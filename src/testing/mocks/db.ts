@@ -34,6 +34,16 @@ const models = {
     discussionId: String,
     createdAt: Date.now,
   },
+  otpCode: {
+    id: primaryKey(nanoid),
+    userId: String,
+    validated: Boolean,
+    code: String,
+    createdAt: Date.now,
+  },
+  consult: {
+    id: primaryKey(nanoid),
+  },
 };
 
 export const db = factory(models);

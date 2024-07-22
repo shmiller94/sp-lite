@@ -53,3 +53,21 @@ export type Address = Entity<{
   state: string;
   postalCode: string;
 }>;
+
+export type HealthcareService = Entity<{
+  id: string;
+  name: string;
+  description: string;
+}>;
+
+export type Order = Entity<{
+  id: string;
+}>;
+
+export type Biomarker = Entity<{
+  id: string;
+}>;
+
+export type Consult = Entity<{
+  id: string;
+}>;
