@@ -28,10 +28,10 @@ export const ServicesRoute = () => {
   return (
     <div className="space-y-20">
       <div className="flex justify-center space-x-6">
-        <NavLink to={'/'}>
+        <NavLink to={'/app/timeline'}>
           <span className="text-[20px] text-zinc-900 opacity-20">Timeline</span>
         </NavLink>
-        <NavLink to={'/'}>
+        <NavLink to={'/app/services'}>
           <span className="text-[20px] text-zinc-900 opacity-100">
             Services
           </span>
