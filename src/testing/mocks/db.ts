@@ -43,6 +43,13 @@ const models = {
   },
   consult: {
     id: primaryKey(nanoid),
+    name: String,
+    practitioner: String,
+  },
+  message: {
+    id: primaryKey(nanoid),
+    body: String,
+    userId: String,
   },
 };
 

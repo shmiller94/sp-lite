@@ -60,7 +60,6 @@ export const createRouter = (queryClient: QueryClient) =>
             const { TimelineRoute } = await import('./app/timeline');
             return { Component: TimelineRoute };
           },
-          loader: servicesLoader(queryClient),
         },
         {
           path: 'services',
@@ -69,6 +68,13 @@ export const createRouter = (queryClient: QueryClient) =>
             return { Component: ServicesRoute };
           },
           loader: servicesLoader(queryClient),
+        },
+        {
+          path: 'concierge',
+          lazy: async () => {
+            const { ConciergeRoute } = await import('./app/concierge');
+            return { Component: ConciergeRoute };
+          },
         },
         {
           path: 'discussions',

@@ -8,6 +8,7 @@ import { authHandlers } from './auth';
 import { commentsHandlers } from './comments';
 import { consultsHandlers } from './consults';
 import { discussionsHandlers } from './discussions';
+import { messagesHandlers } from './messages';
 import { servicesHandlers } from './services';
 import { teamsHandlers } from './teams';
 import { usersHandlers } from './users';
@@ -17,6 +18,7 @@ export const handlers = [
   ...commentsHandlers,
   ...consultsHandlers,
   ...discussionsHandlers,
+  ...messagesHandlers,
   ...servicesHandlers,
   ...teamsHandlers,
   ...usersHandlers,

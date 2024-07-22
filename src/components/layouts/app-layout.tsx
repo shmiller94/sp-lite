@@ -28,7 +28,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   // const logout = useLogout();
   // const navigate = useNavigate();
   const navigation = [
-    { name: 'Home', to: '.', icon: Home },
+    { name: 'Home', to: './timeline', icon: Home },
     { name: 'Data', to: './data', icon: Folder },
     { name: 'Concierge', to: './concierge', icon: MessageSquare },
   ].filter(Boolean) as SideNavigationItem[];

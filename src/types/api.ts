@@ -73,3 +73,7 @@ export type Consult = Entity<{
   name: string;
   practitioner: string;
 }>;
+
+export type Message = Entity<{
+  body: string;
+}>;
