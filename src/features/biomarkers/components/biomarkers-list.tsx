@@ -1,9 +1,8 @@
-// import { Link } from '@/components/ui/link';
 import { Spinner } from '@/components/ui/spinner';
-import { Table } from '@/components/ui/table';
-// import { formatDate } from '@/utils/format';
 
 import { useBiomarkers } from '../api/get-biomarkers';
+
+import { BiomarkersTable, columns } from './biomarkers-table';
 
 export const BiomarkersList = () => {
   const biomarkersQuery = useBiomarkers();
@@ -16,56 +15,7 @@ export const BiomarkersList = () => {
     );
   }
 
-  if (!biomarkersQuery.data) return null;
+  // if (!biomarkersQuery.data) return null;
 
-  return (
-    <Table
-      data={biomarkersQuery.data}
-      columns={
-        [
-          // {
-          //   title: 'Name',
-          //   field: 'name',
-          // },
-          // {
-          //   title: 'Status',
-          //   field: 'status',
-          // },
-          // {
-          //   title: 'Value',
-          //   field: 'value',
-          // },
-          // {
-          //   title: 'Optimal Range',
-          //   field: 'range',
-          // },
-          // {
-          //   title: 'History',
-          //   field: 'history',
-          // },
-          // // {
-          // //   title: '',
-          // //   field: 'id',
-          // //   Cell({ entry: { id } }) {
-          // //     return <Link to={`./${id}`}>View</Link>;
-          // //   },
-          // // },
-          // // {
-          // //   title: '',
-          // //   field: 'id',
-          // //   Cell({ entry: { id } }) {
-          // //     return <DeleteDiscussion id={id} />;
-          // //   },
-          // // },
-          // // {
-          // //   title: 'Created At',
-          // //   field: 'createdAt',
-          // //   Cell({ entry: { createdAt } }) {
-          // //     return <span>{formatDate(createdAt)}</span>;
-          // //   },
-          // // },
-        ]
-      }
-    />
-  );
+  return <BiomarkersTable data={[]} columns={columns} />;
 };

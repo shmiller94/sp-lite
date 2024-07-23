@@ -1,6 +1,6 @@
 import { Link } from '@/components/ui/link';
 import { Spinner } from '@/components/ui/spinner';
-import { Table } from '@/components/ui/table';
+import { Table } from '@/components/ui/table/table';
 import { formatDate } from '@/utils/format';
 
 import { useDiscussions } from '../api/get-discussions';

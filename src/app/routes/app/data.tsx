@@ -1,3 +1,9 @@
+import { BiomarkersList } from '@/features/biomarkers/components/biomarkers-list';
+
 export const DataRoute = () => {
-  return <>Dummy Route</>;
+  return (
+    <div>
+      <BiomarkersList />
+    </div>
+  );
 };
