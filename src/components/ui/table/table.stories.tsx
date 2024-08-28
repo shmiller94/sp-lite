@@ -1,6 +1,14 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { Table } from './table';
+import {
+  Table,
+  TableCaption,
+  TableHeader,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell,
+} from './table';
 
 const meta: Meta<typeof Table> = {
   component: Table,
@@ -8,56 +16,32 @@ const meta: Meta<typeof Table> = {
 
 export default meta;
 
-type User = {
-  id: string;
-  createdAt: number;
-  name: string;
-  title: string;
-  role: string;
-  email: string;
+type Story = StoryObj<typeof Table>;
+
+const DemoTable = () => {
+  return (
+    <Table>
+      <TableCaption>A list of your recent invoices.</TableCaption>
+      <TableHeader>
+        <TableRow>
+          <TableHead className="w-[100px]">Invoice</TableHead>
+          <TableHead>Status</TableHead>
+          <TableHead>Method</TableHead>
+          <TableHead className="text-right">Amount</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow>
+          <TableCell className="font-medium">INV001</TableCell>
+          <TableCell>Paid</TableCell>
+          <TableCell>Credit Card</TableCell>
+          <TableCell className="text-right">$250.00</TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+  );
 };
 
-type Story = StoryObj<typeof Table<User>>;
-
-const data: User[] = [
-  {
-    id: '1',
-    createdAt: Date.now(),
-    name: 'Jane Cooper',
-    title: 'Regional Paradigm Technician',
-    role: 'Admin',
-    email: 'jane.cooper@example.com',
-  },
-  {
-    id: '2',
-    createdAt: Date.now(),
-    name: 'Cody Fisher',
-    title: 'Product Directives Officer',
-    role: 'Owner',
-    email: 'cody.fisher@example.com',
-  },
-];
-
 export const Default: Story = {
-  args: {
-    data,
-    columns: [
-      {
-        title: 'Name',
-        field: 'name',
-      },
-      {
-        title: 'Title',
-        field: 'title',
-      },
-      {
-        title: 'Role',
-        field: 'role',
-      },
-      {
-        title: 'Email',
-        field: 'email',
-      },
-    ],
-  },
+  render: () => <DemoTable />,
 };

@@ -16,7 +16,6 @@ export type User = Entity<{
   lastName: string;
   email: string;
   role: 'ADMIN' | 'USER';
-  teamId: string;
   bio: string;
 }>;
 
@@ -28,24 +27,6 @@ export type AuthResponse = {
 export type ServiceabilityResponse = {
   serviceable: boolean;
 };
-
-export type Team = Entity<{
-  name: string;
-  description: string;
-}>;
-
-export type Discussion = Entity<{
-  title: string;
-  body: string;
-  teamId: string;
-  author: User;
-}>;
-
-export type Comment = Entity<{
-  body: string;
-  discussionId: string;
-  author: User;
-}>;
 
 export type Questionnaire = Entity<{
   id: string;
@@ -62,6 +43,9 @@ export type HealthcareService = Entity<{
   id: string;
   name: string;
   description: string;
+  image: string;
+  price: number;
+  items: [];
 }>;
 
 export type Order = Entity<{
@@ -81,3 +65,19 @@ export type Consult = Entity<{
 export type Message = Entity<{
   body: string;
 }>;
+
+export type VerifyOPT = {
+  success: boolean;
+};
+
+export type Slot = {
+  start: string;
+  end: string;
+};
+
+export type Price = {
+  total: number;
+  // items
+};
+
+export type CollectionMethodType = 'AT_HOME' | 'IN_LAB' | 'PHLEBOTOMY_KIT';

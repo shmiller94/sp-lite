@@ -3,7 +3,6 @@ import React, { useRef, useState } from 'react';
 import SignatureCanvas from 'react-signature-canvas';
 
 export const SignatureBlock: React.FC = () => {
-  // TODO: save signature (?)
   const canvasRef = useRef<SignatureCanvas | null>(null);
   const clearCanvas = () => {
     if (canvasRef.current) {
@@ -88,58 +87,3 @@ export const SignatureBlock: React.FC = () => {
     </div>
   );
 };
-
-// export const CommitmentContent = ({ onComplete }) => {
-//   const canvasRef = useRef<SignatureCanvas | null>(null);
-//   // todo: save signature (?)
-//   const clearCanvas = () => {
-//     if (canvasRef.current) {
-//       canvasRef.current.clear();
-//     }
-//   };
-//
-//   return (
-//     <div className="text-white xs:max-w-xs md:max-w-2xl mx-10 mt-32">
-//       <div className="space-y-14 md:space-y-20">
-//         <h3 className="text-white text-2xl light">Your commitment to health</h3>
-//         <div className="space-y-16 light">
-//           <div className="flex flex-row items-center space-x-10">
-//             <span>1.</span>
-//             <h1 className="text-white text-3xl md:text-6xl leading-[2rem] md:leading-[4.5rem]">
-//               Commit to putting health first, always.
-//             </h1>
-//           </div>
-//           <div className="flex flex-row items-center space-x-10">
-//             <span>2.</span>
-//             <h1 className="text-white text-3xl md:text-6xl leading-[2rem] md:leading-[4.5rem]">
-//               Recognize that optimal health is a journey, not a destination.
-//             </h1>
-//           </div>
-//           <div className="flex flex-row items-center space-x-10">
-//             <span>3.</span>
-//             <h1 className="text-white text-3xl md:text-6xl leading-[2rem] md:leading-[4.5rem]">
-//               Understand that your health is the foundation to success, personal
-//               & professional.
-//             </h1>
-//           </div>
-//         </div>
-//       </div>
-//       <div className="mt-20 mb-10 mt-20 mb-10 w-full flex flex-row justify-between">
-//         <h3 className="text-white text-2xl light">
-//           Add your signature in the box below:
-//         </h3>
-//         <div
-//           className="opacity-50 cursor-pointer"
-//           onClick={() => clearCanvas()}
-//         >
-//           <UndoIcon />
-//         </div>
-//       </div>
-//
-//       <SignatureBlock />
-//       <div className="flex justify-center mt-10 pb-80">
-//         <NextButton enabled onClick={onComplete} />
-//       </div>
-//     </div>
-//   );
-// };

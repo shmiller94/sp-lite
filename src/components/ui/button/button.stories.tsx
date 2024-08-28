@@ -7,11 +7,29 @@ const meta: Meta<typeof Button> = {
 };
 
 export default meta;
+
 type Story = StoryObj<typeof Button>;
 
+const DefaultButton = () => {
+  return <Button>Superpower</Button>;
+};
+
 export const Default: Story = {
-  args: {
-    children: 'Button',
-    variant: 'default',
-  },
+  render: () => <DefaultButton />,
+};
+
+const OutlineButton = () => {
+  return <Button variant="outline">Superpower</Button>;
+};
+
+export const Outline: Story = {
+  render: () => <OutlineButton />,
+};
+
+const GhostButton = () => {
+  return <Button variant="ghost">Superpower</Button>;
+};
+
+export const Ghost: Story = {
+  render: () => <GhostButton />,
 };

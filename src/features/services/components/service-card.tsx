@@ -21,7 +21,7 @@ export const ServiceCard = ({ serviceId }: { serviceId: string }) => {
       <div className="flex h-full items-center gap-x-3 gap-y-2 rounded-[20px] bg-[#F7F7F7] px-5 py-4 sm:flex-col sm:items-start sm:gap-x-0 sm:rounded-[24px] sm:p-2">
         {/* <div className="aspect-[225/172] rounded-[20px] bg-white"> */}
         <img
-          src={`/src/assets/services/${serviceQuery.data.name.replaceAll(' ', '_').toLowerCase().trim()}.png`}
+          src={serviceQuery.data.image}
           alt={serviceQuery.data.name}
           className="aspect-[225/172] size-9 rounded-[8px] object-cover sm:size-full sm:rounded-[20px]"
         />

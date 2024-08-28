@@ -1,7 +1,7 @@
 import { ArrowRight, CheckIcon, LockKeyhole } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
 
 export const TimelineRoute = () => {
   return (
@@ -55,8 +55,8 @@ export const TimelineRoute = () => {
             </svg>
           </div>
 
-          <p className="text-sm leading-5 text-[#71717A]">Jan 3, 2024</p>
-          <p className="text-sm leading-5 text-[#A1A1AA]">
+          <p className="text-sm leading-5 text-zinc-500">Jan 3, 2024</p>
+          <p className="text-sm leading-5 text-zinc-400">
             Your Superpower health journey begins
           </p>
         </div>
@@ -94,7 +94,7 @@ export const TimelineRoute = () => {
             </svg>
           </div>
 
-          <p className="text-sm leading-5 text-[#71717A]">Baseline program</p>
+          <p className="text-sm leading-5 text-zinc-500">Baseline program</p>
         </div>
         <Example />
       </div>
@@ -148,7 +148,7 @@ const TimelineItem = (props: TimelineItemProps) => {
           />
           <p className="text-lg text-zinc-900">{props.name}</p>
         </div>
-        <ArrowRight className="text-[#A1A1AA]" />
+        <ArrowRight className="text-zinc-400" />
       </div>
     </div>
   );
@@ -241,7 +241,7 @@ export default function Example() {
                     <div>
                       <TimelineItem
                         name="Health history evaluation"
-                        imgPath="/src/assets/services/superpower_blood_panel.png"
+                        imgPath="/services/superpower_blood_panel.png"
                       />
                     </div>
                   </span>
@@ -287,7 +287,7 @@ export default function Example() {
                     <div>
                       <TimelineItem
                         name="Health history evaluation"
-                        imgPath="/src/assets/services/superpower_blood_panel.png"
+                        imgPath="/services/superpower_blood_panel.png"
                       />
                     </div>
                   </span>
@@ -318,7 +318,7 @@ export default function Example() {
                     <div>
                       <TimelineItem
                         name="Health history evaluation"
-                        imgPath="/src/assets/services/superpower_blood_panel.png"
+                        imgPath="/services/superpower_blood_panel.png"
                       />
                     </div>
                   </span>
@@ -353,7 +353,7 @@ export default function Example() {
                     <div>
                       <TimelineItem
                         name="Health history evaluation"
-                        imgPath="/src/assets/services/superpower_blood_panel.png"
+                        imgPath="/services/superpower_blood_panel.png"
                       />
                     </div>
                   </span>

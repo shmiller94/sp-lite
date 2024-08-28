@@ -1,6 +1,7 @@
+import { toast } from 'sonner';
+
 import { Button } from '@/components/ui/button';
 import { ConfirmationDialog } from '@/components/ui/dialog/confirmation-dialog';
-import { useNotifications } from '@/components/ui/notifications';
 import { useUser } from '@/lib/auth';
 
 import { useDeleteUser } from '../api/delete-user';
@@ -11,14 +12,10 @@ type DeleteUserProps = {
 
 export const DeleteUser = ({ id }: DeleteUserProps) => {
   const user = useUser();
-  const { addNotification } = useNotifications();
   const deleteUserMutation = useDeleteUser({
     mutationConfig: {
       onSuccess: () => {
-        addNotification({
-          type: 'success',
-          title: 'User Deleted',
-        });
+        toast.success('User deleted');
       },
     },
   });
@@ -33,7 +30,6 @@ export const DeleteUser = ({ id }: DeleteUserProps) => {
       triggerButton={<Button variant="destructive">Delete</Button>}
       confirmButton={
         <Button
-          isLoading={deleteUserMutation.isPending}
           type="button"
           variant="destructive"
           onClick={() => deleteUserMutation.mutate({ userId: id })}

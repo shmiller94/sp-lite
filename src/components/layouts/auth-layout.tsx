@@ -1,36 +1,67 @@
+import { ChevronLeft } from 'lucide-react';
 import * as React from 'react';
+import { useLocation } from 'react-router-dom';
 
-import logo from '@/assets/logo.svg';
 import { Head } from '@/components/seo';
-import { Link } from '@/components/ui/link';
+import { Button } from '@/components/ui/button';
+import { Body2 } from '@/components/ui/typography';
 
 type LayoutProps = {
   children: React.ReactNode;
   title: string;
+  className?: string;
 };
 
-export const Layout = ({ children, title }: LayoutProps) => {
+const AuthStepLayoutHeader = () => {
+  // const { prevStep, activeStep } = useStepper();
+  return (
+    <section id="header" className="flex w-full items-center justify-between">
+      {/*{activeStep !== 0 ? (*/}
+      <Button
+        variant="glass"
+        className="size-12 rounded-full"
+        onClick={() => {
+          // prevStep();
+        }}
+      >
+        <ChevronLeft />
+      </Button>
+      {/*) : (*/}
+      {/*  <div className="size-12" />*/}
+      {/*)}*/}
+      <div className="w-[114px]">
+        <img className="w-auto" src="/logo-dark.svg" alt="logo" />
+      </div>
+      <div className="size-12" />
+    </section>
+  );
+};
+
+export const AuthLayout = ({ children, title }: LayoutProps) => {
+  const location = useLocation();
+
   return (
     <>
       <Head title={title} />
-      <div className="flex min-h-screen flex-col justify-center bg-gray-50 py-12 sm:px-6 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="flex justify-center">
-            <Link className="flex items-center text-white" to="/">
-              <img className="h-24 w-auto" src={logo} alt="Workflow" />
-            </Link>
+      <div className="flex min-h-screen w-full flex-col items-center justify-between py-8 md:py-12">
+        <AuthStepLayoutHeader />
+        {children}
+        {location.pathname === '/auth/login' && (
+          <div className="flex flex-col items-center justify-center gap-2">
+            <Body2 className="text-zinc-500">Forgot password</Body2>
+            <div className="flex items-center gap-0.5">
+              <Body2 className="text-zinc-500">Don’t have an account?</Body2>
+              <a
+                href="https://google.com"
+                className="cursor-pointer text-sm text-[#FC5F2B]"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Sign up to our waitlist.
+              </a>
+            </div>
           </div>
-
-          <h2 className="mt-3 text-center text-3xl font-extrabold text-gray-900">
-            {title}
-          </h2>
-        </div>
-
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white px-4 py-8 shadow sm:rounded-lg sm:px-10">
-            {children}
-          </div>
-        </div>
+        )}
       </div>
     </>
   );

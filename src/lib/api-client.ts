@@ -1,6 +1,6 @@
 import Axios, { InternalAxiosRequestConfig } from 'axios';
+import { toast } from 'sonner';
 
-import { useNotifications } from '@/components/ui/notifications';
 import { env } from '@/config/env';
 
 function authRequestInterceptor(config: InternalAxiosRequestConfig) {
@@ -23,11 +23,7 @@ api.interceptors.response.use(
   },
   (error) => {
     const message = error.response?.data?.message || error.message;
-    useNotifications.getState().addNotification({
-      type: 'error',
-      title: 'Error',
-      message,
-    });
+    toast.error(message);
 
     if (error.response?.status === 401) {
       const searchParams = new URLSearchParams();

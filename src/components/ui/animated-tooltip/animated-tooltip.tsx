@@ -7,7 +7,7 @@ import {
 } from 'framer-motion';
 import { useState } from 'react';
 
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
 
 export const AnimatedTooltip = ({
   items,

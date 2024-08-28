@@ -45,6 +45,17 @@ export const twoFactorHandlers = [
       }
       const data = (await request.json()) as VerifyOtpBody;
 
+      const code = db.otpCode.findFirst({
+        where: {
+          code: { equals: data.code },
+          userId: { equals: user?.id },
+        },
+      });
+
+      if (!code) {
+        return HttpResponse.json({ success: false }, { status: 404 });
+      }
+
       try {
         db.otpCode.update({
           where: {
@@ -65,7 +76,7 @@ export const twoFactorHandlers = [
 
         await persistDb('otpCode');
       } catch (e) {
-        return HttpResponse.json({ success: false }, { status: 200 });
+        return HttpResponse.json({ success: false }, { status: 404 });
       }
 
       return HttpResponse.json({ success: true }, { status: 200 });

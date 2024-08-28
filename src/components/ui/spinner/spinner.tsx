@@ -1,4 +1,4 @@
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
 
 const sizes = {
   sm: 'h-4 w-4',
@@ -9,7 +9,7 @@ const sizes = {
 
 const variants = {
   light: 'text-white',
-  primary: 'text-slate-600',
+  primary: 'text-primary',
 };
 
 export type SpinnerProps = {
@@ -19,7 +19,7 @@ export type SpinnerProps = {
 };
 
 export const Spinner = ({
-  size = 'md',
+  size = 'sm',
   variant = 'primary',
   className = '',
 }: SpinnerProps) => {

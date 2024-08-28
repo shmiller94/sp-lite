@@ -10,7 +10,7 @@ import { NavLink } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
 // import { useLogout } from '@/lib/auth';
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
 
 import {
   DropdownMenu,

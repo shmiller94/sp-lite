@@ -1,64 +1,98 @@
-import { Link, useSearchParams } from 'react-router-dom';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Lock, Mail } from 'lucide-react';
+import { useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
-import { Form, Input } from '@/components/ui/form';
-import { useLogin, loginInputSchema } from '@/lib/auth';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from '@/components/ui/form';
+import { Spinner } from '@/components/ui/spinner';
+import { H1, H4 } from '@/components/ui/typography';
+import { AuthInput } from '@/features/auth/components/auth-input';
+import { LoginInput, loginInputSchema, useLogin } from '@/lib/auth';
 
 type LoginFormProps = {
   onSuccess: () => void;
 };
 
 export const LoginForm = ({ onSuccess }: LoginFormProps) => {
-  const login = useLogin({
+  const loginMutation = useLogin({
     onSuccess,
   });
-  const [searchParams] = useSearchParams();
-  const redirectTo = searchParams.get('redirectTo');
+
+  const form = useForm<LoginInput>({
+    resolver: zodResolver(loginInputSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
 
   return (
-    <div>
-      <Form
-        onSubmit={(values) => {
-          login.mutate(values);
-        }}
-        schema={loginInputSchema}
-      >
-        {({ register, formState }) => (
-          <>
-            <Input
-              type="email"
-              label="Email Address"
-              error={formState.errors['email']}
-              registration={register('email')}
-            />
-            <Input
-              type="password"
-              label="Password"
-              error={formState.errors['password']}
-              registration={register('password')}
-            />
-            <div>
-              <Button
-                isLoading={login.isPending}
-                type="submit"
-                className="w-full"
-              >
-                Log in
-              </Button>
-            </div>
-          </>
-        )}
-      </Form>
-      <div className="mt-2 flex items-center justify-end">
-        <div className="text-sm">
-          <Link
-            to={`/auth/register${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`}
-            className="font-medium text-blue-600 hover:text-blue-500"
-          >
-            Register
-          </Link>
-        </div>
+    <div className="flex w-full max-w-[400px] flex-col gap-16">
+      <div className="text-center">
+        <H1 className="text-zinc-900">Welcome</H1>
+        <H4 className="text-zinc-600">Please log in</H4>
       </div>
+
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit((values) => {
+            loginMutation.mutate(values);
+          })}
+          className="space-y-8"
+        >
+          <div>
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormMessage />
+                  <FormControl>
+                    <AuthInput
+                      border="top"
+                      placeholder="Email"
+                      icon={<Mail className="size-4 text-zinc-400" />}
+                      {...field}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <AuthInput
+                      border="bottom"
+                      placeholder="Password"
+                      icon={<Lock className="size-4 text-zinc-400" />}
+                      type="password"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="space-y-3">
+            <Button className="w-full" type="submit">
+              {loginMutation.isPending ? <Spinner variant="light" /> : 'Login'}
+            </Button>
+            <Button className="w-full" variant="outline" type="button">
+              Join waitlist
+            </Button>
+          </div>
+        </form>
+      </Form>
     </div>
   );
 };

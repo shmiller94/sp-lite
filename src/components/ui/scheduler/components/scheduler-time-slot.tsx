@@ -1,0 +1,44 @@
+import moment from 'moment';
+import React from 'react';
+import 'moment-timezone';
+
+import { useScheduler } from '@/components/ui/scheduler/stores';
+import { cn } from '@/lib/utils';
+import { Slot } from '@/types/api';
+
+export function SchedulerTimeSlot({
+  timeSlot,
+}: {
+  timeSlot: Slot;
+}): JSX.Element {
+  const { tz, onSlotUpdate, updateSlot, slot, showCreateBtn } = useScheduler(
+    (s) => s,
+  );
+
+  const selected = timeSlot === slot;
+
+  return (
+    <div
+      className={cn(
+        selected
+          ? 'bg-[#F7F7F7] text-zinc-900'
+          : 'text-zinc-500 hover:bg-[#F7F7F7] hover:text-zinc-900',
+        'col-span-1 flex flex-col rounded-[8px] cursor-pointer ease-in-out duration-200 lowercase p-4 text-left',
+      )}
+      key={timeSlot.start}
+      onClick={() => {
+        updateSlot(timeSlot);
+
+        // additionally invoke if we dont have a create button
+        onSlotUpdate && !showCreateBtn && onSlotUpdate(timeSlot);
+      }}
+      role="presentation"
+    >
+      {timeRangeText(timeSlot, tz)}
+    </div>
+  );
+}
+
+const timeRangeText = (slot: Slot, tz: string): string => {
+  return `${moment(slot.start).tz(tz).format('h:mma')} — ${moment(slot.end).tz(tz).format('h:mma')}`;
+};
