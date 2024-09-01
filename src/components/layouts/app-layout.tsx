@@ -10,6 +10,7 @@ import { NavLink } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
 // import { useLogout } from '@/lib/auth';
+import { useLogout } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 
 import {
@@ -25,7 +26,7 @@ type SideNavigationItem = {
 };
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
-  // const logout = useLogout();
+  const logout = useLogout();
   // const navigate = useNavigate();
   const navigation = [
     { name: 'Home', to: './timeline', icon: Home },
@@ -87,22 +88,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             align="end"
           >
             <div className="flex flex-col gap-1.5">
-              {navigation.map((item) => (
-                <NavLink
-                  key={item.name}
-                  to={item.to}
-                  className="flex cursor-pointer items-center gap-3 rounded-[18px] p-4 transition duration-200 ease-in-out hover:bg-[#252525]"
-                >
-                  <item.icon
-                    className={cn(
-                      'text-gray-400 group-hover:text-gray-300',
-                      'mr-4 size-6 shrink-0',
-                    )}
-                    aria-hidden="true"
-                  />
-                  <p className="text-sm text-white">{item.name}</p>
-                </NavLink>
-              ))}
+              <div role="presentation" onClick={() => logout.mutate({})}>
+                logout
+              </div>
             </div>
           </DropdownMenuContent>
         </DropdownMenu>

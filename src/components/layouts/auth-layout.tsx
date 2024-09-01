@@ -1,10 +1,13 @@
 import { ChevronLeft } from 'lucide-react';
 import * as React from 'react';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router';
 import { useLocation } from 'react-router-dom';
 
 import { Head } from '@/components/seo';
 import { Button } from '@/components/ui/button';
 import { Body2 } from '@/components/ui/typography';
+import { useUser } from '@/lib/auth';
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -13,22 +16,15 @@ type LayoutProps = {
 };
 
 const AuthStepLayoutHeader = () => {
-  // const { prevStep, activeStep } = useStepper();
   return (
     <section id="header" className="flex w-full items-center justify-between">
-      {/*{activeStep !== 0 ? (*/}
       <Button
         variant="glass"
         className="size-12 rounded-full"
-        onClick={() => {
-          // prevStep();
-        }}
+        onClick={() => {}}
       >
         <ChevronLeft />
       </Button>
-      {/*) : (*/}
-      {/*  <div className="size-12" />*/}
-      {/*)}*/}
       <div className="w-[114px]">
         <img className="w-auto" src="/logo-dark.svg" alt="logo" />
       </div>
@@ -39,6 +35,17 @@ const AuthStepLayoutHeader = () => {
 
 export const AuthLayout = ({ children, title }: LayoutProps) => {
   const location = useLocation();
+  const user = useUser();
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user.data) {
+      navigate('/app', {
+        replace: true,
+      });
+    }
+  }, [user.data, navigate]);
 
   return (
     <>

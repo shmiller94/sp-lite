@@ -19,9 +19,59 @@ export type User = Entity<{
   bio: string;
 }>;
 
-export type AuthResponse = {
-  jwt: string;
-  user: User;
+export type LoginAuthenticationResponse = {
+  login: string;
+  code?: string;
+};
+
+export type TokenResponse = {
+  token_type: string;
+  id_token: string;
+  access_token: string;
+  refresh_token: string;
+  expires_in: number;
+  profile: User;
+};
+
+export enum IssueSeverity {
+  INFOROMATION = 'information',
+  WARNING = 'warning',
+  ERROR = 'error',
+  FATAL = 'fatal',
+}
+
+export type OperationOutcomeIssue = {
+  severity: IssueSeverity;
+  code?: string;
+  details: {
+    text: string;
+  };
+  expression?: string[];
+};
+
+export type OperationOutcome = {
+  id?: string;
+  resourceType?: string;
+  issue: OperationOutcomeIssue[];
+};
+
+/**
+ /**
+ * OAuth 2.0 Grant Type Identifiers
+ * Standard identifiers defined here: https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-07#name-grant-types
+ * Token exchange extension defined here: https://datatracker.ietf.org/doc/html/rfc8693
+ */
+export enum OAuthGrantType {
+  ClientCredentials = 'client_credentials',
+  AuthorizationCode = 'authorization_code',
+  RefreshToken = 'refresh_token',
+  TokenExchange = 'urn:ietf:params:oauth:grant-type:token-exchange',
+}
+
+export type LoginState = {
+  profile: User;
+  accessToken: string;
+  refreshToken: string;
 };
 
 export type ServiceabilityResponse = {

@@ -7,7 +7,6 @@ import { Toaster } from 'sonner';
 
 import { MainErrorFallback } from '@/components/errors/main';
 import { Spinner } from '@/components/ui/spinner';
-import { AuthLoader } from '@/lib/auth';
 import { queryClient } from '@/lib/react-query';
 
 type AppProviderProps = {
@@ -28,15 +27,16 @@ export const AppProvider = ({ children }: AppProviderProps) => {
           <QueryClientProvider client={queryClient}>
             {import.meta.env.DEV && <ReactQueryDevtools />}
             <Toaster richColors />
-            <AuthLoader
-              renderLoading={() => (
-                <div className="flex h-screen w-screen items-center justify-center">
-                  <Spinner size="xl" />
-                </div>
-              )}
-            >
-              {children}
-            </AuthLoader>
+            {children}
+            {/*<AuthLoader*/}
+            {/*  renderLoading={() => (*/}
+            {/*    <div className="flex h-screen w-screen items-center justify-center">*/}
+            {/*      <Spinner size="xl" />*/}
+            {/*    </div>*/}
+            {/*  )}*/}
+            {/*>*/}
+            {/*  {children}*/}
+            {/*</AuthLoader>*/}
           </QueryClientProvider>
         </HelmetProvider>
       </ErrorBoundary>

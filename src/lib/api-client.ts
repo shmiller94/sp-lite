@@ -1,36 +1,85 @@
-import Axios, { InternalAxiosRequestConfig } from 'axios';
-import { toast } from 'sonner';
+import axios, { InternalAxiosRequestConfig } from 'axios';
 
 import { env } from '@/config/env';
+import { clearActiveLogin, getActiveLogin, setActiveLogin } from '@/lib/utils';
+import { OAuthGrantType, TokenResponse } from '@/types/api';
+import { parseJWTPayload } from '@/utils/jwt';
 
 function authRequestInterceptor(config: InternalAxiosRequestConfig) {
   if (config.headers) {
     config.headers.Accept = 'application/json';
+    config.headers.Authorization = `Bearer ${getActiveLogin()?.accessToken}`;
   }
 
   config.withCredentials = true;
   return config;
 }
 
-export const api = Axios.create({
+export const api = axios.create({
   baseURL: env.API_URL,
 });
 
 api.interceptors.request.use(authRequestInterceptor);
+
 api.interceptors.response.use(
-  (response) => {
-    return response.data;
+  (config) => {
+    return config.data;
   },
-  (error) => {
-    const message = error.response?.data?.message || error.message;
-    toast.error(message);
+  async (error) => {
+    const originalRequest = error.config;
 
-    if (error.response?.status === 401) {
-      const searchParams = new URLSearchParams();
-      const redirectTo = searchParams.get('redirectTo');
-      window.location.href = `/auth/login?redirectTo=${redirectTo}`;
+    if (
+      error.response.status === 401 &&
+      error.config &&
+      !error.config._isRetry
+    ) {
+      originalRequest._isRetry = true;
+      try {
+        const refreshToken = getActiveLogin()?.refreshToken;
+
+        if (refreshToken) {
+          /*
+           * we are not reusing auth.tsx functions here
+           * because we need to make this request from different
+           * axios instance (that is not api)
+           * */
+          const formBody = new URLSearchParams();
+          formBody.set('grant_type', OAuthGrantType.RefreshToken);
+          formBody.set('refresh_token', refreshToken);
+
+          const tokens: TokenResponse = await axios.post(
+            'oauth2/token',
+            formBody,
+            {
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              withCredentials: true,
+            },
+          );
+
+          const token = tokens.access_token;
+
+          // Verify token has not expired
+          const tokenPayload = parseJWTPayload(token);
+          if (Date.now() >= (tokenPayload.exp as number) * 1000) {
+            clearActiveLogin();
+            throw new Error('Token expired');
+          }
+
+          setActiveLogin({
+            accessToken: token,
+            refreshToken: tokens.refresh_token,
+            profile: tokens.profile,
+          });
+
+          originalRequest.headers.Authorization = `Bearer ${token}`;
+        }
+
+        return api.request(originalRequest);
+      } catch (err) {
+        console.log('Not authorized');
+        clearActiveLogin();
+      }
     }
-
-    return Promise.reject(error);
+    throw error;
   },
 );
