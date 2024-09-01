@@ -30,7 +30,7 @@ const timeline: TimelineType[] = [
 export const BookingSuccess = () => {
   const controls = useAnimationControls();
   const { nextStep } = useStepper((s) => s);
-  const { address, slots, collectionMethod } = useOnboarding();
+  const { serviceAddress, slots, collectionMethod } = useOnboarding();
 
   return (
     <section id="main">
@@ -90,10 +90,10 @@ export const BookingSuccess = () => {
           })}
         </div>
         <div className="flex w-full justify-end gap-3 py-12">
-          {address && collectionMethod && slots.blood && (
+          {serviceAddress && collectionMethod && slots.blood.slot && (
             <AddToCalendar
-              address={address}
-              slot={slots.blood}
+              address={serviceAddress.address}
+              slot={slots.blood.slot}
               service="Superpower Blood Panel"
               collectionMethod={collectionMethod}
             />
@@ -106,7 +106,11 @@ export const BookingSuccess = () => {
 };
 
 export const BookingSuccessStep = () => (
-  <ImageContentLayout title="Success" className="bg-female-stretching">
+  <ImageContentLayout
+    title="Success"
+    className="bg-female-stretching"
+    blockBackButton
+  >
     <BookingSuccess />
   </ImageContentLayout>
 );

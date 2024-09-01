@@ -17,32 +17,59 @@ import { useStepper } from '@/components/ui/stepper';
 import { useGetServiceability } from '@/features/onboarding/api/get-serviceability';
 import { OnboardingInput } from '@/features/onboarding/components/onboarding-input';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
-import { AddressInput, addressInputSchema } from '@/shared/api/update-profile';
+import { useUser } from '@/lib/auth';
+import {
+  AddressInput,
+  addressInputSchema,
+  useUpdateProfile,
+} from '@/shared/api/update-profile';
 
-function FullPrimaryAddressForm() {
+function FullPrimaryAddressForm({
+  googleAddres,
+}: {
+  googleAddres: AddressInput;
+}) {
   const { nextStep } = useStepper((s) => s);
-  const { address, updateAddress, updateBlocked } = useOnboarding();
+  const {
+    updateBlocked,
+    updateServiceAddress,
+    updateMicrobiomeAddress,
+    updateToxinAddress,
+  } = useOnboarding();
+  const user = useUser();
+  const primaryAddress = user.data?.primaryAddress?.address;
+
+  const selectedAddress = primaryAddress ?? googleAddres;
+
   const getServiceabilityMutation = useGetServiceability();
+  const updateProfileMutation = useUpdateProfile();
 
   const form = useForm<AddressInput>({
     resolver: zodResolver(addressInputSchema),
     defaultValues: {
-      line1: address?.line1 ?? '',
-      line2: address?.line2 ?? '',
-      postalCode: address?.postalCode ?? '',
-      city: address?.city ?? '',
-      state: address?.state ?? '',
+      line: selectedAddress?.line ?? [],
+      postalCode: selectedAddress?.postalCode ?? '',
+      city: selectedAddress?.city ?? '',
+      state: selectedAddress?.state ?? '',
     },
   });
 
   const onSubmit = async (address: AddressInput) => {
-    const data = { postalCode: address.postalCode };
     const { serviceable } = await getServiceabilityMutation.mutateAsync({
-      data,
+      data: {
+        zipCode: address.postalCode,
+        collectionMethod: 'IN_LAB',
+      },
     });
 
     if (serviceable) {
-      updateAddress(address);
+      const user = await updateProfileMutation.mutateAsync({
+        data: { activeAddress: { address } },
+      });
+
+      updateServiceAddress(user.primaryAddress ?? null);
+      updateMicrobiomeAddress(user.primaryAddress?.address ?? null);
+      updateToxinAddress(user.primaryAddress?.address ?? null);
       updateBlocked(false);
       nextStep();
     } else {
@@ -58,32 +85,16 @@ function FullPrimaryAddressForm() {
       >
         <FormField
           control={form.control}
-          name="line1"
-          render={({ field }) => (
+          name="line"
+          render={({ ...rest }) => (
             <FormItem className="space-y-0">
-              <FormLabel className="text-white">Street Address</FormLabel>
+              <FormLabel className="text-white">Street address</FormLabel>
               <FormControl>
                 <OnboardingInput
                   autoComplete="off"
-                  placeholder="Address"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage className="pt-2" />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="line2"
-          render={({ field }) => (
-            <FormItem className="space-y-0">
-              <FormLabel className="text-white">Apt, Unit, etc.</FormLabel>
-              <FormControl>
-                <OnboardingInput
-                  autoComplete="off"
-                  placeholder="Apt, Unit, etc."
-                  {...field}
+                  placeholder="Street address"
+                  onChange={(e) => form.setValue('line', [e.target.value])}
+                  {...rest}
                 />
               </FormControl>
               <FormMessage className="pt-2" />
@@ -145,7 +156,7 @@ function FullPrimaryAddressForm() {
         />
         <Button type="submit" variant="white" className="w-full">
           {getServiceabilityMutation.isPending ? (
-            <Spinner className="size-6" />
+            <Spinner className="size-6" variant="primary" />
           ) : (
             'Confirm'
           )}
@@ -156,11 +167,12 @@ function FullPrimaryAddressForm() {
 }
 
 export function PrimaryAddressForm() {
-  const { updateAddress } = useOnboarding();
-  const [enableFullAddress, setEnableFullAddress] = useState(false);
+  const [googleAddress, setGoogleAddress] = useState<
+    AddressInput | undefined
+  >();
 
-  if (enableFullAddress) {
-    return <FullPrimaryAddressForm />;
+  if (googleAddress) {
+    return <FullPrimaryAddressForm googleAddres={googleAddress} />;
   }
 
   return (
@@ -168,8 +180,7 @@ export function PrimaryAddressForm() {
       emptyMessage="No results."
       placeholder="Address"
       onSubmit={(address) => {
-        setEnableFullAddress(true);
-        updateAddress(address);
+        setGoogleAddress(address);
       }}
     />
   );

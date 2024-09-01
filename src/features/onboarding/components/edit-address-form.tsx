@@ -18,36 +18,38 @@ import { useGetServiceability } from '@/features/onboarding/api/get-serviceabili
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import { cn } from '@/lib/utils';
 import { AddressInput, addressInputSchema } from '@/shared/api/update-profile';
+import { CollectionMethodType } from '@/types/api';
 
+// TODO: make this component live when there is support for this on backend
 export function EditAddressForm({
   setIsEditing,
 }: {
   setIsEditing: () => void;
 }) {
   const getServiceabilityMutation = useGetServiceability();
-  const { address, updateAddress, isBlocked, updateBlocked } = useOnboarding();
+  const { isBlocked, updateBlocked } = useOnboarding();
 
   const form = useForm<AddressInput>({
     resolver: zodResolver(addressInputSchema),
     defaultValues: {
-      line1: address?.line1 ?? '',
-      line2: address?.line2 ?? '',
-      postalCode: address?.postalCode ?? '',
-      city: address?.city ?? '',
-      state: address?.state ?? '',
+      line: [],
+      postalCode: '',
+      city: '',
+      state: '',
     },
   });
 
   const onSubmit = async (address: AddressInput) => {
-    const data = { postalCode: address.postalCode };
+    const data = {
+      zipCode: address.postalCode,
+      collectionMethod: 'IN_LAB' as CollectionMethodType,
+    };
 
     const { serviceable } = await getServiceabilityMutation.mutateAsync({
       data,
     });
 
     if (serviceable) {
-      // TODO: add primary address / active addresses update here
-      updateAddress(address);
       setIsEditing();
       updateBlocked(false);
     } else {
@@ -60,7 +62,7 @@ export function EditAddressForm({
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-8">
         <FormField
           control={form.control}
-          name="line1"
+          name="line"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-sm font-normal text-zinc-500">
@@ -68,25 +70,6 @@ export function EditAddressForm({
               </FormLabel>
               <FormControl>
                 <Input autoComplete="off" placeholder="Address" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="line2"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-sm font-normal text-zinc-500">
-                Apt, Unit, etc.
-              </FormLabel>
-              <FormControl>
-                <Input
-                  autoComplete="off"
-                  placeholder="Apt, Unit, etc."
-                  {...field}
-                />
               </FormControl>
               <FormMessage />
             </FormItem>

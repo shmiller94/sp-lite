@@ -9,7 +9,7 @@ test('should handle confirmation flow', async () => {
   const confirmationButtonText = 'Confirm';
   const openButtonText = 'Open';
 
-  await rtlRender(
+  rtlRender(
     <ConfirmationDialog
       icon="danger"
       title={titleText}

@@ -90,12 +90,10 @@ export const AddressAutocomplete = ({
             address_components.find((a) => a.types.includes('postal_code'))
               ?.long_name ?? '';
 
-          const line1 = `${streetNumber || ''} ${route || ''}`;
-          const line2 = '';
+          const line = [`${streetNumber || ''} ${route || ''}`];
 
           const address: AddressInput = {
-            line1,
-            line2,
+            line,
             city,
             state,
             postalCode,
@@ -130,7 +128,7 @@ export const AddressAutocomplete = ({
             {isPlacePredictionsLoading ? (
               <CommandPrimitive.Loading>
                 <div className="flex w-full items-center justify-center px-[28px] py-4">
-                  <Spinner className="size-6" />
+                  <Spinner className="size-6" variant="primary" />
                 </div>
               </CommandPrimitive.Loading>
             ) : null}

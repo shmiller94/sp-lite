@@ -1,24 +1,30 @@
 import moment, { Moment } from 'moment';
 import { createStore } from 'zustand';
 
-import { Slot } from '@/types/api';
+import { api } from '@/lib/api-client';
+import { Address, CollectionMethodType, Slot } from '@/types/api';
+
+const URL = '/phlebotomy/availability';
 
 export interface SchedulerProps {
-  slots: Slot[];
-  tz: string;
-  updateStart: (date: Date) => void;
-  slotsLoading: boolean;
-  onSlotUpdate?: (slot: Slot | null) => void;
-  numDays: number;
+  collectionMethod: CollectionMethodType;
+  address: Address;
+  serviceId: string;
+  onSlotUpdate?: (slot: Slot | null, tz: string) => void;
+  numDays?: number;
   showCreateBtn?: boolean;
 }
 
 export interface SchedulerStore extends SchedulerProps {
+  slots: Slot[];
+  loading: boolean;
+  tz: string;
+  fetchSlots: () => Promise<void>;
   selectedDay: Moment | undefined;
   updateSelectedDay: (day: Moment | undefined) => void;
-  slot: Slot | undefined;
-  updateSlot: (slot: Slot | undefined) => void | undefined;
-  startRange: Moment;
+  selectedSlot: Slot | undefined;
+  updateSelectedSlot: (slot: Slot | undefined) => void | undefined;
+  startRange: Moment | undefined;
   updateStartRange: (date: Moment) => void;
 }
 
@@ -26,23 +32,58 @@ export type SchedulerStoreApi = ReturnType<typeof schedulerStoreCreator>;
 
 export const schedulerStoreCreator = (initProps: SchedulerProps) => {
   const DEFAULT_PROPS: SchedulerProps = {
-    slots: initProps.slots,
-    tz: initProps.tz,
-    slotsLoading: initProps.slotsLoading,
-    numDays: initProps.numDays,
-    updateStart: initProps.updateStart,
+    numDays: initProps.numDays ?? 5,
     onSlotUpdate: initProps.onSlotUpdate,
     showCreateBtn: initProps.showCreateBtn,
+    collectionMethod: initProps.collectionMethod,
+    address: initProps.address,
+    serviceId: initProps.serviceId,
   };
 
-  return createStore<SchedulerStore>()((set) => ({
+  return createStore<SchedulerStore>()((set, get) => ({
     ...DEFAULT_PROPS,
+    slots: [],
+    tz: moment.tz.guess(),
+    loading: false,
+    fetchSlots: async () => {
+      const state = get();
+      const collectionMethod = state.collectionMethod;
+      const address = state.address;
+      const serviceId = state.serviceId;
+      const startRange = state.startRange;
+      set({ loading: true });
+      const response: { slots: Slot[]; timezone: string | undefined } =
+        await api.post(URL, {
+          collectionMethod,
+          address,
+          serviceId,
+          start: startRange ? startRange.toDate() : new Date(),
+        });
+
+      set({ loading: false, slots: response.slots });
+
+      if (!response.slots.length) return;
+
+      if (!response.timezone) return;
+
+      const convertedMoment = moment
+        .utc(response.slots[0].start)
+        .tz(response.timezone);
+      if (moment(convertedMoment).isAfter(startRange)) {
+        set({
+          startRange: convertedMoment,
+          selectedDay: undefined,
+          tz: response.timezone,
+        });
+      }
+    },
     selectedDay: undefined,
     updateSelectedDay: (day) =>
       set((state) => ({ ...state, selectedDay: day })),
-    slot: undefined,
-    updateSlot: (slot) => set((state) => ({ ...state, slot: slot })),
-    startRange: moment().tz(DEFAULT_PROPS.tz as string),
+    selectedSlot: undefined,
+    updateSelectedSlot: (slot) =>
+      set((state) => ({ ...state, selectedSlot: slot })),
+    startRange: undefined,
     updateStartRange: (date) =>
       set((state) => ({ ...state, startRange: date })),
   }));

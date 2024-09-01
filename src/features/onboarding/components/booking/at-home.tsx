@@ -7,6 +7,7 @@ import { AddAddressForm } from '@/features/onboarding/components/add-address-for
 import { AddressSelect } from '@/features/onboarding/components/address-select';
 import { CurrentAddressCard } from '@/features/onboarding/components/current-address-card';
 import { EditAddressForm } from '@/features/onboarding/components/edit-address-form';
+import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 
 const AtHomeServiceCard = () => {
   return (
@@ -28,6 +29,8 @@ export const AtHome = () => {
   const { nextStep, prevStep } = useStepper((s) => s);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [isAddingAddress, setIsAddingAddress] = useState(false);
+
+  const { updateServiceAddress, serviceAddress } = useOnboarding();
 
   if (isEditingAddress) {
     return (
@@ -66,6 +69,8 @@ export const AtHome = () => {
             <AddressSelect
               setIsAddingAddress={() => setIsAddingAddress((prev) => !prev)}
               setIsEditingAddress={() => setIsEditingAddress((prev) => !prev)}
+              defaultValue={serviceAddress}
+              callback={(address) => updateServiceAddress(address)}
             />
           </div>
         </div>

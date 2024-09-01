@@ -1,22 +1,38 @@
 import { create } from 'zustand';
 
-import { AddressInput } from '@/shared/api/update-profile';
-import { HealthcareService, Slot } from '@/types/api';
+import {
+  ActiveAddress,
+  Address,
+  CollectionMethodType,
+  HealthcareService,
+  Slot,
+} from '@/types/api';
 
 export type MembershipType = 'DEFAULT';
 export type BloodPackageType = 'BASELINE' | 'ADVANCED';
-export type CollectionMethodType = 'AT_HOME' | 'IN_LAB';
+
+/* orderId here is updated whenever we create a DRAFT order and want to update it later */
 export type ScheduledSlots = {
-  blood: Slot | null;
-  cancer: Slot | null;
-  microbiome: AddressInput | null;
-  toxin: AddressInput | null;
+  /* Slot because user selects slot time */
+  blood: {
+    orderId: string | null;
+    slot: Slot | null;
+    timezone: string | null;
+  };
+  cancer: {
+    orderId: string | null;
+    slot: Slot | null;
+    timezone: string | null;
+  };
+  /* Address because we DELIVER to this location */
+  microbiome: { orderId: string | null; address: Address | null };
+  toxin: { orderId: string | null; address: Address | null };
 };
 
 type OnboardingStore = {
-  /* TODO: remove that when we connect real server */
-  address: AddressInput | null;
-  updateAddress: (address: AddressInput) => void;
+  serviceAddress: ActiveAddress | null;
+  updateServiceAddress: (serviceAddress: ActiveAddress | null) => void;
+
   isBlocked: boolean /* Primarly used after address step if zip code not supported */;
   updateBlocked: (
     status: boolean,
@@ -38,8 +54,14 @@ type OnboardingStore = {
   slots: ScheduledSlots;
   updateBloodSlot: (slot: Slot | null) => void;
   updateCancerSlot: (slot: Slot | null) => void;
-  updateMicrobiomeAddress: (address: AddressInput) => void;
-  updateToxinAddress: (address: AddressInput) => void;
+  updateMicrobiomeAddress: (address: Address | null) => void;
+  updateToxinAddress: (address: Address | null) => void;
+  updateBloodOrderId: (id: string | null) => void;
+  updateCancerOrderId: (id: string | null) => void;
+  updateMicrobiomeOrderId: (id: string | null) => void;
+  updateToxinOrderId: (id: string | null) => void;
+  updateBloodTimezone: (timezone: string) => void;
+  updateCancerTimezone: (timezone: string) => void;
 
   /* Used to keep track of current total order accross steps */
   orderTotal: number;
@@ -48,9 +70,12 @@ type OnboardingStore = {
 };
 
 export const useOnboarding = create<OnboardingStore>((set) => ({
-  address: null,
-  updateAddress: (address: AddressInput) =>
-    set((state) => ({ ...state, address: address })),
+  /*
+   *  Different than user's primaryAddress or activeAddress
+   *  In this context used as address that user selects to get service
+   */
+  serviceAddress: null,
+  updateServiceAddress: (serviceAddress) => set({ serviceAddress }),
   isBlocked: false,
   updateBlocked: (status) => set({ isBlocked: status }),
   membership: 'DEFAULT',
@@ -62,10 +87,24 @@ export const useOnboarding = create<OnboardingStore>((set) => ({
     set({ collectionMethod: collectionMethod }),
   additionalServices: [],
   slots: {
-    blood: null,
-    cancer: null,
-    microbiome: null,
-    toxin: null,
+    blood: {
+      orderId: null,
+      slot: null,
+      timezone: null,
+    },
+    cancer: {
+      orderId: null,
+      slot: null,
+      timezone: null,
+    },
+    microbiome: {
+      orderId: null,
+      address: null,
+    },
+    toxin: {
+      orderId: null,
+      address: null,
+    },
   },
   addAdditionalService: (additionalService) =>
     set((state) => ({
@@ -79,21 +118,105 @@ export const useOnboarding = create<OnboardingStore>((set) => ({
     })),
   updateBloodSlot: (slot) =>
     set((state) => ({
-      slots: { ...state.slots, blood: slot },
+      slots: {
+        ...state.slots,
+        blood: {
+          slot,
+          orderId: state.slots.blood.orderId,
+          timezone: state.slots.blood.timezone,
+        },
+      },
     })),
   updateCancerSlot: (slot) =>
     set((state) => ({
-      slots: { ...state.slots, cancer: slot },
+      slots: {
+        ...state.slots,
+        cancer: {
+          slot,
+          orderId: state.slots.cancer.orderId,
+          timezone: state.slots.cancer.timezone,
+        },
+      },
     })),
   updateMicrobiomeAddress: (address) =>
     set((state) => ({
-      slots: { ...state.slots, microbiome: address },
+      slots: {
+        ...state.slots,
+        microbiome: {
+          address,
+          orderId: state.slots.microbiome.orderId,
+        },
+      },
     })),
   updateToxinAddress: (address) =>
     set((state) => ({
-      slots: { ...state.slots, toxin: address },
+      slots: {
+        ...state.slots,
+        toxin: {
+          address,
+          orderId: state.slots.toxin.orderId,
+        },
+      },
     })),
-  orderTotal: 49900, // base membership price always checked
+  updateBloodOrderId: (id) =>
+    set((state) => ({
+      slots: {
+        ...state.slots,
+        blood: {
+          orderId: id,
+          slot: state.slots.blood.slot,
+          timezone: state.slots.blood.timezone,
+        },
+      },
+    })),
+  updateCancerOrderId: (id) =>
+    set((state) => ({
+      slots: {
+        ...state.slots,
+        cancer: {
+          orderId: id,
+          slot: state.slots.cancer.slot,
+          timezone: state.slots.cancer.timezone,
+        },
+      },
+    })),
+  updateMicrobiomeOrderId: (id) =>
+    set((state) => ({
+      slots: {
+        ...state.slots,
+        microbiome: { orderId: id, address: state.slots.microbiome.address },
+      },
+    })),
+  updateToxinOrderId: (id) =>
+    set((state) => ({
+      slots: {
+        ...state.slots,
+        toxin: { orderId: id, address: state.slots.toxin.address },
+      },
+    })),
+  updateBloodTimezone: (timezone) =>
+    set((state) => ({
+      slots: {
+        ...state.slots,
+        blood: {
+          orderId: state.slots.blood.orderId,
+          slot: state.slots.blood.slot,
+          timezone: timezone,
+        },
+      },
+    })),
+  updateCancerTimezone: (timezone) =>
+    set((state) => ({
+      slots: {
+        ...state.slots,
+        cancer: {
+          orderId: state.slots.cancer.orderId,
+          slot: state.slots.cancer.slot,
+          timezone: timezone,
+        },
+      },
+    })),
+  orderTotal: 0,
   increaseOrderTotal: (amount: number) =>
     set((state) => ({
       orderTotal: state.orderTotal + amount,

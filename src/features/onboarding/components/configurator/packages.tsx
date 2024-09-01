@@ -23,12 +23,12 @@ const packages: Package[] = [
     price: 0,
     type: 'BASELINE',
   },
-  {
-    displayName: 'Advanced',
-    description: '85 biomarkers',
-    price: 199,
-    type: 'ADVANCED',
-  },
+  // {
+  //   displayName: 'Advanced',
+  //   description: '85 biomarkers',
+  //   price: 199,
+  //   type: 'ADVANCED',
+  // },
 ];
 
 const BloodTestPackageCard = ({

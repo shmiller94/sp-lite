@@ -1,13 +1,15 @@
 import React from 'react';
 
 import { Checkbox } from '@/components/ui/checkbox';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Body1, Body2, H2 } from '@/components/ui/typography';
 import {
   GRAIL_GALLERI_MULTI_CANCER_TEST,
-  GUT_MICROBIOME_ANALYSIS,
+  // GUT_MICROBIOME_ANALYSIS,
   TOTAL_TOXIN_TEST,
 } from '@/const';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
+import { useService } from '@/features/services/api/get-service';
 import { useServices } from '@/features/services/api/get-services';
 import { cn } from '@/lib/utils';
 import { HealthcareService } from '@/types/api';
@@ -27,8 +29,12 @@ const AdditionalServiceCard = ({ service }: AdditionalServiceCardProps) => {
     increaseOrderTotal,
     decreaseOrderTotal,
   } = useOnboarding();
-
   const checked = additionalServices.find((as) => as.id === service.id);
+  const serviceQuery = useService({
+    serviceId: service.id,
+    method: service.name === GRAIL_GALLERI_MULTI_CANCER_TEST ? 'AT_HOME' : null,
+  });
+
   return (
     <div
       className={cn(
@@ -56,18 +62,16 @@ const AdditionalServiceCard = ({ service }: AdditionalServiceCardProps) => {
         </div>
         <div className="flex flex-row items-center gap-x-2 sm:gap-x-6">
           <Body2 className="text-nowrap text-zinc-500">
-            + {formatMoney(service.price)}
+            {serviceQuery.data ? (
+              `+ ${formatMoney(serviceQuery.data.service.price)}`
+            ) : (
+              <Skeleton className="h-5 w-10" />
+            )}
           </Body2>
 
           <Checkbox
             checked={!!checked}
             onCheckedChange={(checked) => {
-              /* This is probably not the best way to keep track of this
-               *
-               * Potential TODO here is to refactor this so we dynamically make API calls one time
-               * based on selected items in summary
-               * */
-
               if (checked) {
                 increaseOrderTotal(service.price);
                 return addAdditionalService(service);
@@ -87,12 +91,12 @@ const AdditionalServiceCard = ({ service }: AdditionalServiceCardProps) => {
 const SectionServices = () => {
   const servicesQuery = useServices({});
 
-  let services = servicesQuery.data;
+  let services = servicesQuery.data?.services;
 
   services = services?.filter(
     (service) =>
       service.name === GRAIL_GALLERI_MULTI_CANCER_TEST ||
-      service.name === GUT_MICROBIOME_ANALYSIS ||
+      // service.name === GUT_MICROBIOME_ANALYSIS ||
       service.name === TOTAL_TOXIN_TEST,
   );
 
@@ -104,6 +108,15 @@ const SectionServices = () => {
           Your private health concierge will help you schedule them.
         </p>
       </div>
+      {servicesQuery.isLoading &&
+        Array(2)
+          .fill(0)
+          .map((_, i) => (
+            <Skeleton
+              className="aspect-square h-[134px] w-full rounded-lg"
+              key={i}
+            />
+          ))}
       <div className="space-y-2">
         {services?.map((service, i) => (
           <AdditionalServiceCard service={service} key={i} />

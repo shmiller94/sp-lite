@@ -14,7 +14,7 @@ import {
   PickDateStep,
   PrimaryAddressStep,
   ScheduleStep,
-  TwoFAStep,
+  // TwoFAStep,
   TypeformEntryStep,
   TypeformIntegrationStep,
   WearablesEntryStep,
@@ -26,10 +26,10 @@ export const steps: StepItem[] = [
     id: 'primary-address',
     content: <PrimaryAddressStep />,
   },
-  {
-    id: 'two-fa',
-    content: <TwoFAStep />,
-  },
+  // {
+  //   id: 'two-fa',
+  //   content: <TwoFAStep />,
+  // },
   {
     id: 'mission',
     content: <MissionStep />,

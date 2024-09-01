@@ -31,10 +31,10 @@ export const createRouter = (queryClient: QueryClient) =>
       },
     },
     {
-      path: '/onboarding',
+      path: '/auth/logout',
       lazy: async () => {
-        const { OnboardingRoute } = await import('./app/onboarding');
-        return { Component: OnboardingRoute };
+        const { LogoutRoute } = await import('./auth/logout');
+        return { Component: LogoutRoute };
       },
     },
     {
@@ -61,6 +61,13 @@ export const createRouter = (queryClient: QueryClient) =>
           //loader: () => {
           //  servicesLoader(queryClient);
           //},
+        },
+        {
+          path: 'onboarding',
+          lazy: async () => {
+            const { OnboardingRoute } = await import('./app/onboarding');
+            return { Component: OnboardingRoute };
+          },
         },
         {
           path: 'concierge',

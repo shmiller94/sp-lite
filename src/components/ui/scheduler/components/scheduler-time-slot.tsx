@@ -11,11 +11,10 @@ export function SchedulerTimeSlot({
 }: {
   timeSlot: Slot;
 }): JSX.Element {
-  const { tz, onSlotUpdate, updateSlot, slot, showCreateBtn } = useScheduler(
-    (s) => s,
-  );
+  const { tz, onSlotUpdate, updateSelectedSlot, selectedSlot, showCreateBtn } =
+    useScheduler((s) => s);
 
-  const selected = timeSlot === slot;
+  const selected = timeSlot === selectedSlot;
 
   return (
     <div
@@ -27,10 +26,10 @@ export function SchedulerTimeSlot({
       )}
       key={timeSlot.start}
       onClick={() => {
-        updateSlot(timeSlot);
+        updateSelectedSlot(timeSlot);
 
         // additionally invoke if we dont have a create button
-        onSlotUpdate && !showCreateBtn && onSlotUpdate(timeSlot);
+        onSlotUpdate && !showCreateBtn && onSlotUpdate(timeSlot, tz);
       }}
       role="presentation"
     >

@@ -1,21 +1,7 @@
-import { useNavigate } from 'react-router';
-
 import { Head } from '@/components/seo';
 import { Button } from '@/components/ui/button';
-import { useUser } from '@/lib/auth';
 
 export const LandingRoute = () => {
-  const navigate = useNavigate();
-  const user = useUser();
-
-  const handleStart = () => {
-    if (user.data) {
-      navigate('/app');
-    } else {
-      navigate('/auth/login');
-    }
-  };
-
   return (
     <>
       <Head description="Welcome to bulletproof react" />
@@ -27,9 +13,6 @@ export const LandingRoute = () => {
           <img src="/logo.svg" alt="react" />
           <p>Showcasing Best Practices For Building React Applications</p>
           <div className="mt-8 flex justify-center">
-            <div className="inline-flex rounded-md shadow">
-              <Button onClick={handleStart}>Get started</Button>
-            </div>
             <div className="ml-3 inline-flex">
               <a
                 href="https://github.com/alan2207/bulletproof-react"

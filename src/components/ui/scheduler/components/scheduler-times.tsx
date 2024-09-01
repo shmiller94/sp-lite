@@ -4,13 +4,14 @@ import React from 'react';
 import 'moment-timezone';
 
 import { useScheduler } from '@/components/ui/scheduler/stores';
+import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { Slot } from '@/types/api';
 
 import { SchedulerTimeSlot } from './scheduler-time-slot';
 
 export function SchedulerTimes(): JSX.Element {
-  const { selectedDay, slots, tz } = useScheduler((s) => s);
+  const { selectedDay, slots, tz, loading } = useScheduler((s) => s);
 
   const timeSlots = slots.filter((a: Slot) =>
     selectedDay?.isSame(moment(a.start), 'day'),
@@ -18,7 +19,7 @@ export function SchedulerTimes(): JSX.Element {
 
   return (
     <>
-      {timeSlots.length > 0 && (
+      {timeSlots.length > 0 ? (
         <div className="mb-2 flex items-center gap-2 text-sm text-zinc-400 md:text-base">
           {moment(timeSlots[0]?.start).tz(tz).format('MMMM Do')}
           <DotIcon className="size-3" color="#71717A" />
@@ -26,7 +27,7 @@ export function SchedulerTimes(): JSX.Element {
             {fullAbbr(moment(timeSlots[0]?.start).tz(tz).format('zz'))}
           </h5>
         </div>
-      )}
+      ) : null}
       <div className="items-center text-center">
         <div
           className={cn(
@@ -34,6 +35,10 @@ export function SchedulerTimes(): JSX.Element {
             timeSlots.length > 0 ? 'border border-[#E4E4E7]' : '',
           )}
         >
+          {loading &&
+            Array(3)
+              .fill(0)
+              .map((_, i) => <Skeleton className="h-14 w-full" key={i} />)}
           {timeSlots.map((slot: Slot) => {
             return <SchedulerTimeSlot key={slot.start} timeSlot={slot} />;
           })}

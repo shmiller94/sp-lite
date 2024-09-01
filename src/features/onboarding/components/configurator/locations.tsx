@@ -2,11 +2,9 @@ import React from 'react';
 
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Body1, Body2, H2 } from '@/components/ui/typography';
-import {
-  CollectionMethodType,
-  useOnboarding,
-} from '@/features/onboarding/stores/onboarding-store';
+import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import { cn } from '@/lib/utils';
+import { CollectionMethodType } from '@/types/api';
 import { formatMoney } from '@/utils/format-money';
 
 type Location = {

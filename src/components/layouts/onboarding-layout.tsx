@@ -45,11 +45,11 @@ export const OnboardingLayout = (props: Props) => {
       <div className="flex min-h-screen w-full flex-col p-8 md:p-6">
         <div
           className={cn(
-            'fixed left-0 top-0 z-[-1] h-screen w-full bg-spine bg-cover',
+            'fixed left-0 top-0 z-0 h-screen w-full bg-spine bg-cover',
             props.className,
           )}
         />
-        <div className="flex w-full flex-1 flex-col">
+        <div className="z-10 flex w-full flex-1 flex-col">
           <OnboardingStepLayoutHeader />
           <div className="flex w-full flex-1 flex-col items-center justify-center">
             {props.children}

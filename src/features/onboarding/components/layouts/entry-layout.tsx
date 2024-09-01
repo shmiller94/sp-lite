@@ -62,12 +62,12 @@ export const EntryLayout = (props: Props) => {
         {imgBg && (
           <div
             className={cn(
-              'fixed left-0 top-0 z-[-1] h-screen w-full bg-female-looking-up bg-cover bg-center',
+              'fixed left-0 top-0 z-0 h-screen w-full bg-female-looking-up bg-cover bg-center',
               className,
             )}
           />
         )}
-        <div className="flex w-full flex-1 flex-col">
+        <div className="z-10 flex w-full flex-1 flex-col">
           {displayTopText ? (
             <div>
               <Mono

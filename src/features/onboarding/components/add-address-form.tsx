@@ -19,32 +19,56 @@ import { Spinner } from '@/components/ui/spinner';
 import { Body2 } from '@/components/ui/typography';
 import { useGetServiceability } from '@/features/onboarding/api/get-serviceability';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
+import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
-import { AddressInput, addressInputSchema } from '@/shared/api/update-profile';
+import {
+  AddressInput,
+  addressInputSchema,
+  useUpdateProfile,
+} from '@/shared/api/update-profile';
 
-function FullAddressForm({ setIsAdding }: { setIsAdding: () => void }) {
-  const { address, updateAddress, updateBlocked, isBlocked } = useOnboarding();
+function FullAddressForm({
+  setIsAdding,
+  googleAddres,
+}: {
+  setIsAdding: () => void;
+  googleAddres: AddressInput;
+}) {
+  const { updateBlocked, isBlocked, collectionMethod } = useOnboarding();
+  const [asDefault, setAsDefault] = useState<boolean>(false);
+
+  const user = useUser();
+  const primaryAddress = user.data?.primaryAddress?.address;
   const getServiceabilityMutation = useGetServiceability();
+
+  const selectedAddress = primaryAddress ?? googleAddres;
 
   const form = useForm<AddressInput>({
     resolver: zodResolver(addressInputSchema),
     defaultValues: {
-      line1: address?.line1 ?? '',
-      line2: address?.line2 ?? '',
-      postalCode: address?.postalCode ?? '',
-      city: address?.city ?? '',
-      state: address?.state ?? '',
+      line: selectedAddress?.line ?? [],
+      postalCode: selectedAddress?.postalCode ?? '',
+      city: selectedAddress?.city ?? '',
+      state: selectedAddress?.state ?? '',
     },
   });
 
+  const updateProfileMutation = useUpdateProfile();
+
   const onSubmit = async (address: AddressInput) => {
-    const data = { postalCode: address.postalCode };
     const { serviceable } = await getServiceabilityMutation.mutateAsync({
-      data,
+      data: {
+        zipCode: address.postalCode,
+        collectionMethod: collectionMethod ?? 'IN_LAB',
+      },
     });
 
     if (serviceable) {
-      updateAddress(address);
+      await updateProfileMutation.mutateAsync({
+        data: asDefault
+          ? { primaryAddress: { address } }
+          : { activeAddress: { address } },
+      });
       updateBlocked(false);
       setIsAdding();
     } else {
@@ -57,28 +81,16 @@ function FullAddressForm({ setIsAdding }: { setIsAdding: () => void }) {
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-8">
         <FormField
           control={form.control}
-          name="line1"
-          render={({ field }) => (
+          name="line"
+          render={({ ...rest }) => (
             <FormItem>
               <FormLabel className="text-zinc-600">Street Address</FormLabel>
               <FormControl>
-                <Input autoComplete="off" placeholder="Address" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="line2"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-zinc-600">Apt, Unit, etc.</FormLabel>
-              <FormControl>
                 <Input
                   autoComplete="off"
-                  placeholder="Apt, Unit, etc."
-                  {...field}
+                  placeholder="Address"
+                  onChange={(e) => form.setValue('line', [e.target.value])}
+                  {...rest}
                 />
               </FormControl>
               <FormMessage />
@@ -145,7 +157,10 @@ function FullAddressForm({ setIsAdding }: { setIsAdding: () => void }) {
         </div>
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div className="flex cursor-pointer items-center gap-1.5">
-            <Checkbox id="default" />
+            <Checkbox
+              id="default"
+              onChange={() => setAsDefault((prev) => !prev)}
+            />
             <Label
               htmlFor="default"
               className="line-clamp-1 text-base text-zinc-500"
@@ -172,11 +187,14 @@ function FullAddressForm({ setIsAdding }: { setIsAdding: () => void }) {
 }
 
 export function AddAddressForm({ setIsAdding }: { setIsAdding: () => void }) {
-  const { updateAddress } = useOnboarding();
-  const [enableFullAddress, setEnableFullAddress] = useState(false);
+  const [googleAddress, setGoogleAddress] = useState<
+    AddressInput | undefined
+  >();
 
-  if (enableFullAddress) {
-    return <FullAddressForm setIsAdding={setIsAdding} />;
+  if (googleAddress) {
+    return (
+      <FullAddressForm setIsAdding={setIsAdding} googleAddres={googleAddress} />
+    );
   }
 
   return (
@@ -185,8 +203,7 @@ export function AddAddressForm({ setIsAdding }: { setIsAdding: () => void }) {
         emptyMessage="No results."
         placeholder="Address"
         onSubmit={(address) => {
-          setEnableFullAddress(true);
-          updateAddress(address);
+          setGoogleAddress(address);
         }}
         color="zinc"
       />

@@ -11,26 +11,27 @@ export function SchedulerHeading(): JSX.Element {
   const {
     updateSelectedDay,
     tz,
-    updateStart,
-    slotsLoading,
+    slots,
     updateStartRange,
     startRange,
     numDays,
-    updateSlot,
+    updateSelectedSlot,
     onSlotUpdate,
     showCreateBtn,
+    loading,
   } = useScheduler((s) => s);
 
   const handleClick = (numDays: number): void => {
+    if (!startRange) return;
+
     const newStartRange = startRange.clone().add(numDays, 'days').tz(tz);
 
-    updateStart(newStartRange.toDate());
     updateStartRange(newStartRange);
     updateSelectedDay(undefined);
-    updateSlot(undefined);
+    updateSelectedSlot(undefined);
 
     // additional callback if native button is hidden
-    onSlotUpdate && !showCreateBtn && onSlotUpdate(null);
+    onSlotUpdate && !showCreateBtn && onSlotUpdate(null, tz);
   };
 
   return (
@@ -40,26 +41,27 @@ export function SchedulerHeading(): JSX.Element {
       </h5>
       <div className="flex flex-row items-center">
         <div className="flex flex-row items-center">
-          {slotsLoading ? (
+          {loading ? (
             <span className="flex size-6 items-center">
               <Spinner />
             </span>
-          ) : (
+          ) : null}
+          {slots.length ? (
             <>
               <RangeSelectButton
                 icon={<ChevronLeft className="size-4" />}
                 onClick={() => {
-                  handleClick(-numDays);
+                  numDays && handleClick(-numDays);
                 }}
               />
               <RangeSelectButton
                 icon={<ChevronRight className="size-4" />}
                 onClick={() => {
-                  handleClick(numDays);
+                  numDays && handleClick(numDays);
                 }}
               />
             </>
-          )}
+          ) : null}
         </div>
       </div>
     </div>

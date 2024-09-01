@@ -6,7 +6,7 @@ export const TypeformIntegration = () => {
   return (
     <section id="main">
       <Widget
-        id="CxleN2f4"
+        id="VVOeB9wb"
         className="h-[80dvh] w-[80dvw]"
         opacity={0}
         enableSandbox

@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { OnboardingLayout } from '@/components/layouts/onboarding-layout';
 import { Button } from '@/components/ui/button';
 import { useStepper } from '@/components/ui/stepper';
@@ -7,6 +9,9 @@ import { SignatureBlock } from '../signature-block';
 
 export const Commitment = () => {
   const { nextStep } = useStepper((s) => s);
+
+  const [enableNext, setEnableNext] = useState(false);
+
   return (
     <section className="mx-auto flex max-w-[500px] flex-col gap-y-12 py-12">
       <div className="flex flex-col space-y-12">
@@ -39,10 +44,11 @@ export const Commitment = () => {
           </div>
         </div>
         <div>
-          <SignatureBlock />
+          <SignatureBlock setNext={setEnableNext} />
         </div>
         <Button
           onClick={() => nextStep()}
+          disabled={!enableNext}
           type="submit"
           className="w-full"
           variant="white"

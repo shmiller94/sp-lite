@@ -1,3 +1,5 @@
+import { MapPin } from 'lucide-react';
+import { nanoid } from 'nanoid';
 import React, { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -5,10 +7,13 @@ import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
 import { useStepper } from '@/components/ui/stepper';
 import { Body1, Body2, H2, H3, H4 } from '@/components/ui/typography';
-import { useGetServiceability } from '@/features/onboarding/api/get-serviceability';
+import { UsePhlebotomyLocations } from '@/features/onboarding/api/get-phlebotomy-locations';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
+import { useDebounce } from '@/hooks/use-debounce';
+import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
-import { AddressInput } from '@/shared/api/update-profile';
+import { PhlebotomyLocation } from '@/types/api';
+import { formatAddress } from '@/utils/format';
 
 const InLabServiceCard = () => {
   return (
@@ -24,29 +29,18 @@ const InLabServiceCard = () => {
 };
 
 export const InLab = () => {
-  const { prevStep, nextStep } = useStepper((s) => s);
-  const getServiceabilityMutation = useGetServiceability();
-  const { address, updateAddress, isBlocked, updateBlocked } = useOnboarding(
-    (s) => s,
+  const { prevStep } = useStepper((s) => s);
+  const { data: user } = useUser();
+  const [zipCode, setZipCode] = useState(
+    user?.primaryAddress?.address?.postalCode ?? '',
   );
+  const debouncedZipCode = useDebounce(zipCode, 500);
 
-  const submitZip = async () => {
-    if (zipCode.length === 5) {
-      const { serviceable } = await getServiceabilityMutation.mutateAsync({
-        data: { postalCode: zipCode },
-      });
+  const phlebotomyLocationsMutation = UsePhlebotomyLocations({
+    postalCode: debouncedZipCode,
+    queryConfig: { enabled: debouncedZipCode.length === 5 },
+  });
 
-      if (!serviceable) {
-        updateBlocked(true);
-      } else {
-        updateBlocked(false);
-        updateAddress({ ...address, postalCode: zipCode } as AddressInput);
-        nextStep();
-      }
-    }
-  };
-
-  const [zipCode, setZipCode] = useState(address?.postalCode ?? '');
   return (
     <section id="main" className="space-y-16">
       <div className="space-y-4">
@@ -63,21 +57,22 @@ export const InLab = () => {
           </H4>
         </div>
         <div className="space-y-2">
-          <Body2 className="text-zinc-500">My zip code</Body2>
+          <div className="flex flex-row items-center">
+            <Body2 className="text-zinc-500">My zip code</Body2>
+            {phlebotomyLocationsMutation.isLoading && (
+              <span>
+                <Spinner variant="primary" />
+              </span>
+            )}
+          </div>
           <Input
+            maxLength={5}
             value={zipCode}
             onChange={(e) => setZipCode(e.target.value)}
-            className={cn(
-              isBlocked &&
-                'border border-[#B90090] bg-[#FFF3F6] focus-visible:bg-[#FFF3F6] focus-visible:ring-0',
-            )}
           />
-          {isBlocked && (
-            <Body2 className="text-[#B90090]">
-              Sorry, we’re unable to service your area right now. please go back
-              and try a different address.
-            </Body2>
-          )}
+          <LocationList
+            locations={phlebotomyLocationsMutation.data?.locations || []}
+          />
         </div>
       </div>
 
@@ -86,15 +81,113 @@ export const InLab = () => {
           <Button variant="outline" onClick={prevStep}>
             Back
           </Button>
-          <Button onClick={submitZip} disabled={zipCode.length !== 5}>
-            {getServiceabilityMutation.isPending ? (
-              <Spinner variant="light" className="size-6" />
-            ) : (
-              'Next'
-            )}
-          </Button>
         </div>
       </div>
     </section>
   );
 };
+
+function LocationList({
+  locations,
+}: {
+  locations: PhlebotomyLocation[];
+}): JSX.Element {
+  const { updateServiceAddress, serviceAddress } = useOnboarding();
+  const { nextStep } = useStepper((s) => s);
+
+  if (!locations || locations.length === 0) {
+    return (
+      <p className="text-zinc-500">
+        No locations found. Please enter a new zip code.
+      </p>
+    );
+  }
+
+  return (
+    <div className="max-h-[240px] overflow-y-scroll rounded-2xl border border-zinc-200 p-2">
+      <div className="flex flex-col">
+        {locations?.map((option, index) => (
+          <button
+            key={index}
+            className={cn(
+              'rounded-lg p-4 text-left transition-all hover:bg-accent',
+              // selected && formatAddress(selected?.address) === formatAddress(item.address) && 'bg-muted'
+            )}
+            onClick={() => {
+              updateServiceAddress({ address: option.address, id: nanoid() });
+              nextStep();
+            }}
+          >
+            <div className="flex items-center gap-4">
+              <RadioIcon
+                checked={
+                  !!serviceAddress &&
+                  formatAddress(serviceAddress?.address) ===
+                    formatAddress(option.address)
+                }
+              />
+              <div className="flex flex-col items-start">
+                <h3 className="text-[#52525B]">
+                  {formatAddress(option.address)}
+                </h3>
+                <div className="flex flex-row items-center text-[#A1A1AA]">
+                  <MapPin className="mr-1 size-4" />
+                  <p className="text-sm">
+                    {option.name
+                      ? `${option.name} ( ${option.distance} mile${option.distance > 1 ? 's' : ''} )`
+                      : `${option.distance} mile${option.distance > 1 ? 's' : ''}`}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export interface RadioIconProps {
+  checked?: boolean;
+}
+
+export function RadioIcon({ checked = false }: RadioIconProps): JSX.Element {
+  return checked ? <RadioChecked /> : <RadioEmpty />;
+}
+
+function RadioEmpty(): JSX.Element {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect x="0.5" y="0.5" width="23" height="23" rx="11.5" stroke="#E4E4E7" />
+    </svg>
+  );
+}
+
+function RadioChecked(): JSX.Element {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect
+        x="1"
+        y="1"
+        width="22"
+        height="22"
+        rx="11"
+        stroke="#18181B"
+        strokeWidth="2"
+      />
+      <rect x="4" y="4" width="16" height="16" rx="8" fill="#18181B" />
+    </svg>
+  );
+}

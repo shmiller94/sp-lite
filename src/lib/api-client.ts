@@ -73,10 +73,10 @@ api.interceptors.response.use(
 
           originalRequest.headers.Authorization = `Bearer ${token}`;
         }
-
         return api.request(originalRequest);
       } catch (err) {
         console.log('Not authorized');
+
         clearActiveLogin();
       }
     }

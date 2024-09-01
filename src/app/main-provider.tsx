@@ -8,6 +8,7 @@ import { Toaster } from 'sonner';
 import { MainErrorFallback } from '@/components/errors/main';
 import { Spinner } from '@/components/ui/spinner';
 import { queryClient } from '@/lib/react-query';
+import { StripeProvider } from '@/lib/stripe';
 
 type AppProviderProps = {
   children: React.ReactNode;
@@ -25,18 +26,11 @@ export const AppProvider = ({ children }: AppProviderProps) => {
       <ErrorBoundary FallbackComponent={MainErrorFallback}>
         <HelmetProvider>
           <QueryClientProvider client={queryClient}>
-            {import.meta.env.DEV && <ReactQueryDevtools />}
-            <Toaster richColors />
-            {children}
-            {/*<AuthLoader*/}
-            {/*  renderLoading={() => (*/}
-            {/*    <div className="flex h-screen w-screen items-center justify-center">*/}
-            {/*      <Spinner size="xl" />*/}
-            {/*    </div>*/}
-            {/*  )}*/}
-            {/*>*/}
-            {/*  {children}*/}
-            {/*</AuthLoader>*/}
+            <StripeProvider>
+              {import.meta.env.DEV && <ReactQueryDevtools />}
+              <Toaster richColors />
+              {children}
+            </StripeProvider>
           </QueryClientProvider>
         </HelmetProvider>
       </ErrorBoundary>

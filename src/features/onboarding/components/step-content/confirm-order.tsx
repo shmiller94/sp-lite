@@ -1,45 +1,69 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import {
+  CardCvcElement,
+  CardExpiryElement,
+  CardNumberElement,
+  useElements,
+  useStripe,
+} from '@stripe/react-stripe-js';
+import moment from 'moment';
+import React, { FormEvent, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { MultiStepLoader } from '@/components/ui/multi-step-loader';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useStepper } from '@/components/ui/stepper';
 import { Body1, Body2, H2 } from '@/components/ui/typography';
+import {
+  GRAIL_GALLERI_MULTI_CANCER_TEST,
+  GUT_MICROBIOME_ANALYSIS,
+  SUPERPOWER_BLOOD_PANEL,
+  TOTAL_TOXIN_TEST,
+} from '@/const';
 import { ImageContentLayout } from '@/features/onboarding/components/layouts';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
+import { useCreateOrder } from '@/features/orders/api/create-order';
+import { useServices } from '@/features/services/api/get-services';
+import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
+import { useAddPaymentMethod } from '@/shared/api/add-payment-method';
+import { useCreateSubscription } from '@/shared/api/create-subscription';
+import { Address } from '@/types/api';
 import { formatMoney } from '@/utils/format-money';
 
-const FormSchema = z.object({
-  cardNumber: z
-    .string()
-    .min(16, { message: 'Card number must be at least 16 digits.' }),
-  expirationDate: z.string().regex(/^(0[1-9]|1[0-2])\/?([0-9]{4}|[0-9]{2})$/, {
-    message: 'Expiration date must be in MM/YY format.',
-  }),
-  cvc: z
-    .string()
-    .min(3, { message: 'CVC must be at least 3 digits.' })
-    .max(4, { message: 'CVC cannot exceed 4 digits.' }),
-  zipCode: z
-    .string()
-    .min(5, { message: 'ZIP code must be at least 5 digits.' })
-    .max(9, { message: 'ZIP code cannot exceed 9 digits.' }),
-});
+const loadingStates = [
+  {
+    text: 'Processing your payment method...',
+  },
+  {
+    text: 'Securing your membership...',
+  },
+  {
+    text: 'Creating your first-ever superpower order...',
+  },
+  {
+    text: 'Adding your selected services...',
+  },
+  {
+    text: 'Finalizing your order...',
+  },
+  {
+    text: 'Reviewing your choices...',
+  },
+  {
+    text: 'Almost there, wrapping up...',
+  },
+  {
+    text: 'Double-checking everything for you...',
+  },
+  {
+    text: 'Making sure everything’s perfect...',
+  },
+];
 
 export const ConfirmOrder = () => {
   const { orderTotal } = useOnboarding();
+  // link stripe to this
 
   const { prevStep } = useStepper((s) => s);
   const [method, setMethod] = React.useState<string>('credit');
@@ -117,108 +141,219 @@ const HSACheckout = () => {
 
 const CreditCardCheckout = () => {
   const { nextStep } = useStepper((s) => s);
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-    defaultValues: {
-      cardNumber: '',
-      expirationDate: '',
-      cvc: '',
-      zipCode: '',
+  const elements = useElements();
+  const stripe = useStripe();
+  const servicesQuery = useServices({});
+  const createOrderMutation = useCreateOrder({});
+  const user = useUser({});
+  const {
+    collectionMethod,
+    additionalServices,
+    updateBloodOrderId,
+    updateMicrobiomeOrderId,
+    updateToxinOrderId,
+    updateCancerOrderId,
+    slots,
+  } = useOnboarding();
+
+  const addPaymentMethodMutation = useAddPaymentMethod({
+    mutationConfig: {
+      onError: ({ message }) => {
+        setErrorMessage(message);
+      },
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(data);
-    // todo: add order checkout call here
+  const createSubscriptionMutation = useCreateSubscription({});
+
+  const [errorMessage, setErrorMessage] = useState<string | undefined>(
+    undefined,
+  );
+  const [processing, setProcessing] = useState<boolean>(false);
+
+  const handleSubmit = async (event: FormEvent) => {
+    // We don't want to let default form submission happen here,
+    // which would refresh the page.
+    event.preventDefault();
+
+    if (!stripe || !elements) {
+      // Stripe.js hasn't yet loaded.
+      return;
+    }
+
+    const cardNumber = elements.getElement(CardNumberElement);
+
+    if (!cardNumber) {
+      return;
+    }
+
+    setProcessing(true);
+
+    const { error, paymentMethod } = await stripe.createPaymentMethod({
+      type: 'card',
+      card: cardNumber,
+    });
+
+    if (error) {
+      setErrorMessage(error.message);
+      setProcessing(false);
+      return;
+    }
+
+    setErrorMessage(undefined);
+
+    const { success } = await addPaymentMethodMutation.mutateAsync({
+      data: { paymentMethodId: paymentMethod.id },
+    });
+
+    if (!success) {
+      setErrorMessage('Error creating payment method');
+      setProcessing(false);
+      return;
+    }
+
+    await createSubscriptionMutation.mutateAsync({
+      data: {
+        code: localStorage.getItem('superpower-code') ?? undefined,
+      },
+    });
+
+    const superpowerPanel = servicesQuery.data?.services.find(
+      (s) => s.name === SUPERPOWER_BLOOD_PANEL,
+    );
+
+    if (!superpowerPanel) {
+      setErrorMessage(
+        'Cannot find test package you requested. Contact support',
+      );
+      setProcessing(false);
+      return;
+    }
+
+    try {
+      const { order } = await createOrderMutation.mutateAsync({
+        data: {
+          items: [],
+          serviceId: superpowerPanel.id,
+          status: 'DRAFT',
+          location: {
+            address: user.data?.primaryAddress?.address as Address,
+          },
+          method: [collectionMethod ?? 'IN_LAB'],
+          timestamp: new Date().toISOString(),
+          timezone: moment.tz.guess(),
+        },
+      });
+
+      updateBloodOrderId(order.id);
+
+      console.log(slots);
+
+      for (const as of additionalServices) {
+        const { order } = await createOrderMutation.mutateAsync({
+          data: {
+            items: [],
+            serviceId: as.id,
+            status: 'DRAFT',
+            location: {
+              address: user.data?.primaryAddress?.address as Address,
+            },
+            // TODO: double check this guy
+            method: [
+              as.name === GRAIL_GALLERI_MULTI_CANCER_TEST
+                ? 'AT_HOME'
+                : 'PHLEBOTOMY_KIT',
+            ],
+            timestamp: new Date().toISOString(),
+            timezone: moment.tz.guess(),
+          },
+        });
+
+        as.name === GRAIL_GALLERI_MULTI_CANCER_TEST &&
+          updateCancerOrderId(order.id);
+        as.name === GUT_MICROBIOME_ANALYSIS &&
+          updateMicrobiomeOrderId(order.id);
+        as.name === TOTAL_TOXIN_TEST && updateToxinOrderId(order.id);
+      }
+    } catch (e) {
+      setProcessing(false);
+      setErrorMessage(
+        "We can't fulfil this request at the moment. Contact support.",
+      );
+      return;
+    }
+
+    setProcessing(false);
     nextStep();
-  }
+  };
 
   return (
     <div className="flex flex-col gap-8">
+      <MultiStepLoader
+        loadingStates={loadingStates}
+        loading={processing}
+        duration={3000}
+      />
+
       <H2 className="text-zinc-900">Payment</H2>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-8">
-          <FormField
-            control={form.control}
-            name="cardNumber"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm font-normal text-zinc-500">
-                  Card number
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="1234567890"
-                    className="rounded-xl"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+      <form onSubmit={handleSubmit} className="grid gap-8">
+        <div className="space-y-2">
+          <Label htmlFor="cardNumber" className="text-sm text-zinc-500">
+            Card number
+          </Label>
+          <CardNumberElement
+            id="cardNumber"
+            options={{
+              disableLink: true,
+            }}
+            className="rounded-xl border border-input bg-white px-6 py-4 text-base placeholder:text-muted-foreground"
           />
-          <div className="grid grid-cols-3 gap-4">
-            <FormField
-              control={form.control}
-              name="expirationDate"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel className="text-sm font-normal text-zinc-500">
-                    Expiration date
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="12/12"
-                      className="w-full rounded-xl"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="cvc"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel className="text-sm font-normal text-zinc-500">
-                    CVC
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="234"
-                      className="w-full rounded-xl"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="zipCode"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel className="text-sm font-normal text-zinc-500">
-                    Zipcode
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="123456"
-                      className="rounded-xl"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="cardExpiration" className="text-sm text-zinc-500">
+              Expiration date
+            </Label>
+            <CardExpiryElement
+              id="cardExpiration"
+              className="rounded-xl border border-input bg-white px-6 py-4 text-base placeholder:text-muted-foreground"
             />
           </div>
-          <Button type="submit">Confirm</Button>
-        </form>
-      </Form>
+
+          <div className="space-y-2">
+            <Label htmlFor="cardCvc" className="text-sm text-zinc-500">
+              CVC
+            </Label>
+            <CardCvcElement
+              id="cardCvc"
+              className="rounded-xl border border-input bg-white px-6 py-4 text-base placeholder:text-muted-foreground"
+            />
+          </div>
+        </div>
+        <div className="space-y-2">
+          <Button
+            className={cn(
+              'w-full',
+              processing ? 'animate-pulse rounded-md bg-[#eaebec]' : '',
+            )}
+            type="submit"
+            disabled={
+              !stripe ||
+              processing ||
+              servicesQuery.isLoading ||
+              !servicesQuery.data?.services ||
+              !user.data ||
+              !!errorMessage
+            }
+          >
+            Confirm
+          </Button>
+          {errorMessage && (
+            <Body1 className="text-[#B90090]">{errorMessage}</Body1>
+          )}
+        </div>
+      </form>
     </div>
   );
 };

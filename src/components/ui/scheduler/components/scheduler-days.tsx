@@ -3,16 +3,26 @@ import { useEffect } from 'react';
 import 'moment-timezone';
 
 import { useScheduler } from '@/components/ui/scheduler/stores';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Body1 } from '@/components/ui/typography';
 
 import { dayArray, isDisabledDaySlot } from '../utils';
 
 import { SchedulerDaySlot } from './scheduler-day-slot';
 
 export function SchedulerDays(): JSX.Element {
-  const { selectedDay, slots, updateSelectedDay, startRange, numDays } =
-    useScheduler((s) => s);
+  const {
+    selectedDay,
+    slots,
+    updateSelectedDay,
+    startRange,
+    numDays,
+    loading,
+  } = useScheduler((s) => s);
 
   useEffect(() => {
+    if (!startRange || !numDays) return;
+
     for (const day of dayArray(startRange, numDays).reverse()) {
       if (!selectedDay && !isDisabledDaySlot(day, slots)) {
         updateSelectedDay(day);
@@ -20,15 +30,32 @@ export function SchedulerDays(): JSX.Element {
     }
   }, [slots]);
 
+  const renderDays = numDays && startRange && slots.length > 0;
+
+  if (slots.length === 0 && !loading) {
+    return <Body1 className="text-center">No slots found.</Body1>;
+  }
+
   return (
     <div className="mb-8 flex flex-col justify-start gap-2 sm:h-[200px] sm:flex-row">
-      {dayArray(startRange, numDays).map((day: Moment): JSX.Element => {
-        return (
-          <div key={day.format()} className="flex w-full">
-            <SchedulerDaySlot day={day} />
-          </div>
-        );
-      })}
+      {loading &&
+        Array(numDays)
+          .fill(0)
+          .map((_, indx) => (
+            <Skeleton
+              className="h-[60px] w-full rounded-2xl sm:h-[200px]"
+              key={indx}
+            />
+          ))}
+      {renderDays
+        ? dayArray(startRange, numDays).map((day: Moment): JSX.Element => {
+            return (
+              <div key={day.format()} className="flex w-full">
+                <SchedulerDaySlot day={day} />
+              </div>
+            );
+          })
+        : null}
     </div>
   );
 }

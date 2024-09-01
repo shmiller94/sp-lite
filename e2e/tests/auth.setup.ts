@@ -20,8 +20,6 @@ setup('authenticate', async ({ page }) => {
   await page.getByLabel('Email Address').fill(user.email);
   await page.getByLabel('Password').click();
   await page.getByLabel('Password').fill(user.password);
-  await page.getByLabel('Team Name').click();
-  await page.getByLabel('Team Name').fill(user.teamName);
   await page.getByRole('button', { name: 'Register' }).click();
   await page.waitForURL('/app');
 

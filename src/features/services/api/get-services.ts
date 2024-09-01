@@ -4,7 +4,9 @@ import { api } from '@/lib/api-client';
 import { QueryConfig } from '@/lib/react-query';
 import { HealthcareService } from '@/types/api';
 
-export const getServices = (): Promise<HealthcareService[]> => {
+export const getServices = async (): Promise<{
+  services: HealthcareService[];
+}> => {
   return api.get('/services');
 };
 

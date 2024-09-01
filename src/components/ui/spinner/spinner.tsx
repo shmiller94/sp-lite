@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 
 const sizes = {
-  sm: 'h-4 w-4',
+  sm: 'h-6 w-6',
   md: 'h-8 w-8',
   lg: 'h-16 w-16',
   xl: 'h-24 w-24',
@@ -20,7 +20,7 @@ export type SpinnerProps = {
 
 export const Spinner = ({
   size = 'sm',
-  variant = 'primary',
+  variant = 'light',
   className = '',
 }: SpinnerProps) => {
   return (

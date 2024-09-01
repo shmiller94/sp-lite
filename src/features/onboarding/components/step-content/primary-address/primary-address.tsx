@@ -1,12 +1,14 @@
 import { OnboardingLayout } from '@/components/layouts/onboarding-layout';
-import { H1 } from '@/components/ui/typography';
+import { Body1, H1 } from '@/components/ui/typography';
 import { ContentComingSoon } from '@/features/onboarding/components/coming-soon';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
+import { useUser } from '@/lib/auth';
 
 import { PrimaryAddressForm } from './primary-address-form';
 
 export const PrimaryAddress = () => {
   const { isBlocked } = useOnboarding();
+  const { data } = useUser();
 
   if (isBlocked) {
     return <ContentComingSoon />;
@@ -19,9 +21,9 @@ export const PrimaryAddress = () => {
     >
       <div className="space-y-12">
         <div className="space-y-3 text-center">
-          <p className="text-sm text-white opacity-80 md:text-base">
-            Welcome to Superpower
-          </p>
+          <Body1 className="text-white opacity-80">
+            Hello {data?.firstName}
+          </Body1>
           <H1 className="text-white">
             Where do you live or primarily plan to receive services?
           </H1>

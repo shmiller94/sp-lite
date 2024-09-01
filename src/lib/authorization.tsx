@@ -33,7 +33,7 @@ export const useAuthorization = () => {
   const checkAccess = React.useCallback(
     ({ allowedRoles }: { allowedRoles: RoleTypes[] }) => {
       if (allowedRoles && allowedRoles.length > 0 && user.data) {
-        return allowedRoles?.includes(user.data.role);
+        return allowedRoles?.includes(user.data.admin ? 'ADMIN' : 'USER');
       }
 
       return true;
@@ -41,7 +41,7 @@ export const useAuthorization = () => {
     [user.data],
   );
 
-  return { checkAccess, role: user.data.role };
+  return { checkAccess, role: user.data.admin ? 'ADMIN' : 'USER' };
 };
 
 type AuthorizationProps = {

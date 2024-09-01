@@ -85,7 +85,7 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
           </div>
           <div className="space-y-3">
             <Button className="w-full" type="submit">
-              {loginMutation.isPending ? <Spinner variant="light" /> : 'Login'}
+              {loginMutation.isPending ? <Spinner /> : 'Login'}
             </Button>
             <Button className="w-full" variant="outline" type="button">
               Join waitlist

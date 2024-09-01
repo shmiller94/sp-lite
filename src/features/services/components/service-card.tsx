@@ -8,6 +8,7 @@ import { useService } from '../api/get-service';
 export const ServiceCard = ({ serviceId }: { serviceId: string }) => {
   const serviceQuery = useService({
     serviceId,
+    method: null,
   });
 
   if (serviceQuery.isLoading) {
@@ -21,17 +22,17 @@ export const ServiceCard = ({ serviceId }: { serviceId: string }) => {
       <div className="flex h-full items-center gap-x-3 gap-y-2 rounded-[20px] bg-[#F7F7F7] px-5 py-4 sm:flex-col sm:items-start sm:gap-x-0 sm:rounded-[24px] sm:p-2">
         {/* <div className="aspect-[225/172] rounded-[20px] bg-white"> */}
         <img
-          src={serviceQuery.data.image}
-          alt={serviceQuery.data.name}
+          src={serviceQuery.data.service.image}
+          alt={serviceQuery.data.service.name}
           className="aspect-[225/172] size-9 rounded-[8px] object-cover sm:size-full sm:rounded-[20px]"
         />
         {/* </div> */}
         <div className="sm:space-y-1 sm:p-4">
           <p className="line-clamp-1 leading-5 sm:text-xl sm:leading-7">
-            {serviceQuery.data.name}
+            {serviceQuery.data.service.name}
           </p>
           <p className="line-clamp-1 text-sm text-[#A1A1A1] sm:line-clamp-3 sm:text-base">
-            {serviceQuery.data.description}
+            {serviceQuery.data.service.description}
           </p>
         </div>
       </div>

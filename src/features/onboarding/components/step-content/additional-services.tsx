@@ -2,6 +2,7 @@ import React, { Dispatch, SetStateAction, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Scheduler } from '@/components/ui/scheduler';
+import { Spinner } from '@/components/ui/spinner';
 import { useStepper } from '@/components/ui/stepper';
 import { Body1, Body2, H2 } from '@/components/ui/typography';
 import {
@@ -16,8 +17,9 @@ import { CurrentAddressCard } from '@/features/onboarding/components/current-add
 import { EditAddressForm } from '@/features/onboarding/components/edit-address-form';
 import { ImageContentLayout } from '@/features/onboarding/components/layouts';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
-import { AddressInput } from '@/shared/api';
-import { HealthcareService, Slot } from '@/types/api';
+import { getOrderInfo } from '@/features/onboarding/utils/get-order-info';
+import { useUpdateOrder } from '@/features/orders/api/update-order';
+import { ActiveAddress, Address, HealthcareService, Slot } from '@/types/api';
 
 const ServiceCard = ({ service }: { service: HealthcareService }) => {
   return (
@@ -44,16 +46,25 @@ const SchedulerCase = ({
   service: HealthcareService;
   setIndex: Dispatch<SetStateAction<number>>;
 }) => {
-  const { updateCancerSlot } = useOnboarding();
+  const {
+    updateCancerSlot,
+    serviceAddress,
+    collectionMethod,
+    updateCancerTimezone,
+  } = useOnboarding();
   const [slot, setSlot] = useState<Slot | null>();
   const { prevStep } = useStepper((s) => s);
 
-  const onCreate = (slot: Slot | null) => {
+  const onCreate = (slot: Slot | null, timezone: string) => {
     if (service.name === GRAIL_GALLERI_MULTI_CANCER_TEST) {
       setSlot(slot);
       updateCancerSlot(slot);
+      updateCancerTimezone(timezone);
     }
   };
+
+  // double check we have all of that before showing scheduler
+  const allowSchedulerRender = serviceAddress?.address && collectionMethod;
 
   return (
     <>
@@ -84,21 +95,23 @@ const SchedulerCase = ({
           ensure the most accurate measurement of blood hormone levels
         </Body1>
       </div>
-      <Scheduler
-        // todo: rewrite this with mock response
-        slots={[
-          {
-            start: new Date().toISOString(),
-            end: new Date(new Date().getTime() + 15 * 60 * 1000).toISOString(), // 15 minutes later
-          },
-        ]}
-        // updateStart={(date) => setStart(date)}
-        updateStart={(date) => console.log(date)}
-        onSlotUpdate={onCreate}
-        displayCancellationNote
-        showCreateBtn={false}
-        className="max-w-none py-6"
-      />
+      {allowSchedulerRender ? (
+        <Scheduler
+          serviceId={service.id}
+          address={serviceAddress?.address}
+          collectionMethod={collectionMethod}
+          onSlotUpdate={onCreate}
+          displayCancellationNote
+          showCreateBtn={false}
+          className="max-w-none py-6"
+        />
+      ) : (
+        <div className="flex justify-center py-10">
+          <Body1 className="text-[#B90090]">
+            Cannot load service scheduler. Contact support.
+          </Body1>
+        </div>
+      )}
       <div className="flex justify-end gap-4">
         <Button
           variant="outline"
@@ -135,16 +148,17 @@ const ConfirmAddressCase = ({
 }) => {
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [isAddingAddress, setIsAddingAddress] = useState(false);
-  const { updateMicrobiomeAddress, updateToxinAddress } = useOnboarding();
+  const { updateMicrobiomeAddress, updateToxinAddress, serviceAddress } =
+    useOnboarding();
   const { prevStep } = useStepper((s) => s);
 
-  const callback = (address: AddressInput) => {
+  const callback = (active: ActiveAddress) => {
     if (service.name === TOTAL_TOXIN_TEST) {
-      updateToxinAddress(address);
+      updateToxinAddress(active.address);
     }
 
     if (service.name === GUT_MICROBIOME_ANALYSIS) {
-      updateMicrobiomeAddress(address);
+      updateMicrobiomeAddress(active.address);
     }
   };
 
@@ -198,6 +212,7 @@ const ConfirmAddressCase = ({
           <AddressSelect
             setIsAddingAddress={() => setIsAddingAddress((prev) => !prev)}
             setIsEditingAddress={() => setIsEditingAddress((prev) => !prev)}
+            defaultValue={serviceAddress}
             callback={callback}
           />
         </div>
@@ -230,8 +245,38 @@ const OrderSummaryCase = ({
 }: {
   setIndex: Dispatch<SetStateAction<number>>;
 }) => {
+  const updateOrderMutation = useUpdateOrder({});
   const { nextStep } = useStepper((s) => s);
-  const { additionalServices } = useOnboarding();
+  const { additionalServices, slots } = useOnboarding();
+
+  // filter out all services that user skipped
+  const filteredServices = additionalServices.filter((as) => {
+    const orderInfo = getOrderInfo(as, slots);
+    return orderInfo && (orderInfo.timestamp || orderInfo.address);
+  });
+
+  const updateBloodOrders = async () => {
+    for (const as of filteredServices) {
+      const orderInfo = getOrderInfo(as, slots);
+
+      await updateOrderMutation.mutateAsync({
+        orderId: orderInfo?.orderId as string,
+        data: {
+          serviceId: as.id,
+          location: { address: orderInfo?.address as Address },
+          timezone: orderInfo?.timezone as string,
+
+          timestamp: orderInfo?.timestamp
+            ? orderInfo.timestamp
+            : new Date().toISOString(),
+          status: 'PENDING',
+        },
+      });
+    }
+
+    nextStep();
+  };
+
   return (
     <>
       <div className="space-y-4">
@@ -240,7 +285,7 @@ const OrderSummaryCase = ({
           Review your additional order details below. Make changes or select
           confirm to complete your bookings.
         </Body1>
-        {additionalServices.map((service, index) => (
+        {filteredServices.map((service, index) => (
           <AdditionalServiceCard
             service={service}
             onEdit={() => setIndex((prev) => prev - 1)}
@@ -249,11 +294,16 @@ const OrderSummaryCase = ({
         ))}
       </div>
       <div className="flex justify-end gap-4">
-        <Button variant="outline" onClick={() => setIndex((prev) => prev - 1)}>
+        <Button
+          variant="outline"
+          disabled={updateOrderMutation.isPending}
+          onClick={() => setIndex((prev) => prev - 1)}
+        >
           Back
         </Button>
-        {/*Add logic for scheduling order on backend here*/}
-        <Button onClick={nextStep}>Confirm</Button>
+        <Button onClick={updateBloodOrders}>
+          {updateOrderMutation.isPending ? <Spinner /> : 'Confirm appointment'}
+        </Button>
       </div>
     </>
   );

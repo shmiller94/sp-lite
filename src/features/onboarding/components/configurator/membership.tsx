@@ -1,12 +1,14 @@
 import { Dot } from 'lucide-react';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Body1, Body2, H2 } from '@/components/ui/typography';
 import {
   MembershipType,
   useOnboarding,
 } from '@/features/onboarding/stores/onboarding-store';
+import { useMembershipPrice } from '@/shared/api/get-subscription-price';
 import { formatMoney } from '@/utils/format-money';
 
 const metadata = [
@@ -20,19 +22,30 @@ const metadata = [
 type Membership = {
   displayName: string;
   description?: string;
-  price: number;
   type: MembershipType;
 };
 
 const memberships: Membership[] = [
   {
     displayName: 'Default',
-    price: 49900,
     type: 'DEFAULT',
   },
 ];
 
 const MembershipCard = ({ membership }: { membership: Membership }) => {
+  // get membership price
+  const code = localStorage.getItem('superpower-code');
+  const membershipQuery = useMembershipPrice({
+    code: code ?? undefined,
+    queryConfig: {},
+  });
+
+  const { increaseOrderTotal } = useOnboarding();
+
+  useEffect(() => {
+    increaseOrderTotal(membershipQuery.data?.total ?? 0);
+  }, [membershipQuery.data]);
+
   return (
     <div className="flex flex-row items-center rounded-xl border border-zinc-200 bg-zinc-50 p-4">
       <div className="flex w-full flex-row items-center justify-between">
@@ -45,9 +58,21 @@ const MembershipCard = ({ membership }: { membership: Membership }) => {
           <div className="flex flex-col justify-center gap-1">
             <Body2 className="text-zinc-500">{membership.displayName}</Body2>
             <div className="flex items-center">
-              <Body1 className="text-zinc-900 sm:text-base">{`${formatMoney(membership.price / 12)}/mo`}</Body1>
+              <Body1 className="text-zinc-900 sm:text-base">
+                {membershipQuery.data ? (
+                  `${formatMoney(membershipQuery.data?.total / 12)}/mo`
+                ) : (
+                  <Skeleton className="h-6 w-[60px]" />
+                )}
+              </Body1>
               <Dot className="hidden text-zinc-400 sm:block" />
-              <Body1 className="hidden text-zinc-400 sm:block sm:text-base">{`${formatMoney(membership.price)} billed annually`}</Body1>
+              <Body1 className="hidden text-zinc-400 sm:block sm:text-base">
+                {membershipQuery.data ? (
+                  `${formatMoney(membershipQuery.data.total)} billed annually`
+                ) : (
+                  <Skeleton className="h-6 w-[120px]" />
+                )}
+              </Body1>
             </div>
           </div>
         </div>

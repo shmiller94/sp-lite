@@ -1,19 +1,33 @@
 import { ArrowUpRight } from 'lucide-react';
 import React from 'react';
 
+import { Skeleton } from '@/components/ui/skeleton';
 import { Body2, H2 } from '@/components/ui/typography';
+import { GRAIL_GALLERI_MULTI_CANCER_TEST } from '@/const';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
+import { useService } from '@/features/services/api/get-service';
 import { HealthcareService } from '@/types/api';
 import { formatMoney } from '@/utils/format-money';
 
 const ServiceLine = ({ service }: { service: HealthcareService }) => {
+  const serviceQuery = useService({
+    serviceId: service.id,
+    method: service.name === GRAIL_GALLERI_MULTI_CANCER_TEST ? 'AT_HOME' : null,
+  });
+
   return (
     <div className="flex justify-between">
       <div className="flex gap-1">
         <Body2 className="text-zinc-900">{service.name}</Body2>
-        <Body2 className="text-zinc-400">(Annual)</Body2>
+        {/*<Body2 className="text-zinc-400">(Annual)</Body2>*/}
       </div>
-      <Body2 className="text-zinc-400">{formatMoney(service.price)}</Body2>
+      <Body2 className="text-zinc-400">
+        {serviceQuery.data ? (
+          formatMoney(serviceQuery.data.service.price)
+        ) : (
+          <Skeleton className="h-5 w-10" />
+        )}
+      </Body2>
     </div>
   );
 };

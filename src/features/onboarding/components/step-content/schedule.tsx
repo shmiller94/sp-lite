@@ -45,7 +45,11 @@ export const Schedule = () => {
 };
 
 export const ScheduleStep = () => (
-  <ImageContentLayout title="Schedule" className="bg-female-stretching">
+  <ImageContentLayout
+    title="Schedule"
+    className="bg-female-stretching"
+    blockBackButton
+  >
     <Schedule />
   </ImageContentLayout>
 );

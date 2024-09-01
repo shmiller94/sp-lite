@@ -1,4 +1,3 @@
-import moment from 'moment';
 import React, { useEffect } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -8,16 +7,15 @@ import {
 } from '@/components/ui/scheduler/stores';
 import { Body1 } from '@/components/ui/typography';
 import { cn } from '@/lib/utils';
-import { Slot } from '@/types/api';
+import { Address, CollectionMethodType, Slot } from '@/types/api';
 
 import { SchedulerDays, SchedulerHeading, SchedulerTimes } from './components';
 
 interface Props {
-  slots: Slot[];
-  tz?: string;
-  updateStart: (date: Date) => void;
-  slotsLoading?: boolean;
-  onSlotUpdate?: (slot: Slot | null) => void;
+  collectionMethod: CollectionMethodType;
+  address: Address;
+  serviceId: string;
+  onSlotUpdate?: (slot: Slot | null, tz: string) => void;
   numDays?: number;
   className?: string;
   displayCancellationNote?: boolean;
@@ -34,23 +32,21 @@ interface Props {
 export function Scheduler(props: Props) {
   const {
     className,
-    tz,
-    slotsLoading,
+    collectionMethod,
+    address,
+    serviceId,
     numDays,
     displayCancellationNote = false,
     showCreateBtn = true,
     ...rest
   } = props;
 
-  const lTz = tz ?? moment.tz.guess();
-  const lSlotsLoading = slotsLoading ?? false;
-  const lNumDays = numDays ?? 5;
-
   return (
     <SchedulerStoreProvider
-      tz={lTz}
-      slotsLoading={lSlotsLoading}
-      numDays={lNumDays}
+      address={address}
+      serviceId={serviceId}
+      collectionMethod={collectionMethod}
+      numDays={numDays}
       showCreateBtn={showCreateBtn}
       {...rest}
     >
@@ -72,25 +68,13 @@ function SchedulerConsumer({
   displayCancellationNote?: boolean;
   showCreateBtn?: boolean;
 }): JSX.Element {
-  const {
-    slots,
-    slot,
-    startRange,
-    updateStartRange,
-    tz,
-    onSlotUpdate,
-    updateSelectedDay,
-  } = useScheduler((s) => s);
+  const { selectedSlot, slots, onSlotUpdate, fetchSlots, tz } = useScheduler(
+    (s) => s,
+  );
 
   useEffect(() => {
-    if (!slots.length) return;
-
-    const convertedMoment = moment.utc(slots[0].start).tz(tz);
-    if (moment(convertedMoment).isAfter(startRange)) {
-      updateStartRange(convertedMoment);
-    }
-    updateSelectedDay(undefined);
-  }, [slots]);
+    fetchSlots();
+  }, []);
 
   return (
     <div className={cn('max-w-[800px] space-y-10', className)}>
@@ -100,7 +84,7 @@ function SchedulerConsumer({
         </div>
         <SchedulerDays />
         <SchedulerTimes />
-        {displayCancellationNote && (
+        {displayCancellationNote && slots.length > 0 && (
           <div className="mt-6">
             <Body1 className="text-zinc-500">
               Rescheduling or cancelling less than 24 hours in advance of your
@@ -112,9 +96,9 @@ function SchedulerConsumer({
         {showCreateBtn && onSlotUpdate && (
           <div className="mt-6 flex justify-end">
             <Button
-              disabled={slot === undefined}
+              disabled={!selectedSlot}
               onClick={() => {
-                slot && onSlotUpdate(slot);
+                selectedSlot && onSlotUpdate(selectedSlot, tz);
               }}
               className="rounded-xl bg-[#18181B] px-8 py-4 text-white hover:bg-[#18181B]/80"
             >

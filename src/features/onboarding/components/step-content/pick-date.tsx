@@ -1,37 +1,55 @@
-import React from 'react';
+import moment from 'moment';
 
 import { Button } from '@/components/ui/button';
 import { Scheduler } from '@/components/ui/scheduler';
+import { Spinner } from '@/components/ui/spinner';
 import { useStepper } from '@/components/ui/stepper';
 import { Body1, H2 } from '@/components/ui/typography';
 import { ImageContentLayout } from '@/features/onboarding/components/layouts';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
+import { useUpdateOrder } from '@/features/orders/api/update-order';
+import { useServices } from '@/features/services/api/get-services';
 
 export const PickDate = () => {
   const { nextStep, prevStep } = useStepper((s) => s);
-  const { updateBloodSlot, slots } = useOnboarding();
+  const { data, isLoading } = useServices({});
+  const {
+    updateBloodSlot,
+    slots,
+    collectionMethod,
+    serviceAddress,
+    updateBloodTimezone,
+  } = useOnboarding();
 
-  // const getPhlebotomyAvailabilityMutation = usePhlebotomyAvailability();
+  const updateOrderMutation = useUpdateOrder({});
+  const superpowerBloodPanel = data?.services.find(
+    (s) => s.name === 'Superpower Blood Panel',
+  );
 
-  // const [start, setStart] = useState<Date>(new Date());
-  // const [slots, setSlots] = useState<Slot[]>([]);
+  const allowOrder = slots.blood.orderId && superpowerBloodPanel?.id;
 
-  // useEffect(() => {
-  //   if (!healthcareService || !location?.address || !collectionMethod)
-  //     throw Error('Missing fields to query availability');
-  //
-  //   getPhlebotomyAvailabilityMutation
-  //     .mutateAsync({
-  //       serviceId: healthcareService.id,
-  //       address: location.address,
-  //       start: start.toISOString(),
-  //       collectionMethod: collectionMethod,
-  //     })
-  //     .then((response) => {
-  //       setSlots(response.slots);
-  //       setTz(response.timezone || moment.tz.guess());
-  //     });
-  // }, [start]);
+  // double check we have all of that before showing scheduler
+  const allowSchedulerRender =
+    serviceAddress?.address && superpowerBloodPanel?.id && collectionMethod;
+
+  const updateBloodOrder = async () => {
+    if (!allowOrder) return;
+
+    await updateOrderMutation.mutateAsync({
+      orderId: slots.blood.orderId as string,
+      data: {
+        serviceId: superpowerBloodPanel?.id,
+        location: { address: serviceAddress?.address },
+        timezone: slots.blood.timezone ?? moment.tz.guess(),
+        timestamp: slots.blood.slot
+          ? slots.blood.slot.start
+          : new Date().toISOString(),
+        status: 'PENDING',
+      },
+    });
+
+    nextStep();
+  };
 
   return (
     <section id="main">
@@ -43,41 +61,42 @@ export const PickDate = () => {
           ensure the most accurate measurement of blood hormone levels
         </Body1>
       </div>
-      <Scheduler
-        // todo: rewrite this with mock response
-        slots={[
-          {
-            start: '2024-09-09T16:15:00.000Z',
-            end: '2024-09-09T16:30:00.000Z',
-          },
-          {
-            start: '2024-09-09T17:15:00.000Z',
-            end: '2024-09-09T17:30:00.000Z',
-          },
-          {
-            start: '2024-09-09T17:30:00.000Z',
-            end: '2024-09-09T17:45:00.000Z',
-          },
-          {
-            start: '2024-09-09T17:45:00.000Z',
-            end: '2024-09-09T18:00:00.000Z',
-          },
-        ]}
-        slotsLoading={false}
-        // updateStart={(date) => setStart(date)}
-        updateStart={(date) => console.log(date)}
-        onSlotUpdate={(slot) => {
-          updateBloodSlot(slot);
-        }}
-        className="max-w-none py-6"
-        showCreateBtn={false}
-      />
+      {allowSchedulerRender ? (
+        <Scheduler
+          collectionMethod={collectionMethod}
+          address={serviceAddress?.address}
+          serviceId={superpowerBloodPanel?.id}
+          onSlotUpdate={(slot, tz) => {
+            updateBloodSlot(slot);
+            updateBloodTimezone(tz);
+          }}
+          className="max-w-none py-6"
+          showCreateBtn={false}
+        />
+      ) : isLoading ? (
+        <div className="flex justify-center py-10">
+          <Spinner size="md" variant="primary" />
+        </div>
+      ) : (
+        <div className="flex justify-center py-10">
+          <Body1 className="text-[#B90090]">
+            Cannot load service scheduler. Contact support.
+          </Body1>
+        </div>
+      )}
       <div className="flex justify-end gap-4">
-        <Button variant="outline" onClick={prevStep}>
+        <Button
+          variant="outline"
+          onClick={prevStep}
+          disabled={updateOrderMutation.isPending}
+        >
           Back
         </Button>
-        <Button onClick={nextStep} disabled={!slots.blood}>
-          Confirm appointment
+        <Button
+          onClick={updateBloodOrder}
+          disabled={!slots.blood.slot || !allowOrder}
+        >
+          {updateOrderMutation.isPending ? <Spinner /> : 'Confirm appointment'}
         </Button>
       </div>
     </section>

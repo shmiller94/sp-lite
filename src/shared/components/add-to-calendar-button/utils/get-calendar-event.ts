@@ -22,14 +22,14 @@ export const getCalendarEvent = ({
 }) => {
   const cancerEvent: CalendarEvent = {
     title: 'Superpower - Cancer Test Window',
-    start: slot.start,
+    start: slot?.start,
     duration: [
       (new Date(slot.end).getTime() - new Date(slot.start).getTime()) /
         (1000 * 60 * 60),
       'hour',
     ],
     description: 'Add description here',
-    location: `${address?.line1} ${address?.line2}, ${address?.city}, ${address?.state}, ${address?.postalCode}`,
+    location: `${address?.line.join(' ')}, ${address?.city}, ${address?.state}, ${address?.postalCode}`,
   };
 
   const bloodDrawEvent: CalendarEvent = {
@@ -52,7 +52,7 @@ What to do:
         : `🧪 Results take ~10 days to fully process, but most will be visible within just a few days.
 
 🩸 The blood draw will only take ~10 min! Please remember to arrive at least 5 minutes before your appointment starts.`,
-    location: `${address?.line1} ${address?.line2}, ${address?.city}, ${address?.state}, ${address?.postalCode}`,
+    location: `${address?.line.join(' ')}, ${address?.city}, ${address?.state}, ${address?.postalCode}`,
   };
 
   if (service === 'Grail Galleri Multi Cancer Test') {

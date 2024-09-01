@@ -1,8 +1,14 @@
 import { UndoIcon } from 'lucide-react';
-import React, { useRef, useState } from 'react';
+import React, { Dispatch, SetStateAction, useRef, useState } from 'react';
 import SignatureCanvas from 'react-signature-canvas';
 
-export const SignatureBlock: React.FC = () => {
+type SignatureBlockProps = {
+  setNext: Dispatch<SetStateAction<boolean>>;
+};
+
+export const SignatureBlock: React.FC<SignatureBlockProps> = ({
+  setNext,
+}: SignatureBlockProps) => {
   const canvasRef = useRef<SignatureCanvas | null>(null);
   const clearCanvas = () => {
     if (canvasRef.current) {
@@ -29,13 +35,17 @@ export const SignatureBlock: React.FC = () => {
         <p className="text-white">Sign below:</p>
         <UndoIcon
           className="size-10 cursor-pointer p-2 text-white/50 hover:text-white"
-          onClick={() => clearCanvas()}
+          onClick={() => {
+            setNext(false);
+            clearCanvas();
+          }}
         />
       </div>
       <div
         style={{ position: 'relative' }}
         onMouseEnter={() => setShowPencil(true)}
         onMouseLeave={() => setShowPencil(false)}
+        onMouseDownCapture={() => setNext(true)}
         ref={divRef}
         onMouseMove={handleMouseMove}
       >

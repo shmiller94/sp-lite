@@ -9,9 +9,12 @@ import React, {
 } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useStepper } from '@/components/ui/stepper';
 import { Body1, Body2, Body3, H3, H4 } from '@/components/ui/typography';
+import { GRAIL_GALLERI_MULTI_CANCER_TEST } from '@/const';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
+import { useService } from '@/features/services/api/get-service';
 import { useOutsideClick } from '@/hooks/use-outside-click';
 import { cn } from '@/lib/utils';
 import { HealthcareService } from '@/types/api';
@@ -24,10 +27,21 @@ type Props = {
 };
 
 const ServiceLine = ({ service }: { service: HealthcareService }) => {
+  const serviceQuery = useService({
+    serviceId: service.id,
+    method: service.name === GRAIL_GALLERI_MULTI_CANCER_TEST ? 'AT_HOME' : null,
+  });
+
   return (
     <div className="flex w-full items-center justify-between">
       <Body1 className="text-white">{service.name}</Body1>
-      <Body1 className="text-zinc-400">{formatMoney(service.price)}</Body1>
+      <Body1 className="text-zinc-400">
+        {serviceQuery.data ? (
+          formatMoney(serviceQuery.data.service.price)
+        ) : (
+          <Skeleton className="h-6 w-10" />
+        )}
+      </Body1>
     </div>
   );
 };
@@ -75,10 +89,10 @@ const ExpandableCard = ({ parentRef, isExpanded, setIsExpanded }: Props) => {
         initial={false}
         ref={ref}
         animate={{
-          height: isExpanded ? 294 : 86,
+          height: isExpanded ? 294 : 92,
         }}
         onClick={() => setIsExpanded(true)}
-        className="fixed bottom-0 z-[120] mb-9 flex flex-col overflow-y-scroll rounded-3xl border border-zinc-200 bg-zinc-900 shadow-[0_10px_100px_0px_rgba(24,24,27,0.15)]"
+        className="fixed bottom-0 z-[120] mb-9 flex flex-col overflow-y-auto rounded-3xl border border-zinc-200 bg-zinc-900 shadow-[0_10px_100px_0px_rgba(24,24,27,0.15)] scrollbar-none"
       >
         {isExpanded ? (
           <motion.div
@@ -169,6 +183,7 @@ const ExpandableCard = ({ parentRef, isExpanded, setIsExpanded }: Props) => {
           </div>
           <Button
             className="rounded-[12px] border border-zinc-500 bg-zinc-700 px-6 py-4"
+            disabled={orderTotal === 0}
             onClick={(e) => {
               e.stopPropagation();
 

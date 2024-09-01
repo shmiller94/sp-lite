@@ -1,16 +1,25 @@
 import {
-  Home,
-  Folder,
   Ellipsis,
   EllipsisVertical,
-  MessageSquare,
+  Database,
+  Settings,
+  LogOut,
+  History,
+  LucideIcon,
 } from 'lucide-react';
-import { NavLink } from 'react-router-dom';
-// import { NavLink, useNavigate } from 'react-router-dom';
+import { SVGProps, FC, useState } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 
+import {
+  DataIcon,
+  HomeIcon,
+  MarketplaceIcon,
+  MessageIcon,
+  ServicesIcon,
+} from '@/components/icons';
 import { Button } from '@/components/ui/button';
-// import { useLogout } from '@/lib/auth';
-import { useLogout } from '@/lib/auth';
+import { useUser } from '@/lib/auth';
+import { ROLES, useAuthorization } from '@/lib/authorization';
 import { cn } from '@/lib/utils';
 
 import {
@@ -22,63 +31,172 @@ import {
 type SideNavigationItem = {
   name: string;
   to: string;
-  icon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
+  icon: LucideIcon | FC<SVGProps<SVGSVGElement>>;
 };
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
-  const logout = useLogout();
-  // const navigate = useNavigate();
-  const navigation = [
-    { name: 'Home', to: './timeline', icon: Home },
-    { name: 'Data', to: './data', icon: Folder },
-    { name: 'Concierge', to: './concierge', icon: MessageSquare },
+  const { pathname } = useLocation();
+
+  const { data } = useUser();
+  const { checkAccess } = useAuthorization();
+  /*
+   * Completely hides navbar from UI.
+   *
+   * Not the same as `disablePaddingBottom`.
+   * */
+  const hideNavBar = !data || data?.onboarding?.status === 'INCOMPLETE';
+
+  /*
+   * Leaves navbar on UI but removes padding bottom that was introduced
+   *
+   * for mobile devices to facilitate navigation.
+   * */
+  const disablePaddingBottom = pathname.startsWith('/concierge');
+
+  const links: SideNavigationItem[] = [
+    {
+      icon: HomeIcon,
+      name: 'Home',
+      to: './',
+    },
+    {
+      icon: DataIcon,
+      name: 'Data',
+      to: './data',
+    },
+    {
+      icon: MessageIcon,
+      name: 'Concierge',
+      to: './concierge',
+    },
+    checkAccess({ allowedRoles: [ROLES.ADMIN] }) && {
+      name: 'Admin',
+      to: './admin/users',
+      icon: Lock,
+    },
   ].filter(Boolean) as SideNavigationItem[];
+
+  const moreLinks: SideNavigationItem[] = [
+    {
+      icon: ServicesIcon,
+      name: 'Services',
+      to: './services',
+    },
+    {
+      icon: MarketplaceIcon,
+      name: 'Marketplace',
+      to: 'https://products.superpower.com',
+    },
+    {
+      icon: Database,
+      name: 'Data Vault',
+      to: './settings/vault',
+    },
+    {
+      icon: History,
+      name: 'Order History',
+      to: './settings/purchases',
+    },
+    {
+      icon: Settings,
+      name: 'Settings',
+      to: './settings',
+      // to: isMobileView ? '/settings' : '/settings/profile',
+    },
+    {
+      icon: LogOut,
+      name: 'Logout',
+      to: '/auth/logout',
+    },
+  ];
 
   return (
     <>
       <main
-        className={cn('bg-white min-h-dvh pb-24')}
-        style={{
-          backgroundImage: 'radial-gradient(#E8E8E8 1px, transparent 0)',
-          backgroundSize: '20px 20px',
-          backgroundPosition: '-12 -12',
-        }}
+        id="app"
+        className={cn(
+          'flex min-h-screen w-full flex-col bg-white',
+          hideNavBar ? '' : 'pb-24',
+          disablePaddingBottom && '!p-0',
+        )}
+        // style={{
+        //   backgroundImage: 'radial-gradient(#E8E8E8 1px, transparent 0)',
+        //   backgroundSize: '20px 20px',
+        //   backgroundPosition: '-12 -12',
+        // }}
       >
-        <div className="container mx-auto pb-16 pt-9 sm:p-16 sm:pb-0">
-          {children}
-        </div>
+        {children}
       </main>
-      <div className="fixed bottom-12 left-1/2 z-10 flex -translate-x-1/2 rounded-full bg-black p-1.5">
-        {navigation.map((item) => (
+      {hideNavBar ? null : (
+        <SideNavigation links={links} moreLinks={moreLinks} />
+      )}
+    </>
+  );
+}
+
+const SideNavigation: FC<{
+  links: SideNavigationItem[];
+  moreLinks?: SideNavigationItem[];
+}> = ({ links, moreLinks }) => {
+  const { pathname } = useLocation();
+  const [open, setOpen] = useState<boolean>(false);
+
+  return (
+    <ul className="fixed bottom-12 left-1/2 z-10 flex -translate-x-1/2 rounded-full bg-black p-1.5">
+      {links.map((link, i) => {
+        const isSelected = pathname === link.to;
+        return (
           <NavLink
-            key={item.name}
-            to={item.to}
+            key={i}
+            to={link.to}
+            /*
+             * <NavLink to="/"> is an exceptional case because every URL matches /.
+             * To avoid this matching every single route by default,
+             * it effectively ignores the end prop and only matches when you're at the root route.
+             * */
+            end
             className={({ isActive }) =>
-              cn(
-                `flex px-[14px] xs:px-4 py-2 xs:py-3 flex-col xs:flex-row items-center justify-center xs:justify-between gap-[5px] xs:gap-3 rounded-full hover:bg-[#252525] transition duration-200 ease-in-out cursor-pointer`,
-                isActive ? 'opacity-100 bg-[#252525]' : 'opacity-50',
-              )
+              [
+                isActive ? 'bg-[#252525]' : '',
+                'flex px-[14px] xs:px-4 py-2 xs:py-3 flex-col xs:flex-row items-center justify-center xs:justify-between gap-[5px] xs:gap-3 rounded-full hover:bg-[#252525] transition duration-200 ease-in-out cursor-pointer',
+              ].join(' ')
             }
           >
-            <item.icon
-              className={cn('text-white', 'size-4 shrink-0')}
-              aria-hidden="true"
+            <link.icon
+              className={cn(
+                'w-3 xs:w-4 h-3 xs:h-4',
+                isSelected ? 'opacity-100' : 'opacity-50',
+              )}
+              color="white"
             />
-            <p className="text-sm text-white xs:text-base">{item.name}</p>
+
+            <p
+              className={cn(
+                'text-[12px] xs:text-[16px] text-white leading-4 sm:leading-6',
+                isSelected ? 'opacity-100' : 'opacity-50',
+              )}
+            >
+              {link.name}
+            </p>
           </NavLink>
-        ))}
-        <DropdownMenu>
+        );
+      })}
+      {moreLinks && (
+        <DropdownMenu open={open} onOpenChange={setOpen}>
           <DropdownMenuTrigger
-            className="rounded-full opacity-50 outline-none hover:bg-[#252525]"
+            className="rounded-full hover:bg-[#252525]"
             asChild
           >
-            <Button>
+            <Button
+              variant="link"
+              className="px-[14px] py-3 focus-visible:ring-transparent focus-visible:ring-offset-0 sm:px-4"
+            >
               <EllipsisVertical
                 size={18}
                 color="white"
-                className="hidden sm:block"
+                className="block sm:hidden"
               />
-              <Ellipsis color="white" className="block sm:hidden" />
+              <Ellipsis color="white" className="hidden sm:block" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -87,14 +205,22 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             sideOffset={10}
             align="end"
           >
-            <div className="flex flex-col gap-1.5">
-              <div role="presentation" onClick={() => logout.mutate({})}>
-                logout
-              </div>
-            </div>
+            <ul className="flex flex-col gap-1.5">
+              {moreLinks.map((link, i) => (
+                <NavLink
+                  key={i}
+                  to={link.to}
+                  className="flex cursor-pointer items-center gap-3 rounded-[18px] p-4 transition duration-200 ease-in-out hover:bg-[#252525]"
+                >
+                  <link.icon width={12} height={12} color="white" />
+
+                  <p className="text-sm text-white">{link.name}</p>
+                </NavLink>
+              ))}
+            </ul>
           </DropdownMenuContent>
         </DropdownMenu>
-      </div>
-    </>
+      )}
+    </ul>
   );
-}
+};
