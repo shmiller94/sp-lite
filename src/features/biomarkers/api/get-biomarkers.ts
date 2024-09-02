@@ -4,7 +4,7 @@ import { api } from '@/lib/api-client';
 import { QueryConfig } from '@/lib/react-query';
 import { Biomarker } from '@/types/api';
 
-export const getBiomarkers = (): Promise<Biomarker[]> => {
+export const getBiomarkers = (): Promise<{ biomarkers: Biomarker[] }> => {
   return api.get('/biomarkers');
 };
 

@@ -4,29 +4,36 @@ export const DataIcon: React.FC<SVGProps<SVGSVGElement>> = ({ ...props }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      {...props}
-      viewBox="0 0 15 15"
+      width="22"
+      height="21"
+      viewBox="0 0 22 21"
       fill="none"
+      {...props}
     >
-      <g opacity="0.8">
-        <rect
-          x="0.5"
-          y="5.11523"
-          width="4"
-          height="10.3846"
-          rx="1"
-          fill="white"
-        />
-        <rect x="5.5" y="0.5" width="4" height="15" rx="1" fill="white" />
-        <rect
-          x="10.5"
-          y="5.11523"
-          width="4"
-          height="10.3846"
-          rx="1"
-          fill="white"
-        />
-      </g>
+      <rect
+        x="2.21289"
+        y="6.96643"
+        width="5.25049"
+        height="12.7212"
+        rx="1.37812"
+        fill="#A1A1AA"
+      />
+      <rect
+        x="8.7793"
+        y="1.31268"
+        width="5.25049"
+        height="18.375"
+        rx="1.37812"
+        fill="#A1A1AA"
+      />
+      <rect
+        x="15.3379"
+        y="6.96637"
+        width="5.25049"
+        height="12.7212"
+        rx="1.37812"
+        fill="#A1A1AA"
+      />
     </svg>
   );
 };

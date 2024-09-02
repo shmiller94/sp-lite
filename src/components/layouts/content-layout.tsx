@@ -1,21 +1,41 @@
 import * as React from 'react';
 
+import { H1 } from '@/components/ui/typography';
+import { cn } from '@/lib/utils';
+
 import { Head } from '../seo';
 
 type ContentLayoutProps = {
   children: React.ReactNode;
   title: string;
+  className?: string;
+  bgColor?: 'white' | 'zinc';
 };
 
-export const ContentLayout = ({ children, title }: ContentLayoutProps) => {
+export const ContentLayout = ({
+  children,
+  title,
+  className,
+  bgColor = 'white',
+}: ContentLayoutProps) => {
   return (
     <>
       <Head title={title} />
-      <div className="py-6">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
-          <h1 className="text-2xl font-semibold text-gray-900">{title}</h1>
-        </div>
-        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 md:px-8">
+      <div
+        className={cn(
+          'min-h-screen w-full',
+          bgColor === 'zinc' ? 'bg-zinc-50' : null,
+        )}
+      >
+        <div
+          // not using regular container to adjust based on 88 margin left from sidebar
+          className={cn(
+            'max-w-[552px] md:max-w-[680px] lg:max-w-[936px] xl:max-w-[1192px] mx-auto px-8 sm:space-y-0 sm:p-16 md:space-y-12',
+            className,
+          )}
+        >
+          <H1>{title}</H1>
+
           {children}
         </div>
       </div>

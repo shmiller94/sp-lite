@@ -1,9 +1,21 @@
-import { BiomarkersList } from '@/features/biomarkers/components/biomarkers-list';
+import { ContentLayout } from '@/components/layouts';
+import { BiologicalAgeCard } from '@/features/biomarkers/components/biological-age-card';
+import { BiomarkersDataTable } from '@/features/biomarkers/components/biomarkers-data-table/biomarker-data-table';
+import { BiomarkersSummaryCard } from '@/features/biomarkers/components/biomarkers-summary-card';
 
 export const DataRoute = () => {
   return (
-    <div>
-      <BiomarkersList />
-    </div>
+    <ContentLayout title="Data" bgColor="zinc">
+      <section
+        id="summary"
+        className="flex flex-col gap-y-5 pt-6 md:flex-row md:gap-x-5 md:pb-16"
+      >
+        <BiologicalAgeCard />
+        <BiomarkersSummaryCard />
+      </section>
+      <section id="data">
+        <BiomarkersDataTable />
+      </section>
+    </ContentLayout>
   );
 };

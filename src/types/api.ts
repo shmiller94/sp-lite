@@ -8,6 +8,7 @@ export type Entity<T> = {
 
 export type IdentityVerificationStatus = 'VERIFIED' | 'REQUIRES_INPUT';
 
+/* USER */
 export type UserIdentity = {
   sessionId: string;
   userId: string;
@@ -45,6 +46,7 @@ export type AdminActor = Entity<{
   email: string;
 }>;
 
+/* AUTH */
 export type LoginAuthenticationResponse = {
   login: string;
   code?: string;
@@ -58,6 +60,27 @@ export type TokenResponse = {
   expires_in: number;
   profile: User;
 };
+
+/**
+ /**
+ * OAuth 2.0 Grant Type Identifiers
+ * Standard identifiers defined here: https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-07#name-grant-types
+ * Token exchange extension defined here: https://datatracker.ietf.org/doc/html/rfc8693
+ */
+export enum OAuthGrantType {
+  ClientCredentials = 'client_credentials',
+  AuthorizationCode = 'authorization_code',
+  RefreshToken = 'refresh_token',
+  TokenExchange = 'urn:ietf:params:oauth:grant-type:token-exchange',
+}
+
+export type LoginState = {
+  profile: User;
+  accessToken: string;
+  refreshToken: string;
+};
+
+/* API ERRORS */
 
 export enum IssueSeverity {
   INFOROMATION = 'information',
@@ -81,24 +104,7 @@ export type OperationOutcome = {
   issue: OperationOutcomeIssue[];
 };
 
-/**
- /**
- * OAuth 2.0 Grant Type Identifiers
- * Standard identifiers defined here: https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-07#name-grant-types
- * Token exchange extension defined here: https://datatracker.ietf.org/doc/html/rfc8693
- */
-export enum OAuthGrantType {
-  ClientCredentials = 'client_credentials',
-  AuthorizationCode = 'authorization_code',
-  RefreshToken = 'refresh_token',
-  TokenExchange = 'urn:ietf:params:oauth:grant-type:token-exchange',
-}
-
-export type LoginState = {
-  profile: User;
-  accessToken: string;
-  refreshToken: string;
-};
+/* QUESTIONNAIRE */
 
 export type QuestionnaireStatus = 'INCOMPLETE' | 'COMPLETE';
 
@@ -108,6 +114,7 @@ export type Questionnaire = Entity<{
   readonly progress: number;
 }>;
 
+/* HEALTHCARE SERVICE */
 export type HealthcareService = Entity<{
   id: string;
   name: string;
@@ -122,9 +129,68 @@ export type Coupon = {
   percent_off: number | null;
 };
 
+/* BIOMARKERS */
 export type Biomarker = Entity<{
-  id: string;
+  name: string;
+  description: string;
+  importance: string;
+  status: BiomarkerStatus;
+  category: string;
+  unit: string;
+  favorite: boolean;
+  range: Range[];
+  value: BiomarkerResult[];
+  metadata: BiomarkerMetadata;
 }>;
+
+export interface BiomarkerResult {
+  quantity: Quantity;
+  timestamp: string;
+  status: BiomarkerStatus;
+}
+
+export interface BiomarkerMetadata {
+  source: MetadataSource[];
+  content: MetadataContent[];
+}
+
+export interface MetadataSource {
+  text: string;
+  url: string;
+}
+
+export interface MetadataContent {
+  title: string;
+  text: string;
+  status: BiomarkerStatus;
+}
+
+export type BiomarkerStatus =
+  | 'LOW'
+  | 'HIGH'
+  | 'NORMAL'
+  | 'OPTIMAL'
+  | 'UNKNOWN'
+  | 'PENDING';
+
+export interface Range {
+  low?: Quantity;
+  high?: Quantity;
+  status: BiomarkerStatus;
+}
+
+export interface Quantity {
+  value: number;
+  comparator: Comparator;
+  unit?: string;
+}
+
+export type Comparator =
+  | 'LESS_THAN'
+  | 'LESS_THAN_EQUALS'
+  | 'EQUALS'
+  | 'GREATER_THAN_EQUALS'
+  | 'GREATER_THAN';
 
 export type Consult = Entity<{
   id: string;
@@ -139,6 +205,8 @@ export type Message = Entity<{
 export type VerifyOPT = {
   success: boolean;
 };
+
+/* SUBSCRIPTIONS */
 
 export type SubscriptionName = 'membership';
 

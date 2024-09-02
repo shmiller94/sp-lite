@@ -56,7 +56,9 @@ export const Configurator = () => {
 
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeCard, setActiveCard] = React.useState(0);
+  // wrapper ref is responsible for entire layout
   const wrapperRef = useRef<HTMLDivElement>(null);
+  // faw ref is responsible for the left div in layout
   const faqRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     container: wrapperRef,
@@ -64,6 +66,7 @@ export const Configurator = () => {
   });
   const cardLength = content.length;
 
+  /* NB: if amount of section increases u need to adjust cardsBreakpoints (or come up with smarter way :=D */
   useMotionValueEvent(scrollYProgress, 'change', (latest) => {
     const cardsBreakpoints = content.map(
       (_, index) => index / cardLength / 1.5,

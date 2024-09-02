@@ -127,6 +127,10 @@ export function formatObservationUnit(obs: any | undefined): string {
   return '';
 }
 
+export function capitalize(word: string): string {
+  return word.charAt(0).toUpperCase() + word.substring(1);
+}
+
 /**
  * Formats a FHIR Address as a string.
  * @param address The address to format.
@@ -541,4 +545,18 @@ export function isValidStringEntry(str: string): boolean {
 
   // If the string does not match the regex pattern and is not empty, it is a valid string entry.
   return !matchesRegex && str !== '';
+}
+
+/**
+ * Returns a number representing years since a date
+ * @param date the date to calculate time from
+ * @returns a number of years since the input date
+ */
+export function yearsSinceDate(date: string, asInt = true): number {
+  const now = Date.now();
+  const diff = now - new Date(date).getTime();
+  const millisecondsPerYear = 1000 * 60 * 60 * 24 * 365.25;
+  return asInt
+    ? Math.floor(diff / millisecondsPerYear)
+    : diff / millisecondsPerYear;
 }

@@ -1,4 +1,5 @@
-import { ReactNode } from 'react';
+import { X } from 'lucide-react';
+import React, { ReactNode } from 'react';
 
 import {
   Accordion,
@@ -6,6 +7,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { DialogClose, DialogContent } from '@/components/ui/dialog';
 import { Body1, Body2, H2, H4 } from '@/components/ui/typography';
 import { REQUESTABLE_SERVICES } from '@/const';
 import { HealthcareService } from '@/types/api';
@@ -16,6 +18,42 @@ import {
   TestDetails,
 } from './utils/healthcare-service-faq';
 
+/*
+ * If this dialog is supposed to just show info and then close, pass children wrapped into <DialogClose />
+ *
+ * Otherwise, you can pass any other component into button position with any action required
+ *
+ * P.S. make sure to wrap this into <Dialog /> with <DialogTrigger /> to call this
+ * */
+export const HealthcareServiceDialogContent = ({
+  children,
+  healthcareService,
+}: {
+  children: ReactNode;
+  healthcareService: HealthcareService;
+}) => {
+  return (
+    <DialogContent>
+      <div className="max-h-[90vh] overflow-y-scroll rounded-xl">
+        <div>
+          <div className="flex flex-row items-center justify-between bg-[#F7F7F7] px-12 pb-6 pt-12">
+            <Body1 className="text-zinc-500">Service</Body1>
+            <DialogClose>
+              <X className="size-6 cursor-pointer p-1" />
+            </DialogClose>
+          </div>
+          <HealthcareServiceDetails healthcareService={healthcareService}>
+            {children}
+          </HealthcareServiceDetails>
+        </div>
+      </div>
+    </DialogContent>
+  );
+};
+
+/*
+ * Primarly used with <HealthcareServiceDialogContent /> but can be called separately if no dialog is required
+ * */
 export function HealthcareServiceDetails({
   healthcareService,
   children,
