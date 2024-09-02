@@ -11,7 +11,7 @@ import { EntryLayout } from '@/features/onboarding/components/layouts';
 
 export const WearablesEntry = () => {
   const { data, refetch } = useVitalToken({});
-  const { nextStep } = useStepper((s) => s);
+  const { nextOnboardingStep } = useStepper((s) => s);
 
   const [isLoading, setLoading] = useState(false);
 
@@ -24,9 +24,9 @@ export const WearablesEntry = () => {
       // Then, we need to use this as a temporary hack.
       console.log(_metadata);
 
-      nextStep();
+      nextOnboardingStep();
     },
-    [nextStep],
+    [nextOnboardingStep],
   );
 
   const onExit = useCallback(
@@ -83,7 +83,7 @@ export const WearablesEntry = () => {
       </Button>
       <Body1
         className="cursor-pointer text-white hover:text-white/90"
-        onClick={nextStep}
+        onClick={nextOnboardingStep}
       >
         Skip and connect later
       </Body1>

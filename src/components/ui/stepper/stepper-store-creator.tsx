@@ -1,6 +1,8 @@
 import { ReactNode } from 'react';
 import { createStore } from 'zustand';
 
+import { api } from '@/lib/api-client';
+
 export type StepItem = {
   id: string;
   content: ReactNode;
@@ -8,6 +10,7 @@ export type StepItem = {
 
 export interface StepperProps {
   steps: StepItem[];
+  initialStep?: number;
 }
 
 export interface StepperStore extends StepperProps {
@@ -15,6 +18,11 @@ export interface StepperStore extends StepperProps {
   nextStep: () => void;
   prevStep: () => void;
   insertStepsAfter: (id: string, newSteps: StepItem[]) => void;
+
+  /* We are exposing nextOnboardingStep only because server only allows to update if new value is greater than old one */
+  nextOnboardingStep: () => Promise<void>;
+  /* Updating step is a loading state for step update call */
+  updatingStep: boolean;
 }
 
 export type StepperStoreApi = ReturnType<typeof stepperStoreCreator>;
@@ -34,10 +42,10 @@ export const stepperStoreCreator = (initProps?: Partial<StepperStore>) => {
     }
   }
 
-  return createStore<StepperStore>()((set) => ({
+  return createStore<StepperStore>()((set, get) => ({
     ...DEFAULT_PROPS,
     ...initProps,
-    activeStep: 0,
+    activeStep: initProps?.initialStep ?? 0,
     nextStep: () => set((state) => ({ activeStep: state.activeStep + 1 })),
     prevStep: () => set((state) => ({ activeStep: state.activeStep - 1 })),
     insertStepsAfter: (id: string, newSteps: StepItem[]) =>
@@ -65,5 +73,18 @@ export const stepperStoreCreator = (initProps?: Partial<StepperStore>) => {
 
         return { steps: updatedSteps };
       }),
+    updatingStep: false,
+    nextOnboardingStep: async () => {
+      set({ updatingStep: true });
+      const state = get();
+      const activeStep = state.activeStep;
+      await api.put<boolean>(`users/onboarding`, {
+        progress: activeStep + 1,
+      });
+      set((state) => ({
+        updatingStep: false,
+        activeStep: state.activeStep + 1,
+      }));
+    },
   }));
 };

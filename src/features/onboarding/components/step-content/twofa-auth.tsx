@@ -27,6 +27,7 @@ import { TwoFaCode } from '@/shared/components';
 
 export const TwoFaAuth = () => {
   const [showOTP, setShowOTP] = useState(false);
+  // TODO: be careful! if we uncomment this back make sure we check if its under onboarding or auth. NM 09/02/2024
   const { nextStep } = useStepper((s) => s);
   const sendOTPMutation = useSendOtp({
     mutationConfig: {

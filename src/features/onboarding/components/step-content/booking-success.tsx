@@ -29,7 +29,7 @@ const timeline: TimelineType[] = [
 
 export const BookingSuccess = () => {
   const controls = useAnimationControls();
-  const { nextStep } = useStepper((s) => s);
+  const { nextOnboardingStep } = useStepper((s) => s);
   const { serviceAddress, slots, collectionMethod } = useOnboarding();
 
   return (
@@ -98,7 +98,7 @@ export const BookingSuccess = () => {
               collectionMethod={collectionMethod}
             />
           )}
-          <Button onClick={() => nextStep()}>Done</Button>
+          <Button onClick={() => nextOnboardingStep()}>Done</Button>
         </div>
       </div>
     </section>

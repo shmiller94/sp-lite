@@ -6,8 +6,7 @@ import { H1 } from '@/components/ui/typography';
 import { EntryLayout } from '@/features/onboarding/components/layouts';
 
 export const DigitalTwinEntry = () => {
-  const { nextStep, activeStep } = useStepper((s) => s);
-  console.log(activeStep);
+  const { nextOnboardingStep } = useStepper((s) => s);
   return (
     <section
       id="main"
@@ -16,7 +15,7 @@ export const DigitalTwinEntry = () => {
       <H1 className="text-white">It’s time to build your digital twin</H1>
       <Button
         className="mx-auto flex flex-row items-center justify-center gap-1 rounded-[50px] bg-white p-4 text-zinc-900 hover:bg-white/90"
-        onClick={nextStep}
+        onClick={nextOnboardingStep}
       >
         Set up
         <ChevronRight className="size-4" />

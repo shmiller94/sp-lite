@@ -7,7 +7,7 @@ import { EntryLayout } from '@/features/onboarding/components/layouts';
 import { useUser } from '@/lib/auth';
 
 export const ActivateBookingEntry = () => {
-  const { nextStep } = useStepper((s) => s);
+  const { nextOnboardingStep } = useStepper((s) => s);
   const { data } = useUser();
   return (
     <section
@@ -20,7 +20,7 @@ export const ActivateBookingEntry = () => {
       </div>
       <Button
         className="mx-auto flex flex-row items-center justify-center gap-1 rounded-[50px] bg-white p-4 text-zinc-900 hover:bg-white/90"
-        onClick={nextStep}
+        onClick={nextOnboardingStep}
       >
         Activate
         <ChevronRight className="size-4" />

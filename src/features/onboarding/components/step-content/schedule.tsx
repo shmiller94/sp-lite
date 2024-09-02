@@ -7,7 +7,7 @@ import { Body1, H2 } from '@/components/ui/typography';
 import { ImageContentLayout } from '@/features/onboarding/components/layouts';
 
 export const Schedule = () => {
-  const { nextStep } = useStepper((s) => s);
+  const { nextOnboardingStep } = useStepper((s) => s);
   return (
     <section id="main">
       <div className="mb-4 flex flex-col gap-8">
@@ -38,7 +38,7 @@ export const Schedule = () => {
         </div>
       </div>
       <div className="flex w-full justify-end py-12">
-        <Button onClick={nextStep}>Continue</Button>
+        <Button onClick={nextOnboardingStep}>Continue</Button>
       </div>
     </section>
   );

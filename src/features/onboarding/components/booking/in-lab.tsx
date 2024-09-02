@@ -93,7 +93,7 @@ function LocationList({
   locations: PhlebotomyLocation[];
 }): JSX.Element {
   const { updateServiceAddress, serviceAddress } = useOnboarding();
-  const { nextStep } = useStepper((s) => s);
+  const { nextOnboardingStep } = useStepper((s) => s);
 
   if (!locations || locations.length === 0) {
     return (
@@ -113,9 +113,9 @@ function LocationList({
               'rounded-lg p-4 text-left transition-all hover:bg-accent',
               // selected && formatAddress(selected?.address) === formatAddress(item.address) && 'bg-muted'
             )}
-            onClick={() => {
+            onClick={async () => {
               updateServiceAddress({ address: option.address, id: nanoid() });
-              nextStep();
+              await nextOnboardingStep();
             }}
           >
             <div className="flex items-center gap-4">

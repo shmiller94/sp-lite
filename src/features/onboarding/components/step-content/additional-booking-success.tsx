@@ -9,7 +9,7 @@ import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import { getOrderInfo } from '@/features/onboarding/utils/get-order-info';
 
 const AdditionalBookingSuccess = () => {
-  const { nextStep } = useStepper((s) => s);
+  const { nextOnboardingStep } = useStepper((s) => s);
   const { additionalServices, slots } = useOnboarding();
 
   // filter out all services that user skipped
@@ -31,7 +31,7 @@ const AdditionalBookingSuccess = () => {
         ))}
       </div>
       <div className="flex justify-end gap-4">
-        <Button onClick={nextStep}>Done</Button>
+        <Button onClick={nextOnboardingStep}>Done</Button>
       </div>
     </section>
   );

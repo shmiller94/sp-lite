@@ -26,7 +26,7 @@ const AtHomeServiceCard = () => {
 };
 
 export const AtHome = () => {
-  const { nextStep, prevStep } = useStepper((s) => s);
+  const { nextOnboardingStep, prevStep } = useStepper((s) => s);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [isAddingAddress, setIsAddingAddress] = useState(false);
 
@@ -79,7 +79,7 @@ export const AtHome = () => {
             <Button variant="outline" onClick={prevStep}>
               Back
             </Button>
-            <Button onClick={nextStep}>Next</Button>
+            <Button onClick={nextOnboardingStep}>Next</Button>
           </div>
         </div>
       </>

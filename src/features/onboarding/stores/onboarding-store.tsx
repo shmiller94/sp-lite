@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 import {
   ActiveAddress,
@@ -69,160 +70,168 @@ type OnboardingStore = {
   decreaseOrderTotal: (amount: number) => void;
 };
 
-export const useOnboarding = create<OnboardingStore>((set) => ({
-  /*
-   *  Different than user's primaryAddress or activeAddress
-   *  In this context used as address that user selects to get service
-   */
-  serviceAddress: null,
-  updateServiceAddress: (serviceAddress) => set({ serviceAddress }),
-  isBlocked: false,
-  updateBlocked: (status) => set({ isBlocked: status }),
-  membership: 'DEFAULT',
-  updateMembership: (membership) => set({ membership: membership }),
-  bloodPackage: 'BASELINE',
-  updateBloodPackage: (bloodPackage) => set({ bloodPackage: bloodPackage }),
-  collectionMethod: 'IN_LAB',
-  updateCollectionMethod: (collectionMethod) =>
-    set({ collectionMethod: collectionMethod }),
-  additionalServices: [],
-  slots: {
-    blood: {
-      orderId: null,
-      slot: null,
-      timezone: null,
-    },
-    cancer: {
-      orderId: null,
-      slot: null,
-      timezone: null,
-    },
-    microbiome: {
-      orderId: null,
-      address: null,
-    },
-    toxin: {
-      orderId: null,
-      address: null,
-    },
-  },
-  addAdditionalService: (additionalService) =>
-    set((state) => ({
-      additionalServices: [...state.additionalServices, additionalService],
-    })),
-  removeAdditionalService: (id) =>
-    set((state) => ({
-      additionalServices: state.additionalServices.filter(
-        (service) => service.id !== id,
-      ),
-    })),
-  updateBloodSlot: (slot) =>
-    set((state) => ({
+export const useOnboarding = create<OnboardingStore>()(
+  persist(
+    (set) => ({
+      /*
+       *  Different than user's primaryAddress or activeAddress
+       *  In this context used as address that user selects to get service
+       */
+      serviceAddress: null,
+      updateServiceAddress: (serviceAddress) => set({ serviceAddress }),
+      isBlocked: false,
+      updateBlocked: (status) => set({ isBlocked: status }),
+      membership: 'DEFAULT',
+      updateMembership: (membership) => set({ membership: membership }),
+      bloodPackage: 'BASELINE',
+      updateBloodPackage: (bloodPackage) => set({ bloodPackage: bloodPackage }),
+      collectionMethod: 'IN_LAB',
+      updateCollectionMethod: (collectionMethod) =>
+        set({ collectionMethod: collectionMethod }),
+      additionalServices: [],
       slots: {
-        ...state.slots,
         blood: {
-          slot,
-          orderId: state.slots.blood.orderId,
-          timezone: state.slots.blood.timezone,
+          orderId: null,
+          slot: null,
+          timezone: null,
         },
-      },
-    })),
-  updateCancerSlot: (slot) =>
-    set((state) => ({
-      slots: {
-        ...state.slots,
         cancer: {
-          slot,
-          orderId: state.slots.cancer.orderId,
-          timezone: state.slots.cancer.timezone,
+          orderId: null,
+          slot: null,
+          timezone: null,
         },
-      },
-    })),
-  updateMicrobiomeAddress: (address) =>
-    set((state) => ({
-      slots: {
-        ...state.slots,
         microbiome: {
-          address,
-          orderId: state.slots.microbiome.orderId,
+          orderId: null,
+          address: null,
         },
-      },
-    })),
-  updateToxinAddress: (address) =>
-    set((state) => ({
-      slots: {
-        ...state.slots,
         toxin: {
-          address,
-          orderId: state.slots.toxin.orderId,
+          orderId: null,
+          address: null,
         },
       },
-    })),
-  updateBloodOrderId: (id) =>
-    set((state) => ({
-      slots: {
-        ...state.slots,
-        blood: {
-          orderId: id,
-          slot: state.slots.blood.slot,
-          timezone: state.slots.blood.timezone,
-        },
-      },
-    })),
-  updateCancerOrderId: (id) =>
-    set((state) => ({
-      slots: {
-        ...state.slots,
-        cancer: {
-          orderId: id,
-          slot: state.slots.cancer.slot,
-          timezone: state.slots.cancer.timezone,
-        },
-      },
-    })),
-  updateMicrobiomeOrderId: (id) =>
-    set((state) => ({
-      slots: {
-        ...state.slots,
-        microbiome: { orderId: id, address: state.slots.microbiome.address },
-      },
-    })),
-  updateToxinOrderId: (id) =>
-    set((state) => ({
-      slots: {
-        ...state.slots,
-        toxin: { orderId: id, address: state.slots.toxin.address },
-      },
-    })),
-  updateBloodTimezone: (timezone) =>
-    set((state) => ({
-      slots: {
-        ...state.slots,
-        blood: {
-          orderId: state.slots.blood.orderId,
-          slot: state.slots.blood.slot,
-          timezone: timezone,
-        },
-      },
-    })),
-  updateCancerTimezone: (timezone) =>
-    set((state) => ({
-      slots: {
-        ...state.slots,
-        cancer: {
-          orderId: state.slots.cancer.orderId,
-          slot: state.slots.cancer.slot,
-          timezone: timezone,
-        },
-      },
-    })),
-  orderTotal: 0,
-  increaseOrderTotal: (amount: number) =>
-    set((state) => ({
-      orderTotal: state.orderTotal + amount,
-    })),
-  decreaseOrderTotal: (amount: number) =>
-    set((state) => ({
-      orderTotal: state.orderTotal - amount,
-    })),
-}));
+      addAdditionalService: (additionalService) =>
+        set((state) => ({
+          additionalServices: [...state.additionalServices, additionalService],
+        })),
+      removeAdditionalService: (id) =>
+        set((state) => ({
+          additionalServices: state.additionalServices.filter(
+            (service) => service.id !== id,
+          ),
+        })),
+      updateBloodSlot: (slot) =>
+        set((state) => ({
+          slots: {
+            ...state.slots,
+            blood: {
+              slot,
+              orderId: state.slots.blood.orderId,
+              timezone: state.slots.blood.timezone,
+            },
+          },
+        })),
+      updateCancerSlot: (slot) =>
+        set((state) => ({
+          slots: {
+            ...state.slots,
+            cancer: {
+              slot,
+              orderId: state.slots.cancer.orderId,
+              timezone: state.slots.cancer.timezone,
+            },
+          },
+        })),
+      updateMicrobiomeAddress: (address) =>
+        set((state) => ({
+          slots: {
+            ...state.slots,
+            microbiome: {
+              address,
+              orderId: state.slots.microbiome.orderId,
+            },
+          },
+        })),
+      updateToxinAddress: (address) =>
+        set((state) => ({
+          slots: {
+            ...state.slots,
+            toxin: {
+              address,
+              orderId: state.slots.toxin.orderId,
+            },
+          },
+        })),
+      updateBloodOrderId: (id) =>
+        set((state) => ({
+          slots: {
+            ...state.slots,
+            blood: {
+              orderId: id,
+              slot: state.slots.blood.slot,
+              timezone: state.slots.blood.timezone,
+            },
+          },
+        })),
+      updateCancerOrderId: (id) =>
+        set((state) => ({
+          slots: {
+            ...state.slots,
+            cancer: {
+              orderId: id,
+              slot: state.slots.cancer.slot,
+              timezone: state.slots.cancer.timezone,
+            },
+          },
+        })),
+      updateMicrobiomeOrderId: (id) =>
+        set((state) => ({
+          slots: {
+            ...state.slots,
+            microbiome: {
+              orderId: id,
+              address: state.slots.microbiome.address,
+            },
+          },
+        })),
+      updateToxinOrderId: (id) =>
+        set((state) => ({
+          slots: {
+            ...state.slots,
+            toxin: { orderId: id, address: state.slots.toxin.address },
+          },
+        })),
+      updateBloodTimezone: (timezone) =>
+        set((state) => ({
+          slots: {
+            ...state.slots,
+            blood: {
+              orderId: state.slots.blood.orderId,
+              slot: state.slots.blood.slot,
+              timezone: timezone,
+            },
+          },
+        })),
+      updateCancerTimezone: (timezone) =>
+        set((state) => ({
+          slots: {
+            ...state.slots,
+            cancer: {
+              orderId: state.slots.cancer.orderId,
+              slot: state.slots.cancer.slot,
+              timezone: timezone,
+            },
+          },
+        })),
+      orderTotal: 0,
+      increaseOrderTotal: (amount: number) =>
+        set((state) => ({
+          orderTotal: state.orderTotal + amount,
+        })),
+      decreaseOrderTotal: (amount: number) =>
+        set((state) => ({
+          orderTotal: state.orderTotal - amount,
+        })),
+    }),
+    { name: 'onboarding' },
+  ),
+);

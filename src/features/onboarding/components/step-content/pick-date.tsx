@@ -11,7 +11,7 @@ import { useUpdateOrder } from '@/features/orders/api/update-order';
 import { useServices } from '@/features/services/api/get-services';
 
 export const PickDate = () => {
-  const { nextStep, prevStep } = useStepper((s) => s);
+  const { nextOnboardingStep, prevStep } = useStepper((s) => s);
   const { data, isLoading } = useServices({});
   const {
     updateBloodSlot,
@@ -48,7 +48,7 @@ export const PickDate = () => {
       },
     });
 
-    nextStep();
+    await nextOnboardingStep();
   };
 
   return (

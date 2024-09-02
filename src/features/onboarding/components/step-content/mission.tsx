@@ -4,7 +4,7 @@ import { useStepper } from '@/components/ui/stepper';
 import { H1 } from '@/components/ui/typography';
 
 export const Mission = () => {
-  const { nextStep } = useStepper((s) => s);
+  const { nextOnboardingStep } = useStepper((s) => s);
 
   return (
     <section
@@ -52,7 +52,7 @@ export const Mission = () => {
         </div>
         <Button
           onClick={() => {
-            nextStep();
+            nextOnboardingStep();
           }}
           type="submit"
           className="w-full"

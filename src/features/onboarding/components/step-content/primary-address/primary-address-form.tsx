@@ -29,7 +29,7 @@ function FullPrimaryAddressForm({
 }: {
   googleAddres: AddressInput;
 }) {
-  const { nextStep } = useStepper((s) => s);
+  const { nextOnboardingStep } = useStepper((s) => s);
   const {
     updateBlocked,
     updateServiceAddress,
@@ -71,7 +71,7 @@ function FullPrimaryAddressForm({
       updateMicrobiomeAddress(user.primaryAddress?.address ?? null);
       updateToxinAddress(user.primaryAddress?.address ?? null);
       updateBlocked(false);
-      nextStep();
+      await nextOnboardingStep();
     } else {
       updateBlocked(true);
     }

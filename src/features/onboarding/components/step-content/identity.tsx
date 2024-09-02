@@ -41,7 +41,7 @@ const loadingStates = [
 ];
 
 export const Identity = () => {
-  const { nextStep } = useStepper((s) => s);
+  const { nextOnboardingStep } = useStepper((s) => s);
   const createVerificationMutation = useCreateVerificationSession({});
 
   // used for stripe error types that we get back
@@ -65,7 +65,7 @@ export const Identity = () => {
 
         if (updatedUser?.data?.userIdentity?.status === 'VERIFIED') {
           clearInterval(interval);
-          nextStep();
+          await nextOnboardingStep();
         } else if (updatedUser?.data?.userIdentity && !sameReportId) {
           clearInterval(interval); // Cleanup interval
           setLongPollingUser(false);
@@ -81,7 +81,7 @@ export const Identity = () => {
   /* Case when user closed the window but we still processing on background and he comes back */
   useEffect(() => {
     if (user?.userIdentity) {
-      nextStep();
+      nextOnboardingStep();
     }
   }, [user?.userIdentity]);
 

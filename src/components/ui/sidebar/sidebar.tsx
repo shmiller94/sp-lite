@@ -4,6 +4,7 @@ import {
   ChevronsRight,
   Ellipsis,
   LogIn,
+  LogOut,
   LucideIcon,
   Settings,
 } from 'lucide-react';
@@ -215,6 +216,14 @@ export const MobileSidebar = () => {
                   <p className="text-sm text-white">{link.name}</p>
                 </NavLink>
               ))}
+              <NavLink
+                to="/auth/logout"
+                className="flex cursor-pointer items-center gap-3 rounded-[18px] p-4 transition duration-200 ease-in-out hover:bg-[#252525]"
+              >
+                <LogOut width={12} height={12} color="white" />
+
+                <p className="text-sm text-white">Log out</p>
+              </NavLink>
             </ul>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -246,7 +246,7 @@ const OrderSummaryCase = ({
   setIndex: Dispatch<SetStateAction<number>>;
 }) => {
   const updateOrderMutation = useUpdateOrder({});
-  const { nextStep } = useStepper((s) => s);
+  const { nextOnboardingStep } = useStepper((s) => s);
   const { additionalServices, slots } = useOnboarding();
 
   // filter out all services that user skipped
@@ -274,7 +274,7 @@ const OrderSummaryCase = ({
       });
     }
 
-    nextStep();
+    await nextOnboardingStep();
   };
 
   return (
@@ -311,13 +311,13 @@ const OrderSummaryCase = ({
 
 export const AdditionalServices = () => {
   const { additionalServices } = useOnboarding();
-  const { nextStep } = useStepper((s) => s);
+  const { nextOnboardingStep } = useStepper((s) => s);
 
   const [curIndex, setCurIndex] = useState(0);
 
   if (additionalServices.length === 0) {
     // skip this step if no services were purchased
-    nextStep();
+    nextOnboardingStep();
   }
 
   const renderStep = (service: HealthcareService) => {

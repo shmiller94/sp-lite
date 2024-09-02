@@ -8,7 +8,7 @@ import { Body1, H1 } from '@/components/ui/typography';
 import { SignatureBlock } from '../signature-block';
 
 export const Commitment = () => {
-  const { nextStep } = useStepper((s) => s);
+  const { nextOnboardingStep } = useStepper((s) => s);
 
   const [enableNext, setEnableNext] = useState(false);
 
@@ -47,7 +47,7 @@ export const Commitment = () => {
           <SignatureBlock setNext={setEnableNext} />
         </div>
         <Button
-          onClick={() => nextStep()}
+          onClick={() => nextOnboardingStep()}
           disabled={!enableNext}
           type="submit"
           className="w-full"

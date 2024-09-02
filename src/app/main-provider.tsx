@@ -7,12 +7,27 @@ import { Toaster } from 'sonner';
 
 import { MainErrorFallback } from '@/components/errors/main';
 import { Spinner } from '@/components/ui/spinner';
+import { useUser } from '@/lib/auth';
 import { queryClient } from '@/lib/react-query';
 import { StripeProvider } from '@/lib/stripe';
 
 type AppProviderProps = {
   children: React.ReactNode;
 };
+
+function AuthLoader({ children }: { children: React.ReactNode }) {
+  const { isFetched } = useUser();
+
+  if (!isFetched) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center">
+        <Spinner size="xl" />
+      </div>
+    );
+  }
+
+  return children;
+}
 
 export const AppProvider = ({ children }: AppProviderProps) => {
   return (
@@ -29,7 +44,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
             <StripeProvider>
               {import.meta.env.DEV && <ReactQueryDevtools />}
               <Toaster richColors />
-              {children}
+              <AuthLoader>{children}</AuthLoader>
             </StripeProvider>
           </QueryClientProvider>
         </HelmetProvider>

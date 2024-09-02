@@ -140,7 +140,7 @@ const HSACheckout = () => {
 };
 
 const CreditCardCheckout = () => {
-  const { nextStep } = useStepper((s) => s);
+  const { nextOnboardingStep } = useStepper((s) => s);
   const elements = useElements();
   const stripe = useStripe();
   const servicesQuery = useServices({});
@@ -153,7 +153,6 @@ const CreditCardCheckout = () => {
     updateMicrobiomeOrderId,
     updateToxinOrderId,
     updateCancerOrderId,
-    slots,
   } = useOnboarding();
 
   const addPaymentMethodMutation = useAddPaymentMethod({
@@ -247,8 +246,6 @@ const CreditCardCheckout = () => {
 
       updateBloodOrderId(order.id);
 
-      console.log(slots);
-
       for (const as of additionalServices) {
         const { order } = await createOrderMutation.mutateAsync({
           data: {
@@ -284,7 +281,7 @@ const CreditCardCheckout = () => {
     }
 
     setProcessing(false);
-    nextStep();
+    await nextOnboardingStep();
   };
 
   return (

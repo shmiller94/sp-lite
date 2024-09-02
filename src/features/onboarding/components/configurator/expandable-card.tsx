@@ -51,7 +51,7 @@ const ExpandableCard = ({ parentRef, isExpanded, setIsExpanded }: Props) => {
   const { orderTotal, collectionMethod, bloodPackage, additionalServices } =
     useOnboarding();
 
-  const { nextStep } = useStepper((s) => s);
+  const { nextOnboardingStep } = useStepper((s) => s);
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -184,10 +184,10 @@ const ExpandableCard = ({ parentRef, isExpanded, setIsExpanded }: Props) => {
           <Button
             className="rounded-[12px] border border-zinc-500 bg-zinc-700 px-6 py-4"
             disabled={orderTotal === 0}
-            onClick={(e) => {
+            onClick={async (e) => {
               e.stopPropagation();
 
-              nextStep();
+              await nextOnboardingStep();
             }}
           >
             Checkout
