@@ -75,12 +75,34 @@ module.exports = {
           foreground: 'hsl(var(--card-foreground))',
         },
         vermillion: {
-          50: "#FFF6EA",
+          50: "#FFF6EA", /* Tag background */
           100: "#FFEDD5",
           300: "#FED7AA",
           500: "#FDBA74",
           700: "#F7861E",
-          900: "#FC5F2B"
+          900: "#FC5F2B" /* Accent text colour */
+        },
+        green: {
+          50: "#E9F9F3",
+          100: "#A7F3D0",
+          300: "#00FCA1",
+          500: "#11C182", /* Data points */
+          700: "#26936B"  /* Data graph text */
+        },
+        yellow: {
+          50: "#E8FC00",
+          100: "#F7FF9D",
+          300: "#E8FC00",
+          500: "#D7DB0E", /* Data points */
+          700: "#938700", /* Data graph text */
+        },
+        pink: {
+          50: "#FBF2F9", /* Error backgrounds */
+          100: "#FFDDF8",
+          300: "#FFBEF1",
+          500: "#FF68DE", /* Data points */
+          700: "#B90090", /* Error text, background */
+          900: "#84004B"
         }
       },
       borderRadius: {

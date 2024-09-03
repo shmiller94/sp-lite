@@ -2,6 +2,28 @@ import React, { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
+/**
+ * Heading2 Component
+ *
+ * This component renders a heading element (`<h2>`) with the following styles:
+ *
+ * - Color: #18181b (zinc-900)
+ * - Font Family: "NB International Pro"
+ * - Font Size: 32px
+ * - Font Style: normal
+ * - Font Weight: 400
+ * - Line Height: 40px (125% of font size)
+ * - Letter Spacing: -0.64px
+ *
+ * These styles align with the "Product Headings/Heading 2" design specifications.
+ *
+ * Additional classes can be passed via the `className` prop to override or extend the default styling.
+ *
+ * @param {React.HTMLAttributes<HTMLHeadingElement>} props - The props for the heading element.
+ * @param {React.Ref<HTMLHeadingElement>} ref - The ref to the heading element.
+ * @returns {JSX.Element} The styled heading element.
+ */
+
 const H2 = forwardRef<
   HTMLHeadingElement,
   React.HTMLAttributes<HTMLHeadingElement>
@@ -11,7 +33,7 @@ const H2 = forwardRef<
       {...props}
       ref={ref}
       className={cn(
-        'text-3xl tracking-[-0.64px] text-black font-normal',
+        'text-3xl tracking-[-0.64px] text-zinc-900 font-normal',
         props.className,
       )}
     >
