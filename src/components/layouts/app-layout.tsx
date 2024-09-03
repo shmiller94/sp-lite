@@ -12,19 +12,24 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
    * */
   const hideNavBar = !data || data?.onboarding?.status === 'INCOMPLETE';
 
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
 
   return (
     <>
       <main
         id="app"
-        className={cn(
-          'flex flex-col-reverse sm:flex-row  bg-white w-full ',
-          'min-h-screen', // for your use case, use `h-screen` instead of `h-[60vh]`
-        )}
+        className={cn('flex flex-col-reverse sm:flex-row  bg-white w-full', '')}
       >
         {!hideNavBar && <Sidebar open={open} setOpen={setOpen} />}
-        <div className={cn('flex-1', !hideNavBar ? 'md:ml-[88px]' : null)}>
+        {/*there probably should be better way of doing this but works for v1*/}
+        <div
+          className={cn(
+            'flex flex-col flex-1',
+            !hideNavBar
+              ? 'mb-[85px] mb:mb-0 md:ml-[88px] min-h-[calc(100dvh-85px)] md:min-h-screen overflow-x-hidden'
+              : 'min-h-screen',
+          )}
+        >
           {children}
         </div>
       </main>

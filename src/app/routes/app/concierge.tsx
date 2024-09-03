@@ -1,9 +1,10 @@
+import { ContentLayout } from '@/components/layouts';
 import { CreateMessage } from '@/features/messages/components/create-message';
 
 export const ConciergeRoute = () => {
   return (
-    <div>
+    <ContentLayout title="Concierge" bgColor="zinc">
       <CreateMessage />
-    </div>
+    </ContentLayout>
   );
 };

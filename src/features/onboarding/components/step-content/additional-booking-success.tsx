@@ -18,6 +18,10 @@ const AdditionalBookingSuccess = () => {
     return orderInfo && (orderInfo.timestamp || orderInfo.address);
   });
 
+  if (filteredServices.length === 0) {
+    nextOnboardingStep();
+  }
+
   return (
     <section id="main" className="space-y-12">
       <div className="space-y-4">

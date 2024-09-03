@@ -1,8 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { SendIcon, TimerIcon } from 'lucide-react';
+import { TimerIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 
-import { AnimatedTooltip } from '@/components/ui/animated-tooltip/animated-tooltip';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -12,13 +11,12 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
+import { Body1 } from '@/components/ui/typography';
 
 import {
   CreateMessageInput,
   createMessageInputSchema,
-  // useCreateMessage,
 } from '../api/create-message';
-import { MD_TEAM } from '../const';
 
 export const CreateMessage = (): JSX.Element => {
   // const { addNotification } = useNotifications();
@@ -47,18 +45,14 @@ export const CreateMessage = (): JSX.Element => {
   // };
 
   return (
-    <div className="container flex flex-col items-center p-0">
-      <div className="mt-[72px] hidden flex-col gap-6 md:flex">
-        <div className="flex w-full flex-row items-center justify-center">
-          <AnimatedTooltip items={MD_TEAM} disablePopover />
-        </div>
-        <h1 className="text-center text-5xl text-zinc-900">
-          Message your care team
-        </h1>
-      </div>
+    <div className="flex flex-col">
+      <Body1 className="text-zinc-500">
+        Submit a message to your care team down below or text us instead at
+        <span className="text-vermillion-900"> +1-208-984-2571</span>
+      </Body1>
 
       <Form {...form}>
-        <form className="mt-[71px] hidden w-full max-w-[900px] flex-col gap-4 rounded-[32px] bg-white p-5 md:flex">
+        <form className="mt-[71px] flex w-full flex-col gap-6">
           <FormField
             control={form.control}
             name="body"
@@ -78,17 +72,12 @@ export const CreateMessage = (): JSX.Element => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1 px-4 ">
               <TimerIcon color="#71717A" className="size-4" />
-              <h3 className="text-base text-zinc-500">{`Response Time: < 8 hrs`}</h3>
+              <Body1 className="text-zinc-500">{`Response Time: < 24 hrs on weekdays`}</Body1>
             </div>
-            <div className="flex items-center gap-5">
-              <a className="flex items-center gap-2" href="sms:+12089842571">
-                <SendIcon className="size-4" color="#71717A" />
-                <h3 className="text-zinc-500">+1 (208) 984-2571</h3>
-              </a>
-              <Button form="create-message" type="submit">
-                Send Message
-              </Button>
-            </div>
+
+            <Button form="create-message" type="submit">
+              Send Message
+            </Button>
           </div>
         </form>
       </Form>

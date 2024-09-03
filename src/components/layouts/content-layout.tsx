@@ -23,14 +23,14 @@ export const ContentLayout = ({
       <Head title={title} />
       <div
         className={cn(
-          'min-h-screen w-full',
+          'w-full flex-1',
           bgColor === 'zinc' ? 'bg-zinc-50' : null,
         )}
       >
         <div
           // not using regular container to adjust based on 88 margin left from sidebar
           className={cn(
-            'max-w-[552px] md:max-w-[680px] lg:max-w-[936px] xl:max-w-[1192px] mx-auto px-6 py-16 space-y-6 sm:p-16 md:space-y-12',
+            'container md:max-w-[680px] lg:max-w-[936px] xl:max-w-[1192px] mx-auto px-6 py-16 space-y-6 sm:p-16 md:space-y-12',
             className,
           )}
         >

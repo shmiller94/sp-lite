@@ -255,6 +255,11 @@ const OrderSummaryCase = ({
     return orderInfo && (orderInfo.timestamp || orderInfo.address);
   });
 
+  if (filteredServices.length === 0) {
+    // skip this step if no services were purchased
+    nextOnboardingStep();
+  }
+
   const updateBloodOrders = async () => {
     for (const as of filteredServices) {
       const orderInfo = getOrderInfo(as, slots);

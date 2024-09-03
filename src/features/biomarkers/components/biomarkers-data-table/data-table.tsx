@@ -101,9 +101,7 @@ export function DataTable<TData, TValue>({
       )}
 
       {currentCategory === 'Blood' ? (
-        <Table
-          className={`border-separate border-spacing-y-3${!disableToolbar ? ' mb-14' : ''}`}
-        >
+        <Table className={`border-separate border-spacing-y-3`}>
           {disableHeader ? (
             <></>
           ) : table.getRowModel().rows.length > 0 ? (
