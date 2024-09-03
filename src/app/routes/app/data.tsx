@@ -8,7 +8,7 @@ export const DataRoute = () => {
     <ContentLayout title="Data" bgColor="zinc">
       <section
         id="summary"
-        className="flex flex-col gap-y-5 pt-6 md:flex-row md:gap-x-5 md:pb-16"
+        className="flex flex-col gap-5 pt-6 lg:flex-row lg:pb-16"
       >
         <BiologicalAgeCard />
         <BiomarkersSummaryCard />

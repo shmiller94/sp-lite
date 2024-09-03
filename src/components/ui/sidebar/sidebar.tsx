@@ -139,7 +139,7 @@ export const DesktopSidebar = () => {
     <>
       <motion.div
         className={cn(
-          'h-dvh px-4 py-4 hidden fixed left-0 md:flex md:flex-col bg-white flex-shrink-0 w-[196px] md:justify-between md:gap-10 border-r border-r-zinc-200 z-[999]',
+          'max-h-screen px-4 py-4 hidden md:flex md:flex-col bg-white flex-shrink-0 w-[196px] md:justify-between md:gap-10 border-r border-r-zinc-200',
         )}
         animate={{
           width: open ? '196px' : '88px',
@@ -252,7 +252,7 @@ export const SidebarLink = ({
       className={({ isActive }) =>
         [
           isActive ? 'bg-zinc-100' : null,
-          'flex items-center gap-2 group/sidebar p-4 cursor-pointer hover:bg-zinc-100',
+          'flex flex-col md:flex-row items-center gap-2 group/sidebar p-4 cursor-pointer hover:bg-zinc-100',
           open ? 'justify-start rounded-[52px]' : 'justify-center rounded-full',
           className,
         ].join(' ')
@@ -276,7 +276,7 @@ export const SidebarLink = ({
           exit={{ opacity: 0, width: 0 }}
           transition={{ duration: 0.3 }}
           className={cn(
-            '!m-0 inline-block whitespace-pre !p-0 text-sm text-zinc-500 transition duration-150 group-hover/sidebar:translate-x-1 group-hover/sidebar:text-zinc-900',
+            '!m-0 inline-block whitespace-pre !p-0 text-[10px] md:text-sm text-zinc-500 transition duration-150 group-hover/sidebar:translate-x-1 group-hover/sidebar:text-zinc-900',
             isSelected ? 'text-zinc-900' : null,
           )}
         >

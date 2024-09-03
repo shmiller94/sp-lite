@@ -63,6 +63,13 @@ export const createRouter = (queryClient: QueryClient) =>
           // },
         },
         {
+          path: 'settings',
+          lazy: async () => {
+            const { SettingsRoute } = await import('./app/settings');
+            return { Component: SettingsRoute };
+          },
+        },
+        {
           path: 'onboarding',
           lazy: async () => {
             const { OnboardingRoute } = await import('./app/onboarding');
