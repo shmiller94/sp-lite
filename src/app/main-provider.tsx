@@ -42,7 +42,9 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         <HelmetProvider>
           <QueryClientProvider client={queryClient}>
             <StripeProvider>
-              {import.meta.env.DEV && <ReactQueryDevtools />}
+              {import.meta.env.DEV && (
+                <ReactQueryDevtools buttonPosition="top-right" />
+              )}
               <Toaster richColors />
               <AuthLoader>{children}</AuthLoader>
             </StripeProvider>

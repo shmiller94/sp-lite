@@ -184,7 +184,7 @@ export const MobileSidebar = () => {
     <>
       <div
         className={cn(
-          'flex justify-between md:hidden  items-center w-full p-4 fixed bottom-0 bg-white border-t border-t-zinc-100 z-40',
+          'flex justify-between md:hidden  items-center w-full p-4 fixed bottom-0 bg-white border-t border-t-zinc-100 z-40 h-[72px]',
         )}
       >
         {baseLinks.map((link, idx) => (
@@ -251,11 +251,13 @@ export const SidebarLink = ({
   return (
     <NavLink
       to={link.to}
+      target={link.to.includes('https') ? '_blank' : undefined}
+      rel={link.to.includes('https') ? 'noopener noreferrer' : undefined}
       end
       className={({ isActive }) =>
         [
           isActive ? 'bg-zinc-100' : null,
-          'flex flex-col md:flex-row items-center gap-2 group/sidebar p-4 cursor-pointer hover:bg-zinc-100',
+          'flex flex-col md:flex-row items-center gap-2 group/sidebar p-2 min-w-[62px] md:min-w-0 md:p-4 cursor-pointer hover:bg-zinc-100',
           open ? 'justify-start rounded-[52px]' : 'justify-center rounded-full',
           className,
         ].join(' ')
@@ -279,7 +281,7 @@ export const SidebarLink = ({
           exit={{ opacity: 0, width: 0 }}
           transition={{ duration: 0.3 }}
           className={cn(
-            '!m-0 inline-block whitespace-pre !p-0 text-[10px] md:text-sm text-zinc-500 transition duration-150 group-hover/sidebar:translate-y-1 group-hover/sidebar:md:translate-y-0 group-hover/sidebar:md:translate-x-1 group-hover/sidebar:text-zinc-900',
+            '!m-0 inline-block whitespace-pre !p-0 text-[10px] md:text-sm text-zinc-500 transition duration-150 group-hover/sidebar:translate-y-0.5 group-hover/sidebar:md:translate-y-0 group-hover/sidebar:md:translate-x-1 group-hover/sidebar:text-zinc-900',
             isSelected ? 'text-zinc-900' : null,
           )}
         >

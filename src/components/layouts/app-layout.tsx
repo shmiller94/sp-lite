@@ -26,7 +26,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           className={cn(
             'flex flex-col flex-1',
             !hideNavBar
-              ? 'mb-[85px] md:mb-0 min-h-[calc(100dvh-85px)] md:h-screen overflow-x-hidden'
+              ? 'mb-[72px] md:mb-0 min-h-[calc(100dvh-72px)] md:h-screen overflow-x-hidden'
               : 'min-h-screen',
           )}
         >
