@@ -4,7 +4,7 @@ import { api } from '@/lib/api-client';
 import { QueryConfig } from '@/lib/react-query';
 import { Order } from '@/types/api';
 
-export const getOrders = (): Promise<Order[]> => {
+export const getOrders = (): Promise<{ orders: Order[] }> => {
   return api.get('/orders');
 };
 

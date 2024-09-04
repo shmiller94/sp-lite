@@ -114,8 +114,11 @@ module.exports = {
         sm: 'calc(var(--radius) - 4px)',
       },
       fontFamily: {
-        sans: ["nbinternationalproreg", ...defaultTheme.fontFamily.sans],
+        // we use proboo because it looks closer to design versions
+        sans: ["nbinternationalproboo", ...defaultTheme.fontFamily.sans],
         mono: ["nbinternationalpromono", ...defaultTheme.fontFamily.mono],
+        // proreg is secondary font that looks bolder
+        proreg: ["nbinternationalproreg", ...defaultTheme.fontFamily.sans]
       },
       keyframes: {
         'accordion-down': {

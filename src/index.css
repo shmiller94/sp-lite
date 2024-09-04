@@ -83,6 +83,12 @@
     url('./assets/fonts/NBInternationalPro/nbinternationalpromono-webfont.ttf') format('truetype');
   }
 
+  @font-face {
+    font-family: 'nbinternationalproboo';
+    src: local("nbinternationalproboo-webfont"),
+    url('./assets/fonts/NBInternationalPro/nbinternationalproboo-webfont.ttf') format('truetype');
+  }
+
   * {
     @apply border-border;
   }

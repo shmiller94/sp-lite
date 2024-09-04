@@ -45,6 +45,13 @@ export const createRouter = (queryClient: QueryClient) =>
       ),
       children: [
         {
+          path: '',
+          lazy: async () => {
+            const { HomeRoute } = await import('./app/home');
+            return { Component: HomeRoute };
+          },
+        },
+        {
           path: 'timeline',
           lazy: async () => {
             const { TimelineRoute } = await import('./app/timeline');

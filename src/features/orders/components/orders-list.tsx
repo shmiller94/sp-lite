@@ -20,7 +20,7 @@ export const OrdersList = () => {
 
   return (
     <>
-      {ordersQuery.data.map((order: Order, i: number) => (
+      {ordersQuery.data.orders.map((order: Order, i: number) => (
         <OrderCard key={i} orderId={order.id} />
       ))}
     </>
