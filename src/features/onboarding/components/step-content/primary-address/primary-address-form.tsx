@@ -19,15 +19,16 @@ import { OnboardingInput } from '@/features/onboarding/components/onboarding-inp
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import { useUser } from '@/lib/auth';
 import {
-  AddressInput,
-  addressInputSchema,
+  FormAddressInput,
+  formAddressInputSchema,
   useUpdateProfile,
 } from '@/shared/api/update-profile';
+import { Address } from '@/types/api';
 
 function FullPrimaryAddressForm({
   googleAddres,
 }: {
-  googleAddres: AddressInput;
+  googleAddres: FormAddressInput;
 }) {
   const { nextOnboardingStep } = useStepper((s) => s);
   const {
@@ -39,30 +40,35 @@ function FullPrimaryAddressForm({
   const user = useUser();
   const primaryAddress = user.data?.primaryAddress?.address;
 
-  const selectedAddress = primaryAddress ?? googleAddres;
-
   const getServiceabilityMutation = useGetServiceability();
   const updateProfileMutation = useUpdateProfile();
 
-  const form = useForm<AddressInput>({
-    resolver: zodResolver(addressInputSchema),
+  const form = useForm<FormAddressInput>({
+    resolver: zodResolver(formAddressInputSchema),
     defaultValues: {
-      line: selectedAddress?.line ?? [],
-      postalCode: selectedAddress?.postalCode ?? '',
-      city: selectedAddress?.city ?? '',
-      state: selectedAddress?.state ?? '',
+      line1: googleAddres.line1 ?? primaryAddress?.line.join(' ') ?? '',
+      postalCode: googleAddres.postalCode ?? primaryAddress?.postalCode ?? '',
+      city: googleAddres.city ?? primaryAddress?.city ?? '',
+      state: googleAddres.state ?? primaryAddress?.state ?? '',
     },
   });
 
-  const onSubmit = async (address: AddressInput) => {
+  const onSubmit = async (data: FormAddressInput) => {
     const { serviceable } = await getServiceabilityMutation.mutateAsync({
       data: {
-        zipCode: address.postalCode,
+        zipCode: data.postalCode,
         collectionMethod: 'IN_LAB',
       },
     });
 
     if (serviceable) {
+      const address: Address = {
+        line: [data.line1],
+        city: data.city,
+        state: data.state,
+        postalCode: data.postalCode,
+      };
+
       const user = await updateProfileMutation.mutateAsync({
         data: { activeAddress: { address } },
       });
@@ -85,22 +91,22 @@ function FullPrimaryAddressForm({
       >
         <FormField
           control={form.control}
-          name="line"
-          render={({ ...rest }) => (
+          name="line1"
+          render={({ field }) => (
             <FormItem className="space-y-0">
-              <FormLabel className="text-white">Street address</FormLabel>
+              <FormLabel className="text-white">Street Address</FormLabel>
               <FormControl>
                 <OnboardingInput
                   autoComplete="off"
-                  placeholder="Street address"
-                  onChange={(e) => form.setValue('line', [e.target.value])}
-                  {...rest}
+                  placeholder="Line 1"
+                  {...field}
                 />
               </FormControl>
               <FormMessage className="pt-2" />
             </FormItem>
           )}
         />
+
         <div className="grid grid-cols-1 gap-x-4 gap-y-8 md:grid-cols-2">
           <FormField
             control={form.control}
@@ -147,6 +153,7 @@ function FullPrimaryAddressForm({
                 <OnboardingInput
                   autoComplete="off"
                   placeholder="ZIP Code"
+                  maxLength={5}
                   {...field}
                 />
               </FormControl>
@@ -168,7 +175,7 @@ function FullPrimaryAddressForm({
 
 export function PrimaryAddressForm() {
   const [googleAddress, setGoogleAddress] = useState<
-    AddressInput | undefined
+    FormAddressInput | undefined
   >();
 
   if (googleAddress) {
@@ -177,7 +184,7 @@ export function PrimaryAddressForm() {
 
   return (
     <AddressAutocomplete
-      emptyMessage="No results."
+      emptyMessage="Start searching..."
       placeholder="Address"
       onSubmit={(address) => {
         setGoogleAddress(address);

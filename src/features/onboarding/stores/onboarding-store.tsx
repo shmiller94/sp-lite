@@ -48,8 +48,7 @@ type OnboardingStore = {
 
   /* Used to keep track of all additional services user orders in configurator */
   additionalServices: HealthcareService[];
-  addAdditionalService: (additionalService: HealthcareService) => void;
-  removeAdditionalService: (id: string) => void;
+  updateAdditionalService: (service: HealthcareService) => void;
 
   /* Used to keep track of all slots/addresses user selected for services */
   slots: ScheduledSlots;
@@ -63,11 +62,6 @@ type OnboardingStore = {
   updateToxinOrderId: (id: string | null) => void;
   updateBloodTimezone: (timezone: string) => void;
   updateCancerTimezone: (timezone: string) => void;
-
-  /* Used to keep track of current total order accross steps */
-  orderTotal: number;
-  increaseOrderTotal: (amount: number) => void;
-  decreaseOrderTotal: (amount: number) => void;
 };
 
 export const useOnboarding = create<OnboardingStore>()(
@@ -109,16 +103,6 @@ export const useOnboarding = create<OnboardingStore>()(
           address: null,
         },
       },
-      addAdditionalService: (additionalService) =>
-        set((state) => ({
-          additionalServices: [...state.additionalServices, additionalService],
-        })),
-      removeAdditionalService: (id) =>
-        set((state) => ({
-          additionalServices: state.additionalServices.filter(
-            (service) => service.id !== id,
-          ),
-        })),
       updateBloodSlot: (slot) =>
         set((state) => ({
           slots: {
@@ -222,15 +206,20 @@ export const useOnboarding = create<OnboardingStore>()(
             },
           },
         })),
-      orderTotal: 0,
-      increaseOrderTotal: (amount: number) =>
-        set((state) => ({
-          orderTotal: state.orderTotal + amount,
-        })),
-      decreaseOrderTotal: (amount: number) =>
-        set((state) => ({
-          orderTotal: state.orderTotal - amount,
-        })),
+      updateAdditionalService: (additionalService: HealthcareService) =>
+        set((state) => {
+          const exists = state.additionalServices.some(
+            (service) => service.id === additionalService.id,
+          );
+
+          return {
+            additionalServices: exists
+              ? state.additionalServices.filter(
+                  (service) => service.id !== additionalService.id,
+                )
+              : [...state.additionalServices, additionalService],
+          };
+        }),
     }),
     { name: 'onboarding' },
   ),

@@ -4,8 +4,7 @@ import {
   GRAIL_GALLERI_MULTI_CANCER_TEST,
   SUPERPOWER_BLOOD_PANEL,
 } from '@/const';
-import { AddressInput } from '@/shared/api';
-import { CollectionMethodType, Slot } from '@/types/api';
+import { Address, CollectionMethodType, Slot } from '@/types/api';
 
 export const getCalendarEvent = ({
   slot,
@@ -14,7 +13,7 @@ export const getCalendarEvent = ({
   service,
 }: {
   slot: Slot;
-  address: AddressInput;
+  address: Address;
   collectionMethod: CollectionMethodType;
   service:
     | typeof SUPERPOWER_BLOOD_PANEL

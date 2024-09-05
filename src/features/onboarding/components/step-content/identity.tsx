@@ -12,31 +12,31 @@ import { useUser } from '@/lib/auth';
 
 const loadingStates = [
   {
-    text: 'Making sure everything checks out...',
+    text: 'Making sure everything checks out',
   },
   {
-    text: 'Verifying your info, hang tight...',
+    text: 'Verifying your info, hang tight',
   },
   {
-    text: 'Just a moment, ensuring security...',
+    text: 'Just a moment, ensuring security',
   },
   {
-    text: 'Reviewing your details...',
+    text: 'Reviewing your details',
   },
   {
-    text: 'Double-checking everything...',
+    text: 'Double-checking everything',
   },
   {
-    text: 'Securing your connection...',
+    text: 'Securing your connection',
   },
   {
-    text: 'Cross-referencing your data...',
+    text: 'Cross-referencing your data',
   },
   {
-    text: 'Checking all the boxes...',
+    text: 'Checking all the boxes',
   },
   {
-    text: 'Confirming your identity...',
+    text: 'Confirming your identity',
   },
 ];
 
@@ -80,7 +80,7 @@ export const Identity = () => {
 
   /* Case when user closed the window but we still processing on background and he comes back */
   useEffect(() => {
-    if (user?.userIdentity) {
+    if (user?.userIdentity?.status === 'VERIFIED') {
       nextOnboardingStep();
     }
   }, [user?.userIdentity]);

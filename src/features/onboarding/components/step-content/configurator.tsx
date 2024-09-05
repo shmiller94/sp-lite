@@ -8,6 +8,7 @@ import { SectionMembership } from '@/features/onboarding/components/configurator
 import { SectionPackages } from '@/features/onboarding/components/configurator/packages';
 import { SectionServices } from '@/features/onboarding/components/configurator/services';
 import { ConfiguratorLayout } from '@/features/onboarding/components/layouts';
+import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 import { cn } from '@/lib/utils';
 
 export const Configurator = () => {
@@ -65,11 +66,14 @@ export const Configurator = () => {
     offset: ['start start', 'end start'],
   });
   const cardLength = content.length;
+  const { height } = useWindowDimensions();
 
   /* NB: if amount of section increases u need to adjust cardsBreakpoints (or come up with smarter way :=D */
   useMotionValueEvent(scrollYProgress, 'change', (latest) => {
+    const divideBy = height > 1100 ? 2 : 1.5;
+
     const cardsBreakpoints = content.map(
-      (_, index) => index / cardLength / 1.5,
+      (_, index) => index / cardLength / divideBy,
     );
 
     const closestBreakpointIndex = cardsBreakpoints.reduce(

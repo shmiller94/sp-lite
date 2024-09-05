@@ -17,7 +17,7 @@ import { Body2 } from '@/components/ui/typography';
 import { useGetServiceability } from '@/features/onboarding/api/get-serviceability';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import { cn } from '@/lib/utils';
-import { AddressInput, addressInputSchema } from '@/shared/api/update-profile';
+import { FormAddressInput, formAddressInputSchema } from '@/shared/api';
 import { CollectionMethodType } from '@/types/api';
 
 // TODO: make this component live when there is support for this on backend
@@ -29,17 +29,17 @@ export function EditAddressForm({
   const getServiceabilityMutation = useGetServiceability();
   const { isBlocked, updateBlocked } = useOnboarding();
 
-  const form = useForm<AddressInput>({
-    resolver: zodResolver(addressInputSchema),
+  const form = useForm<FormAddressInput>({
+    resolver: zodResolver(formAddressInputSchema),
     defaultValues: {
-      line: [],
+      line1: '',
       postalCode: '',
       city: '',
       state: '',
     },
   });
 
-  const onSubmit = async (address: AddressInput) => {
+  const onSubmit = async (address: FormAddressInput) => {
     const data = {
       zipCode: address.postalCode,
       collectionMethod: 'IN_LAB' as CollectionMethodType,
@@ -62,7 +62,7 @@ export function EditAddressForm({
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-8">
         <FormField
           control={form.control}
-          name="line"
+          name="line1"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-sm font-normal text-zinc-500">

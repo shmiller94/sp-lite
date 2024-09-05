@@ -22,53 +22,58 @@ import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 import {
-  AddressInput,
-  addressInputSchema,
+  FormAddressInput,
+  formAddressInputSchema,
   useUpdateProfile,
 } from '@/shared/api/update-profile';
+import { Address } from '@/types/api';
 
 function FullAddressForm({
   setIsAdding,
   googleAddres,
 }: {
   setIsAdding: () => void;
-  googleAddres: AddressInput;
+  googleAddres: FormAddressInput;
 }) {
   const { updateBlocked, isBlocked, collectionMethod } = useOnboarding();
-  const [asDefault, setAsDefault] = useState<boolean>(false);
+  // const [asDefault, setAsDefault] = useState<boolean>(false);
 
   const user = useUser();
   const primaryAddress = user.data?.primaryAddress?.address;
   const getServiceabilityMutation = useGetServiceability();
 
-  const selectedAddress = primaryAddress ?? googleAddres;
-
-  const form = useForm<AddressInput>({
-    resolver: zodResolver(addressInputSchema),
+  const form = useForm<FormAddressInput>({
+    resolver: zodResolver(formAddressInputSchema),
     defaultValues: {
-      line: selectedAddress?.line ?? [],
-      postalCode: selectedAddress?.postalCode ?? '',
-      city: selectedAddress?.city ?? '',
-      state: selectedAddress?.state ?? '',
+      line1: primaryAddress?.line.join(' ') ?? googleAddres.line1 ?? '',
+      postalCode: primaryAddress?.postalCode ?? googleAddres.postalCode ?? '',
+      city: primaryAddress?.city ?? googleAddres.city ?? '',
+      state: primaryAddress?.state ?? googleAddres.state ?? '',
     },
   });
 
   const updateProfileMutation = useUpdateProfile();
 
-  const onSubmit = async (address: AddressInput) => {
+  const onSubmit = async (data: FormAddressInput) => {
     const { serviceable } = await getServiceabilityMutation.mutateAsync({
       data: {
-        zipCode: address.postalCode,
+        zipCode: data.postalCode,
         collectionMethod: collectionMethod ?? 'IN_LAB',
       },
     });
 
     if (serviceable) {
+      const address: Address = {
+        line: [data.line1],
+        city: data.city,
+        state: data.state,
+        postalCode: data.postalCode,
+      };
+
       await updateProfileMutation.mutateAsync({
-        data: asDefault
-          ? { primaryAddress: { address } }
-          : { activeAddress: { address } },
+        data: { activeAddress: { address } },
       });
+
       updateBlocked(false);
       setIsAdding();
     } else {
@@ -81,17 +86,12 @@ function FullAddressForm({
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-8">
         <FormField
           control={form.control}
-          name="line"
+          name="line1"
           render={({ ...rest }) => (
             <FormItem>
               <FormLabel className="text-zinc-600">Street Address</FormLabel>
               <FormControl>
-                <Input
-                  autoComplete="off"
-                  placeholder="Address"
-                  onChange={(e) => form.setValue('line', [e.target.value])}
-                  {...rest}
-                />
+                <Input autoComplete="off" placeholder="Address" {...rest} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -159,7 +159,7 @@ function FullAddressForm({
           <div className="flex cursor-pointer items-center gap-1.5">
             <Checkbox
               id="default"
-              onChange={() => setAsDefault((prev) => !prev)}
+              // onChange={() => setAsDefault((prev) => !prev)}
             />
             <Label
               htmlFor="default"
@@ -188,7 +188,7 @@ function FullAddressForm({
 
 export function AddAddressForm({ setIsAdding }: { setIsAdding: () => void }) {
   const [googleAddress, setGoogleAddress] = useState<
-    AddressInput | undefined
+    FormAddressInput | undefined
   >();
 
   if (googleAddress) {
@@ -200,7 +200,7 @@ export function AddAddressForm({ setIsAdding }: { setIsAdding: () => void }) {
   return (
     <div className="space-y-8">
       <AddressAutocomplete
-        emptyMessage="No results."
+        emptyMessage="Start searching..."
         placeholder="Address"
         onSubmit={(address) => {
           setGoogleAddress(address);

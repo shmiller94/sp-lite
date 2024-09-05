@@ -22,13 +22,7 @@ type AdditionalServiceCardProps = {
 };
 
 const AdditionalServiceCard = ({ service }: AdditionalServiceCardProps) => {
-  const {
-    addAdditionalService,
-    removeAdditionalService,
-    additionalServices,
-    increaseOrderTotal,
-    decreaseOrderTotal,
-  } = useOnboarding();
+  const { additionalServices, updateAdditionalService } = useOnboarding();
   const checked = additionalServices.find((as) => as.id === service.id);
   const serviceQuery = useService({
     serviceId: service.id,
@@ -71,15 +65,7 @@ const AdditionalServiceCard = ({ service }: AdditionalServiceCardProps) => {
 
           <Checkbox
             checked={!!checked}
-            onCheckedChange={(checked) => {
-              if (checked) {
-                increaseOrderTotal(service.price);
-                return addAdditionalService(service);
-              }
-
-              decreaseOrderTotal(service.price);
-              return removeAdditionalService(service.id);
-            }}
+            onCheckedChange={() => updateAdditionalService(service)}
             className="size-5 border-zinc-200"
           />
         </div>

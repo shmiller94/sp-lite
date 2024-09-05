@@ -1,23 +1,8 @@
-'use client';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 
+import { Spinner } from '@/components/ui/spinner';
 import { cn } from '@/lib/utils';
-
-const CheckIcon = ({ className }: { className?: string }) => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={1.5}
-      stroke="currentColor"
-      className={cn('w-6 h-6 ', className)}
-    >
-      <path d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-    </svg>
-  );
-};
 
 const CheckFilled = ({ className }: { className?: string }) => {
   return (
@@ -63,14 +48,13 @@ const LoaderCore = ({
           >
             <div>
               {index > value && (
-                <CheckIcon className="text-black dark:text-white" />
+                <Spinner className="text-zinc-900 dark:text-white" />
               )}
               {index <= value && (
                 <CheckFilled
                   className={cn(
-                    'text-black dark:text-white',
-                    value === index &&
-                      'text-black dark:text-lime-500 opacity-100',
+                    'text-vermillion-900',
+                    value === index && 'text-vermillion-900 opacity-100',
                   )}
                 />
               )}
@@ -133,13 +117,13 @@ export const MultiStepLoader = ({
           exit={{
             opacity: 0,
           }}
-          className="fixed inset-0 z-[100] flex size-full items-center justify-center backdrop-blur-2xl"
+          className="fixed inset-0 z-[100] flex size-full items-center justify-center bg-white/80 backdrop-blur-2xl"
         >
           <div className="relative  h-96">
             <LoaderCore value={currentState} loadingStates={loadingStates} />
           </div>
 
-          <div className="absolute inset-x-0 bottom-0 z-20 h-full bg-white bg-gradient-to-t [mask-image:radial-gradient(900px_at_center,transparent_30%,white)] dark:bg-black" />
+          <div className="absolute inset-x-0 bottom-0 z-20 h-full bg-white bg-gradient-to-t [mask-image:radial-gradient(900px_at_center,transparent_50%,white)] dark:bg-black" />
         </motion.div>
       )}
     </AnimatePresence>

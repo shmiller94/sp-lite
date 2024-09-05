@@ -9,7 +9,7 @@ import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import { getOrderInfo } from '@/features/onboarding/utils/get-order-info';
 
 const AdditionalBookingSuccess = () => {
-  const { nextOnboardingStep } = useStepper((s) => s);
+  const nextOnboardingStep = useStepper((s) => s.nextOnboardingStep);
   const { additionalServices, slots } = useOnboarding();
 
   // filter out all services that user skipped
@@ -17,10 +17,6 @@ const AdditionalBookingSuccess = () => {
     const orderInfo = getOrderInfo(as, slots);
     return orderInfo && (orderInfo.timestamp || orderInfo.address);
   });
-
-  if (filteredServices.length === 0) {
-    nextOnboardingStep();
-  }
 
   return (
     <section id="main" className="space-y-12">

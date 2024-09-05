@@ -12,9 +12,8 @@ import {
   GRAIL_GALLERI_MULTI_CANCER_TEST,
   SUPERPOWER_BLOOD_PANEL,
 } from '@/const';
-import { AddressInput } from '@/shared/api';
 import { getCalendarEvent } from '@/shared/components/add-to-calendar-button/utils/get-calendar-event';
-import { CollectionMethodType, Slot } from '@/types/api';
+import { Address, CollectionMethodType, Slot } from '@/types/api';
 
 export function AddToCalendar({
   slot,
@@ -23,7 +22,7 @@ export function AddToCalendar({
   service,
 }: {
   slot: Slot;
-  address: AddressInput;
+  address: Address;
   collectionMethod: CollectionMethodType;
   service:
     | typeof SUPERPOWER_BLOOD_PANEL

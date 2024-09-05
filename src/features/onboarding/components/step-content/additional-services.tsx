@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Scheduler } from '@/components/ui/scheduler';
@@ -245,8 +245,9 @@ const OrderSummaryCase = ({
 }: {
   setIndex: Dispatch<SetStateAction<number>>;
 }) => {
+  // TODO: fix multiple services booking, atm if u skip u still get here
   const updateOrderMutation = useUpdateOrder({});
-  const { nextOnboardingStep } = useStepper((s) => s);
+  const { jump, nextOnboardingStep } = useStepper((s) => s);
   const { additionalServices, slots } = useOnboarding();
 
   // filter out all services that user skipped
@@ -255,10 +256,12 @@ const OrderSummaryCase = ({
     return orderInfo && (orderInfo.timestamp || orderInfo.address);
   });
 
-  if (filteredServices.length === 0) {
-    // skip this step if no services were purchased
-    nextOnboardingStep();
-  }
+  useEffect(() => {
+    if (filteredServices.length === 0) {
+      // skip this step if no services were purchased
+      jump('digital-twin');
+    }
+  }, [filteredServices.length, jump]); // Add dependencies to avoid unnecessary re-renders
 
   const updateBloodOrders = async () => {
     for (const as of filteredServices) {
@@ -316,14 +319,16 @@ const OrderSummaryCase = ({
 
 export const AdditionalServices = () => {
   const { additionalServices } = useOnboarding();
-  const { nextOnboardingStep } = useStepper((s) => s);
+  const { jump } = useStepper((s) => s);
 
   const [curIndex, setCurIndex] = useState(0);
 
-  if (additionalServices.length === 0) {
-    // skip this step if no services were purchased
-    nextOnboardingStep();
-  }
+  useEffect(() => {
+    if (additionalServices.length === 0) {
+      // skip this step if no services were purchased
+      jump('digital-twin');
+    }
+  }, [additionalServices.length, jump]); // Add dependencies
 
   const renderStep = (service: HealthcareService) => {
     switch (service.name) {

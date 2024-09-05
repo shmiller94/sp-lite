@@ -22,48 +22,61 @@ import {
 } from '@/const';
 import { ImageContentLayout } from '@/features/onboarding/components/layouts';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
+import { getTotalPrice } from '@/features/onboarding/utils/get-total-price';
 import { useCreateOrder } from '@/features/orders/api/create-order';
 import { useServices } from '@/features/services/api/get-services';
 import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 import { useAddPaymentMethod } from '@/shared/api/add-payment-method';
 import { useCreateSubscription } from '@/shared/api/create-subscription';
+import { useMembershipPrice } from '@/shared/api/get-subscription-price';
 import { Address } from '@/types/api';
 import { formatMoney } from '@/utils/format-money';
 
 const loadingStates = [
   {
-    text: 'Processing your payment method...',
+    text: 'Processing your payment method',
   },
   {
-    text: 'Securing your membership...',
+    text: 'Securing your membership',
   },
   {
-    text: 'Creating your first-ever superpower order...',
+    text: 'Creating your first-ever superpower order',
   },
   {
-    text: 'Adding your selected services...',
+    text: 'Adding your selected services',
   },
   {
-    text: 'Finalizing your order...',
+    text: 'Finalizing your order',
   },
   {
-    text: 'Reviewing your choices...',
+    text: 'Reviewing your choices',
   },
   {
-    text: 'Almost there, wrapping up...',
+    text: 'Almost there, wrapping up',
   },
   {
-    text: 'Double-checking everything for you...',
+    text: 'Double-checking everything for you',
   },
   {
-    text: 'Making sure everything’s perfect...',
+    text: 'Making sure everything’s perfect',
   },
 ];
 
 export const ConfirmOrder = () => {
-  const { orderTotal } = useOnboarding();
-  // link stripe to this
+  const { additionalServices, collectionMethod } = useOnboarding();
+
+  const code = localStorage.getItem('superpower-code');
+  const membershipQuery = useMembershipPrice({
+    code: code ?? undefined,
+    queryConfig: {},
+  });
+
+  const total = getTotalPrice(
+    collectionMethod ?? 'IN_LAB',
+    additionalServices,
+    membershipQuery.data?.total,
+  );
 
   const { prevStep } = useStepper((s) => s);
   const [method, setMethod] = React.useState<string>('credit');
@@ -73,10 +86,10 @@ export const ConfirmOrder = () => {
       <div className="flex w-full items-center  justify-between rounded-[16px] bg-[#F7F7F7] px-6 py-5">
         <div>
           <Body1 className="text-zinc-900">
-            {formatMoney(orderTotal / 12)} / month
+            {formatMoney(total / 12)} / month
           </Body1>
           <Body2 className="text-zinc-900 opacity-50">
-            {formatMoney(orderTotal)} / year, billed annually
+            {formatMoney(total)} / year, billed annually
           </Body2>
         </div>
         <Button

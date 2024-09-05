@@ -1,5 +1,4 @@
 import { Dot } from 'lucide-react';
-import React, { useEffect } from 'react';
 
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -39,12 +38,6 @@ const MembershipCard = ({ membership }: { membership: Membership }) => {
     code: code ?? undefined,
     queryConfig: {},
   });
-
-  const { increaseOrderTotal } = useOnboarding();
-
-  useEffect(() => {
-    increaseOrderTotal(membershipQuery.data?.total ?? 0);
-  }, [membershipQuery.data]);
 
   return (
     <div className="flex flex-row items-center rounded-xl border border-zinc-200 bg-zinc-50 p-4">

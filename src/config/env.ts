@@ -12,6 +12,7 @@ const createEnv = () => {
     APP_URL: z.string().optional().default('http://localhost:3000'),
     APP_MOCK_API_PORT: z.string().optional().default('8081'),
     VITAL_ENV: z.string(),
+    GOOGLE_API_KEY: z.string(),
   });
 
   const envVars = Object.entries(import.meta.env).reduce<

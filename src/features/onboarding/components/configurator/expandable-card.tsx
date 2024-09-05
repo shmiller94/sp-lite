@@ -14,9 +14,11 @@ import { useStepper } from '@/components/ui/stepper';
 import { Body1, Body2, Body3, H3, H4 } from '@/components/ui/typography';
 import { GRAIL_GALLERI_MULTI_CANCER_TEST } from '@/const';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
+import { getTotalPrice } from '@/features/onboarding/utils/get-total-price';
 import { useService } from '@/features/services/api/get-service';
 import { useOutsideClick } from '@/hooks/use-outside-click';
 import { cn } from '@/lib/utils';
+import { useMembershipPrice } from '@/shared/api/get-subscription-price';
 import { HealthcareService } from '@/types/api';
 import { formatMoney } from '@/utils/format-money';
 
@@ -48,8 +50,20 @@ const ServiceLine = ({ service }: { service: HealthcareService }) => {
 
 const ExpandableCard = ({ parentRef, isExpanded, setIsExpanded }: Props) => {
   const ref = useRef<HTMLDivElement>(null);
-  const { orderTotal, collectionMethod, bloodPackage, additionalServices } =
-    useOnboarding();
+  const code = localStorage.getItem('superpower-code');
+
+  const membershipQuery = useMembershipPrice({
+    code: code ?? undefined,
+    queryConfig: {},
+  });
+
+  const { collectionMethod, additionalServices } = useOnboarding();
+
+  const total = getTotalPrice(
+    collectionMethod ?? 'IN_LAB',
+    additionalServices,
+    membershipQuery.data?.total,
+  );
 
   const { nextOnboardingStep } = useStepper((s) => s);
 
@@ -122,20 +136,27 @@ const ExpandableCard = ({ parentRef, isExpanded, setIsExpanded }: Props) => {
               </div>
               <div className="flex w-full items-center justify-between">
                 <Body1 className="text-white">Superpower Membership</Body1>
-                <Body1 className="text-zinc-400">{formatMoney(49900)}</Body1>
+                <Body1 className="text-zinc-400">
+                  {membershipQuery.isLoading ? (
+                    <Skeleton className="h-5 w-10" />
+                  ) : (
+                    formatMoney(membershipQuery.data?.total ?? 0)
+                  )}
+                </Body1>
               </div>
               {collectionMethod === 'AT_HOME' ? (
                 <div className="flex w-full items-center justify-between">
                   <Body1 className="text-white">At-home collection</Body1>
+                  {/*we probably SHOULD create endpoint to expose at-home price to make this dynamic*/}
                   <Body1 className="text-zinc-400">{formatMoney(7900)}</Body1>
                 </div>
               ) : null}
-              {bloodPackage === 'ADVANCED' ? (
-                <div className="flex w-full items-center justify-between">
-                  <Body1 className="text-white">Advanced blood package</Body1>
-                  <Body1 className="text-zinc-400">{formatMoney(19900)}</Body1>
-                </div>
-              ) : null}
+              {/*{bloodPackage === 'ADVANCED' ? (*/}
+              {/*  <div className="flex w-full items-center justify-between">*/}
+              {/*    <Body1 className="text-white">Advanced blood package</Body1>*/}
+              {/*    <Body1 className="text-zinc-400">{get advanced panel service price here}</Body1>*/}
+              {/*  </div>*/}
+              {/*) : null}*/}
               {additionalServices.map((as, index) => (
                 <ServiceLine service={as} key={index} />
               ))}
@@ -144,11 +165,9 @@ const ExpandableCard = ({ parentRef, isExpanded, setIsExpanded }: Props) => {
               <div className="flex w-full justify-between">
                 <Body1 className="text-white">Annual Total</Body1>
                 <div className="flex flex-col items-end">
-                  <Body1 className="text-white">
-                    {formatMoney(orderTotal)}
-                  </Body1>
+                  <Body1 className="text-white">{formatMoney(total)}</Body1>
                   <Body2 className="text-zinc-400">
-                    {formatMoney(orderTotal)}/mo
+                    {formatMoney(total)}/mo
                   </Body2>
                 </div>
               </div>
@@ -164,9 +183,7 @@ const ExpandableCard = ({ parentRef, isExpanded, setIsExpanded }: Props) => {
           <div>
             <div className="flex gap-2">
               <H4 className="text-white">My plan</H4>
-              <H4 className="text-zinc-400">
-                {formatMoney(orderTotal / 12)}/mo
-              </H4>
+              <H4 className="text-zinc-400">{formatMoney(total / 12)}/mo</H4>
             </div>
             <button
               type="button"
@@ -183,7 +200,7 @@ const ExpandableCard = ({ parentRef, isExpanded, setIsExpanded }: Props) => {
           </div>
           <Button
             className="rounded-[12px] border border-zinc-500 bg-zinc-700 px-6 py-4"
-            disabled={orderTotal === 0}
+            disabled={total === 0}
             onClick={async (e) => {
               e.stopPropagation();
 

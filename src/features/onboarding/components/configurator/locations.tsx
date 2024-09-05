@@ -73,12 +73,7 @@ const LocationTestCard = ({
 };
 
 const SectionLocations = () => {
-  const {
-    collectionMethod,
-    updateCollectionMethod,
-    increaseOrderTotal,
-    decreaseOrderTotal,
-  } = useOnboarding();
+  const { collectionMethod, updateCollectionMethod } = useOnboarding();
   return (
     <section id="location" className="w-full max-w-[500px] space-y-6">
       <div className="space-y-2">
@@ -87,9 +82,6 @@ const SectionLocations = () => {
       <div className="space-y-2">
         <RadioGroup
           onValueChange={(value: CollectionMethodType) => {
-            value === 'AT_HOME'
-              ? increaseOrderTotal(9900)
-              : decreaseOrderTotal(9900);
             updateCollectionMethod(value);
           }}
           defaultValue={collectionMethod ?? 'IN_LAB'}

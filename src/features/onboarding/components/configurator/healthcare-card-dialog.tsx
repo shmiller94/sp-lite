@@ -11,7 +11,7 @@ export const HealthcareCardDialog = ({
 }: {
   healthcareService: HealthcareService;
 }) => {
-  const { addAdditionalService, increaseOrderTotal } = useOnboarding();
+  const { updateAdditionalService } = useOnboarding();
 
   return (
     <Dialog>
@@ -27,12 +27,7 @@ export const HealthcareCardDialog = ({
 
       <HealthcareServiceDialogContent healthcareService={healthcareService}>
         <DialogClose>
-          <Button
-            onClick={() => {
-              increaseOrderTotal(healthcareService.price);
-              addAdditionalService(healthcareService);
-            }}
-          >
+          <Button onClick={() => updateAdditionalService(healthcareService)}>
             Add to cart
           </Button>
         </DialogClose>

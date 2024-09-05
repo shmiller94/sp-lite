@@ -25,7 +25,7 @@ export const TypeformIntegration = () => {
     <section id="main">
       <Widget
         id="VVOeB9wb"
-        className="h-[80dvh] w-[80dvw]"
+        className="h-[80dvh] w-[80dvw] pt-24"
         opacity={0}
         enableSandbox
         fullScreen

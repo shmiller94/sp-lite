@@ -132,22 +132,22 @@ const FaqSection = ({ faqRef }: { faqRef: RefObject<HTMLDivElement> }) => {
               </div>
               <div>
                 <Tabs defaultValue="how">
-                  <TabsList className="grid w-full grid-cols-3 rounded-[64px] border border-zinc-200 bg-white text-sm text-zinc-900">
+                  <TabsList className="grid h-auto w-full grid-cols-3 rounded-[64px] border border-zinc-200 bg-white p-1 text-sm text-zinc-900">
                     <TabsTrigger
                       value="how"
-                      className="rounded-[80px] text-zinc-900 data-[state=active]:bg-zinc-900 data-[state=active]:text-white"
+                      className="max-w-[140px] rounded-[80px]  !border-b-0 px-2 py-1.5 text-sm text-zinc-900 data-[state=active]:!border-b-0 data-[state=active]:bg-zinc-900 data-[state=active]:text-white"
                     >
                       How it works
                     </TabsTrigger>
                     <TabsTrigger
                       value="membership"
-                      className="rounded-[80px] data-[state=active]:bg-zinc-900 data-[state=active]:text-white"
+                      className="max-w-[140px] rounded-[80px]  !border-b-0 px-2 py-1.5 text-sm text-zinc-900 data-[state=active]:!border-b-0 data-[state=active]:bg-zinc-900 data-[state=active]:text-white"
                     >
                       Membership
                     </TabsTrigger>
                     <TabsTrigger
                       value="security"
-                      className="rounded-[80px]  data-[state=active]:bg-zinc-900 data-[state=active]:text-white"
+                      className="max-w-[140px] rounded-[80px]  !border-b-0 px-2 py-1.5 text-sm text-zinc-900 data-[state=active]:!border-b-0 data-[state=active]:bg-zinc-900 data-[state=active]:text-white"
                     >
                       Security
                     </TabsTrigger>

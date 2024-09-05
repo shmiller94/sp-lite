@@ -18,6 +18,7 @@ export interface StepperStore extends StepperProps {
   nextStep: () => void;
   prevStep: () => void;
   resetSteps: () => void;
+  jump: (id: string) => void;
 
   /* We are exposing nextOnboardingStep only because server only allows to update if new value is greater than old one */
   nextOnboardingStep: () => Promise<void>;
@@ -60,6 +61,17 @@ export const stepperStoreCreator = (initProps?: Partial<StepperStore>) => {
         updatingStep: false,
         activeStep: state.activeStep + 1,
       }));
+    },
+    jump: (id) => {
+      const steps = get().steps;
+
+      const stepIndex = steps.findIndex((step) => step.id === id);
+
+      if (stepIndex === -1) {
+        throw new Error('Step ID was not found.');
+      }
+
+      set({ activeStep: stepIndex });
     },
     resetSteps: () => set(() => ({ activeStep: 0 })),
   }));

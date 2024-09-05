@@ -24,26 +24,34 @@ import { Spinner } from '@/components/ui/spinner';
 import { US_STATE_CODES } from '@/const/us-state-codes';
 import { useUser } from '@/lib/auth';
 import {
-  AddressInput,
-  addressInputSchema,
+  formAddressInputSchema,
+  FormAddressInput,
   useUpdateProfile,
 } from '@/shared/api';
+import { Address } from '@/types/api';
 
 export function AddAddressForm(): JSX.Element {
   const { data: user } = useUser();
   const { mutateAsync, isPending, isSuccess } = useUpdateProfile();
 
-  const form = useForm<AddressInput>({
-    resolver: zodResolver(addressInputSchema),
+  const form = useForm<FormAddressInput>({
+    resolver: zodResolver(formAddressInputSchema),
     defaultValues: {
-      line: [],
+      line1: '',
       postalCode: '',
       city: '',
       state: '',
     },
   });
 
-  async function onSubmit(address: AddressInput): Promise<void> {
+  async function onSubmit(data: FormAddressInput): Promise<void> {
+    const address: Address = {
+      line: [data.line1],
+      city: data.city,
+      state: data.state,
+      postalCode: data.postalCode,
+    };
+
     await mutateAsync({
       data: { activeAddress: { address } },
     });
@@ -67,17 +75,12 @@ export function AddAddressForm(): JSX.Element {
 
           <FormField
             control={form.control}
-            name="line"
-            render={({ ...rest }) => (
+            name="line1"
+            render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-zinc-600">Street Address</FormLabel>
                 <FormControl>
-                  <Input
-                    autoComplete="off"
-                    placeholder="Address"
-                    onChange={(e) => form.setValue('line', [e.target.value])}
-                    {...rest}
-                  />
+                  <Input autoComplete="off" placeholder="Address" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

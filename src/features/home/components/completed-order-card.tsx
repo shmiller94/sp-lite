@@ -36,7 +36,7 @@ export function CompletedOrderCard(order: Order): JSX.Element {
         <Button
           variant="outline"
           className="w-full"
-          onClick={() => navigate('/biomarkers')}
+          onClick={() => navigate('./data')}
         >
           View Results
         </Button>

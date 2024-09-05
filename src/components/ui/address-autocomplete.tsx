@@ -4,9 +4,10 @@ import usePlacesService from 'react-google-autocomplete/lib/usePlacesAutocomplet
 
 import { Spinner } from '@/components/ui/spinner';
 import { Body1, Body3 } from '@/components/ui/typography';
+import { env } from '@/config/env';
 import { useDebounce } from '@/hooks/use-debounce';
 import { cn } from '@/lib/utils';
-import { AddressInput } from '@/shared/api/update-profile';
+import { FormAddressInput } from '@/shared/api/update-profile';
 
 import {
   CommandGroup,
@@ -21,7 +22,7 @@ type AutoCompleteProps = {
   emptyMessage: string;
   placeholder?: string;
   color?: Color;
-  onSubmit: (address: AddressInput) => void;
+  onSubmit: (address: FormAddressInput) => void;
 };
 
 export const AddressAutocomplete = ({
@@ -51,7 +52,7 @@ export const AddressAutocomplete = ({
     getPlacePredictions,
     isPlacePredictionsLoading,
   } = usePlacesService({
-    apiKey: 'AIzaSyB4uyJlUrJDEcJHmHDzeS0gHa4Wcg--keU',
+    apiKey: env.GOOGLE_API_KEY,
   });
 
   useEffect(() => {
@@ -90,10 +91,10 @@ export const AddressAutocomplete = ({
             address_components.find((a) => a.types.includes('postal_code'))
               ?.long_name ?? '';
 
-          const line = [`${streetNumber || ''} ${route || ''}`];
+          const line1 = `${streetNumber || ''} ${route || ''}`;
 
-          const address: AddressInput = {
-            line,
+          const address: FormAddressInput = {
+            line1,
             city,
             state,
             postalCode,
@@ -154,7 +155,6 @@ export const AddressAutocomplete = ({
                         }}
                         onSelect={() => {
                           setSelected(option.place_id);
-                          // setSearchInput(option.description);
                         }}
                         className={cn(
                           'flex w-full py-4 px-[28px] flex-col items-start cursor-pointer data-[disabled]:opacity-100 hover:bg-[#F7F7F7] hover:rounded-[10px] data-[disabled]:pointer-events-auto',
@@ -171,9 +171,16 @@ export const AddressAutocomplete = ({
                 )}
               </CommandGroup>
             ) : null}
-            {!isPlacePredictionsLoading ? (
+            {!isPlacePredictionsLoading && !debouncedSearchInput ? (
               <CommandPrimitive.Empty className="select-none rounded-sm px-[28px] py-4 text-center text-base font-normal text-zinc-500">
                 {emptyMessage}
+              </CommandPrimitive.Empty>
+            ) : null}
+            {!isPlacePredictionsLoading &&
+            !placePredictions.length &&
+            debouncedSearchInput.length ? (
+              <CommandPrimitive.Empty className="select-none rounded-sm px-[28px] py-4 text-center text-base font-normal text-zinc-500">
+                No results.
               </CommandPrimitive.Empty>
             ) : null}
           </CommandList>

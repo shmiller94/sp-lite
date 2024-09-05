@@ -1,40 +1,40 @@
 import { ArrowUpRight } from 'lucide-react';
 import React from 'react';
 
-import { Skeleton } from '@/components/ui/skeleton';
 import { Body2, H2 } from '@/components/ui/typography';
-import { GRAIL_GALLERI_MULTI_CANCER_TEST } from '@/const';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
-import { useService } from '@/features/services/api/get-service';
+import { getTotalPrice } from '@/features/onboarding/utils/get-total-price';
+import { useMembershipPrice } from '@/shared/api/get-subscription-price';
 import { HealthcareService } from '@/types/api';
 import { formatMoney } from '@/utils/format-money';
 
 const ServiceLine = ({ service }: { service: HealthcareService }) => {
-  const serviceQuery = useService({
-    serviceId: service.id,
-    method: service.name === GRAIL_GALLERI_MULTI_CANCER_TEST ? 'AT_HOME' : null,
-  });
-
   return (
     <div className="flex justify-between">
       <div className="flex gap-1">
         <Body2 className="text-zinc-900">{service.name}</Body2>
         {/*<Body2 className="text-zinc-400">(Annual)</Body2>*/}
       </div>
-      <Body2 className="text-zinc-400">
-        {serviceQuery.data ? (
-          formatMoney(serviceQuery.data.service.price)
-        ) : (
-          <Skeleton className="h-5 w-10" />
-        )}
-      </Body2>
+      <Body2 className="text-zinc-400">{formatMoney(service.price)}</Body2>
     </div>
   );
 };
 
 const Summary = () => {
-  const { additionalServices, collectionMethod, bloodPackage, orderTotal } =
+  const { additionalServices, collectionMethod, bloodPackage } =
     useOnboarding();
+
+  const code = localStorage.getItem('superpower-code');
+  const membershipQuery = useMembershipPrice({
+    code: code ?? undefined,
+    queryConfig: {},
+  });
+
+  const total = getTotalPrice(
+    collectionMethod ?? 'IN_LAB',
+    additionalServices,
+    membershipQuery.data?.total,
+  );
 
   return (
     <section id="summary" className="w-full max-w-[500px] space-y-6">
@@ -78,9 +78,9 @@ const Summary = () => {
         <div className="flex justify-between p-6">
           <Body2 className="text-zinc-900">Annual Total</Body2>
           <div className="flex flex-col items-end">
-            <Body2 className="text-zinc-900">{formatMoney(orderTotal)}</Body2>
+            <Body2 className="text-zinc-900">{formatMoney(total)}</Body2>
             <Body2 className="text-zinc-400">
-              {formatMoney(orderTotal / 12)}/mo
+              {formatMoney(total / 12)}/mo
             </Body2>
           </div>
         </div>

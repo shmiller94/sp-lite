@@ -17,12 +17,14 @@ type Package = {
 };
 
 const packages: Package[] = [
+  // superpower blood panel service
   {
     displayName: 'Baseline',
     description: '65 biomarkers',
     price: 0,
     type: 'BASELINE',
   },
+  // advanced blood panel service
   // {
   //   displayName: 'Advanced',
   //   description: '85 biomarkers',
@@ -75,12 +77,7 @@ const BloodTestPackageCard = ({
 };
 
 const SectionPackages = () => {
-  const {
-    bloodPackage,
-    updateBloodPackage,
-    increaseOrderTotal,
-    decreaseOrderTotal,
-  } = useOnboarding();
+  const { bloodPackage, updateBloodPackage } = useOnboarding();
   return (
     <section id="package" className="w-full max-w-[500px] space-y-6">
       <div className="space-y-2">
@@ -101,15 +98,6 @@ const SectionPackages = () => {
       <div className="space-y-2">
         <RadioGroup
           onValueChange={(value: BloodPackageType) => {
-            /* This is probably not the best way to keep track of this
-             *
-             * Potential TODO here is to refactor this so we dynamically make API calls one time
-             * based on selected items in summary
-             * */
-            value === 'ADVANCED'
-              ? increaseOrderTotal(19900)
-              : decreaseOrderTotal(19900);
-
             updateBloodPackage(value);
           }}
           defaultValue={bloodPackage ?? 'BASELINE'}

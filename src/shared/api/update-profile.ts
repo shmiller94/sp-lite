@@ -6,6 +6,21 @@ import { useUser } from '@/lib/auth';
 import { MutationConfig } from '@/lib/react-query';
 import { User } from '@/types/api';
 
+/*
+ * Used as main type for all form inputs where we need to add/update address
+ * */
+export const formAddressInputSchema = z.object({
+  line1: z.string().min(1),
+  postalCode: z.string().min(5).max(5),
+  city: z.string().min(1),
+  state: z.string().min(1),
+});
+
+export type FormAddressInput = z.infer<typeof formAddressInputSchema>;
+
+/*
+ * Should not be used in forms but rather as field in other zod schemas if needed
+ * */
 export const addressInputSchema = z.object({
   line: z.array(z.string()),
   city: z.string().min(1, 'Required'),
@@ -13,23 +28,26 @@ export const addressInputSchema = z.object({
   postalCode: z.string().min(5, 'Required'),
 });
 
-export type AddressInput = z.infer<typeof addressInputSchema>;
-
-export const primaryAddressInputSchema = z.object({
+/*
+ * Used as internal type to prepare object for server
+ * */
+const primaryAddressInputSchema = z.object({
   address: addressInputSchema,
   id: z.string().optional(),
 });
 
-export type PrimaryAddressInput = z.infer<typeof primaryAddressInputSchema>;
-
-export const activeAddressInputSchema = z.object({
+/*
+ * Used as internal type to prepare object for server
+ * */
+const activeAddressInputSchema = z.object({
   address: addressInputSchema,
   id: z.string().optional(),
 });
 
-export type ActiveAddressInput = z.infer<typeof activeAddressInputSchema>;
-
-export const updateProfileInputSchema = z.object({
+/*
+ * Used as internal type to prepare object for server
+ * */
+const updateProfileInputSchema = z.object({
   primaryAddress: primaryAddressInputSchema.optional(),
   activeAddress: activeAddressInputSchema.optional(),
 });
