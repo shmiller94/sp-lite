@@ -7,7 +7,7 @@ import { Head } from '../seo';
 
 type ContentLayoutProps = {
   children: React.ReactNode;
-  title: string;
+  title?: string;
   className?: string;
   bgColor?: 'white' | 'zinc';
 };
@@ -33,7 +33,7 @@ export const ContentLayout = ({
             className,
           )}
         >
-          <H1>{title}</H1>
+          {title && <H1>{title}</H1>}
 
           {children}
         </div>

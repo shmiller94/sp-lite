@@ -35,7 +35,11 @@ export function UsersDataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+    phone: false,
+    dateOfBirth: false,
+    createdAt: false,
+  });
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const table = useReactTable({

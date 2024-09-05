@@ -17,24 +17,37 @@ export type UserIdentity = {
   verifiedAt: Date;
 };
 
-export type User = {
+interface BaseUser {
   firstName: string;
   lastName: string;
-  gender: string;
+  createdAt: string;
   email: string;
   phone: string;
-  createdAt: string;
+  dateOfBirth: string;
+  primaryAddress?: ActiveAddress;
+}
+
+export interface AdminUser extends BaseUser {
+  id: string;
+  stripeCustomerId: string;
+  _count: {
+    observations: number;
+    serviceRequests: number;
+  };
+  rdnId: string;
+}
+
+export interface User extends BaseUser {
+  gender: string;
   onboarding?: Questionnaire;
   initialResults?: Questionnaire;
   admin: boolean;
-  dateOfBirth: string;
   carePlan?: string;
   authMethod: 'admin' | 'password';
-  primaryAddress?: ActiveAddress;
   activeAddresses: ActiveAddress[];
   adminActor?: AdminActor;
   userIdentity?: UserIdentity;
-};
+}
 
 export type ActiveAddress = Entity<{
   address: Address;
@@ -420,13 +433,41 @@ export interface PlanGoalItem {
   timestamp?: Date;
 }
 
+export type PlanDate = {
+  timestamp: Date;
+  orderId: string;
+  actionPlanId?: string;
+};
+
 export type PlanGoalItemType = 'SERVICE' | 'BIOMARKER' | 'PRODUCT';
 
 /* PRODUCTS */
 
-export type Product = Entity<{
+export type Product = {
+  id: string;
   name: string;
   image?: string;
   price: string;
   url: string;
-}>;
+};
+
+export type ProductOrder = {
+  id: string;
+  name: string;
+  description?: string;
+  imageUrl?: string;
+  url?: string;
+  price: string;
+  createdAt: Date;
+};
+
+export type ProductOrderLineItem = {
+  name: string;
+  price: string;
+  imageUrl: string;
+};
+
+export type CheckoutLineItem = {
+  productVariantId: string;
+  quantity: number;
+};

@@ -19,6 +19,7 @@ export interface PlanStoreProps {
 
 export interface PlanStore {
   isAdmin: boolean;
+  isUpdating: boolean;
   orderId: string;
   timestamp: Date;
   title: string;
@@ -68,6 +69,7 @@ export const planStoreCreator = (initProps: PlanStoreProps) => {
     published: initialPlan.published,
     goals: initialPlan.goals,
     videoFileId: initialPlan.videoFileId,
+    isUpdating: false,
     changeTitle: (title: string) => set(() => ({ title })),
     changeDescription: (description: string) => set(() => ({ description })),
     addGoal: () =>
@@ -178,6 +180,7 @@ export const planStoreCreator = (initProps: PlanStoreProps) => {
     },
     updateActionPlan: async (published) => {
       const state = get();
+      set({ isUpdating: true });
 
       const dto: Partial<Plan> = {
         orderId: state.orderId,
@@ -185,7 +188,7 @@ export const planStoreCreator = (initProps: PlanStoreProps) => {
         title: state.title,
         description: state.description,
         goals: state.goals,
-        published: published ? published : undefined,
+        published: published ? published : state.published,
         videoFileId: state.videoFileId,
       };
 
@@ -205,6 +208,8 @@ export const planStoreCreator = (initProps: PlanStoreProps) => {
         published: updatedPlan.published,
         videoFileId: updatedPlan.videoFileId,
       });
+
+      set({ isUpdating: false });
     },
   }));
 };

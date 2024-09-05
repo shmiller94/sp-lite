@@ -17,7 +17,6 @@ export interface StepperStore extends StepperProps {
   activeStep: number;
   nextStep: () => void;
   prevStep: () => void;
-  insertStepsAfter: (id: string, newSteps: StepItem[]) => void;
   resetSteps: () => void;
 
   /* We are exposing nextOnboardingStep only because server only allows to update if new value is greater than old one */
@@ -49,31 +48,6 @@ export const stepperStoreCreator = (initProps?: Partial<StepperStore>) => {
     activeStep: initProps?.initialStep ?? 0,
     nextStep: () => set((state) => ({ activeStep: state.activeStep + 1 })),
     prevStep: () => set((state) => ({ activeStep: state.activeStep - 1 })),
-    insertStepsAfter: (id: string, newSteps: StepItem[]) =>
-      set((state) => {
-        const index = state.steps.findIndex((step) => step.id === id);
-
-        // Handle case where stepId is not found
-        if (index === -1) {
-          console.warn(`Step with ID ${id} not found.`);
-          return state; // Return the state unchanged
-        }
-
-        // Handle case where newSteps is empty (optional)
-        if (newSteps.length === 0) {
-          console.warn(`No steps provided for insertion after step ID ${id}.`);
-          return state; // Return the state unchanged
-        }
-
-        // Proceed with inserting the new steps
-        const updatedSteps = [
-          ...state.steps.slice(0, index + 1),
-          ...newSteps,
-          ...state.steps.slice(index + 1),
-        ];
-
-        return { steps: updatedSteps };
-      }),
     updatingStep: false,
     nextOnboardingStep: async () => {
       set({ updatingStep: true });

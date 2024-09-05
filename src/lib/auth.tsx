@@ -19,6 +19,7 @@ const getUser = (): Promise<User> => {
 
 const logout = async (): Promise<void> => {
   await api.post('oauth2/logout');
+
   return clearActiveLogin();
 };
 

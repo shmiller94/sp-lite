@@ -3,11 +3,14 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 import { usePlan } from '@/features/action-plan/stores/plan-store';
 import { useUser } from '@/lib/auth';
 
 export function ClinicianNoteHeader(): JSX.Element {
-  const { isAdmin, published, updateActionPlan } = usePlan((s) => s);
+  const { isAdmin, published, updateActionPlan, isUpdating } = usePlan(
+    (s) => s,
+  );
   const { data: user } = useUser();
   const navigate = useNavigate();
 
@@ -32,18 +35,13 @@ export function ClinicianNoteHeader(): JSX.Element {
           {/*</p>*/}
         </div>
       </div>
-      {isAdmin && (
+      {isAdmin ? (
         <div className="flex gap-[12px]">
           <Button
             className="rounded-[12px] bg-white px-[24px] py-[12px] text-black shadow-[0_32px_64px_0_rgba(212,212,212,0.5)] hover:bg-white"
-            onClick={() => updateActionPlan(false)}
+            onClick={() => updateActionPlan()}
           >
-            Save
-            {/*{isLoading ? (*/}
-            {/*  <Loader2 className="w-4 animate-spin stroke-black text-black" />*/}
-            {/*) : (*/}
-            {/*  statusSave*/}
-            {/*)}*/}
+            {isUpdating ? <Spinner variant="primary" /> : 'Save'}
           </Button>
           {/*<div className="bg-white py-[12px] px-[16px] h-[40px] shadow-[0_32px_64px_0_rgba(212,212,212,0.5)] hover:bg-white rounded-[12px] text-black flex gap-[10px]">*/}
           {/*  <p className="text-sm">Preview</p>*/}
@@ -52,18 +50,13 @@ export function ClinicianNoteHeader(): JSX.Element {
           {!published && (
             <Button
               className="rounded-[12px] bg-black px-[24px]  py-[12px] text-white shadow-[0_32px_64px_0_rgba(212,212,212,0.5)]"
-              // onClick={() => onSubmit(actionPlan, true)}
+              onClick={() => updateActionPlan(true)}
             >
-              {/*{isLoading ? (*/}
-              {/*  <Loader2 className="w-4 animate-spin stroke-white text-white" />*/}
-              {/*) : (*/}
-              {/*  statusPublish*/}
-              {/*)}*/}
-              Publish
+              {isUpdating ? <Spinner variant="primary" /> : 'Publish'}
             </Button>
           )}
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

@@ -1,10 +1,15 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { Button } from '@/components/ui/button';
 import { useLogin } from '@/lib/auth';
-import { User } from '@/types/api';
+import { AdminUser } from '@/types/api';
 
-export const columns: ColumnDef<User>[] = [
+export const columns: ColumnDef<AdminUser>[] = [
+  {
+    accessorKey: 'id',
+    header: 'Identifier',
+  },
   {
     accessorKey: 'firstName',
     header: 'First name',
@@ -14,10 +19,6 @@ export const columns: ColumnDef<User>[] = [
     header: 'Last name',
   },
   {
-    accessorKey: 'dateOfBirth',
-    header: 'Date of birth',
-  },
-  {
     accessorKey: 'email',
     header: 'Email',
   },
@@ -25,33 +26,57 @@ export const columns: ColumnDef<User>[] = [
     accessorKey: 'phone',
     header: 'Phone',
   },
-  // {
-  //   accessorKey: '_count.observations',
-  //   header: 'Biomarker #',
-  // },
-  // {
-  //   accessorKey: '_count.serviceRequests',
-  //   header: 'Services #',
-  // },
+  {
+    accessorKey: 'dateOfBirth',
+    header: 'Date of birth',
+  },
   {
     accessorKey: 'createdAt',
     header: 'Created',
+    cell: ({ row }) => {
+      return row.original.dateOfBirth.split('T')[0];
+    },
+  },
+  {
+    id: 'stripeCustomerId',
+    header: 'Payment Method?',
+    cell: ({ row }) => {
+      return row.original.stripeCustomerId ? 'Y' : 'N';
+    },
+  },
+  {
+    id: 'observations',
+    header: 'Biomarker #',
+    cell: ({ row }) => {
+      return row.original._count.observations;
+    },
+  },
+  {
+    id: 'serviceRequests',
+    header: 'Service #',
+    cell: ({ row }) => {
+      return row.original._count.serviceRequests;
+    },
   },
   {
     id: 'login',
     cell: function CellComponent({ row }) {
       const loginMutation = useLogin({});
+      const queryClient = useQueryClient();
 
       const userEmail = row.original.email;
       return (
         <Button
-          onClick={async () =>
-            loginMutation.mutateAsync({
+          onClick={async () => {
+            await loginMutation.mutateAsync({
               email: userEmail,
               password: '',
               authMethod: 'admin',
-            })
-          }
+            });
+
+            // needed to remove all previous user queries and refetch for the new one
+            queryClient.removeQueries();
+          }}
         >
           Sign in as User
         </Button>
