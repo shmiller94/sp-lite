@@ -130,4 +130,19 @@ export const authHandlers = [
       );
     }
   }),
+
+  http.get(`${env.API_URL}/auth/coupon`, async ({ params }) => {
+    await networkDelay();
+
+    try {
+      const code = params.code;
+
+      return HttpResponse.json({ success: code === 'SUPERPOWER' });
+    } catch (error: any) {
+      return HttpResponse.json(
+        { message: error?.message || 'Server Error' },
+        { status: 500 },
+      );
+    }
+  }),
 ];
