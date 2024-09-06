@@ -70,6 +70,13 @@ export const createRouter = (queryClient: QueryClient) =>
           // },
         },
         {
+          path: 'invite',
+          lazy: async () => {
+            const { AffiliateRoute } = await import('./app/affiliate');
+            return { Component: AffiliateRoute };
+          },
+        },
+        {
           path: 'vault',
           lazy: async () => {
             const { FilesRoute } = await import('./app/files');

@@ -28,9 +28,11 @@ interface CouponCodeAccessFormProps {
 export function CouponCodeAccessForm({
   codeValidated,
 }: CouponCodeAccessFormProps): JSX.Element {
-  const providedCode = window.location.href
-    .split('accessCode=')[1]
-    ?.split('&')[0];
+  const providedCode =
+    window.location.href
+      .split('accessCode=')[1]
+      ?.split('&')[0]
+      ?.toUpperCase() || (window as any).Rewardful?.coupon?.id?.toUpperCase();
 
   const [accessCode, setAccessCode] = useState<string | undefined>(
     providedCode,

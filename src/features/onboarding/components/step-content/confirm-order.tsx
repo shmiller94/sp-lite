@@ -227,6 +227,7 @@ const CreditCardCheckout = () => {
     await createSubscriptionMutation.mutateAsync({
       data: {
         code: localStorage.getItem('superpower-code') ?? undefined,
+        referralId: (window as any)?.Rewardful?.referral,
       },
     });
 

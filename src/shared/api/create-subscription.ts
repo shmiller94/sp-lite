@@ -7,6 +7,7 @@ import { Subscription } from '@/types/api';
 
 export const createSubscriptionInputSchema = z.object({
   code: z.string().optional(),
+  referralId: z.string().optional(),
 });
 
 export type CreateSubscriptionInput = z.infer<

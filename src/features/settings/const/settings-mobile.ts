@@ -1,4 +1,4 @@
-import { CreditCard, GiftIcon, Heart, History, UserIcon } from 'lucide-react';
+import { CreditCard, Heart, History, UserIcon } from 'lucide-react';
 
 import { IntegrationsIcon } from '@/components/icons';
 
@@ -32,12 +32,5 @@ export const SETTINGS_MOBILE = [
     value: 'integrations',
     description: 'Manage wearable and other platform integrations',
     disabled: false,
-  },
-  {
-    icon: GiftIcon,
-    value: 'refer a friend',
-    description: 'Invite the people you want to live longer with Superpower',
-    // TODO: Enable when we want users to be able to send referrals
-    disabled: true,
   },
 ];

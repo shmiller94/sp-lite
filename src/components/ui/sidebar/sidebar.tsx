@@ -25,6 +25,7 @@ import {
   ServicesIcon,
   LockIcon,
 } from '@/components/icons';
+import { PresentIcon } from '@/components/icons/present-icon';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -141,6 +142,12 @@ export const DesktopSidebar = () => {
     },
   ].filter(Boolean) as Link[];
 
+  const invite: Link = {
+    name: 'Invite friend',
+    to: './invite',
+    icon: PresentIcon,
+  };
+
   return (
     <>
       <motion.div
@@ -162,6 +169,7 @@ export const DesktopSidebar = () => {
         <div>
           <CollapseButton />
           <div className="space-y-2.5 border-t border-t-zinc-200 py-5">
+            <SidebarLink link={invite} />
             <LogoutButton />
           </div>
         </div>
