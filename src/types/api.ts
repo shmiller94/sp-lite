@@ -471,3 +471,26 @@ export type CheckoutLineItem = {
   productVariantId: string;
   quantity: number;
 };
+
+/* FILES */
+export type FileContentType =
+  | 'application/pdf'
+  | 'application/zip'
+  | 'text/csv'
+  | 'image/jpeg'
+  | 'image/png'
+  | 'video/mp4'
+  | 'video/mov'
+  | 'application/vnd.md-excel'
+  | 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+
+export type File = {
+  id: string;
+  name: string;
+  contentType: FileContentType;
+  uploadedAt: string;
+  status: string;
+  orderId?: string;
+  deletable: boolean;
+  presignedUrl?: string;
+};

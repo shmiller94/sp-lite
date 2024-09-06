@@ -70,6 +70,20 @@ export const createRouter = (queryClient: QueryClient) =>
           // },
         },
         {
+          path: 'vault',
+          lazy: async () => {
+            const { FilesRoute } = await import('./app/files');
+            return { Component: FilesRoute };
+          },
+        },
+        {
+          path: 'vault/:fileId',
+          lazy: async () => {
+            const { MobileFileRoute } = await import('./app/file');
+            return { Component: MobileFileRoute };
+          },
+        },
+        {
           path: 'plans/:orderId',
           lazy: async () => {
             const { PlanRoute } = await import('./app/plan');
