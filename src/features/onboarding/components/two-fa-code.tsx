@@ -17,7 +17,6 @@ import {
   InputOTPSlot,
 } from '@/components/ui/input-otp';
 import { Spinner } from '@/components/ui/spinner';
-import { useStepper } from '@/components/ui/stepper';
 import { Body1, H1 } from '@/components/ui/typography';
 import { useSendOtp } from '@/features/auth/api';
 import {
@@ -26,6 +25,7 @@ import {
   verifyOtpInputSchema,
 } from '@/features/auth/api/verify-otp';
 import { OnboardingInput } from '@/features/onboarding/components/onboarding-input';
+import { useStepper } from '@/lib/stepper';
 import { cn } from '@/lib/utils';
 
 const TwoFaCode = ({ phone, close }: { phone: string; close: () => void }) => {

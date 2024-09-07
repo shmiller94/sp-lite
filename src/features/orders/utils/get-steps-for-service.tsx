@@ -1,4 +1,3 @@
-import { StepItem } from '@/components/ui/stepper';
 import {
   ADVISORY_CALL,
   CONTINUOUS_GLUCOSE_MONITOR,
@@ -26,6 +25,7 @@ import { HealthcareServiceDetails } from '@/features/orders/components/steps/ser
 import { Success } from '@/features/orders/components/steps/success';
 import { OrderSummary } from '@/features/orders/components/steps/summary';
 import { ToxinsSelect } from '@/features/orders/components/steps/toxins-select';
+import { StepItem } from '@/lib/stepper';
 import { HealthcareService } from '@/types/api';
 
 /**

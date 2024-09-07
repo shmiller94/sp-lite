@@ -1,4 +1,3 @@
-import { StepItem } from '@/components/ui/stepper';
 import {
   ActivateBookingEntryStep,
   AdditionalServicesStep,
@@ -20,6 +19,7 @@ import {
   WearablesEntryStep,
 } from '@/features/onboarding/components/step-content';
 import { AdditionalBookingSuccessStep } from '@/features/onboarding/components/step-content/additional-booking-success';
+import { StepItem } from '@/lib/stepper';
 
 export const steps: StepItem[] = [
   {

@@ -3,7 +3,6 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Scheduler } from '@/components/shared/scheduler';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
-import { useStepper } from '@/components/ui/stepper';
 import { Body1, Body2, H2 } from '@/components/ui/typography';
 import {
   GRAIL_GALLERI_MULTI_CANCER_TEST,
@@ -19,6 +18,7 @@ import { ImageContentLayout } from '@/features/onboarding/components/layouts';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import { getOrderInfo } from '@/features/onboarding/utils/get-order-info';
 import { useUpdateOrder } from '@/features/orders/api/update-order';
+import { useStepper } from '@/lib/stepper';
 import { ActiveAddress, Address, HealthcareService, Slot } from '@/types/api';
 
 const ServiceCard = ({ service }: { service: HealthcareService }) => {

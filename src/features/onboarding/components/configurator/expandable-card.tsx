@@ -10,7 +10,6 @@ import React, {
 
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useStepper } from '@/components/ui/stepper';
 import { Body1, Body2, Body3, H3, H4 } from '@/components/ui/typography';
 import { GRAIL_GALLERI_MULTI_CANCER_TEST } from '@/const';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
@@ -18,6 +17,7 @@ import { getTotalPrice } from '@/features/onboarding/utils/get-total-price';
 import { useService } from '@/features/services/api';
 import { useMembershipPrice } from '@/features/settings/api';
 import { useOutsideClick } from '@/hooks/use-outside-click';
+import { useStepper } from '@/lib/stepper';
 import { cn } from '@/lib/utils';
 import { HealthcareService } from '@/types/api';
 import { formatMoney } from '@/utils/format-money';

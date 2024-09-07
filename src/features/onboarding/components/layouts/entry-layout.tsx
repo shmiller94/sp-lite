@@ -5,8 +5,8 @@ import { useEffect, useState } from 'react';
 
 import { Head } from '@/components/seo';
 import { Button } from '@/components/ui/button';
-import { useStepper } from '@/components/ui/stepper';
 import { Body3, Mono } from '@/components/ui/typography';
+import { useStepper } from '@/lib/stepper';
 import { cn } from '@/lib/utils';
 
 type EntryLayoutType =

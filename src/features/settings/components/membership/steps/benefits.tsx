@@ -1,10 +1,10 @@
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
-import { useStepper } from '@/components/ui/stepper';
 import { useBiomarkers } from '@/features/biomarkers/api/get-biomarkers';
 import { MEMBERSHIP_BENEFITS } from '@/features/settings/const/membership-benefits';
 import { useMembership } from '@/features/settings/stores/membership-store';
 import { useUser } from '@/lib/auth';
+import { useStepper } from '@/lib/stepper';
 import { Biomarker } from '@/types/api';
 
 import { MembershipBenefits } from '../membership-benefits';

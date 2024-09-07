@@ -2,9 +2,9 @@ import { AnimatePresence } from 'framer-motion';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { StepperStoreProvider, useStepper } from '@/components/ui/stepper';
 import { steps } from '@/features/onboarding/components/steps';
 import { useUser } from '@/lib/auth';
+import { StepperStoreProvider, useStepper } from '@/lib/stepper';
 
 export const OnboardingRoute = () => {
   const { data: user } = useUser({});

@@ -1,15 +1,11 @@
 import React from 'react';
 
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
-import {
-  StepItem,
-  StepperStoreProvider,
-  useStepper,
-} from '@/components/ui/stepper';
 import { CancelMembership } from '@/features/settings/components/membership/cancel-membership';
 import { BenefitsStep } from '@/features/settings/components/membership/steps/benefits';
 import { ConfirmationStep } from '@/features/settings/components/membership/steps/confirmation';
 import { GotItStep } from '@/features/settings/components/membership/steps/got-it';
+import { StepItem, StepperStoreProvider, useStepper } from '@/lib/stepper';
 import { Subscription } from '@/types/api';
 
 interface CancelMembershipDialogProps {

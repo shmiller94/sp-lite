@@ -13,7 +13,6 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Spinner } from '@/components/ui/spinner';
-import { useStepper } from '@/components/ui/stepper';
 import { OnboardingInput } from '@/features/onboarding/components/onboarding-input';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import { useGetServiceability } from '@/features/orders/api';
@@ -23,6 +22,7 @@ import {
   useUpdateProfile,
 } from '@/features/users/api';
 import { useUser } from '@/lib/auth';
+import { useStepper } from '@/lib/stepper';
 import { Address } from '@/types/api';
 
 function FullPrimaryAddressForm({

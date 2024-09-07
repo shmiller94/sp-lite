@@ -4,11 +4,11 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { MultiStepLoader } from '@/components/ui/multi-step-loader';
 import { Spinner } from '@/components/ui/spinner';
-import { useStepper } from '@/components/ui/stepper';
 import { Body1, H2 } from '@/components/ui/typography';
 import { useCreateVerificationSession } from '@/features/onboarding/api/create-verification-session';
 import { ImageContentLayout } from '@/features/onboarding/components/layouts';
 import { useUser } from '@/lib/auth';
+import { useStepper } from '@/lib/stepper';
 
 const loadingStates = [
   {

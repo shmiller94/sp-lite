@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { useStepper } from '@/components/ui/stepper';
 import { Body1, Body2, Body3, H2, H3 } from '@/components/ui/typography';
 import { AddAddressForm } from '@/features/onboarding/components/add-address-form';
 import { AddressSelect } from '@/features/onboarding/components/address-select';
 import { CurrentAddressCard } from '@/features/onboarding/components/current-address-card';
 import { EditAddressForm } from '@/features/onboarding/components/edit-address-form';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
+import { useStepper } from '@/lib/stepper';
 
 const AtHomeServiceCard = () => {
   return (

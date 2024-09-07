@@ -1,10 +1,10 @@
 import { ChevronRight } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { useStepper } from '@/components/ui/stepper';
 import { H1, H4 } from '@/components/ui/typography';
 import { EntryLayout } from '@/features/onboarding/components/layouts';
 import { useUser } from '@/lib/auth';
+import { useStepper } from '@/lib/stepper';
 
 export const ActivateBookingEntry = () => {
   const { nextOnboardingStep } = useStepper((s) => s);

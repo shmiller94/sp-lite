@@ -1,16 +1,16 @@
 import { MapPin } from 'lucide-react';
 import { nanoid } from 'nanoid';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
-import { useStepper } from '@/components/ui/stepper';
 import { Body1, Body2, H2, H3, H4 } from '@/components/ui/typography';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import { usePhlebotomyLocations } from '@/features/orders/api';
 import { useDebounce } from '@/hooks/use-debounce';
 import { useUser } from '@/lib/auth';
+import { useStepper } from '@/lib/stepper';
 import { cn } from '@/lib/utils';
 import { PhlebotomyLocation } from '@/types/api';
 import { formatAddress } from '@/utils/format';

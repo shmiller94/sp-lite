@@ -1,12 +1,10 @@
-import React from 'react';
-
 import { Button } from '@/components/ui/button';
-import { useStepper } from '@/components/ui/stepper';
 import { Body1, H2 } from '@/components/ui/typography';
 import { AdditionalServiceCard } from '@/features/onboarding/components/additional-service-card';
 import { ImageContentLayout } from '@/features/onboarding/components/layouts';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import { getOrderInfo } from '@/features/onboarding/utils/get-order-info';
+import { useStepper } from '@/lib/stepper';
 
 const AdditionalBookingSuccess = () => {
   const nextOnboardingStep = useStepper((s) => s.nextOnboardingStep);

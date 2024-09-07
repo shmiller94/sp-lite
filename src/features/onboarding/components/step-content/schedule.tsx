@@ -2,9 +2,9 @@ import { ArrowUpRight } from 'lucide-react';
 import React from 'react';
 
 import { Button } from '@/components/ui/button';
-import { useStepper } from '@/components/ui/stepper';
 import { Body1, H2 } from '@/components/ui/typography';
 import { ImageContentLayout } from '@/features/onboarding/components/layouts';
+import { useStepper } from '@/lib/stepper';
 
 export const Schedule = () => {
   const { nextOnboardingStep } = useStepper((s) => s);

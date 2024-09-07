@@ -2,8 +2,8 @@ import { format } from 'date-fns';
 
 import { Button } from '@/components/ui/button';
 import { DialogClose } from '@/components/ui/dialog';
-import { useStepper } from '@/components/ui/stepper';
 import { useMembership } from '@/features/settings/stores/membership-store';
+import { useStepper } from '@/lib/stepper';
 
 export const GotItStep = (): JSX.Element => {
   const { endDate } = useMembership((s) => s);

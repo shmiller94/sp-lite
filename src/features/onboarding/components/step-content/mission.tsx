@@ -1,7 +1,7 @@
 import { OnboardingLayout } from '@/components/layouts/onboarding-layout';
 import { Button } from '@/components/ui/button';
-import { useStepper } from '@/components/ui/stepper';
 import { H1 } from '@/components/ui/typography';
+import { useStepper } from '@/lib/stepper';
 
 export const Mission = () => {
   const { nextOnboardingStep } = useStepper((s) => s);

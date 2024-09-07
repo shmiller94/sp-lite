@@ -1,9 +1,9 @@
 import { Scheduler } from '@/components/shared/scheduler';
 import { Button } from '@/components/ui/button';
-import { useStepper } from '@/components/ui/stepper';
 import { Body1 } from '@/components/ui/typography';
 import { useOrder } from '@/features/orders/stores/order-store';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
+import { useStepper } from '@/lib/stepper';
 import { Address, CollectionMethodType, Slot } from '@/types/api';
 
 export const PhlebotomyScheduler = () => {

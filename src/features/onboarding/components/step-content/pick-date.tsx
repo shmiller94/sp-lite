@@ -3,12 +3,12 @@ import moment from 'moment';
 import { Scheduler } from '@/components/shared/scheduler';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
-import { useStepper } from '@/components/ui/stepper';
 import { Body1, H2 } from '@/components/ui/typography';
 import { ImageContentLayout } from '@/features/onboarding/components/layouts';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import { useUpdateOrder } from '@/features/orders/api/update-order';
 import { useServices } from '@/features/services/api/get-services';
+import { useStepper } from '@/lib/stepper';
 
 export const PickDate = () => {
   const { nextOnboardingStep, prevStep } = useStepper((s) => s);

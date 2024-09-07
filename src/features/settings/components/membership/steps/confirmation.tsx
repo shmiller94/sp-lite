@@ -3,10 +3,10 @@ import { Ellipsis } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
-import { useStepper } from '@/components/ui/stepper';
 import { useMembershipPrice } from '@/features/settings/api';
 import { useCancelMembership } from '@/features/settings/api/cancel-membership';
 import { useMembership } from '@/features/settings/stores/membership-store';
+import { useStepper } from '@/lib/stepper';
 import { formatMoney } from '@/utils/format-money';
 
 export const ConfirmationStep = (): JSX.Element => {

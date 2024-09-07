@@ -12,7 +12,6 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { MultiStepLoader } from '@/components/ui/multi-step-loader';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { useStepper } from '@/components/ui/stepper';
 import { Body1, Body2, H2 } from '@/components/ui/typography';
 import {
   GRAIL_GALLERI_MULTI_CANCER_TEST,
@@ -31,6 +30,7 @@ import {
 } from '@/features/settings/api';
 import { useAddPaymentMethod } from '@/features/settings/api/add-payment-method';
 import { useUser } from '@/lib/auth';
+import { useStepper } from '@/lib/stepper';
 import { cn } from '@/lib/utils';
 import { Address } from '@/types/api';
 import { formatMoney } from '@/utils/format-money';

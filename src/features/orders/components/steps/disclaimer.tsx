@@ -1,10 +1,10 @@
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useStepper } from '@/components/ui/stepper';
 import { Body1, Body2, H2 } from '@/components/ui/typography';
 import { useOrder } from '@/features/orders/stores/order-store';
 import { getLegalDisclaimerForService } from '@/features/orders/utils/get-legal-disclaimer-for-service';
+import { useStepper } from '@/lib/stepper';
 
 export const Disclaimer = () => {
   const { activeStep, steps, nextStep } = useStepper((s) => s);

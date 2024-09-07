@@ -2,8 +2,8 @@ import { useState } from 'react';
 
 import { OnboardingLayout } from '@/components/layouts/onboarding-layout';
 import { Button } from '@/components/ui/button';
-import { useStepper } from '@/components/ui/stepper';
 import { Body1, H1 } from '@/components/ui/typography';
+import { useStepper } from '@/lib/stepper';
 
 import { SignatureBlock } from '../signature-block';
 

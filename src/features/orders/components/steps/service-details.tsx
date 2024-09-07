@@ -6,10 +6,10 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
-import { useStepper } from '@/components/ui/stepper';
 import { Body1, Body2, H2, H4 } from '@/components/ui/typography';
 import { ENVIRONMENTAL_TOXIN_PANEL } from '@/const/toxin-panel';
 import { useOrder } from '@/features/orders/stores/order-store';
+import { useStepper } from '@/lib/stepper';
 import { cn } from '@/lib/utils';
 import { getHealthcareServicePriceLabel } from '@/utils/format-money';
 import { getDetailsForService } from '@/utils/service';

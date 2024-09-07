@@ -2,9 +2,9 @@ import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { useStepper } from '@/components/ui/stepper';
 import { useProducts } from '@/features/action-plan/api';
 import { useCheckout } from '@/features/action-plan/stores/checkout-store';
+import { useStepper } from '@/lib/stepper';
 import { Product } from '@/types/api';
 
 export const ReviewStep = (): JSX.Element => {

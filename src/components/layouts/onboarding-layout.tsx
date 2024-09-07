@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import { Head } from '@/components/seo';
 import { Button } from '@/components/ui/button';
-import { useStepper } from '@/components/ui/stepper';
+import { useStepper } from '@/lib/stepper';
 import { cn } from '@/lib/utils';
 
 const OnboardingStepLayoutHeader = () => {

@@ -7,14 +7,10 @@ import {
   DialogContent,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import {
-  StepItem,
-  StepperStoreProvider,
-  useStepper,
-} from '@/components/ui/stepper';
 import { CheckoutStep } from '@/features/action-plan/components/steps/checkout-step';
 import { ReviewStep } from '@/features/action-plan/components/steps/review-step';
 import { CheckoutStoreProvider } from '@/features/action-plan/stores/checkout-store';
+import { StepItem, StepperStoreProvider, useStepper } from '@/lib/stepper';
 import { Plan } from '@/types/api';
 import { capitalize } from '@/utils/format';
 

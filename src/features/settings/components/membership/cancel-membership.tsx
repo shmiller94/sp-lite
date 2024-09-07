@@ -1,8 +1,8 @@
 import { ChevronLeft, X } from 'lucide-react';
 
 import { DialogClose, DialogContent } from '@/components/ui/dialog';
-import { useStepper } from '@/components/ui/stepper';
 import { MembershipStoreProvider } from '@/features/settings/stores/membership-store';
+import { useStepper } from '@/lib/stepper';
 import { cn } from '@/lib/utils';
 import { Subscription } from '@/types/api';
 

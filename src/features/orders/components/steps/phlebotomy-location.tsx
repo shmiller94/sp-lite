@@ -13,7 +13,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
-import { useStepper } from '@/components/ui/stepper';
 import { Body1 } from '@/components/ui/typography';
 import { CUSTOM_BLOOD_PANEL, SUPERPOWER_BLOOD_PANEL } from '@/const';
 import { US_STATE_CODES } from '@/const/us-state-codes';
@@ -26,6 +25,7 @@ import { useOrder } from '@/features/orders/stores/order-store';
 import { getDefaultCollectionMethod } from '@/features/orders/utils/get-default-collection-method';
 import { useDebounce } from '@/hooks/use-debounce';
 import { useUser } from '@/lib/auth';
+import { useStepper } from '@/lib/stepper';
 import { cn } from '@/lib/utils';
 import { Address, PhlebotomyLocation } from '@/types/api';
 import { getLine, isAddressComplete, setLine } from '@/utils/address';

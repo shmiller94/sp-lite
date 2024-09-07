@@ -10,7 +10,6 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
-import { StepperStoreProvider, useStepper } from '@/components/ui/stepper';
 import { Body1 } from '@/components/ui/typography';
 import {
   OrderStoreProvider,
@@ -20,6 +19,7 @@ import { getDefaultCollectionMethod } from '@/features/orders/utils/get-default-
 import { getStepsFromService } from '@/features/orders/utils/get-steps-for-service';
 import { useGetSchedulingLink } from '@/features/services/api/get-scheduling-link';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
+import { StepperStoreProvider, useStepper } from '@/lib/stepper';
 import { HealthcareService } from '@/types/api';
 /**
  * This component is the main renderer of the scheduling process for all services.
