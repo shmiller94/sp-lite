@@ -16,13 +16,13 @@ export const CurrentMembership = (): JSX.Element => {
 
   return (
     <div className="rounded-2xl lg:flex lg:flex-row lg:items-center lg:justify-between lg:bg-white lg:p-4">
-      <h2 className="mx-6 my-3 hidden text-lg text-zinc-400 lg:block">
+      <h2 className="mx-6 my-3 hidden text-zinc-400 lg:block lg:text-lg">
         Current Membership
       </h2>
       <div className="flex flex-row gap-x-2">
         <Card className="w-full rounded-2xl px-5 py-4 shadow-none lg:bg-transparent">
           <div className="flex flex-col">
-            <span className="text-xs text-zinc-400 lg:text-sm">
+            <span className="text-xs text-zinc-400 md:text-sm">
               {isLoading ? (
                 <Skeleton className="h-4 w-full" />
               ) : superpowerMembership?.status === 'canceled' ? (
@@ -55,7 +55,7 @@ export const CurrentMembership = (): JSX.Element => {
             )}
           >
             <div className="flex flex-col">
-              <span className="text-xs text-zinc-400 lg:text-sm">
+              <span className="text-xs text-zinc-400 md:text-sm">
                 {isLoading ? (
                   <Skeleton className="h-4 w-full" />
                 ) : superpowerMembership?.status === 'canceled' ? (
@@ -75,13 +75,13 @@ export const CurrentMembership = (): JSX.Element => {
                   )}
                 </span>
               ) : (
-                <div className="flex flex-row items-center justify-between gap-x-1.5 lg:min-w-[175px]">
-                  <span className="lg:text-xl">Membership</span>
+                <div className="flex flex-row items-center justify-between gap-x-1.5 md:min-w-[175px]">
+                  <span className="md:text-xl">Membership</span>
                   <ChevronDown className="size-4 text-zinc-400" />
                 </div>
               )}
               {superpowerMembership?.status === 'active' && (
-                <span className="hidden whitespace-nowrap text-xs text-zinc-400 lg:block">
+                <span className="hidden whitespace-nowrap text-xs text-zinc-400 md:block">
                   Update, cancel, and more
                 </span>
               )}

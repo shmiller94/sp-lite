@@ -15,7 +15,13 @@ import React, {
   FC,
   SVGProps,
 } from 'react';
-import { Link, LinkProps, NavLink, useLocation } from 'react-router-dom';
+import {
+  Link,
+  LinkProps,
+  NavLink,
+  useLocation,
+  useNavigate,
+} from 'react-router-dom';
 
 import {
   DataIcon,
@@ -30,6 +36,7 @@ import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown';
 import { ROLES, useAuthorization } from '@/lib/authorization';
@@ -197,6 +204,8 @@ export const MobileSidebar = () => {
     },
   ];
 
+  const navigate = useNavigate();
+
   return (
     <>
       <div
@@ -224,15 +233,17 @@ export const MobileSidebar = () => {
           >
             <ul className="flex flex-col gap-1.5">
               {additionalMobileLinks.map((link, i) => (
-                <NavLink
+                <DropdownMenuItem
                   key={i}
-                  to={link.to}
-                  className="flex cursor-pointer items-center gap-3 rounded-[18px] p-4 transition duration-200 ease-in-out hover:bg-[#252525]"
+                  className="cursor-pointer rounded-[18px] p-4 transition duration-200 ease-in-out focus:bg-[#252525]"
+                  onClick={() => navigate(link.to)}
                 >
-                  <link.icon width={12} height={12} color="white" />
+                  <div className="flex flex-1 items-center gap-3">
+                    <link.icon width={12} height={12} color="white" />
 
-                  <p className="text-sm text-white">{link.name}</p>
-                </NavLink>
+                    <p className="text-sm text-white">{link.name}</p>
+                  </div>
+                </DropdownMenuItem>
               ))}
               <NavLink
                 to="/auth/logout"

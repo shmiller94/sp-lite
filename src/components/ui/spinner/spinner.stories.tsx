@@ -12,6 +12,13 @@ type Story = StoryObj<typeof Spinner>;
 
 export const Default: Story = {
   args: {
+    size: 'xl',
+  },
+};
+
+export const Light: Story = {
+  args: {
     size: 'md',
+    variant: 'primary',
   },
 };

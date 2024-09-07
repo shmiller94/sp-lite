@@ -8,7 +8,7 @@ export const Membership = () => {
   return (
     <>
       <div className="mt-8 gap-y-5 md:mt-0 lg:flex lg:flex-col-reverse">
-        <div className="rounded-t-2xl bg-transparent py-[6%] md:flex md:justify-center md:bg-white md:bg-dot-zinc-400/[0.4]">
+        <div className="rounded-t-2xl bg-transparent py-[6%] lg:flex lg:justify-center lg:bg-white lg:bg-dot-zinc-400/[0.4]">
           <MembershipCard />
         </div>
         <CurrentMembership />

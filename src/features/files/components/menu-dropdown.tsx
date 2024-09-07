@@ -1,6 +1,11 @@
 import { ReactNode } from 'react';
 
-import { Dialog, DialogTrigger } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  Dialog,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -46,31 +51,24 @@ function DownloadMenuItem({ id, name }: File): JSX.Element {
     downloadBlob(blob, name);
   };
 
-  return (
-    <DropdownMenuItem
-      onClick={onClick}
-      className="cursor-pointer rounded-[12px] p-4 text-base text-[#71717A]"
-    >
-      Download
-    </DropdownMenuItem>
-  );
+  return <DropdownMenuItem onClick={onClick}>Download</DropdownMenuItem>;
 }
 
 function DeleteMenuItem({ id }: File): JSX.Element {
   return (
-    <Dialog>
-      <DialogTrigger asChild>
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
         <DropdownMenuItem
           onSelect={(event) => {
             event.preventDefault();
           }}
-          className="cursor-pointer rounded-[12px] p-4 text-base text-[#B90090] focus:bg-[#FFF6FD] focus:text-[#B90090]"
+          className="cursor-pointer text-pink-700 focus:bg-pink-50 focus:text-pink-700"
         >
           Delete
         </DropdownMenuItem>
-      </DialogTrigger>
+      </AlertDialogTrigger>
       <ConfirmDelete fileId={id} />
-    </Dialog>
+    </AlertDialog>
   );
 }
 
@@ -82,7 +80,6 @@ const ViewMenuItem = ({ id, name }: File) => {
           onSelect={(event) => {
             event.preventDefault();
           }}
-          className="cursor-pointer rounded-[12px] p-4 text-base text-[#71717A]"
         >
           View
         </DropdownMenuItem>

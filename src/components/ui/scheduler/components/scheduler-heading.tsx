@@ -43,7 +43,7 @@ export function SchedulerHeading(): JSX.Element {
         <div className="flex flex-row items-center">
           {loading ? (
             <span className="flex size-6 items-center">
-              <Spinner />
+              <Spinner variant="primary" />
             </span>
           ) : null}
           {slots.length ? (

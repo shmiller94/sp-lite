@@ -1,6 +1,7 @@
 import moment from 'moment';
 
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
 import { useStepper } from '@/components/ui/stepper';
 import { Body1 } from '@/components/ui/typography';
@@ -96,11 +97,15 @@ function CreateOrderSummaryItem(): JSX.Element {
   return (
     <div className="flex flex-col items-start justify-between space-y-4 py-3 sm:flex-row sm:items-center sm:space-y-0">
       <div className="flex flex-row items-center space-x-4">
-        <img
-          src={service.image}
-          alt={service.name}
-          className="size-12 rounded-xl border border-zinc-200 object-cover object-center"
-        />
+        {isLoading ? (
+          <Skeleton className="h-12 min-w-12" />
+        ) : (
+          <img
+            src={service.image}
+            alt={service.name}
+            className="size-12 rounded-xl border border-zinc-200 object-cover object-center"
+          />
+        )}
         <div className="flex flex-col">
           <p className="text-primary">{service.name}</p>
           <p className="space-x-2 text-sm text-zinc-500">
@@ -127,7 +132,7 @@ function CreateOrderSummaryItem(): JSX.Element {
       <div>
         <div className="text-primary">
           {isLoading ? (
-            <Spinner size="xs" />
+            <Spinner size="xs" variant="primary" />
           ) : basePrice === 0 ? (
             'Included in subscription'
           ) : (

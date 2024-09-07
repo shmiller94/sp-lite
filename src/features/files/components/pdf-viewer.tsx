@@ -1,19 +1,17 @@
-import { useResizeObserver } from '@wojtekmaj/react-hooks';
-import { Download, Trash2, X } from 'lucide-react';
-// eslint-disable-next-line import/order
-import type { PDFDocumentProxy } from 'pdfjs-dist';
-
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 
+import { useResizeObserver } from '@wojtekmaj/react-hooks';
+import { Download, Trash2, X } from 'lucide-react';
+import type { PDFDocumentProxy } from 'pdfjs-dist';
 import { useCallback, useEffect, useState } from 'react';
 import { pdfjs, Document, Page } from 'react-pdf';
 
 import {
-  Dialog,
+  AlertDialog,
+  AlertDialogTrigger,
   DialogClose,
   DialogContent,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Spinner } from '@/components/ui/spinner';
 import { useDownloadFile } from '@/features/files/api/download-file';
@@ -91,14 +89,14 @@ export const PdfViewer = ({ id, name }: PdfViewerProps) => {
   return (
     <DialogContent ref={setContainerRef} className="h-full max-h-[80%] gap-0">
       <div className="ml-auto flex items-start gap-2">
-        <Dialog>
-          <DialogTrigger asChild>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
             <div className="cursor-pointer rounded-sm p-3 opacity-70 ring-offset-background transition-opacity data-[state=open]:bg-accent data-[state=open]:text-muted-foreground hover:opacity-100 focus:outline-none disabled:pointer-events-none">
               <Trash2 className="size-5 md:size-6" color="#B90090" />
             </div>
-          </DialogTrigger>
+          </AlertDialogTrigger>
           <ConfirmDelete fileId={id} />
-        </Dialog>
+        </AlertDialog>
         <div
           role="presentation"
           onClick={onDownload}

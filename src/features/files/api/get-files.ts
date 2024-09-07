@@ -14,7 +14,7 @@ export const getFiles = (page = 1): Promise<{ files: File[] }> => {
 
 export const getFilesQueryOptions = ({ page }: { page?: number } = {}) => {
   return queryOptions({
-    queryKey: page ? ['discussions', { page }] : ['discussions'],
+    queryKey: page ? ['files', { page }] : ['files'],
     queryFn: () => getFiles(page),
   });
 };

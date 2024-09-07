@@ -2,7 +2,7 @@ import { EllipsisVertical } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
-import { DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,8 +11,9 @@ import {
 } from '@/components/ui/dropdown';
 import { useInvoice } from '@/features/settings/api/get-invoice';
 import { CancelMembershipDialog } from '@/features/settings/components/membership/cancel-membership-dialog';
+import { OrderInvoiceDialogContent } from '@/features/settings/components/purchases/orders-invoice-dialog-content';
 import { useSubscriptions } from '@/shared/api/get-subscriptions';
-import { MultiPlatformOrder } from '@/types/api';
+import { MultiPlatformOrder, Subscription } from '@/types/api';
 
 interface OrderDropDownProps {
   multiPlatformOrder: MultiPlatformOrder;
@@ -70,42 +71,63 @@ export const OrderDropDown = ({ multiPlatformOrder }: OrderDropDownProps) => {
         className="w-[160px] rounded-[16px] border-none"
       >
         {invoiceId ? (
-          <DialogTrigger asChild>
-            <DropdownMenuItem className="cursor-pointer rounded-[8px] p-4 hover:bg-[#F7F7F7]">
-              See details
-            </DropdownMenuItem>
-          </DialogTrigger>
+          <SeeDetailsMenuItem multiPlatformOrder={multiPlatformOrder} />
         ) : (
-          <DropdownMenuItem
-            className="cursor-pointer rounded-[8px] p-4 hover:bg-[#F7F7F7]"
-            onClick={openShopifyInvoice}
-          >
+          <DropdownMenuItem onClick={openShopifyInvoice}>
             See details
           </DropdownMenuItem>
         )}
         {invoiceId && (
-          <DropdownMenuItem
-            className="cursor-pointer rounded-[8px] p-4 hover:bg-[#F7F7F7]"
-            onClick={downloadInvoice}
-          >
+          <DropdownMenuItem onClick={downloadInvoice}>
             Download invoice
           </DropdownMenuItem>
         )}
         {type === 'membership' &&
           superpowerMembership &&
           superpowerMembership.status === 'active' && (
-            <CancelMembershipDialog membership={superpowerMembership}>
-              <DropdownMenuItem
-                onSelect={(event) => {
-                  event.preventDefault();
-                }}
-                className="cursor-pointer rounded-[8px] p-4 text-[#B90090] hover:!bg-[#FFF3F6] hover:!text-[#B90090]"
-              >
-                Unsubscribe
-              </DropdownMenuItem>
-            </CancelMembershipDialog>
+            <UnsubscribeMenuItem superpowerMembership={superpowerMembership} />
           )}
       </DropdownMenuContent>
     </DropdownMenu>
+  );
+};
+
+const SeeDetailsMenuItem = ({
+  multiPlatformOrder,
+}: {
+  multiPlatformOrder: MultiPlatformOrder;
+}) => {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <DropdownMenuItem
+          onSelect={(event) => {
+            event.preventDefault();
+          }}
+        >
+          See details
+        </DropdownMenuItem>
+      </DialogTrigger>
+      <OrderInvoiceDialogContent multiPlatformOrder={multiPlatformOrder} />
+    </Dialog>
+  );
+};
+
+const UnsubscribeMenuItem = ({
+  superpowerMembership,
+}: {
+  superpowerMembership: Subscription;
+}) => {
+  return (
+    <CancelMembershipDialog membership={superpowerMembership}>
+      <DropdownMenuItem
+        className="text-pink-700 focus:bg-pink-50 focus:text-pink-700"
+        onSelect={(event) => {
+          event.preventDefault();
+        }}
+      >
+        Unsubscribe
+      </DropdownMenuItem>
+    </CancelMembershipDialog>
   );
 };

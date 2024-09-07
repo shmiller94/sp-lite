@@ -12,7 +12,6 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
-import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import {
   Popover,
   PopoverContent,
@@ -29,10 +28,10 @@ import { useProducts } from '@/features/action-plan/api/get-products';
 import { ActionPlanCheckoutModal } from '@/features/action-plan/components/checkout-modal';
 import { filterGoalsByItemType } from '@/features/action-plan/utils/filter-goals-by-item-type';
 import { generateDummyPlan } from '@/features/action-plan/utils/generate-dummy-plan';
+import { HealthcareServiceDialog } from '@/features/orders/components/healthcare-service-dialog';
 import { useServices } from '@/features/services/api/get-services';
 import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
-import { HealthcareServiceInfoDialogContent } from '@/shared/components';
 import { PlanGoal, PlanGoalItem } from '@/types/api';
 
 export const PlanCard = () => {
@@ -163,7 +162,7 @@ const ActionPlanDatePicker = ({
       setCurrentDate(new Date(planDates[0].timestamp));
       setOrderId(planDates[0].orderId);
     }
-  }, [planDates, setOrderId]);
+  }, [planDates]);
 
   // Render a disabled button if there are no plan dates
   if (planDates?.length === 0) return <h1>No dates available</h1>;
@@ -418,17 +417,12 @@ const Item = ({ item }: { item: PlanGoalItem }) => {
             </div>
           </div>
           {service?.active && (
-            <Dialog>
-              <DialogTrigger>
-                <div className="flex cursor-pointer gap-[3px] whitespace-nowrap text-sm text-[#A1A1AA] hover:text-[#FC5F2B]">
-                  <h5 className="hidden lg:block">Get Started</h5>
-                  <ChevronRight width={16} height={16} />
-                </div>
-              </DialogTrigger>
-              <HealthcareServiceInfoDialogContent healthcareService={service}>
-                <Button>Have you changed me?</Button>
-              </HealthcareServiceInfoDialogContent>
-            </Dialog>
+            <HealthcareServiceDialog healthcareService={service}>
+              <div className="flex cursor-pointer gap-[3px] whitespace-nowrap text-sm text-[#A1A1AA] hover:text-[#FC5F2B]">
+                <h5 className="hidden lg:block">Get Started</h5>
+                <ChevronRight width={16} height={16} />
+              </div>
+            </HealthcareServiceDialog>
           )}
         </div>
       );

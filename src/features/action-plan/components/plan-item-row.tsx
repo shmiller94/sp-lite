@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import { CalendarIcon, ChevronRight, Dot, Trash2 } from 'lucide-react';
+import { CalendarIcon, Dot, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -15,7 +15,6 @@ import { useProducts } from '@/features/action-plan/api/get-products';
 import { usePlan } from '@/features/action-plan/stores/plan-store';
 import { useBiomarkers } from '@/features/biomarkers/api/get-biomarkers';
 import { BiomarkersDataTable } from '@/features/biomarkers/components/biomarkers-data-table/biomarker-data-table';
-import { HealthcareServiceDialog } from '@/features/orders/components/healthcare-service-dialog';
 import { useServices } from '@/features/services/api/get-services';
 import { cn } from '@/lib/utils';
 import {
@@ -140,7 +139,7 @@ function ActionPlanProductRow({
         <Body1>{product.name}</Body1>
         <Input
           className={cn(
-            'w-full h-auto shadow-none border-none font-normal text-zinc-400 text-base placeholder:text-base placeholder:text-[#A1A1AA] placeholder:italic caret-[#FC5F2B] p-0 bg-[#F7F7F7] disabled:opacity-1 disabled:cursor-auto',
+            'w-full h-auto shadow-none border-none font-normal text-zinc-400 text-base placeholder:text-base placeholder:text-[#A1A1AA] placeholder:italic caret-[#FC5F2B] p-0 bg-[#F7F7F7] disabled:opacity-100 disabled:cursor-auto',
           )}
           placeholder={
             isAdmin
@@ -194,7 +193,7 @@ function ActionPlanServiceRow({
             )}
           </div>
           <Input
-            className="h-auto w-full truncate border-none bg-[#F7F7F7] p-0 text-sm font-normal text-zinc-400 caret-[#FC5F2B] shadow-none placeholder:text-sm placeholder:italic placeholder:text-zinc-400 disabled:cursor-auto disabled:opacity-50 md:text-base placeholder:md:text-base"
+            className="h-auto w-full truncate border-none bg-[#F7F7F7] p-0 text-sm font-normal text-zinc-400 caret-[#FC5F2B] shadow-none placeholder:text-sm placeholder:italic placeholder:text-zinc-400 disabled:cursor-auto disabled:opacity-100 md:text-base placeholder:md:text-base"
             placeholder={
               isAdmin
                 ? 'Please write short instructions'
@@ -212,14 +211,6 @@ function ActionPlanServiceRow({
       </div>
       {isAdmin && (
         <ActionPlanItemDatePicker goalItem={goalItem} goalIndex={goalIndex} />
-      )}
-      {service.active && !isAdmin && (
-        <HealthcareServiceDialog healthcareService={service}>
-          <div className="hidden cursor-pointer gap-[3px] whitespace-nowrap text-sm text-[#A1A1AA] hover:text-[#FC5F2B] md:flex">
-            <h5>Get Started</h5>
-            <ChevronRight width={16} height={16} />
-          </div>
-        </HealthcareServiceDialog>
       )}
     </div>
   );

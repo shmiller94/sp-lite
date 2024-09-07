@@ -12,7 +12,7 @@ export const createFile = ({
 }): Promise<{ file: SPFile }> => {
   return api.post(
     `files?filename=${encodeURIComponent(data.file.name)}`,
-    data,
+    data.file,
     {
       headers: {
         'Content-Type': data.file.type || 'application/octet-stream',

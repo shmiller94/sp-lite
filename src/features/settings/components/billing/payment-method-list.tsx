@@ -5,7 +5,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown';
 import { RadioGroup } from '@/components/ui/radio-group';
@@ -90,7 +89,6 @@ export function PaymentMethodCard({
                   paymentMethodId={paymentMethod.stripePaymentMethodId}
                   setDefault={!defaultMethod}
                 />
-                <DropdownMenuSeparator />
                 <DeleteMenuItem {...paymentMethod} />
               </DropdownMenuContent>
             </DropdownMenu>
@@ -138,7 +136,10 @@ function DeleteMenuItem({ stripePaymentMethodId }: PaymentMethod): JSX.Element {
   };
 
   return (
-    <DropdownMenuItem onClick={onClick} className="text-red-500">
+    <DropdownMenuItem
+      onClick={onClick}
+      className="text-pink-700 focus:bg-pink-50 focus:text-pink-700"
+    >
       Delete
     </DropdownMenuItem>
   );

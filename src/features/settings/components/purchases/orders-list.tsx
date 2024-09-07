@@ -79,26 +79,15 @@ function OrderBlock({
         <DateHeader occurrence={date} />
       </TableBody>
       <TableBody>
-        {multiPlatformOrders.map((multiPlatformOrder, index) =>
-          multiPlatformOrder.invoiceId ? (
-            <Dialog key={index}>
-              <DialogTrigger asChild>
-                <OrderCard multiPlatformOrder={multiPlatformOrder} />
-              </DialogTrigger>
-              <OrderInvoiceDialogContent
-                multiPlatformOrder={multiPlatformOrder}
-              />
-            </Dialog>
-          ) : (
-            <OrderCard multiPlatformOrder={multiPlatformOrder} key={index} />
-          ),
-        )}
+        {multiPlatformOrders.map((multiPlatformOrder, index) => (
+          <OrderRow multiPlatformOrder={multiPlatformOrder} key={index} />
+        ))}
       </TableBody>
     </Table>
   );
 }
 
-const OrderCard = ({
+const OrderRow = ({
   multiPlatformOrder,
 }: {
   multiPlatformOrder: MultiPlatformOrder;
@@ -172,10 +161,17 @@ const OrderCard = ({
         <div className="flex items-center">
           <OrderDropDown multiPlatformOrder={multiPlatformOrder} />
           {haveInvoice && (
-            <ChevronRight
-              color="#A1A1AA"
-              className="block size-4 text-secondary md:hidden"
-            />
+            <Dialog>
+              <OrderInvoiceDialogContent
+                multiPlatformOrder={multiPlatformOrder}
+              />
+              <DialogTrigger>
+                <ChevronRight
+                  color="#A1A1AA"
+                  className="block size-4 text-secondary md:hidden"
+                />
+              </DialogTrigger>
+            </Dialog>
           )}
         </div>
       </TableCell>
