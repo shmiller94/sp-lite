@@ -24,7 +24,7 @@ export function BiomarkersDataTable(
   if (isLoading) {
     return (
       <div className="flex h-48 w-full items-center justify-center">
-        <Spinner variant="primary" size="lg" />
+        <Spinner variant="primary" size="md" />
       </div>
     );
   }

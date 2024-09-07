@@ -13,7 +13,7 @@ export const BiomarkersSummaryCard = (): JSX.Element => {
   if (biomarkers.isLoading) {
     return (
       <div className="flex h-48 w-full items-center justify-center">
-        <Spinner />
+        <Spinner variant="primary" />
       </div>
     );
   }

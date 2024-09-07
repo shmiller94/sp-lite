@@ -1,10 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 import { TimestampDisplay } from '@/components/shared/timestamp-display';
+import { FileUpload } from '@/components/shared/upload-wrapper';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useCreateFile, useDownloadFile } from '@/features/files/api';
+import { downloadBlob } from '@/features/files/utils/download-blob';
 import { useServices } from '@/features/services/api/get-services';
 import { useUser } from '@/lib/auth';
 import { Order } from '@/types/api';
@@ -12,8 +16,20 @@ import { Order } from '@/types/api';
 export function CompletedOrderCard(order: Order): JSX.Element {
   const navigate = useNavigate();
   const { data, isLoading } = useServices({});
-  // const { mutate: createFile } = useCreateFile();
-  // const { mutate: downloadFile } = useDownloadFile();
+  const { mutate: createFile } = useCreateFile({
+    mutationConfig: {
+      onSuccess: () => {
+        toast.success('Added file!');
+      },
+    },
+  });
+  const { mutate: downloadFile } = useDownloadFile({
+    mutationConfig: {
+      onSuccess: (data) => {
+        downloadBlob(data, `${order.name} Results.pdf`);
+      },
+    },
+  });
   const { data: user } = useUser();
 
   const healthcareService = data?.services.find(
@@ -46,13 +62,10 @@ export function CompletedOrderCard(order: Order): JSX.Element {
         <Button
           variant="outline"
           className="w-full"
-          onClick={
-            () => {}
-            // downloadFile({
-            //   fileId: order.fileId as string,
-            //   callback: (data) =>
-            //     downloadBlob(data, `${order.name} Results.pdf`),
-            // })
+          onClick={() =>
+            downloadFile({
+              fileId: order.fileId as string,
+            })
           }
           disabled={!order.fileId}
         >
@@ -79,10 +92,6 @@ export function CompletedOrderCard(order: Order): JSX.Element {
   //     fileId: file.id,
   //   });
   //   await queryClient.invalidateQueries({ queryKey: ['orders'] });
-  // };
-
-  // const onSubmit = (file: File): void => {
-  //   createFile({ file, callback: submitFile });
   // };
 
   return (
@@ -113,15 +122,13 @@ export function CompletedOrderCard(order: Order): JSX.Element {
       <hr />
       <div className="w-full space-y-2 p-5">
         {isAdmin && (
-          <div>button here</div>
-          // <UploadWrapper
-          //   validTypes={{
-          //     'application/pdf': 'PDF',
-          //   }}
-          //   onSubmit={onSubmit}
-          // >
-          //   <Button className="w-full">Upload file</Button>
-          // </UploadWrapper>
+          <FileUpload
+            onChange={(files) => {
+              createFile({ data: { file: files[0] } });
+            }}
+          >
+            <Button className="w-full">Upload file</Button>
+          </FileUpload>
         )}
         {renderButton()}
       </div>

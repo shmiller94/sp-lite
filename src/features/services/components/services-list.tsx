@@ -12,7 +12,7 @@ export const ServicesList = () => {
   if (servicesQuery.isLoading) {
     return (
       <div className="flex h-48 w-full items-center justify-center">
-        <Spinner size="lg" variant="primary" />
+        <Spinner size="md" variant="primary" />
       </div>
     );
   }

@@ -12,7 +12,7 @@ export const BiologicalAgeCard = (): JSX.Element => {
   if (biomarkersQuery.isLoading) {
     return (
       <div className="flex h-48 w-full items-center justify-center">
-        <Spinner />
+        <Spinner variant="primary" />
       </div>
     );
   }
