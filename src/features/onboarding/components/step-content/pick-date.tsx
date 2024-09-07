@@ -1,7 +1,7 @@
 import moment from 'moment';
 
+import { Scheduler } from '@/components/shared/scheduler';
 import { Button } from '@/components/ui/button';
-import { Scheduler } from '@/components/ui/scheduler';
 import { Spinner } from '@/components/ui/spinner';
 import { useStepper } from '@/components/ui/stepper';
 import { Body1, H2 } from '@/components/ui/typography';

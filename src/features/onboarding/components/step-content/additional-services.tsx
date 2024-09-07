@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
+import { Scheduler } from '@/components/shared/scheduler';
 import { Button } from '@/components/ui/button';
-import { Scheduler } from '@/components/ui/scheduler';
 import { Spinner } from '@/components/ui/spinner';
 import { useStepper } from '@/components/ui/stepper';
 import { Body1, Body2, H2 } from '@/components/ui/typography';

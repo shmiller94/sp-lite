@@ -3,10 +3,11 @@ import moment from 'moment';
 import React from 'react';
 import 'moment-timezone';
 
-import { useScheduler } from '@/components/ui/scheduler/stores';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { Slot } from '@/types/api';
+
+import { useScheduler } from '../stores/scheduler';
 
 import { SchedulerTimeSlot } from './scheduler-time-slot';
 

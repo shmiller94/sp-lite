@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { Sidebar } from '@/components/ui/sidebar/sidebar';
+import { Sidebar } from '@/components/shared/sidebar';
 import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 

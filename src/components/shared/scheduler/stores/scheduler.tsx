@@ -7,7 +7,7 @@ import {
   SchedulerStore,
   SchedulerStoreApi,
   schedulerStoreCreator,
-} from '@/components/ui/scheduler/stores/scheduler-store-creator';
+} from './scheduler-store-creator';
 
 export const SchedulerStoreContext = createContext<
   SchedulerStoreApi | undefined

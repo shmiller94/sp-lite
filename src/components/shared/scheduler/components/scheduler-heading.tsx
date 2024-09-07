@@ -2,8 +2,9 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import React from 'react';
 import 'moment-timezone';
 
-import { useScheduler } from '@/components/ui/scheduler/stores';
 import { Spinner } from '@/components/ui/spinner';
+
+import { useScheduler } from '../stores/scheduler';
 
 import { RangeSelectButton } from './range-select-button';
 

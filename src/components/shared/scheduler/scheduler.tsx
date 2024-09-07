@@ -1,15 +1,12 @@
 import React, { useEffect } from 'react';
 
 import { Button } from '@/components/ui/button';
-import {
-  SchedulerStoreProvider,
-  useScheduler,
-} from '@/components/ui/scheduler/stores';
 import { Body1 } from '@/components/ui/typography';
 import { cn } from '@/lib/utils';
 import { Address, CollectionMethodType, Slot } from '@/types/api';
 
 import { SchedulerDays, SchedulerHeading, SchedulerTimes } from './components';
+import { SchedulerStoreProvider, useScheduler } from './stores/scheduler';
 
 interface Props {
   collectionMethod: CollectionMethodType;

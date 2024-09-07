@@ -1,5 +1,5 @@
+import { Scheduler } from '@/components/shared/scheduler';
 import { Button } from '@/components/ui/button';
-import { Scheduler } from '@/components/ui/scheduler';
 import { useStepper } from '@/components/ui/stepper';
 import { Body1 } from '@/components/ui/typography';
 import { useOrder } from '@/features/orders/stores/order-store';

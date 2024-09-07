@@ -2,9 +2,10 @@ import moment from 'moment';
 import React from 'react';
 import 'moment-timezone';
 
-import { useScheduler } from '@/components/ui/scheduler/stores';
 import { cn } from '@/lib/utils';
 import { Slot } from '@/types/api';
+
+import { useScheduler } from '../stores/scheduler';
 
 export function SchedulerTimeSlot({
   timeSlot,

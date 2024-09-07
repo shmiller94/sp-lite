@@ -1,9 +1,9 @@
 import moment, { Moment } from 'moment';
 import 'moment-timezone';
 
-import { useScheduler } from '@/components/ui/scheduler/stores';
 import { cn } from '@/lib/utils';
 
+import { useScheduler } from '../stores/scheduler';
 import { dayCount, isDisabledDaySlot } from '../utils';
 
 export function SchedulerDaySlot({ day }: { day: Moment }): JSX.Element {

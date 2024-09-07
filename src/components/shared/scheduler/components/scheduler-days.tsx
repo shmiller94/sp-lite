@@ -2,10 +2,10 @@ import { Moment } from 'moment';
 import { useEffect } from 'react';
 import 'moment-timezone';
 
-import { useScheduler } from '@/components/ui/scheduler/stores';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Body1 } from '@/components/ui/typography';
 
+import { useScheduler } from '../stores/scheduler';
 import { dayArray, isDisabledDaySlot } from '../utils';
 
 import { SchedulerDaySlot } from './scheduler-day-slot';
