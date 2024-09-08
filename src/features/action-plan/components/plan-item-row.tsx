@@ -45,7 +45,7 @@ export function ActionPlanItemRow(
       );
 
       return product ? (
-        <div className="relative flex w-full items-center justify-center">
+        <div className="flex w-full items-center justify-center gap-4">
           <ActionPlanProductRow
             product={product}
             goalItem={item}
@@ -54,7 +54,7 @@ export function ActionPlanItemRow(
           {isAdmin && typeof goalIndex === 'number' && (
             <div
               role="presentation"
-              className="absolute right-[-40px] cursor-pointer"
+              className="cursor-pointer shadow-2xl shadow-zinc-900"
               onClick={() => deleteGoalItem(product.id, goalIndex)}
             >
               <Trash2 width={20} height={20} color="#B90090" />
@@ -68,7 +68,7 @@ export function ActionPlanItemRow(
         (service) => service.id === item.itemId,
       );
       return service ? (
-        <div className="relative flex w-full items-center justify-center">
+        <div className="flex w-full items-center justify-center gap-4">
           <ActionPlanServiceRow
             service={service}
             goalItem={item}
@@ -77,7 +77,7 @@ export function ActionPlanItemRow(
           {isAdmin && typeof goalIndex === 'number' && (
             <div
               role="presentation"
-              className="absolute right-[-40px] cursor-pointer"
+              className="cursor-pointer shadow-2xl shadow-zinc-900"
               onClick={() => deleteGoalItem(service.id, goalIndex)}
             >
               <Trash2 width={20} height={20} color="#B90090" />
@@ -91,12 +91,12 @@ export function ActionPlanItemRow(
         (biomarker) => biomarker.id === item.itemId,
       );
       return biomarker ? (
-        <div className="relative flex w-full items-center justify-center">
+        <div className="flex w-full items-center justify-center gap-4">
           <ActionPlanBiomarkerRow item={biomarker} />
           {isAdmin && typeof goalIndex === 'number' && (
             <div
               role="presentation"
-              className="absolute right-[-40px] cursor-pointer"
+              className="cursor-pointer shadow-2xl shadow-zinc-900"
               onClick={() => deleteGoalItem(biomarker.id, goalIndex)}
             >
               <Trash2 width={20} height={20} color="#B90090" />

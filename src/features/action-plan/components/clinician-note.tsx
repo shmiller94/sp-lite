@@ -185,7 +185,7 @@ const ClinicianNoteConsumer = () => {
                   {isAdmin && (
                     <div
                       role="presentation"
-                      className="absolute right-[-160px] top-[50px] flex size-[40px] cursor-pointer items-center justify-center rounded-full bg-white shadow-[0_32px_64px_0_rgba(212,212,212,0.5)]"
+                      className="flex size-[40px] cursor-pointer items-center justify-center rounded-full bg-white shadow-2xl shadow-zinc-900"
                       onClick={() => deleteGoal(index)}
                     >
                       <Trash2 width={20} height={20} color="#B90090" />

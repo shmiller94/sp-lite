@@ -160,10 +160,11 @@ export const DesktopSidebar = () => {
       <motion.div
         className={cn(
           'hidden h-dvh fixed px-4 py-4 md:flex md:flex-col bg-white flex-shrink-0 w-[196px] md:justify-between md:gap-10 border-r border-r-zinc-200',
+          open ? 'w-[196px]' : 'w-[88px]',
         )}
-        animate={{
-          width: open ? '196px' : '88px',
-        }}
+        // animate={{
+        //   width: open ? '196px' : '88px',
+        // }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       >
         <div className="flex overflow-y-auto overflow-x-hidden md:flex-col">
@@ -295,7 +296,7 @@ export const SidebarLink = ({
     >
       <Icon
         className={cn(
-          'w-5 h-5 text-zinc-400',
+          'min-w-5 h-5 text-zinc-400',
           isSelected ? 'text-zinc-800' : null,
         )}
       />

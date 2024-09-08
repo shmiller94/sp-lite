@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigation } from 'react-router-dom';
 
 import { Sidebar } from '@/components/shared/sidebar';
-import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 
@@ -50,7 +49,6 @@ const Progress = () => {
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const { data } = useUser();
   const { pathname } = useLocation();
-  const { width } = useWindowDimensions();
   /*
    * Completely hides sidebar from UI.
    *
@@ -60,38 +58,24 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     data?.onboarding?.status === 'INCOMPLETE' ||
     pathname.includes('plans');
 
-  const isMd = width >= 768;
-
   const [open, setOpen] = useState(true);
 
   return (
     <>
       {!hideNavBar && <Sidebar open={open} setOpen={setOpen} />}
-      {/*there probably should be better way of doing this but works for v1*/}
       <motion.div
         className={cn(
           'flex flex-col',
           !hideNavBar
             ? 'mb-[72px] md:mb-0 min-h-[calc(100dvh-72px)] md:min-h-dvh'
             : 'min-h-screen',
+          open && !hideNavBar
+            ? 'md:ml-[196px] md:max-w-[calc(100dvw-196px]'
+            : null,
+          !open && !hideNavBar
+            ? 'md:ml-[88px] md:max-w-[calc(100dvw-88px]'
+            : null,
         )}
-        animate={
-          !hideNavBar
-            ? {
-                maxWidth: isMd
-                  ? open
-                    ? 'calc(100vw - 196px)'
-                    : 'calc(100vw - 88px)'
-                  : '100vw', // Reset width for smaller screens
-                marginLeft: isMd ? (open ? '196px' : '88px') : '0px', // Reset marginLeft for smaller screens
-              }
-            : {}
-        }
-        transition={
-          isMd && !hideNavBar
-            ? { type: 'spring', stiffness: 300, damping: 30 }
-            : {}
-        }
       >
         <Progress />
         {children}
