@@ -23,7 +23,10 @@ export const OnboardingRoute = () => {
 
   return (
     <AnimatePresence>
-      <StepperStoreProvider steps={steps} initialStep={0}>
+      <StepperStoreProvider
+        steps={steps}
+        initialStep={user?.onboarding?.progress}
+      >
         <Step />
       </StepperStoreProvider>
       ,
