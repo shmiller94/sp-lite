@@ -83,7 +83,7 @@ export const PickDate = () => {
           </Body1>
         </div>
       )}
-      <div className="flex justify-end gap-4">
+      <div className="flex flex-col-reverse gap-4 md:flex-row md:justify-end">
         <Button
           variant="outline"
           onClick={prevStep}

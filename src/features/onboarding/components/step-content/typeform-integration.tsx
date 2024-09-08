@@ -19,6 +19,10 @@ export const TypeformIntegration = () => {
     navigate('/app', {
       replace: true,
     });
+
+    // for some reason typeform doesnt unmount after we get
+    // to app so we need to manually refresh page
+    window.location.reload();
   };
 
   return (

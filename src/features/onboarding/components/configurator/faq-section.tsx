@@ -77,8 +77,11 @@ const SECURITY: Faq[] = [
   },
 ];
 
+const ALL_FAQ = [...HOW_IT_WORKS, ...MEMBERSHIP, ...SECURITY];
+
 const FaqSection = ({ faqRef }: { faqRef: RefObject<HTMLDivElement> }) => {
   const [width, setWidth] = useState(0);
+  const [index, setIndex] = useState(0);
 
   useEffect(() => {
     const updateWidth = () => {
@@ -101,14 +104,20 @@ const FaqSection = ({ faqRef }: { faqRef: RefObject<HTMLDivElement> }) => {
   return (
     <section id="footer" className="my-3 w-full text-[#A1A1A1]">
       <p className="text-xs">FAQ - How it works</p>
-      <p className="text-lg text-zinc-900">
-        What does the Superpower Concierge do?
-      </p>
+      <p className="text-lg text-zinc-900">{ALL_FAQ[index].display}</p>
       <hr className="mb-2 mt-3 bg-zinc-500" />
       <div className="flex flex-row justify-between">
         <div className="flex flex-row items-center space-x-4">
-          <ChevronLeft className="size-4 cursor-pointer hover:text-zinc-900" />
-          <ChevronRight className="size-4 cursor-pointer hover:text-zinc-900" />
+          <ChevronLeft
+            onClick={() => setIndex((prev) => (prev !== 0 ? prev - 1 : prev))}
+            className="size-4 cursor-pointer hover:text-zinc-900"
+          />
+          <ChevronRight
+            onClick={() =>
+              setIndex((prev) => (prev < ALL_FAQ.length - 1 ? prev + 1 : prev))
+            }
+            className="size-4 cursor-pointer hover:text-zinc-900"
+          />
         </div>
 
         <Popover>

@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 
 import { env } from '@/config/env';
 import { clearActiveLogin, getActiveLogin, setActiveLogin } from '@/lib/utils';
-import { OAuthGrantType, OperationOutcome, TokenResponse } from '@/types/api';
+import { OAuthGrantType, TokenResponse } from '@/types/api';
 import { parseJWTPayload } from '@/utils/jwt';
 
 function authRequestInterceptor(config: InternalAxiosRequestConfig) {
@@ -31,11 +31,23 @@ api.interceptors.response.use(
 
     if (error.response.status !== 401) {
       if (error.response.data) {
-        const apiError: OperationOutcome = error.response.data;
+        const apiError = error.response.data;
 
-        for (const e of apiError.issue) {
-          toast.error(e.details.text);
+        /**
+         * If we have issue inside then API error is of type OperationOutcome
+         */
+        if (apiError.issue) {
+          for (const e of apiError.issue) {
+            toast.error(e.details.text);
+          }
+        } else {
+          /**
+           * Regular JS error that has message field inside
+           */
+          toast.error(apiError.message);
         }
+      } else {
+        toast.error('An unknown error occurred.');
       }
     }
 

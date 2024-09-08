@@ -25,7 +25,7 @@ export const ImageContentLayout = (props: Props) => {
   return (
     <>
       <Head title={title} />
-      <div className="flex h-screen w-full flex-col overflow-y-auto lg:flex-row">
+      <div className="flex min-h-screen w-full flex-col overflow-y-auto lg:flex-row">
         <div
           className={cn(
             'min-h-[210px] lg:sticky lg:top-0 lg:h-screen w-full lg:max-w-[556px] bg-spine-2 bg-no-repeat bg-cover flex px-6 flex-col items-start justify-center',

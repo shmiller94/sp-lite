@@ -46,6 +46,7 @@ export const SignatureBlock: React.FC<SignatureBlockProps> = ({
         onMouseEnter={() => setShowPencil(true)}
         onMouseLeave={() => setShowPencil(false)}
         onMouseDownCapture={() => setNext(true)}
+        onTouchStart={() => setNext(true)} // For mobile
         ref={divRef}
         onMouseMove={handleMouseMove}
       >
