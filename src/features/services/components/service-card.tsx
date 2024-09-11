@@ -56,7 +56,7 @@ const DesktopCard = ({ service }: { service: HealthcareService }) => {
         alt={service.name}
         className="h-[190px] w-full rounded-b-2xl rounded-t-3xl object-cover"
       />
-      <div className="flex flex-1 flex-col justify-between sm:p-5">
+      <div className="flex w-full flex-1 flex-col justify-between sm:p-5">
         <div className="space-y-1">
           <H4 className="line-clamp-2 text-wrap">{service.name}</H4>
           <Body2 className="line-clamp-2 text-wrap text-zinc-500">

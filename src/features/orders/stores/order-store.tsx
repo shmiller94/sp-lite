@@ -30,11 +30,19 @@ export const OrderStoreProvider = ({
     orderStoreRef.current = orderStoreCreator(props);
   }
 
+  // TODO: double check this, maybe better to initialize collection as null and then reset it
   useEffect(() => {
     orderStoreRef.current?.setState({
       collectionMethod: props.collectionMethod,
     });
   }, [props.collectionMethod]);
+
+  // TODO: double check this, maybe better to initialize service as null and then reset it
+  useEffect(() => {
+    orderStoreRef.current?.setState({
+      service: props.service,
+    });
+  }, [props.service]);
 
   return (
     <OrderStoreContext.Provider value={orderStoreRef.current}>

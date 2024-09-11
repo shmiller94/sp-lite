@@ -82,6 +82,7 @@ export function DataTable<TData, TValue>({
   ];
   const [currentCategory, setCurrentCategory] =
     useState<ToolbarCategoryType>('Blood');
+
   const healthcareService = healthcareServices?.data?.services.find(
     (service) =>
       service.name === getHealthcareServiceFromCategory(currentCategory),
@@ -203,7 +204,7 @@ export function DataTable<TData, TValue>({
                 </Button>
               </HealthcareServiceDialog>
             )}
-            <Link to="/settings/vault">
+            <Link to="/vault">
               <Button variant="outline" className="mt-4">
                 Upload Lab Report
               </Button>
