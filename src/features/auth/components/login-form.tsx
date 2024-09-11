@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Lock, Mail } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import { Link } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -87,9 +88,13 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
             <Button className="w-full" type="submit">
               {loginMutation.isPending ? <Spinner /> : 'Login'}
             </Button>
-            <Button className="w-full" variant="outline" type="button">
+            <Link
+              to="https://superpower.com"
+              target="_blank"
+              className="inline-flex w-full items-center justify-center rounded-xl border border-input px-8 py-4 shadow-sm hover:bg-accent hover:text-accent-foreground"
+            >
               Join waitlist
-            </Button>
+            </Link>
           </div>
         </form>
       </Form>

@@ -60,14 +60,13 @@ export const AuthLayout = ({ children, title }: LayoutProps) => {
             </Link>
             <div className="flex items-center gap-0.5">
               <Body2 className="text-zinc-500">Don’t have an account?</Body2>
-              <a
-                href="https://google.com"
-                className="cursor-pointer text-sm text-[#FC5F2B]"
+              <Link
+                to="https://superpower.com"
                 target="_blank"
-                rel="noreferrer"
+                className="cursor-pointer text-sm text-vermillion-900"
               >
                 Sign up to our waitlist.
-              </a>
+              </Link>
             </div>
           </div>
         ) : null}
