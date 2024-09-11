@@ -12,7 +12,6 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { Spinner } from '@/components/ui/spinner';
 import { Table, TableBody, TableHeader } from '@/components/ui/table';
 import { BiomarkerTableCell } from '@/features/biomarkers/components/biomarkers-data-table/biomarker-table-cell';
@@ -198,16 +197,11 @@ export function DataTable<TData, TValue>({
           </div>
           <div className="space-x-8 pt-12">
             {healthcareService && (
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="default" className="mt-4">
-                    Get Tested
-                  </Button>
-                </DialogTrigger>
-                <HealthcareServiceDialog healthcareService={healthcareService}>
-                  <Button onClick={() => {}}>Have you changed me?</Button>
-                </HealthcareServiceDialog>
-              </Dialog>
+              <HealthcareServiceDialog healthcareService={healthcareService}>
+                <Button variant="default" className="mt-4">
+                  Get Tested
+                </Button>
+              </HealthcareServiceDialog>
             )}
             <Link to="/settings/vault">
               <Button variant="outline" className="mt-4">

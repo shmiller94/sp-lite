@@ -10,7 +10,7 @@ import { User } from '@/types/api';
  * Used as main type for all form inputs where we need to add/update address
  * */
 export const formAddressInputSchema = z.object({
-  line1: z.string().min(1),
+  line1: z.string().min(3),
   postalCode: z.string().min(5).max(5),
   city: z.string().min(1),
   state: z.string().min(1),

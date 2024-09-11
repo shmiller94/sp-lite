@@ -90,6 +90,8 @@ export const Configurator = () => {
     setActiveCard(closestBreakpointIndex);
   });
 
+  // const test = ['bg-red-500', 'bg-orange-500', 'bg-pink-500', 'bg-green-500'];
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -101,7 +103,7 @@ export const Configurator = () => {
     >
       <div
         className={cn(
-          'hidden lg:flex flex-col items-center justify-between h-screen sticky top-0 w-full bg-[#F7F7F7] p-8',
+          'hidden lg:flex flex-col items-center  justify-between h-screen sticky top-0 w-full bg-[#F7F7F7] p-8',
         )}
         ref={faqRef}
       >
@@ -110,7 +112,9 @@ export const Configurator = () => {
           alt="logo"
           className="h-auto w-[114px] object-cover"
         />
-        {content[activeCard].image ?? null}
+        {/*<div className={cn('h-20 w-20', test[activeCard])}></div>*/}
+        {/*{content[activeCard].image ?? null}*/}
+        <div className="bg-[#F7F7F7]">{content[activeCard].image ?? null}</div>
         <FaqSection faqRef={faqRef} />
       </div>
       <ConfiguratorForm

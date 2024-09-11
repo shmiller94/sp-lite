@@ -53,7 +53,10 @@ export function CouponCodeAccessForm({
   useEffect(() => {
     if (accessCodeQuery.isSuccess) {
       codeValidated();
-      localStorage.setItem('superpower-code', accessCode as string);
+      localStorage.setItem(
+        'superpower-code',
+        accessCode?.toUpperCase() as string,
+      );
     }
   }, [accessCodeQuery.isSuccess, codeValidated]);
 

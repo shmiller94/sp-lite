@@ -1,5 +1,4 @@
-import { Dot } from 'lucide-react';
-
+import { DotIcon } from '@/components/icons/dot';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Body1, Body2, H2 } from '@/components/ui/typography';
@@ -50,7 +49,7 @@ const MembershipCard = ({ membership }: { membership: Membership }) => {
           />
           <div className="flex flex-col justify-center gap-1">
             <Body2 className="text-zinc-500">{membership.displayName}</Body2>
-            <div className="flex items-center">
+            <div className="flex items-center gap-2">
               <Body1 className="text-zinc-900 sm:text-base">
                 {membershipQuery.data ? (
                   `${formatMoney(membershipQuery.data?.total / 12)}/mo`
@@ -58,8 +57,8 @@ const MembershipCard = ({ membership }: { membership: Membership }) => {
                   <Skeleton className="h-6 w-[60px]" />
                 )}
               </Body1>
-              <Dot className="hidden text-zinc-400 sm:block" />
-              <Body1 className="hidden text-zinc-400 sm:block sm:text-base">
+              <DotIcon />
+              <Body1 className="line-clamp-1 text-zinc-400 sm:text-base">
                 {membershipQuery.data ? (
                   `${formatMoney(membershipQuery.data.total)} billed annually`
                 ) : (
@@ -99,9 +98,9 @@ const SectionMembership = () => {
           ))}
         </RadioGroup>
         {metadata.map((meta, indx) => (
-          <div className="flex items-center gap-1 sm:px-2" key={indx}>
+          <div className="flex items-center gap-3 sm:px-2" key={indx}>
             <div>
-              <Dot color="#D4D4D8" />
+              <DotIcon width={5} height={5} fill="#D4D4D8" />
             </div>
             <Body2 className="line-clamp-1 text-zinc-600">{meta}</Body2>
           </div>

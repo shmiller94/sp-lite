@@ -23,7 +23,7 @@ export const ContentLayout = ({
       <Head title={title} />
       <div
         className={cn(
-          'w-full flex-grow',
+          'w-full flex-grow flex flex-col',
           bgColor === 'zinc' ? 'bg-zinc-50' : null,
         )}
       >

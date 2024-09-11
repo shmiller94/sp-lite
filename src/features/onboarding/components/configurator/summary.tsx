@@ -48,7 +48,9 @@ const Summary = () => {
               </Body2>
               <Body2 className="text-zinc-400">(Annual)</Body2>
             </div>
-            <Body2 className="text-zinc-400">{formatMoney(49900)}</Body2>
+            <Body2 className="text-zinc-400">
+              {formatMoney(membershipQuery.data?.total ?? 0)}
+            </Body2>
           </div>
           {collectionMethod === 'AT_HOME' ? (
             <div className="flex justify-between">

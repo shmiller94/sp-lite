@@ -2,43 +2,13 @@ import { useStripe } from '@stripe/react-stripe-js';
 import React, { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { MultiStepLoader } from '@/components/ui/multi-step-loader';
+import { OneLineLoader } from '@/components/ui/one-line-loader/one-line-loader';
 import { Spinner } from '@/components/ui/spinner';
 import { Body1, H2 } from '@/components/ui/typography';
 import { useCreateVerificationSession } from '@/features/onboarding/api/create-verification-session';
 import { ImageContentLayout } from '@/features/onboarding/components/layouts';
 import { useUser } from '@/lib/auth';
 import { useStepper } from '@/lib/stepper';
-
-const loadingStates = [
-  {
-    text: 'Making sure everything checks out',
-  },
-  {
-    text: 'Verifying your info, hang tight',
-  },
-  {
-    text: 'Just a moment, ensuring security',
-  },
-  {
-    text: 'Reviewing your details',
-  },
-  {
-    text: 'Double-checking everything',
-  },
-  {
-    text: 'Securing your connection',
-  },
-  {
-    text: 'Cross-referencing your data',
-  },
-  {
-    text: 'Checking all the boxes',
-  },
-  {
-    text: 'Confirming your identity',
-  },
-];
 
 export const Identity = () => {
   const { nextOnboardingStep } = useStepper((s) => s);
@@ -64,8 +34,8 @@ export const Identity = () => {
           updatedUser.data?.userIdentity?.reportId;
 
         if (updatedUser?.data?.userIdentity?.status === 'VERIFIED') {
+          nextOnboardingStep();
           clearInterval(interval);
-          await nextOnboardingStep();
         } else if (updatedUser?.data?.userIdentity && !sameReportId) {
           clearInterval(interval); // Cleanup interval
           setLongPollingUser(false);
@@ -77,13 +47,6 @@ export const Identity = () => {
       return () => clearInterval(interval); // Cleanup interval on component unmount
     }
   }, [longPollingUser]);
-
-  /* Case when user closed the window but we still processing on background and he comes back */
-  useEffect(() => {
-    if (user?.userIdentity?.status === 'VERIFIED') {
-      nextOnboardingStep();
-    }
-  }, [user?.userIdentity]);
 
   if (!stripe) {
     return null;
@@ -116,11 +79,7 @@ export const Identity = () => {
 
   return (
     <section id="main">
-      <MultiStepLoader
-        loadingStates={loadingStates}
-        loading={longPollingUser}
-        duration={5000}
-      />
+      <OneLineLoader loading={longPollingUser} duration={4000} />
 
       <div className="mb-4 flex flex-col gap-8">
         <H2 className="text-zinc-900">

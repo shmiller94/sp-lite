@@ -1,6 +1,7 @@
 import { PopoverClose } from '@radix-ui/react-popover';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import React, { RefObject, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 import {
   Accordion,
@@ -8,6 +9,7 @@ import {
   AccordionTrigger,
   AccordionItem,
 } from '@/components/ui/accordion';
+import { Button } from '@/components/ui/button';
 import {
   Popover,
   PopoverContent,
@@ -82,6 +84,7 @@ const ALL_FAQ = [...HOW_IT_WORKS, ...MEMBERSHIP, ...SECURITY];
 const FaqSection = ({ faqRef }: { faqRef: RefObject<HTMLDivElement> }) => {
   const [width, setWidth] = useState(0);
   const [index, setIndex] = useState(0);
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   useEffect(() => {
     const updateWidth = () => {
@@ -108,26 +111,38 @@ const FaqSection = ({ faqRef }: { faqRef: RefObject<HTMLDivElement> }) => {
       <hr className="mb-2 mt-3 bg-zinc-500" />
       <div className="flex flex-row justify-between">
         <div className="flex flex-row items-center space-x-4">
-          <ChevronLeft
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => setIndex((prev) => (prev !== 0 ? prev - 1 : prev))}
-            className="size-4 cursor-pointer hover:text-zinc-900"
-          />
-          <ChevronRight
+          >
+            <ChevronLeft className="size-4 cursor-pointer hover:text-zinc-900" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() =>
               setIndex((prev) => (prev < ALL_FAQ.length - 1 ? prev + 1 : prev))
             }
-            className="size-4 cursor-pointer hover:text-zinc-900"
-          />
+          >
+            <ChevronRight className="size-4 cursor-pointer hover:text-zinc-900" />
+          </Button>
         </div>
 
-        <Popover>
+        {isPopoverOpen &&
+          createPortal(
+            <div className="fixed inset-0 z-40 bg-white opacity-80" />,
+            document.body,
+          )}
+
+        <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
           <PopoverTrigger asChild>
             <a href="#" className="text-sm hover:text-zinc-900">
               View FAQs
             </a>
           </PopoverTrigger>
           <PopoverContent
-            className="rounded-2xl p-16"
+            className="h-[calc(100dvh-150px)] rounded-2xl p-16"
             style={{ width: width }}
             side="top"
             align="end"
@@ -144,19 +159,19 @@ const FaqSection = ({ faqRef }: { faqRef: RefObject<HTMLDivElement> }) => {
                   <TabsList className="grid h-auto w-full grid-cols-3 rounded-[64px] border border-zinc-200 bg-white p-1 text-sm text-zinc-900">
                     <TabsTrigger
                       value="how"
-                      className="max-w-[140px] rounded-[80px]  !border-b-0 px-2 py-1.5 text-sm text-zinc-900 data-[state=active]:!border-b-0 data-[state=active]:bg-zinc-900 data-[state=active]:text-white"
+                      className="max-w-[140px] rounded-[80px]  !border-b-0 px-5 py-3 text-sm text-zinc-900 data-[state=active]:!border-b-0 data-[state=active]:bg-zinc-900 data-[state=active]:text-white"
                     >
                       How it works
                     </TabsTrigger>
                     <TabsTrigger
                       value="membership"
-                      className="max-w-[140px] rounded-[80px]  !border-b-0 px-2 py-1.5 text-sm text-zinc-900 data-[state=active]:!border-b-0 data-[state=active]:bg-zinc-900 data-[state=active]:text-white"
+                      className="max-w-[140px] rounded-[80px]  !border-b-0 px-5 py-3 text-sm text-zinc-900 data-[state=active]:!border-b-0 data-[state=active]:bg-zinc-900 data-[state=active]:text-white"
                     >
                       Membership
                     </TabsTrigger>
                     <TabsTrigger
                       value="security"
-                      className="max-w-[140px] rounded-[80px]  !border-b-0 px-2 py-1.5 text-sm text-zinc-900 data-[state=active]:!border-b-0 data-[state=active]:bg-zinc-900 data-[state=active]:text-white"
+                      className="max-w-[140px] rounded-[80px]  !border-b-0 px-5 py-3 text-sm text-zinc-900 data-[state=active]:!border-b-0 data-[state=active]:bg-zinc-900 data-[state=active]:text-white"
                     >
                       Security
                     </TabsTrigger>

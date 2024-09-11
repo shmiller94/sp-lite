@@ -84,6 +84,8 @@ const SchedulerCase = ({
             className="p-0 text-zinc-500"
             onClick={() => {
               setIndex((prev) => prev + 1);
+              service.name === GRAIL_GALLERI_MULTI_CANCER_TEST &&
+                updateCancerSlot(null);
             }}
           >
             Skip this for now
@@ -276,8 +278,6 @@ const OrderSummaryCase = ({
   const updateBloodOrders = async () => {
     for (const as of filteredServices) {
       const orderInfo = getOrderInfo(as, slots);
-
-      console.log(orderInfo);
 
       await updateOrderMutation.mutateAsync({
         orderId: orderInfo?.orderId as string,

@@ -23,6 +23,7 @@ export type ScheduledSlots = {
     orderId: string | null;
     slot: Slot | null;
     timezone: string | null;
+    agreedToDisclaimer: boolean;
   };
   /* Address because we DELIVER to this location */
   microbiome: { orderId: string | null; address: ActiveAddress | null };
@@ -61,6 +62,7 @@ type OnboardingStore = {
   updateToxinOrderId: (id: string | null) => void;
   updateBloodTimezone: (timezone: string) => void;
   updateCancerTimezone: (timezone: string) => void;
+  updateCancerAgreement: (agreed: boolean) => void;
 };
 
 export const useOnboarding = create<OnboardingStore>()(
@@ -92,6 +94,7 @@ export const useOnboarding = create<OnboardingStore>()(
           orderId: null,
           slot: null,
           timezone: null,
+          agreedToDisclaimer: false,
         },
         microbiome: {
           orderId: null,
@@ -121,6 +124,7 @@ export const useOnboarding = create<OnboardingStore>()(
               slot,
               orderId: state.slots.cancer.orderId,
               timezone: state.slots.cancer.timezone,
+              agreedToDisclaimer: state.slots.cancer.agreedToDisclaimer,
             },
           },
         })),
@@ -163,6 +167,7 @@ export const useOnboarding = create<OnboardingStore>()(
               orderId: id,
               slot: state.slots.cancer.slot,
               timezone: state.slots.cancer.timezone,
+              agreedToDisclaimer: state.slots.cancer.agreedToDisclaimer,
             },
           },
         })),
@@ -202,6 +207,19 @@ export const useOnboarding = create<OnboardingStore>()(
               orderId: state.slots.cancer.orderId,
               slot: state.slots.cancer.slot,
               timezone: timezone,
+              agreedToDisclaimer: state.slots.cancer.agreedToDisclaimer,
+            },
+          },
+        })),
+      updateCancerAgreement: (agreed) =>
+        set((state) => ({
+          slots: {
+            ...state.slots,
+            cancer: {
+              orderId: state.slots.cancer.orderId,
+              slot: state.slots.cancer.slot,
+              timezone: state.slots.cancer.timezone,
+              agreedToDisclaimer: agreed,
             },
           },
         })),

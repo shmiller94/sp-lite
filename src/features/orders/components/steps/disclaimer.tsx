@@ -3,14 +3,14 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Body1, Body2, H2 } from '@/components/ui/typography';
 import { useOrder } from '@/features/orders/stores/order-store';
-import { getLegalDisclaimerForService } from '@/features/orders/utils/get-legal-disclaimer-for-service';
 import { useStepper } from '@/lib/stepper';
+import { getLegalDisclaimerForService } from '@/utils/service';
 
 export const Disclaimer = () => {
   const { activeStep, steps, nextStep } = useStepper((s) => s);
   const service = useOrder((s) => s.service);
 
-  const disclaimer = getLegalDisclaimerForService(service);
+  const disclaimer = getLegalDisclaimerForService(service.name);
   return (
     <>
       <div className="space-y-8 md:space-y-12">

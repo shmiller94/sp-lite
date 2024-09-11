@@ -8,6 +8,7 @@ import {
   // GUT_MICROBIOME_ANALYSIS,
   TOTAL_TOXIN_TEST,
 } from '@/const';
+import { Disclaimer } from '@/features/onboarding/components/disclaimer';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import { useService } from '@/features/services/api/get-service';
 import { useServices } from '@/features/services/api/get-services';
@@ -37,6 +38,7 @@ const AdditionalServiceCard = ({ service }: AdditionalServiceCardProps) => {
       )}
       role="presentation"
     >
+      <Disclaimer healthcareService={service} />
       <div className="flex w-full flex-row items-center justify-between gap-2">
         <div className="flex max-w-[300px] flex-row gap-x-4">
           <div className="flex h-16 min-w-16 items-center justify-center rounded-lg bg-zinc-100">

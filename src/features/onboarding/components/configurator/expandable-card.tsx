@@ -106,7 +106,7 @@ const ExpandableCard = ({ parentRef, isExpanded, setIsExpanded }: Props) => {
           height: isExpanded ? 294 : 92,
         }}
         onClick={() => setIsExpanded(true)}
-        className="fixed bottom-0 z-[120] mb-9 flex flex-col overflow-y-auto rounded-3xl border border-zinc-200 bg-zinc-900 shadow-[0_10px_100px_0px_rgba(24,24,27,0.15)] scrollbar-none"
+        className="fixed bottom-0 z-50 mb-9 flex flex-col overflow-y-auto rounded-3xl border border-zinc-200 bg-zinc-900 shadow-[0_10px_100px_0px_rgba(24,24,27,0.15)] scrollbar-none"
       >
         {isExpanded ? (
           <motion.div

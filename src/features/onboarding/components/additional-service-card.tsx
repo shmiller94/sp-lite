@@ -1,7 +1,7 @@
-import { Dot } from 'lucide-react';
 import moment from 'moment';
 import React from 'react';
 
+import { DotIcon } from '@/components/icons/dot';
 import { AddToCalendar } from '@/components/shared/add-to-calendar-button';
 import { Button } from '@/components/ui/button';
 import { Body1, Body2 } from '@/components/ui/typography';
@@ -37,9 +37,9 @@ export const AdditionalServiceCard = ({
       case GRAIL_GALLERI_MULTI_CANCER_TEST:
         return (
           <div className="flex items-center gap-1.5">
-            <Body2 className="text-zinc-500">At home visit</Body2>
-            <Dot className="text-zinc-500" />
-            <Body2 className="text-zinc-500">
+            <Body2 className="line-clamp-1 text-zinc-500">At home visit</Body2>
+            <DotIcon className="text-zinc-500" />
+            <Body2 className="line-clamp-1 text-zinc-500">
               {moment(slots.cancer?.slot?.start).format(
                 'MMMM Do YYYY, h:mm A',
               ) ?? 'soon'}
@@ -48,20 +48,20 @@ export const AdditionalServiceCard = ({
         );
       case GUT_MICROBIOME_ANALYSIS:
         return (
-          <div className="flex items-center gap-1.5">
-            <Body2 className="text-zinc-500">{`Ships to ${slots?.microbiome.address?.address?.line.join(' ')}`}</Body2>
-            <Dot className="text-zinc-500" />
-            <Body2 className="text-zinc-500">
+          <div className="flex items-center gap-2">
+            <Body2 className="line-clamp-1 text-zinc-500">{`Ships to ${slots?.microbiome.address?.address?.line.join(' ')}`}</Body2>
+            <DotIcon className="text-zinc-500" />
+            <Body2 className="line-clamp-1 text-zinc-500">
               Arriving in 2-3 business days
             </Body2>
           </div>
         );
       case TOTAL_TOXIN_TEST:
         return (
-          <div className="flex items-center gap-1.5">
-            <Body2 className="text-zinc-500">{`Ships to ${slots?.toxin.address?.address.line.join(' ')}`}</Body2>
-            <Dot className="text-zinc-500" />
-            <Body2 className="text-zinc-500">
+          <div className="flex items-center gap-2">
+            <Body2 className="line-clamp-1 text-zinc-500">{`Ships to ${slots?.toxin.address?.address.line.join(' ')}`}</Body2>
+            <DotIcon className="text-zinc-500" />
+            <Body2 className="line-clamp-1 text-zinc-500">
               Arriving in 2-3 business days
             </Body2>
           </div>
@@ -84,7 +84,7 @@ export const AdditionalServiceCard = ({
             <Body1 className="text-zinc-900">{service.name}</Body1>
             {onEdit && (
               <div className="flex items-center gap-1.5">
-                <Dot className="text-zinc-500" />
+                <DotIcon className="text-zinc-500" />
                 <Button
                   variant="ghost"
                   className="p-0 text-sm text-zinc-500"

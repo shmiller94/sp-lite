@@ -12,8 +12,9 @@ import { ConsentInfo } from '@/components/shared/consent-info';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { MultiStepLoader } from '@/components/ui/multi-step-loader';
+import { OneLineLoader } from '@/components/ui/one-line-loader/one-line-loader';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Body1, Body2, H2 } from '@/components/ui/typography';
 import {
   GRAIL_GALLERI_MULTI_CANCER_TEST,
@@ -38,36 +39,6 @@ import { cn } from '@/lib/utils';
 import { Address } from '@/types/api';
 import { formatMoney } from '@/utils/format-money';
 
-const loadingStates = [
-  {
-    text: 'Processing your payment method',
-  },
-  {
-    text: 'Securing your membership',
-  },
-  {
-    text: 'Creating your first-ever superpower order',
-  },
-  {
-    text: 'Adding your selected services',
-  },
-  {
-    text: 'Finalizing your order',
-  },
-  {
-    text: 'Reviewing your choices',
-  },
-  {
-    text: 'Almost there, wrapping up',
-  },
-  {
-    text: 'Double-checking everything for you',
-  },
-  {
-    text: 'Making sure everything’s perfect',
-  },
-];
-
 export const ConfirmOrder = () => {
   const { additionalServices, collectionMethod } = useOnboarding();
 
@@ -91,10 +62,18 @@ export const ConfirmOrder = () => {
       <div className="flex w-full items-center  justify-between rounded-[16px] bg-[#F7F7F7] px-6 py-5">
         <div>
           <Body1 className="text-zinc-900">
-            {formatMoney(total / 12)} / month
+            {membershipQuery.isLoading ? (
+              <Skeleton className="h-6 w-[130px]" />
+            ) : (
+              `${formatMoney(total / 12)} / month`
+            )}
           </Body1>
           <Body2 className="text-zinc-900 opacity-50">
-            {formatMoney(total)} / year, billed annually
+            {membershipQuery.isLoading ? (
+              <Skeleton className="h-5 w-[130px]" />
+            ) : (
+              `${formatMoney(total)} / year, billed annually`
+            )}
           </Body2>
         </div>
         <Button
@@ -297,16 +276,12 @@ const CreditCardPaymentForm = () => {
     }
 
     setProcessing(false);
-    await nextOnboardingStep();
+    nextOnboardingStep();
   };
 
   return (
     <div className="flex flex-col gap-8">
-      <MultiStepLoader
-        loadingStates={loadingStates}
-        loading={processing}
-        duration={3000}
-      />
+      <OneLineLoader loading={processing} duration={4000} />
 
       <H2 className="text-zinc-900">Payment</H2>
       <form onSubmit={handleSubmit} className="grid gap-8">

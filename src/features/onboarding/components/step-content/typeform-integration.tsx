@@ -7,6 +7,7 @@ import { useUser } from '@/lib/auth';
 
 export const TypeformIntegration = () => {
   const navigate = useNavigate();
+  const { data: user } = useUser();
   const { refetch } = useUser();
 
   const completeOnboarding = async () => {
@@ -25,14 +26,21 @@ export const TypeformIntegration = () => {
     window.location.reload();
   };
 
+  // Check if in development environment
+  const isDev = import.meta.env.DEV;
+
   return (
     <section id="main">
       <Widget
         id="VVOeB9wb"
         className="h-[80dvh] w-[80dvw] pt-24"
         opacity={0}
-        enableSandbox
+        enableSandbox={isDev}
         fullScreen
+        transitiveSearchParams={['email']}
+        hidden={{
+          email: user?.email ?? '',
+        }}
         onSubmit={completeOnboarding}
       />
     </section>

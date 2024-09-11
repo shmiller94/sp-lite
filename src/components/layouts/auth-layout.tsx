@@ -73,7 +73,7 @@ export const AuthLayout = ({ children, title }: LayoutProps) => {
         ) : null}
         {location.pathname === '/register' ? (
           <div className="flex items-center gap-0.5">
-            <Body2 className="text-zinc-500">Don’t have an account?</Body2>
+            <Body2 className="text-zinc-500">Already have an account?</Body2>
             <Link
               to="/signin"
               replace={false}

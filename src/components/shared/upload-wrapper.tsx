@@ -70,7 +70,7 @@ export const FileUpload = ({
     fileInputRef.current?.click();
   };
 
-  const { getRootProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
     multiple: false,
     accept: acceptedFileTypes,
     onDrop: handleFileChange,
@@ -83,6 +83,8 @@ export const FileUpload = ({
   if (children) {
     return (
       <div className="w-full" {...getRootProps()}>
+        {/*needed in safari*/}
+        <input {...getInputProps()} className="hidden" />
         {children}
       </div>
     );

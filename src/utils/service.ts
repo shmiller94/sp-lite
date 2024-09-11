@@ -2,6 +2,11 @@ import {
   ServiceDetails,
   TestDetails,
 } from '@/components/shared/healthcare-service-info-dialog-content/types/service';
+import {
+  ENVIRONMENTAL_TOXINS,
+  GRAIL_GALLERI_MULTI_CANCER_TEST,
+  LEGAL_DESCLAIMERS,
+} from '@/const';
 import { HealthcareService } from '@/types/api';
 import { TimelineType } from '@/types/timeline';
 
@@ -351,4 +356,37 @@ A DEXA scan provides an in-depth body fat analysis including segmental fat mass,
   };
 
   return serviceDetails[healthcareServiceName];
+};
+
+/**
+ * Retrieves the legal disclaimer for a specific healthcare service.
+ * If the service does not have a specific disclaimer, the disclaimer for environmental toxins is used by default.
+ *
+ * @param service - The healthcare service for which to retrieve the legal disclaimer.
+ * @returns {string} The corresponding legal disclaimer for the given healthcare service.
+ *
+ * The function includes a default case where the disclaimer for "environmental toxins" is returned.
+ * This default is applied when the healthcare service does not have a predefined legal disclaimer or falls under unspecified services.
+ * This ensures that all services have a disclaimer, especially when the service is not explicitly mapped to one.
+ *
+ * @example
+ * // Returns the legal disclaimer for GRAIL Galleri Multi-Cancer Test
+ * const disclaimer = getLegalDisclaimerForService({
+ *   name: 'GRAIL Galleri Multi-Cancer Test'
+ * });
+ *
+ * // Returns the default legal disclaimer for environmental toxins
+ * const disclaimer = getLegalDisclaimerForService({
+ *   name: 'Unspecified Service'
+ * });
+ */
+export const getLegalDisclaimerForService = (service: string): string => {
+  switch (service) {
+    case GRAIL_GALLERI_MULTI_CANCER_TEST:
+      return LEGAL_DESCLAIMERS.grail;
+    case ENVIRONMENTAL_TOXINS:
+      return LEGAL_DESCLAIMERS.environmentalToxins;
+    default:
+      return LEGAL_DESCLAIMERS.environmentalToxins;
+  }
 };

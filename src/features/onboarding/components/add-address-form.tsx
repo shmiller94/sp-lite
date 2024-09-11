@@ -24,31 +24,28 @@ import {
   formAddressInputSchema,
   useUpdateProfile,
 } from '@/features/users/api';
-import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 import { Address } from '@/types/api';
 
 function FullAddressForm({
   setIsAdding,
-  googleAddres,
+  googleAddress,
 }: {
   setIsAdding: () => void;
-  googleAddres: FormAddressInput;
+  googleAddress: FormAddressInput;
 }) {
-  const { updateBlocked, isBlocked, collectionMethod } = useOnboarding();
-  // const [asDefault, setAsDefault] = useState<boolean>(false);
+  console.log(googleAddress);
 
-  const user = useUser();
-  const primaryAddress = user.data?.primaryAddress?.address;
+  const { updateBlocked, isBlocked, collectionMethod } = useOnboarding();
   const getServiceabilityMutation = useGetServiceability();
 
   const form = useForm<FormAddressInput>({
     resolver: zodResolver(formAddressInputSchema),
     defaultValues: {
-      line1: primaryAddress?.line.join(' ') ?? googleAddres.line1 ?? '',
-      postalCode: primaryAddress?.postalCode ?? googleAddres.postalCode ?? '',
-      city: primaryAddress?.city ?? googleAddres.city ?? '',
-      state: primaryAddress?.state ?? googleAddres.state ?? '',
+      line1: googleAddress.line1 ?? '',
+      postalCode: googleAddress.postalCode ?? '',
+      city: googleAddress.city ?? '',
+      state: googleAddress.state ?? '',
     },
   });
 
@@ -87,13 +84,13 @@ function FullAddressForm({
         <FormField
           control={form.control}
           name="line1"
-          render={({ ...rest }) => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel className="text-zinc-600">Street Address</FormLabel>
               <FormControl>
-                <Input autoComplete="off" placeholder="Address" {...rest} />
+                <Input autoComplete="off" placeholder="Line 1" {...field} />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="pt-2" />
             </FormItem>
           )}
         />
@@ -136,6 +133,8 @@ function FullAddressForm({
                   <Input
                     autoComplete="off"
                     placeholder="ZIP Code"
+                    maxLength={5}
+                    onFocus={() => updateBlocked(false)}
                     className={cn(
                       isBlocked
                         ? 'border border-[#B90090] bg-[#FFF3F6] focus-visible:bg-[#FFF3F6] focus-visible:ring-0'
@@ -150,8 +149,8 @@ function FullAddressForm({
           />
           {isBlocked && (
             <Body2 className="text-[#B90090]">
-              Sorry, we’re unable to service your area right now. please go back
-              and try a different address.
+              Sorry, we’re unable to service your area right now. Try different
+              address.
             </Body2>
           )}
         </div>
@@ -169,7 +168,12 @@ function FullAddressForm({
             </Label>
           </div>
           <div className="flex flex-col items-center gap-4 sm:flex-row">
-            <Button variant="outline" type="button" className="w-full">
+            <Button
+              variant="outline"
+              type="button"
+              className="w-full"
+              onClick={() => setIsAdding()}
+            >
               Cancel
             </Button>
             <Button type="submit" className="w-full">
@@ -193,7 +197,10 @@ export function AddAddressForm({ setIsAdding }: { setIsAdding: () => void }) {
 
   if (googleAddress) {
     return (
-      <FullAddressForm setIsAdding={setIsAdding} googleAddres={googleAddress} />
+      <FullAddressForm
+        setIsAdding={setIsAdding}
+        googleAddress={googleAddress}
+      />
     );
   }
 
