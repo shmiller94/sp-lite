@@ -72,6 +72,16 @@ deploy/story/stg:
 		-e 's|__VERSION__|$(DOCKER_TAG)|g' \
 		deployment/$(APP_NAME)/deploy.app.story.yaml | kubectl apply -f -
 
+### Deploy (PRD)
+
+.PHONY: deploy/app/prd
+deploy/app/prd: description = Deploy app to AWS Cloudfront
+deploy/app/prd: prereq
+	@bash $(SHARED_SCRIPT) info "Creating deployment notification in Slack ..."
+	@TARGET=$@ bash $(SHARED_SCRIPT) notify $(PRD_DEPLOYMENT_MSG)
+	@bash $(SHARED_SCRIPT) info "Deploying app to cloudfront ..."
+	doppler run -p superpower -c prd -- sh ./assets/scripts/deploy-app-cloudfront.sh
+
 # Combined commands
 build/push/deploy/app: build/docker/app push/docker/app deploy/app
 
