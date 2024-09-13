@@ -50,7 +50,7 @@ export const Identity = () => {
 
   /* Case when user closed the window but we still processing on background and he comes back */
   useEffect(() => {
-    if (user?.userIdentity?.status === 'VERIFIED') {
+    if (user?.userIdentity?.status === 'VERIFIED' && !longPollingUser) {
       nextOnboardingStep();
     }
   }, []);
