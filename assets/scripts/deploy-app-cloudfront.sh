@@ -56,6 +56,12 @@ aws s3 cp dist/ "s3://${APP_BUCKET}/" \
   --recursive \
   --cache-control "public, max-age=31536000" \
   --exclude "*" \
+  --include "*.ttf"
+
+aws s3 cp dist/ "s3://${APP_BUCKET}/" \
+  --recursive \
+  --cache-control "public, max-age=31536000" \
+  --exclude "*" \
   --include "*.woff2"
 
 aws s3 cp dist/ "s3://${APP_BUCKET}/" \
