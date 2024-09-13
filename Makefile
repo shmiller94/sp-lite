@@ -15,6 +15,7 @@ DOCKER_TAG := $(shell git rev-parse --short HEAD)
 AWS_REGION := us-east-1
 AWS_ACCOUNT_ID := $(shell aws sts get-caller-identity --query Account --output text)
 ECR_URL := $(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
+SHARED_SCRIPT := ./assets/scripts/shared.sh
 # Utility functions
 check_defined = \
 	$(strip $(foreach 1,$1, \
