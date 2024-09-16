@@ -5,6 +5,10 @@ import { cn } from '@/lib/utils';
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {}
 
+/*
+ * Note here: if adding anything lower than text-base it creates weird zoom effect on safari
+ * */
+
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, ...props }, ref) => {
     return (

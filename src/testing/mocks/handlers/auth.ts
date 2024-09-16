@@ -78,7 +78,7 @@ export const authHandlers = [
       let loginId: string;
 
       /* weird hack because without this non-test requests failing */
-      if (import.meta.env.NODE_ENV === 'test') {
+      if (import.meta.env.NODE_ENV === 'test' || env.ENABLE_API_MOCKING) {
         const formData = await request.formData();
         loginId = formData.get('code') as string;
       } else {
