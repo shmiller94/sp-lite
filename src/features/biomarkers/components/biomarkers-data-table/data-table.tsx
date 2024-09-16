@@ -192,20 +192,20 @@ export function DataTable<TData, TValue>({
           )}
         </Table>
       ) : (
-        <div className="w-full rounded-3xl bg-white py-16 text-center">
+        <div className="w-full rounded-3xl bg-white px-8 py-16 text-center">
           <div className="text-xl">
             Looks like we don&apos;t have your {currentCategory} data.
           </div>
-          <div className="space-x-8 pt-12">
+          <div className="flex w-full flex-col items-center justify-center gap-3 pt-12">
             {healthcareService && (
               <HealthcareServiceDialog healthcareService={healthcareService}>
-                <Button variant="default" className="mt-4">
+                <Button variant="default" className="w-full max-w-[400px]">
                   Get Tested
                 </Button>
               </HealthcareServiceDialog>
             )}
-            <Link to="/vault">
-              <Button variant="outline" className="mt-4">
+            <Link to="/vault" className="w-full max-w-[400px]">
+              <Button variant="outline" className="w-full">
                 Upload Lab Report
               </Button>
             </Link>

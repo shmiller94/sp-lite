@@ -34,9 +34,6 @@ export function BiomarkerCardHeader({
       <div className="flex w-full min-w-0 flex-col justify-between md:flex-row md:items-center">
         <div className="flex min-w-0 flex-row items-center justify-between space-x-4">
           <span className="min-w-0 truncate text-center text-2xl">{name}</span>
-          <DialogClose className="md:hidden">
-            <X className="size-6 cursor-pointer" />
-          </DialogClose>
         </div>
         <div className="flex flex-row items-center space-x-4">
           <div
