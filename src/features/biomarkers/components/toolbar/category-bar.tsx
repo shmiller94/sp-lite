@@ -17,16 +17,7 @@ const CategoryBar = ({
 }: CategoryBarProps): JSX.Element => {
   return (
     <div className="relative z-10 overflow-x-auto rounded-2xl shadow-[0px_4px_24px_0px_rgba(0,0,0,0.05)]">
-      <div
-        className="flex flex-nowrap rounded-2xl bg-white p-4 scrollbar-none"
-        style={{
-          position: 'relative',
-          WebkitMask:
-            'linear-gradient(to right, black, transparent)  right, linear-gradient(black 0 0) left',
-          WebkitMaskSize: '20% 100%, calc(100% - 20%) 100%',
-          WebkitMaskRepeat: 'no-repeat',
-        }}
-      >
+      <div className="flex flex-nowrap rounded-2xl bg-white p-4 scrollbar-none">
         {TOOLBAR_CATEGORIES.map((category) => (
           <Button
             key={category.name}

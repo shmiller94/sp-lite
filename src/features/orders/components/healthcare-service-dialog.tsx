@@ -98,7 +98,7 @@ const HealthcareServiceDialogConsumer = ({
     return (
       <Drawer onOpenChange={handleOpenChange}>
         <DrawerTrigger asChild>{children}</DrawerTrigger>
-        <DrawerContent className="h-screen">
+        <DrawerContent className="inset-x-0 bottom-0 h-full max-h-[96%] outline-none">
           <div className="flex items-center justify-center px-6 pb-3 pt-10">
             <Body1>Service</Body1>
           </div>

@@ -51,7 +51,7 @@ export function MobileFilter<TData, TValue>({
           <SlidersHorizontal className="size-4" />
         </Button>
       </DrawerTrigger>
-      <DrawerContent className="h-dvh rounded-none bg-white">
+      <DrawerContent className="inset-x-0 bottom-0 h-full max-h-[96%] rounded-none bg-white">
         <DrawerHeader>
           <div className="mb-4 mt-8 text-center">
             <h2>Biomarker Filters</h2>
