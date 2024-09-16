@@ -208,6 +208,16 @@ export const MobileSidebar = () => {
 
   const navigate = useNavigate();
 
+  const handleLinkClick = (url: string) => {
+    if (url.includes('https')) {
+      // Open external link in a new tab with noreferrer for security
+      window.open(url, '_blank', 'noreferrer');
+    } else {
+      // Navigate internally using react-router's navigate function
+      navigate(url);
+    }
+  };
+
   return (
     <>
       <div
@@ -238,7 +248,7 @@ export const MobileSidebar = () => {
                 <DropdownMenuItem
                   key={i}
                   className="cursor-pointer rounded-[18px] p-4 transition duration-200 ease-in-out focus:bg-[#252525]"
-                  onClick={() => navigate(link.to)}
+                  onClick={() => handleLinkClick(link.to)}
                 >
                   <div className="flex flex-1 items-center gap-3">
                     <link.icon width={12} height={12} color="white" />
