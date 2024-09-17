@@ -47,7 +47,7 @@ function ActionPlanCheckoutModalConsumer() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="w-full md:w-auto">Get Products</Button>
+        <Button className="w-full lg:w-auto">Get Products</Button>
       </DialogTrigger>
       <DialogContent className="max-h-[90%] max-w-2xl overflow-y-auto p-0">
         <ActionPlanCheckoutContent />
