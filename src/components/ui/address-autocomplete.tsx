@@ -80,6 +80,9 @@ export const AddressAutocomplete = ({
             types: string[];
           }[];
         }) => {
+          const aptNumber = address_components.find((a) =>
+            a.types.includes('subpremise'),
+          )?.long_name;
           const streetNumber = address_components.find((a) =>
             a.types.includes('street_number'),
           )?.long_name;
@@ -97,7 +100,7 @@ export const AddressAutocomplete = ({
             address_components.find((a) => a.types.includes('postal_code'))
               ?.long_name ?? '';
 
-          const line1 = `${streetNumber || ''} ${route || ''}`;
+          const line1 = `${streetNumber || ''} ${route || ''} ${aptNumber || ''}`;
 
           const address: FormAddressInput = {
             line1,
