@@ -25,6 +25,7 @@ type AdditionalServiceCardProps = {
 const AdditionalServiceCard = ({ service }: AdditionalServiceCardProps) => {
   const { additionalServices, updateAdditionalService } = useOnboarding();
   const checked = additionalServices.find((as) => as.id === service.id);
+
   const serviceQuery = useService({
     serviceId: service.id,
     method: service.name === GRAIL_GALLERI_MULTI_CANCER_TEST ? 'AT_HOME' : null,

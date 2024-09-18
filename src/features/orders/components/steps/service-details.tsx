@@ -15,7 +15,7 @@ import { getHealthcareServicePriceLabel } from '@/utils/format-money';
 import { getDetailsForService } from '@/utils/service';
 
 export const HealthcareServiceDetails = () => {
-  const { service } = useOrder((s) => s);
+  const { service, draftOrderId } = useOrder((s) => s);
   const { activeStep, nextStep, steps, prevStep } = useStepper((s) => s);
   const serviceDetails = getDetailsForService(service.name);
 
@@ -30,7 +30,9 @@ export const HealthcareServiceDetails = () => {
           <div>
             <H2 className="text-zinc-900">{service.name}</H2>
             <Body2 className="text-zinc-500">
-              {getHealthcareServicePriceLabel(service)}
+              {draftOrderId
+                ? 'Included'
+                : getHealthcareServicePriceLabel(service)}
             </Body2>
           </div>
           <Body1 className="text-zinc-500">{service.description}</Body1>

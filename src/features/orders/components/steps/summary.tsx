@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
 import { Body1 } from '@/components/ui/typography';
-import { useCreateOrder } from '@/features/orders/api';
+import { useCreateOrder, useUpdateOrder } from '@/features/orders/api';
 import { useOrder } from '@/features/orders/stores/order-store';
 import { useService } from '@/features/services/api';
 import { useStepper } from '@/lib/stepper';
@@ -19,12 +19,22 @@ export function OrderSummary(): JSX.Element {
     slot,
     collectionMethod,
     tz,
+    draftOrderId,
     updateCreatedOrderId,
   } = useOrder((s) => s);
   const { activeStep, nextStep, steps, prevStep } = useStepper((s) => s);
 
   const createOrderMutation = useCreateOrder();
+  const updateOrderMutation = useUpdateOrder();
 
+  const isMutationLoading =
+    createOrderMutation.isPending || updateOrderMutation.isPending;
+
+  /*
+   * If user books new service (draftOrderId was not initialized)
+   *
+   * we just create regular order
+   * */
   const createOrderFn = async (): Promise<void> => {
     if (service === null)
       throw Error('There was a problem creating the order.');
@@ -50,6 +60,27 @@ export function OrderSummary(): JSX.Element {
     }
   };
 
+  /*
+   * If we initially called dialog with `draftOrderId` then
+   * we will just update existing order
+   * */
+  const updateOrderFn = async (): Promise<void> => {
+    const response = await updateOrderMutation.mutateAsync({
+      orderId: draftOrderId as string,
+      data: {
+        location: location ? location : {},
+        timezone: tz || moment.tz.guess(),
+
+        timestamp: slot ? slot.start : new Date().toISOString(),
+        status: 'PENDING',
+      },
+    });
+
+    if (response.order) {
+      nextStep();
+    }
+  };
+
   return (
     <>
       <div className="space-y-16">
@@ -66,12 +97,12 @@ export function OrderSummary(): JSX.Element {
           <Button
             variant="outline"
             onClick={prevStep}
-            disabled={createOrderMutation.isPending}
+            disabled={isMutationLoading}
           >
             Back
           </Button>
-          <Button onClick={createOrderFn}>
-            {createOrderMutation.isPending ? <Spinner /> : 'Confirm'}
+          <Button onClick={draftOrderId ? updateOrderFn : createOrderFn}>
+            {isMutationLoading ? <Spinner /> : 'Confirm'}
           </Button>
         </div>
       </div>
@@ -80,7 +111,9 @@ export function OrderSummary(): JSX.Element {
 }
 
 function CreateOrderSummaryItem(): JSX.Element {
-  const { service, items, slot, collectionMethod, tz } = useOrder((s) => s);
+  const { service, items, slot, collectionMethod, tz, draftOrderId } = useOrder(
+    (s) => s,
+  );
 
   if (service === null) throw Error('There was a problem creating the order.');
 
@@ -133,8 +166,8 @@ function CreateOrderSummaryItem(): JSX.Element {
         <div className="text-primary">
           {isLoading ? (
             <Spinner size="xs" variant="primary" />
-          ) : basePrice === 0 ? (
-            'Included in subscription'
+          ) : basePrice === 0 || draftOrderId ? (
+            'Included'
           ) : (
             formatMoney(basePrice)
           )}

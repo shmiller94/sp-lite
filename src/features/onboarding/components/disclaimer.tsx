@@ -91,14 +91,20 @@ const DisclaimerContent = () => {
       </div>
       {/*Mobile button*/}
       <div className="py-3 pb-[38px] pt-8 md:hidden">
-        <Button className="w-full" onClick={() => updateCancerAgreement(true)}>
+        <Button
+          className="w-full"
+          disabled={!agreed}
+          onClick={() => updateCancerAgreement(true)}
+        >
           Next
         </Button>
       </div>
 
       {/*Desktop button*/}
       <div className="mt-12 hidden items-center justify-between md:flex">
-        <Button onClick={() => updateCancerAgreement(true)}>Next</Button>
+        <Button disabled={!agreed} onClick={() => updateCancerAgreement(true)}>
+          Next
+        </Button>
       </div>
     </>
   );

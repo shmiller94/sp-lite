@@ -8,16 +8,28 @@ import { HealthcareServiceDialog } from '@/features/orders/components/healthcare
 import { useGetSchedulingLink } from '@/features/services/api';
 import { HealthcareService } from '@/types/api';
 
-export const ServiceCard = ({ service }: { service: HealthcareService }) => {
+export const ServiceCard = ({
+  service,
+  draftOrderId,
+}: {
+  service: HealthcareService;
+  draftOrderId?: string;
+}) => {
   return (
     <>
-      <DesktopCard service={service} />
-      <MobileCard service={service} />
+      <DesktopCard service={service} draftOrderId={draftOrderId} />
+      <MobileCard service={service} draftOrderId={draftOrderId} />
     </>
   );
 };
 
-const DesktopCard = ({ service }: { service: HealthcareService }) => {
+const DesktopCard = ({
+  service,
+  draftOrderId,
+}: {
+  service: HealthcareService;
+  draftOrderId?: string;
+}) => {
   const schedulingLinkQuery = useGetSchedulingLink();
   const noSchedulingLink =
     service.name === ADVISORY_CALL &&
@@ -64,7 +76,10 @@ const DesktopCard = ({ service }: { service: HealthcareService }) => {
           </Body2>
         </div>
 
-        <HealthcareServiceDialog healthcareService={service}>
+        <HealthcareServiceDialog
+          healthcareService={service}
+          draftOrderId={draftOrderId}
+        >
           {renderButton()}
         </HealthcareServiceDialog>
       </div>
@@ -72,9 +87,18 @@ const DesktopCard = ({ service }: { service: HealthcareService }) => {
   );
 };
 
-const MobileCard = ({ service }: { service: HealthcareService }) => {
+const MobileCard = ({
+  service,
+  draftOrderId,
+}: {
+  service: HealthcareService;
+  draftOrderId?: string;
+}) => {
   return (
-    <HealthcareServiceDialog healthcareService={service}>
+    <HealthcareServiceDialog
+      healthcareService={service}
+      draftOrderId={draftOrderId}
+    >
       <div className="flex items-center justify-between gap-3 rounded-[20px] bg-zinc-100 px-5 py-4 sm:hidden">
         <img
           src={service.image}

@@ -307,14 +307,11 @@ function CreateOrderPhlebotomyLocationSelector(): JSX.Element {
 
   const code = localStorage.getItem('superpower-code');
 
-  console.log(collectionMethod);
-
   return (
     <RadioGroup
       defaultValue={collectionMethod ?? 'AT_HOME'}
       className="flex flex-col sm:flex-row"
     >
-      {/* TODO: Border and background should darken on selection */}
       {COLLECTION_METHODS.map((option, index) => {
         let interpretedMethod = option.value;
         if (

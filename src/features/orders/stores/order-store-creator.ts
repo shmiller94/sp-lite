@@ -12,6 +12,7 @@ export interface OrderStoreProps {
   service: HealthcareService;
   tz: string;
   collectionMethod: CollectionMethodType | null;
+  draftOrderId: string | null;
 }
 
 export interface OrderStore extends OrderStoreProps {
@@ -35,6 +36,7 @@ export type OrderStoreApi = ReturnType<typeof orderStoreCreator>;
 
 const initialState = {
   items: [],
+  draftOrderId: null,
   collectionMethod: null,
   location: null,
   slot: null,

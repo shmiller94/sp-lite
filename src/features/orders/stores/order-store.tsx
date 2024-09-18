@@ -30,12 +30,17 @@ export const OrderStoreProvider = ({
     orderStoreRef.current = orderStoreCreator(props);
   }
 
-  // TODO: double check this, maybe better to initialize collection as null and then reset it
   useEffect(() => {
     orderStoreRef.current?.setState({
       collectionMethod: props.collectionMethod,
     });
   }, [props.collectionMethod]);
+
+  useEffect(() => {
+    orderStoreRef.current?.setState({
+      draftOrderId: props.draftOrderId,
+    });
+  }, [props.draftOrderId]);
 
   // TODO: double check this, maybe better to initialize service as null and then reset it
   useEffect(() => {

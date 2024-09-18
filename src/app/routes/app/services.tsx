@@ -1,8 +1,10 @@
 import { QueryClient } from '@tanstack/react-query';
 
 import { ContentLayout } from '@/components/layouts';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { H3 } from '@/components/ui/typography';
 import { getServicesQueryOptions } from '@/features/services/api/get-services';
+import { FinishScheduleList } from '@/features/services/components/finish-schedule-list';
 import { OrdersList } from '@/features/services/components/orders-list';
 import { ServicesList } from '@/features/services/components/services-list';
 
@@ -34,8 +36,18 @@ export const ServicesRoute = () => {
         <OrdersList />
       </section>
       <section id="orders" className="space-y-6">
-        <H3>Book a service</H3>
-        <ServicesList />
+        <Tabs defaultValue="all">
+          <TabsList className="grid w-fit grid-cols-2">
+            <TabsTrigger value="all">All</TabsTrigger>
+            <TabsTrigger value="schedule">To be scheduled</TabsTrigger>
+          </TabsList>
+          <TabsContent value="all" className="py-6 md:py-[72px]">
+            <ServicesList />
+          </TabsContent>
+          <TabsContent value="schedule" className="py-6 md:py-[72px]">
+            <FinishScheduleList />
+          </TabsContent>
+        </Tabs>
       </section>
     </ContentLayout>
   );
