@@ -22,6 +22,7 @@ export function OrdersList(): JSX.Element {
   const { data, isLoading, error } = useMultiPlatformOrders();
   const { width } = useWindowDimensions();
 
+  // TODO: replace this with skeletons
   if (isLoading) {
     return (
       <div className="flex h-48 w-full items-center justify-center">
