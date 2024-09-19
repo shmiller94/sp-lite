@@ -337,7 +337,7 @@ export const CollapseButton = () => {
   return (
     <div
       className={cn(
-        'flex items-center gap-2 group/sidebar p-4 cursor-pointer hover:bg-zinc-100',
+        'flex items-center gap-2 group/sidebar p-4 cursor-pointer hover:bg-zinc-100 mb-2.5',
         open ? 'justify-start rounded-[52px]' : 'justify-center rounded-full',
       )}
       role="presentation"
