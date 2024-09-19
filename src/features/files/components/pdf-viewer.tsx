@@ -11,9 +11,8 @@ import {
   AlertDialog,
   AlertDialogTrigger,
   DialogClose,
-  DialogContent,
 } from '@/components/ui/dialog';
-import { Spinner } from '@/components/ui/spinner';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useDownloadFile } from '@/features/files/api/download-file';
 import { useGetFileUrl } from '@/features/files/api/get-file-url';
 import { ConfirmDelete } from '@/features/files/components/confirm-delete';
@@ -87,7 +86,7 @@ export const PdfViewer = ({ id, name }: PdfViewerProps) => {
   }, [data?.file]);
 
   return (
-    <DialogContent ref={setContainerRef} className="h-full max-h-[80%] gap-0">
+    <div ref={setContainerRef} className="gap-0 overflow-y-scroll">
       <div className="ml-auto flex items-start gap-2">
         <AlertDialog>
           <AlertDialogTrigger asChild>
@@ -130,14 +129,14 @@ export const PdfViewer = ({ id, name }: PdfViewerProps) => {
           />
         ))}
       </Document>
-    </DialogContent>
+    </div>
   );
 };
 
 const Loader = (): JSX.Element => {
   return (
     <div className="flex items-center justify-center">
-      <Spinner variant="primary" className="size-8" />
+      <Skeleton className="h-screen w-full" />
     </div>
   );
 };

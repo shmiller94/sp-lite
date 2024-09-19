@@ -3,7 +3,7 @@ import { X } from 'lucide-react';
 import React from 'react';
 
 import { Button } from '@/components/ui/button';
-import { DialogClose, DialogContent } from '@/components/ui/dialog';
+import { DialogClose } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
@@ -18,13 +18,13 @@ import { useInvoice } from '@/features/settings/api/get-invoice';
 import { MultiPlatformOrder } from '@/types/api';
 import { formatMoney } from '@/utils/format-money';
 
-interface OrderInvoiceDialogContentProps {
+interface OrderInvoiceContentProps {
   multiPlatformOrder: MultiPlatformOrder;
 }
 
-export const OrderInvoiceDialogContent = ({
+export const OrderInvoiceContent = ({
   multiPlatformOrder,
-}: OrderInvoiceDialogContentProps) => {
+}: OrderInvoiceContentProps) => {
   const invoiceQuery = useInvoice({
     invoiceId: multiPlatformOrder.invoiceId as string,
     queryConfig: { enabled: !!multiPlatformOrder.invoiceId },
@@ -50,7 +50,7 @@ export const OrderInvoiceDialogContent = ({
   ];
 
   return (
-    <DialogContent className="px-14 py-12">
+    <div className="overflow-y-auto px-6 py-12 md:px-14">
       <div className="flex justify-between pb-6">
         <h3 className="text-base text-[#71717A]">Order history</h3>
         <DialogClose className="outline-none">
@@ -65,10 +65,6 @@ export const OrderInvoiceDialogContent = ({
             Invoice #{invoice?.number}
           </h1>
         )}
-        {/*<h1 className="text-base text-[#71717A]">*/}
-        {/*  You have <span className="text-[#FC5F2B]">41 days</span> to enjoy your membership benefits until the next*/}
-        {/*  billing cycle.{' '}*/}
-        {/*</h1>*/}
       </div>
       <Table className="py-12">
         <TableHeader>
@@ -171,6 +167,6 @@ export const OrderInvoiceDialogContent = ({
           )}
         </div>
       </div>
-    </DialogContent>
+    </div>
   );
 };

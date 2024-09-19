@@ -4,6 +4,7 @@ import {
   AlertDialog,
   AlertDialogTrigger,
   Dialog,
+  DialogContent,
   DialogTrigger,
 } from '@/components/ui/dialog';
 import {
@@ -12,10 +13,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useDownloadFile } from '@/features/files/api/download-file';
 import { ConfirmDelete } from '@/features/files/components/confirm-delete';
 import { PdfViewer } from '@/features/files/components/pdf-viewer';
 import { downloadBlob } from '@/features/files/utils/download-blob';
+import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 import { File } from '@/types/api';
 
 interface MenuDropdownProps {
@@ -73,6 +76,26 @@ function DeleteMenuItem({ id }: File): JSX.Element {
 }
 
 const ViewMenuItem = ({ id, name }: File) => {
+  const { width } = useWindowDimensions();
+
+  if (width <= 768) {
+    return (
+      <Sheet>
+        <SheetTrigger asChild>
+          <DropdownMenuItem
+            onSelect={(event) => {
+              event.preventDefault();
+            }}
+          >
+            View
+          </DropdownMenuItem>
+        </SheetTrigger>
+        <SheetContent className="flex max-h-full flex-col rounded-t-[10px]">
+          <PdfViewer id={id} name={name} />
+        </SheetContent>
+      </Sheet>
+    );
+  }
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -84,7 +107,9 @@ const ViewMenuItem = ({ id, name }: File) => {
           View
         </DropdownMenuItem>
       </DialogTrigger>
-      <PdfViewer id={id} name={name} />
+      <DialogContent className="h-full max-h-[80%]">
+        <PdfViewer id={id} name={name} />
+      </DialogContent>
     </Dialog>
   );
 };

@@ -2,7 +2,7 @@ import { EllipsisVertical } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dropdown';
 import { useSubscriptions, useInvoice } from '@/features/settings/api';
 import { CancelMembershipDialog } from '@/features/settings/components/membership/cancel-membership-dialog';
-import { OrderInvoiceDialogContent } from '@/features/settings/components/purchases/orders-invoice-dialog-content';
+import { OrderInvoiceContent } from '@/features/settings/components/purchases/orders-invoice-content';
 import { MultiPlatformOrder, Subscription } from '@/types/api';
 
 interface OrderDropDownProps {
@@ -107,7 +107,9 @@ const SeeDetailsMenuItem = ({
           See details
         </DropdownMenuItem>
       </DialogTrigger>
-      <OrderInvoiceDialogContent multiPlatformOrder={multiPlatformOrder} />
+      <DialogContent>
+        <OrderInvoiceContent multiPlatformOrder={multiPlatformOrder} />
+      </DialogContent>
     </Dialog>
   );
 };

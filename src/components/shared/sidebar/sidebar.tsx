@@ -135,7 +135,6 @@ export const DesktopSidebar = () => {
       icon: Settings,
       name: 'Settings',
       to: './settings',
-      // to: isMobileView ? '/settings' : '/settings/profile',
     },
     checkAccess({ allowedRoles: [ROLES.ADMIN] }) && {
       name: 'Users',

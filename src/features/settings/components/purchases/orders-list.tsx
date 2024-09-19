@@ -1,15 +1,16 @@
 import { format } from 'date-fns';
 import { ChevronRight } from 'lucide-react';
+import { HTMLAttributes } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Card } from '@/components/ui/card';
-import { Dialog, DialogTrigger } from '@/components/ui/dialog';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Spinner } from '@/components/ui/spinner';
 import { Body1, Body2 } from '@/components/ui/typography';
 import { useMultiPlatformOrders } from '@/features/orders/api';
 import { DateHeader } from '@/features/settings/components/purchases/date-header';
 import { OrderDropDown } from '@/features/settings/components/purchases/order-dropdown';
-import { OrderInvoiceDialogContent } from '@/features/settings/components/purchases/orders-invoice-dialog-content';
+import { OrderInvoiceContent } from '@/features/settings/components/purchases/orders-invoice-content';
 import { groupOrdersByMonthAndYear } from '@/features/settings/utils/group-orders-by-month-and-year';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 import { cn } from '@/lib/utils';
@@ -56,7 +57,7 @@ export function OrdersList(): JSX.Element {
       />
     ));
 
-  return width > 769 ? (
+  return width >= 768 ? (
     <Card className="p-6">{content()}</Card>
   ) : (
     <div>{content()}</div>
@@ -91,6 +92,34 @@ const OrderRow = ({
 }: {
   multiPlatformOrder: MultiPlatformOrder;
 }) => {
+  const { width } = useWindowDimensions();
+  const haveInvoice =
+    multiPlatformOrder.invoiceId || multiPlatformOrder.invoiceUrl;
+
+  if (!haveInvoice || width >= 768) {
+    return <OrderRowCard multiPlatformOrder={multiPlatformOrder} />;
+  }
+
+  return (
+    <Sheet>
+      <SheetTrigger asChild>
+        <OrderRowCard multiPlatformOrder={multiPlatformOrder} />
+      </SheetTrigger>
+      <SheetContent className="flex max-h-full flex-col rounded-t-[10px]">
+        <OrderInvoiceContent multiPlatformOrder={multiPlatformOrder} />
+      </SheetContent>
+    </Sheet>
+  );
+};
+
+interface OrderRowContentProps extends HTMLAttributes<HTMLDivElement> {
+  multiPlatformOrder: MultiPlatformOrder;
+}
+
+const OrderRowCard = ({
+  multiPlatformOrder,
+  ...rest
+}: OrderRowContentProps) => {
   const navigate = useNavigate();
   const haveInvoice =
     multiPlatformOrder.invoiceId || multiPlatformOrder.invoiceUrl;
@@ -107,10 +136,9 @@ const OrderRow = ({
 
   return (
     <div
+      {...rest}
       className={cn(
-        'flex items-center',
-        'py-[14px] pr-[14px] pl-5 bg-white',
-        'rounded-2xl cursor-pointer hover:bg-zinc-50',
+        'flex items-center py-[14px] pr-[14px] pl-5 bg-white rounded-2xl cursor-pointer hover:bg-zinc-50',
       )}
     >
       <div className="flex items-center justify-center gap-3">
@@ -178,18 +206,11 @@ const OrderRow = ({
                 {orderPrice > 0 ? formatMoney(orderPrice) : 'Included'}
               </span>
 
-              <Dialog>
-                <OrderInvoiceDialogContent
-                  multiPlatformOrder={multiPlatformOrder}
-                />
-                <DialogTrigger>
-                  <ChevronRight
-                    color="#A1A1AA"
-                    className="block size-4 text-secondary md:hidden"
-                    strokeWidth={2}
-                  />
-                </DialogTrigger>
-              </Dialog>
+              <ChevronRight
+                color="#A1A1AA"
+                className="block size-4 text-secondary md:hidden"
+                strokeWidth={2}
+              />
             </div>
           )}
           <OrderDropDown multiPlatformOrder={multiPlatformOrder} />

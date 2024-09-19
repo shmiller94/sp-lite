@@ -1,6 +1,6 @@
-import { ChevronLeft, X } from 'lucide-react';
+import { X } from 'lucide-react';
 
-import { DialogClose, DialogContent } from '@/components/ui/dialog';
+import { DialogClose } from '@/components/ui/dialog';
 import { MembershipStoreProvider } from '@/features/settings/stores/membership-store';
 import { useStepper } from '@/lib/stepper';
 import { cn } from '@/lib/utils';
@@ -24,7 +24,7 @@ function CancelMembershipCard(): JSX.Element {
   const { steps, activeStep, resetSteps } = useStepper((s) => s);
 
   return (
-    <DialogContent
+    <div
       className={cn(
         `z-[110] overflow-y-scroll px-6 md:px-14 py-12 flex flex-col justify-between gap-12`,
         activeStep === steps.length - 1 ? 'max-w-[432px]' : 'rounded-[24px]',
@@ -36,12 +36,15 @@ function CancelMembershipCard(): JSX.Element {
           activeStep === steps.length - 1 && 'hidden',
         )}
       >
-        <div
-          className="block cursor-pointer rounded-full bg-zinc-100 p-3 md:hidden"
-          // onClick={handleClose}
-        >
-          <ChevronLeft className="size-6 p-1" />
-        </div>
+        <DialogClose>
+          <div
+            onClick={resetSteps}
+            role="presentation"
+            className="block cursor-pointer rounded-full bg-zinc-100 p-3 md:hidden"
+          >
+            <X className="h-6 min-w-6 p-1" />
+          </div>
+        </DialogClose>
         <span className="text-[#71717A]">Pause membership</span>
         <DialogClose>
           <X
@@ -52,6 +55,6 @@ function CancelMembershipCard(): JSX.Element {
         <div className="block size-6 p-3 md:hidden" />
       </div>
       {steps[activeStep].content ?? null}
-    </DialogContent>
+    </div>
   );
 }
