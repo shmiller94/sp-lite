@@ -174,6 +174,7 @@ const CreditCardPaymentForm = () => {
   const {
     collectionMethod,
     additionalServices,
+    slots,
     updateBloodOrderId,
     updateCancerOrderId,
     updateToxinOrderId,
@@ -275,6 +276,10 @@ const CreditCardPaymentForm = () => {
 
       for (const as of additionalServices) {
         const collectionMethod = getDefaultCollectionMethod(as);
+        const shouldAddConsent =
+          as.name === GRAIL_GALLERI_MULTI_CANCER_TEST &&
+          slots.cancer.agreedToConsent;
+
         const response = await createOrderMutation.mutateAsync({
           data: {
             items: [],
@@ -286,6 +291,9 @@ const CreditCardPaymentForm = () => {
             method: collectionMethod ? [collectionMethod] : [],
             timestamp: new Date().toISOString(),
             timezone: moment.tz.guess(),
+            informedConsent: shouldAddConsent
+              ? { agreedAt: new Date().toISOString() }
+              : undefined,
           },
         });
 

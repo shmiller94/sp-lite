@@ -39,3 +39,9 @@ export const LEGAL_DESCLAIMERS = {
   your healthcare practitioner for diagnosis and treatment considerations. The Vibrant Wellness platform provides 
   tools for you to track and analyze your general wellness profile.`,
 };
+
+export const REGULAR_CONSENT_AGREEMENT_COPY =
+  'By continuing, I acknowledge my understanding and acceptance of the above information.';
+
+export const GRAIL_GALLERI_CONSENT_AGREEMENT_COPY =
+  'BY CLICKING “I AGREE”, YOU ACKNOWLEDGE THAT YOU HAVE READ AND UNDERSTAND THE INFORMATION PROVIDED ABOUT THE GRAIL GALLERI CANCER DETECTION TEST, INCLUDING THE RISKS, BENEFITS, AND SAFETY CONSIDERATIONS, AND YOU ARE PROVIDING YOUR INFORMED CONSENT.';

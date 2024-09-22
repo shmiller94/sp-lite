@@ -23,7 +23,7 @@ export type ScheduledSlots = {
     orderId: string | null;
     slot: Slot | null;
     timezone: string | null;
-    agreedToDisclaimer: boolean;
+    agreedToConsent: boolean;
   };
   /* Address because we DELIVER to this location */
   microbiome: { orderId: string | null; address: ActiveAddress | null };
@@ -34,10 +34,10 @@ type OnboardingStore = {
   serviceAddress: ActiveAddress | null;
   updateServiceAddress: (serviceAddress: ActiveAddress | null) => void;
 
-  isBlocked: boolean /* Primarly used after address step if zip code not supported */;
+  isBlocked: boolean /* Primarily used after address step if zip code not supported */;
   updateBlocked: (
     status: boolean,
-  ) => void /* Primarly used after address step if zip code not supported */;
+  ) => void /* Primarily used after address step if zip code not supported */;
 
   membership: MembershipType | null;
   updateMembership: (membership: MembershipType) => void;
@@ -69,7 +69,7 @@ export const useOnboarding = create<OnboardingStore>()(
   persist(
     (set) => ({
       /*
-       *  Different than user's primaryAddress or activeAddress
+       *  Different from user's primaryAddress or activeAddress
        *  In this context used as address that user selects to get service
        */
       serviceAddress: null,
@@ -94,7 +94,7 @@ export const useOnboarding = create<OnboardingStore>()(
           orderId: null,
           slot: null,
           timezone: null,
-          agreedToDisclaimer: false,
+          agreedToConsent: false,
         },
         microbiome: {
           orderId: null,
@@ -124,7 +124,7 @@ export const useOnboarding = create<OnboardingStore>()(
               slot,
               orderId: state.slots.cancer.orderId,
               timezone: state.slots.cancer.timezone,
-              agreedToDisclaimer: state.slots.cancer.agreedToDisclaimer,
+              agreedToConsent: state.slots.cancer.agreedToConsent,
             },
           },
         })),
@@ -167,7 +167,7 @@ export const useOnboarding = create<OnboardingStore>()(
               orderId: id,
               slot: state.slots.cancer.slot,
               timezone: state.slots.cancer.timezone,
-              agreedToDisclaimer: state.slots.cancer.agreedToDisclaimer,
+              agreedToConsent: state.slots.cancer.agreedToConsent,
             },
           },
         })),
@@ -207,7 +207,7 @@ export const useOnboarding = create<OnboardingStore>()(
               orderId: state.slots.cancer.orderId,
               slot: state.slots.cancer.slot,
               timezone: timezone,
-              agreedToDisclaimer: state.slots.cancer.agreedToDisclaimer,
+              agreedToConsent: state.slots.cancer.agreedToConsent,
             },
           },
         })),
@@ -219,7 +219,7 @@ export const useOnboarding = create<OnboardingStore>()(
               orderId: state.slots.cancer.orderId,
               slot: state.slots.cancer.slot,
               timezone: state.slots.cancer.timezone,
-              agreedToDisclaimer: agreed,
+              agreedToConsent: agreed,
             },
           },
         })),

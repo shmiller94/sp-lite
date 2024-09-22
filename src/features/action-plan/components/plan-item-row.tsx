@@ -216,7 +216,7 @@ function ActionPlanServiceRow({
   );
 }
 
-function ActionPlanBiomarkerRow({ item }: { item: Biomarker }) {
+export function ActionPlanBiomarkerRow({ item }: { item: Biomarker }) {
   return (
     <BiomarkersDataTable
       biomarkers={[item]}

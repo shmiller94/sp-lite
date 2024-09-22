@@ -5,7 +5,7 @@ import {
   AccordionTrigger,
 } from '@radix-ui/react-accordion';
 import { ChevronDown, Loader } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -21,7 +21,7 @@ import { HealthcareService } from '@/types/api';
 import { EnvironmentalToxinType } from '@/types/toxin';
 import { formatMoney } from '@/utils/format-money';
 
-export function ToxinsSelect(): JSX.Element {
+export function ToxinsSelect(): ReactNode {
   const service = useOrder((s) => s.service);
 
   const isEnvironmental = Boolean(
@@ -122,7 +122,7 @@ function ToxinPanelGroup({
   toxinPanels: HealthcareService[];
   selectedToxin: EnvironmentalToxinType;
   setSelectedToxin: (value: EnvironmentalToxinType) => void;
-}): JSX.Element {
+}): ReactNode {
   return (
     <RadioGroup
       value={selectedToxin}

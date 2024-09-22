@@ -38,10 +38,14 @@ export interface OrderStore extends OrderStoreProps {
   updateCreatedOrderId: (orderId: string | null) => void;
   updateService: (service: HealthcareService) => void;
   reset: () => void;
+  // Needs to be an optional because not all orders will have informed consent
+  informedConsent: boolean | null;
+  updateInformedConsent: (agreed: boolean) => void; // Updates consent with agreedToConsent and agreedAt
 }
 
 export type OrderStoreApi = ReturnType<typeof orderStoreCreator>;
 
+// Define the initial state
 const initialState = {
   items: [],
   draftOrderId: null,
@@ -49,6 +53,7 @@ const initialState = {
   location: null,
   slot: null,
   createdOrderId: null,
+  informedConsent: null,
 };
 
 export const orderStoreCreator = (initProps: OrderStoreProps) => {
@@ -75,5 +80,9 @@ export const orderStoreCreator = (initProps: OrderStoreProps) => {
     updateCreatedOrderId: (orderId) => set({ createdOrderId: orderId }),
     updateService: (service) => set({ service }),
     reset: () => set(initialState),
+
+    // Update consent and set the agreedAt date when consent is given
+    updateInformedConsent: (informedConsent: boolean) =>
+      set({ informedConsent }),
   }));
 };

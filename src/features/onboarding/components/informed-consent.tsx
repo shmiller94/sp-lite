@@ -14,9 +14,9 @@ import { Body1, Body2, H2 } from '@/components/ui/typography';
 import { GRAIL_GALLERI_MULTI_CANCER_TEST } from '@/const';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import { HealthcareService } from '@/types/api';
-import { getLegalDisclaimerForService } from '@/utils/service';
+import { getInformedConsentForService } from '@/utils/service';
 
-export const Disclaimer = ({
+export const InformedConsent = ({
   healthcareService,
 }: {
   healthcareService: HealthcareService;
@@ -31,7 +31,7 @@ export const Disclaimer = ({
 
   const isOpen =
     additionalServices.find((s) => s.name === healthcareService.name) !==
-      undefined && !slots.cancer.agreedToDisclaimer;
+      undefined && !slots.cancer.agreedToConsent;
 
   return (
     <AlertDialog open={isOpen}>
@@ -47,7 +47,7 @@ export const Disclaimer = ({
               </AlertDialogCancel>
             </div>
             <div className="p-12">
-              <DisclaimerContent />
+              <InformedConsentContent />
             </div>
           </div>
         </div>
@@ -56,16 +56,14 @@ export const Disclaimer = ({
   );
 };
 
-const DisclaimerContent = () => {
-  const disclaimer = getLegalDisclaimerForService(
+const InformedConsentContent = () => {
+  const disclaimer = getInformedConsentForService(
     GRAIL_GALLERI_MULTI_CANCER_TEST,
   );
 
   const { updateCancerAgreement, slots } = useOnboarding((s) => s);
 
-  const [agreed, setAgreed] = useState<boolean>(
-    slots.cancer.agreedToDisclaimer,
-  );
+  const [agreed, setAgreed] = useState<boolean>(slots.cancer.agreedToConsent);
 
   return (
     <>

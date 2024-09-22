@@ -32,6 +32,10 @@ export const locationInputSchema = z.object({
 
 export type LocationInput = z.infer<typeof locationInputSchema>;
 
+export const consentInputSchema = z.object({
+  agreedAt: z.string(), // You can store `agreedAt` as a string (ISO date format)
+});
+
 export const createOrderInputSchema = z.object({
   id: z.string().optional(),
   serviceId: z.string().min(1, 'Required'),
@@ -52,6 +56,7 @@ export const createOrderInputSchema = z.object({
       'ACTIVE',
     ])
     .optional(),
+  informedConsent: consentInputSchema.optional(),
 });
 
 export type CreateOrderInput = z.infer<typeof createOrderInputSchema>;

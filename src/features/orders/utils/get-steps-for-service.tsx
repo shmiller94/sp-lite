@@ -20,7 +20,7 @@ import {
   VO2_MAX_TEST,
 } from '@/const';
 import { Calendly } from '@/features/orders/components/steps/calendly';
-import { Disclaimer } from '@/features/orders/components/steps/disclaimer';
+import { InformedConsent } from '@/features/orders/components/steps/informed-consent';
 import { MessageConcierge } from '@/features/orders/components/steps/message-concierge';
 import { PhlebotomyLocationSelect } from '@/features/orders/components/steps/phlebotomy-location';
 import { PhlebotomyScheduler } from '@/features/orders/components/steps/phlebotomy-scheduler';
@@ -59,7 +59,10 @@ export const getStepsFromService = (
     case GRAIL_GALLERI_MULTI_CANCER_TEST:
       return [
         { id: 'info', content: <HealthcareServiceDetails /> },
-        { id: 'disclaimer', content: <Disclaimer /> },
+        {
+          id: 'informed-consent',
+          content: <InformedConsent />,
+        },
         { id: 'phlebotomy', content: <PhlebotomyLocationSelect /> },
         { id: 'scheduler', content: <PhlebotomyScheduler /> },
         { id: 'summary', content: <OrderSummary /> },
@@ -67,9 +70,9 @@ export const getStepsFromService = (
       ];
     case ENVIRONMENTAL_TOXINS:
       return [
-        { id: 'disclaimer', content: <Disclaimer /> },
         { id: 'toxin-select', content: <ToxinsSelect /> },
         { id: 'info', content: <HealthcareServiceDetails /> },
+        { id: 'informed-consent', content: <InformedConsent /> },
         { id: 'summary', content: <OrderSummary /> },
         { id: 'success', content: <Success /> },
       ];

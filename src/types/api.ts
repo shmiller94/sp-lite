@@ -269,6 +269,10 @@ export enum OrderStatus {
 
 export type CollectionMethodType = 'AT_HOME' | 'IN_LAB' | 'PHLEBOTOMY_KIT';
 
+export interface InformedConsent {
+  agreedAt: string;
+}
+
 export type Order = Entity<{
   serviceId: string;
   serviceItemIds: string[];
@@ -285,6 +289,7 @@ export type Order = Entity<{
   fileId?: string;
   amount: number;
   invoiceId?: string;
+  consent?: InformedConsent;
 }>;
 
 export type ServiceItem = Entity<{

@@ -1,10 +1,15 @@
 import moment from 'moment';
+import { ReactNode } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
 import { Body1, Body2, H2 } from '@/components/ui/typography';
-import { useCreateOrder, useUpdateOrder } from '@/features/orders/api';
+import {
+  CreateOrderInput,
+  useCreateOrder,
+  useUpdateOrder,
+} from '@/features/orders/api';
 import { useOrder } from '@/features/orders/stores/order-store';
 import { useService } from '@/features/services/api';
 import { usePaymentMethods } from '@/features/settings/api';
@@ -14,7 +19,7 @@ import { OrderStatus } from '@/types/api';
 import { capitalize } from '@/utils/format';
 import { formatMoney } from '@/utils/format-money';
 
-export function OrderSummary(): JSX.Element {
+export function OrderSummary(): ReactNode {
   const {
     service,
     items,
@@ -23,6 +28,7 @@ export function OrderSummary(): JSX.Element {
     collectionMethod,
     tz,
     draftOrderId,
+    informedConsent,
     updateCreatedOrderId,
   } = useOrder((s) => s);
   const { activeStep, nextStep, steps, prevStep } = useStepper((s) => s);
@@ -43,19 +49,26 @@ export function OrderSummary(): JSX.Element {
     if (service === null)
       throw Error('There was a problem creating the order.');
 
+    const data: CreateOrderInput = {
+      serviceId: service.id,
+      items,
+      location: location ? location : {},
+      timestamp: slot ? slot.start : new Date().toISOString(),
+      timezone: tz || moment.tz.guess(),
+      method: collectionMethod ? [collectionMethod] : [],
+      status:
+        service.name === '1-1 Advisory Call'
+          ? ('DRAFT' as OrderStatus)
+          : undefined,
+    };
+
+    // if step requires consent, add it to the final data object we send to server
+    if (informedConsent) {
+      data.informedConsent = { agreedAt: new Date().toISOString() };
+    }
+
     const response = await createOrderMutation.mutateAsync({
-      data: {
-        serviceId: service.id,
-        items,
-        location: location ? location : {},
-        timestamp: slot ? slot.start : new Date().toISOString(),
-        timezone: tz || moment.tz.guess(),
-        method: collectionMethod ? [collectionMethod] : [],
-        status:
-          service.name === '1-1 Advisory Call'
-            ? ('DRAFT' as OrderStatus)
-            : undefined,
-      },
+      data,
     });
 
     if (response.order) {
@@ -132,7 +145,7 @@ export function OrderSummary(): JSX.Element {
   );
 }
 
-function CreateOrderSummaryItem(): JSX.Element {
+function CreateOrderSummaryItem(): ReactNode {
   const { service, items, slot, collectionMethod, tz } = useOrder((s) => s);
 
   if (service === null) throw Error('There was a problem creating the order.');

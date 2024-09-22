@@ -4,8 +4,10 @@ import {
 } from '@/components/shared/healthcare-service-info-dialog-content/types/service';
 import {
   ENVIRONMENTAL_TOXINS,
+  GRAIL_GALLERI_CONSENT_AGREEMENT_COPY,
   GRAIL_GALLERI_MULTI_CANCER_TEST,
   LEGAL_DESCLAIMERS,
+  REGULAR_CONSENT_AGREEMENT_COPY,
 } from '@/const';
 import { HealthcareService } from '@/types/api';
 import { TimelineType } from '@/types/timeline';
@@ -380,7 +382,7 @@ A DEXA scan provides an in-depth body fat analysis including segmental fat mass,
  *   name: 'Unspecified Service'
  * });
  */
-export const getLegalDisclaimerForService = (service: string): string => {
+export const getInformedConsentForService = (service: string): string => {
   switch (service) {
     case GRAIL_GALLERI_MULTI_CANCER_TEST:
       return LEGAL_DESCLAIMERS.grail;
@@ -388,5 +390,14 @@ export const getLegalDisclaimerForService = (service: string): string => {
       return LEGAL_DESCLAIMERS.environmentalToxins;
     default:
       return LEGAL_DESCLAIMERS.environmentalToxins;
+  }
+};
+
+export const getDefaultAgreementCopyForService = (service: string): string => {
+  switch (service) {
+    case GRAIL_GALLERI_MULTI_CANCER_TEST:
+      return GRAIL_GALLERI_CONSENT_AGREEMENT_COPY;
+    default:
+      return REGULAR_CONSENT_AGREEMENT_COPY;
   }
 };
