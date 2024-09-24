@@ -25,8 +25,14 @@ window.addEventListener('storage', (e: StorageEvent) => {
 /**
  * Since before we loaded service worker into the app, it might give some weird behavior for users
  * with the new vite app, therefore if we can find it, we unregister it
+ *
+ * NB: at some point we should bring back the import.meta.env.NODE_ENV === 'production' check
+ * this kills ALL service workers and if we use it with mocked service worker that fakes API
+ * it will most likely not work.
+ *
+ * This is currently tech debt introduced Sept 23, 2024 by NM
  */
-if ('serviceWorker' in navigator && import.meta.env.NODE_ENV === 'production') {
+if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.getRegistrations().then((registrations) => {
       if (registrations.length > 0) {
