@@ -1,12 +1,8 @@
 import { createStore } from 'zustand';
 
-import { PlanGoal, Product } from '@/types/api';
+import { Product } from '@/types/api';
 
-export interface CheckoutStoreProps {
-  goals: PlanGoal[];
-}
-
-export interface CheckoutStore extends CheckoutStoreProps {
+export interface CheckoutStore {
   selectedProducts: Product[];
   updateSelectedProducts: (product: Product) => void;
   reset: () => void;
@@ -14,17 +10,13 @@ export interface CheckoutStore extends CheckoutStoreProps {
 
 export type CheckoutStoreApi = ReturnType<typeof checkoutStoreCreator>;
 
-export const checkoutStoreCreator = (
-  initProps?: Partial<CheckoutStoreProps>,
-) => {
-  const DEFAULT_PROPS: CheckoutStoreProps = {
-    goals: [],
-  };
+const initState = {
+  selectedProducts: [],
+};
 
+export const checkoutStoreCreator = () => {
   return createStore<CheckoutStore>()((set) => ({
-    ...DEFAULT_PROPS,
-    ...initProps,
-    selectedProducts: [],
+    ...initState,
     updateSelectedProducts: (product: Product) => {
       set((state) => {
         const existing = state.selectedProducts.find(
@@ -48,6 +40,6 @@ export const checkoutStoreCreator = (
         };
       });
     },
-    reset: () => set(DEFAULT_PROPS),
+    reset: () => set(initState),
   }));
 };

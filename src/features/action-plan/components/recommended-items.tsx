@@ -5,11 +5,17 @@ import { usePlan } from '@/features/action-plan/stores/plan-store';
 import { cn } from '@/lib/utils';
 
 export const RecommendedItems = ({ className }: { className?: string }) => {
-  const goals = usePlan((s) => s.goals);
+  const goals = usePlan((s) => s.goals).filter(
+    (g) => g.type === 'ANNUAL_REPORT_PROTOCOLS',
+  );
 
   const productItems = goals
     .flatMap((goal) => goal.goalItems)
     .filter((item) => item.itemType === 'PRODUCT');
+
+  if (productItems.length === 0) {
+    return null;
+  }
 
   return (
     <div className={cn(className, 'flex flex-col items-center')}>
@@ -18,7 +24,7 @@ export const RecommendedItems = ({ className }: { className?: string }) => {
         you
       </H2>
       <div className="flex flex-col items-center gap-6">
-        <ActionPlanCheckoutModal goals={goals}>
+        <ActionPlanCheckoutModal>
           <Button variant="default" className="rounded-full">
             View protocol items
           </Button>

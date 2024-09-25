@@ -5,13 +5,15 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Body1, Body2, H2 } from '@/components/ui/typography';
 import { useProducts } from '@/features/action-plan/api';
 import { useCheckout } from '@/features/action-plan/stores/checkout-store';
+import { usePlan } from '@/features/action-plan/stores/plan-store';
 import { useStepper } from '@/lib/stepper';
 import { Product } from '@/types/api';
 
 export const ReviewStep = (): JSX.Element => {
   const { nextStep } = useStepper((s) => s);
   const productsQuery = useProducts();
-  const { selectedProducts, goals } = useCheckout((s) => s);
+  const goals = usePlan((s) => s.goals);
+  const { selectedProducts } = useCheckout((s) => s);
   const products = productsQuery.data?.products ?? [];
 
   const total = selectedProducts
@@ -24,37 +26,39 @@ export const ReviewStep = (): JSX.Element => {
         <H2>Checkout</H2>
       </div>
       <div className="flex flex-col gap-6 p-6">
-        {goals.map((goal, index) => {
-          const productGoalItems = goal.goalItems.filter(
-            (goalItem) => goalItem.itemType === 'PRODUCT',
-          );
-
-          if (productGoalItems.length > 0) {
-            return (
-              <div className="flex flex-col gap-4" key={index}>
-                <Body1 className="px-6 text-zinc-500">
-                  {goal.title.length ? goal.title : `Goal ${index + 1}`}
-                </Body1>
-                {productGoalItems.map((goalItem, index) => (
-                  <ActionPlanProductCheckoutOptionRow
-                    key={index}
-                    item={products.find(
-                      (product) => product.id === goalItem.itemId,
-                    )}
-                    initiallyChecked={
-                      !!selectedProducts?.find(
-                        (product) => product.id === goalItem.itemId,
-                      )
-                    }
-                  />
-                ))}
-              </div>
+        {goals
+          .filter((g) => g.type === 'ANNUAL_REPORT_PROTOCOLS')
+          .map((goal, index) => {
+            const productGoalItems = goal.goalItems.filter(
+              (goalItem) => goalItem.itemType === 'PRODUCT',
             );
-          }
 
-          // If no products, return null or any other placeholder
-          return null;
-        })}
+            if (productGoalItems.length > 0) {
+              return (
+                <div className="flex flex-col gap-4" key={index}>
+                  <Body1 className="px-6 text-zinc-500">
+                    {goal.title.length ? goal.title : `Goal ${index + 1}`}
+                  </Body1>
+                  {productGoalItems.map((goalItem, index) => (
+                    <ActionPlanProductCheckoutOptionRow
+                      key={index}
+                      item={products.find(
+                        (product) => product.id === goalItem.itemId,
+                      )}
+                      initiallyChecked={
+                        !!selectedProducts?.find(
+                          (product) => product.id === goalItem.itemId,
+                        )
+                      }
+                    />
+                  ))}
+                </div>
+              );
+            }
+
+            // If no products, return null or any other placeholder
+            return null;
+          })}
       </div>
       <div className="flex w-full flex-col-reverse items-center gap-6 px-6 pb-14 pt-4 md:w-auto md:flex-row md:justify-end md:px-14 md:pt-0">
         <div className="flex flex-col items-center md:items-end">

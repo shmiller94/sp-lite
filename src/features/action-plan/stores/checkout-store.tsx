@@ -4,7 +4,6 @@ import { useStoreWithEqualityFn } from 'zustand/traditional';
 
 import {
   CheckoutStoreApi,
-  CheckoutStoreProps,
   CheckoutStore,
   checkoutStoreCreator,
 } from '@/features/action-plan/stores/checkout-store-creator';
@@ -13,15 +12,14 @@ export const CheckoutStoreContext = createContext<CheckoutStoreApi | undefined>(
   undefined,
 );
 
-type CheckoutStoreProviderProps = PropsWithChildren<CheckoutStoreProps>;
+type CheckoutStoreProviderProps = PropsWithChildren;
 
 export const CheckoutStoreProvider = ({
   children,
-  ...props
 }: CheckoutStoreProviderProps) => {
   const checkoutStoreRef = useRef<CheckoutStoreApi>();
   if (!checkoutStoreRef.current) {
-    checkoutStoreRef.current = checkoutStoreCreator(props);
+    checkoutStoreRef.current = checkoutStoreCreator();
   }
 
   return (

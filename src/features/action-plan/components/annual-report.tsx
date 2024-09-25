@@ -5,6 +5,8 @@ import { CoreMonitoredIssues } from '@/features/action-plan/components/core-moni
 import { BlockEditor } from '@/features/action-plan/components/editor/editor';
 import { PhilosophyBlocks } from '@/features/action-plan/components/philosophy-blocks';
 import { Protocol } from '@/features/action-plan/components/protocol';
+import { RecommendedItems } from '@/features/action-plan/components/recommended-items';
+import { ConsultationCard } from '@/features/action-plan/components/schedule-consultant-card';
 import { SecondaryIssues } from '@/features/action-plan/components/secondary-issues';
 import { ACTION_PLAN_INPUT_STYLE } from '@/features/action-plan/const/action-plan-input';
 import { ACTION_PLAN_SAVE_DELAY } from '@/features/action-plan/const/delay';
@@ -55,6 +57,8 @@ export const AnnualReportComponent = () => {
       <CoreMonitoredIssues className={REPORT_STYLE} />
       <SecondaryIssues className={REPORT_STYLE} />
       <Protocol className={REPORT_STYLE} />
+      <ConsultationCard className={REPORT_STYLE} />
+      <RecommendedItems className={REPORT_STYLE} />
     </div>
   );
 };

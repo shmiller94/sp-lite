@@ -23,15 +23,8 @@ import {
 } from '@/features/action-plan/stores/checkout-store';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 import { StepItem, StepperStoreProvider, useStepper } from '@/lib/stepper';
-import { PlanGoal } from '@/types/api';
 
-export function ActionPlanCheckoutModal({
-  goals,
-  children,
-}: {
-  goals: PlanGoal[];
-  children: ReactNode;
-}) {
+export function ActionPlanCheckoutModal({ children }: { children: ReactNode }) {
   const steps: StepItem[] = [
     {
       id: 'review',
@@ -45,7 +38,7 @@ export function ActionPlanCheckoutModal({
 
   return (
     <StepperStoreProvider steps={steps}>
-      <CheckoutStoreProvider goals={goals}>
+      <CheckoutStoreProvider>
         <ActionPlanCheckoutModalConsumer>
           {children}
         </ActionPlanCheckoutModalConsumer>
