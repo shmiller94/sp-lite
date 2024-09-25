@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useUser } from '@/lib/auth';
@@ -60,9 +59,6 @@ export function PersonalInformationForm(): JSX.Element {
           value={capitalize(gender.toLowerCase())}
           disabled
         />
-      </div>
-      <div className="hidden justify-end md:flex">
-        <Button disabled>Update</Button>
       </div>
     </div>
   );
