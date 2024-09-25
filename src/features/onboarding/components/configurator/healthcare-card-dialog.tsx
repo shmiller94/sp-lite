@@ -8,8 +8,10 @@ import { HealthcareService } from '@/types/api';
 
 export const HealthcareCardDialog = ({
   healthcareService,
+  inCart,
 }: {
   healthcareService: HealthcareService;
+  inCart: boolean;
 }) => {
   const { updateAdditionalService } = useOnboarding();
 
@@ -26,11 +28,13 @@ export const HealthcareCardDialog = ({
       </DialogTrigger>
 
       <HealthcareServiceInfoDialogContent healthcareService={healthcareService}>
-        <DialogClose>
-          <Button onClick={() => updateAdditionalService(healthcareService)}>
-            Add to cart
-          </Button>
-        </DialogClose>
+        {!inCart && (
+          <DialogClose>
+            <Button onClick={() => updateAdditionalService(healthcareService)}>
+              Add to cart
+            </Button>
+          </DialogClose>
+        )}
       </HealthcareServiceInfoDialogContent>
     </Dialog>
   );

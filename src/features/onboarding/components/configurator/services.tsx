@@ -54,7 +54,10 @@ const AdditionalServiceCard = ({ service }: AdditionalServiceCardProps) => {
             <Body2 className="line-clamp-2 text-[#A5A5AE]">
               {service.description}
             </Body2>
-            <HealthcareCardDialog healthcareService={service} />
+            <HealthcareCardDialog
+              healthcareService={service}
+              inCart={!!checked}
+            />
           </div>
         </div>
         <div className="flex flex-row items-center gap-x-2 sm:gap-x-6">
