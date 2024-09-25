@@ -1,8 +1,10 @@
 import { Trash2 } from 'lucide-react';
+import { useDebouncedCallback } from 'use-debounce';
 
 import { Input } from '@/components/ui/input';
 import { BlockEditor } from '@/features/action-plan/components/editor/editor';
 import { ACTION_PLAN_INPUT_STYLE } from '@/features/action-plan/const/action-plan-input';
+import { ACTION_PLAN_SAVE_DELAY } from '@/features/action-plan/const/delay';
 import { usePlan } from '@/features/action-plan/stores/plan-store';
 import { cn } from '@/lib/utils';
 import { PlanGoal } from '@/types/api';
@@ -25,14 +27,14 @@ export function ActionPlanGoal({
     isAdmin,
     changeGoalTitle,
     deleteGoal,
-    goalDescription,
     changeGoalDescription,
+    updateActionPlan,
   } = usePlan((state) => ({
     isAdmin: state.isAdmin,
     changeGoalTitle: state.changeGoalTitle,
     deleteGoal: state.deleteGoal,
     changeGoalDescription: state.changeGoalDescription,
-    goalDescription: goal.description,
+    updateActionPlan: state.updateActionPlan,
   }));
 
   const getGoalTitle = () => {
@@ -56,7 +58,7 @@ export function ActionPlanGoal({
       default:
         return (
           <BlockEditor
-            initialContent={goalDescription}
+            initialContent={goal.description}
             onUpdate={(content) => changeGoalDescription(content, goal.id)}
           />
         );
@@ -70,6 +72,11 @@ export function ActionPlanGoal({
     return 'text-xl placeholder:text-2xl';
   };
 
+  const debouncedGoalTitle = useDebouncedCallback(async (value: string) => {
+    changeGoalTitle(value, goal.id);
+    await updateActionPlan();
+  }, ACTION_PLAN_SAVE_DELAY);
+
   return (
     <div id={String(goal.id)} className={cn('flex w-full', className)}>
       <div className="w-full">
@@ -78,8 +85,8 @@ export function ActionPlanGoal({
           <Input
             placeholder="Goal title"
             className={cn(ACTION_PLAN_INPUT_STYLE, getInputClassName())}
-            value={goal.title}
-            onChange={(e) => changeGoalTitle(e.target.value, goal.id)}
+            defaultValue={goal.title}
+            onChange={(e) => debouncedGoalTitle(e.target.value)}
             disabled={!isAdmin}
           />
           {isAdmin && (

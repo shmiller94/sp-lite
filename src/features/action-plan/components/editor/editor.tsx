@@ -1,5 +1,7 @@
+import { Editor } from '@tiptap/core';
 import { useCurrentEditor } from '@tiptap/react';
 import { useState } from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 
 import {
   ColorSelector,
@@ -41,10 +43,17 @@ export const BlockEditor = ({
   const content = parseInitialContent(initialContent);
   const { editor } = useCurrentEditor();
   const isAdmin = usePlan((s) => s.isAdmin);
+  const updateActionPlan = usePlan((s) => s.updateActionPlan);
 
   const [openNode, setOpenNode] = useState(false);
   const [openColor, setOpenColor] = useState(false);
   const [openLink, setOpenLink] = useState(false);
+
+  const debouncedUpdates = useDebouncedCallback(async (editor: Editor) => {
+    const json = editor.getJSON();
+    onUpdate(JSON.stringify(json));
+    await updateActionPlan();
+  }, 2500);
 
   return (
     <EditorRoot>
@@ -64,7 +73,7 @@ export const BlockEditor = ({
           },
         }}
         onUpdate={({ editor }) => {
-          onUpdate(JSON.stringify(editor.getJSON()));
+          debouncedUpdates(editor);
         }}
       >
         <EditorCommand className="z-50 h-auto max-h-[330px] overflow-y-auto rounded-md border border-muted bg-background px-1 py-2 shadow-md transition-all">

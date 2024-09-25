@@ -1,20 +1,43 @@
 import { X } from 'lucide-react';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { Switch } from '@/components/ui/switch';
+import { Body1 } from '@/components/ui/typography';
 import { usePlan } from '@/features/action-plan/stores/plan-store';
 import { useUser } from '@/lib/auth';
+import { cn } from '@/lib/utils';
 
 export function ClinicianNoteHeader(): React.ReactNode {
   const { isAdmin, published, updateActionPlan, isUpdating, updateIsAdmin } =
     usePlan((s) => s);
   const { data: user } = useUser();
   const navigate = useNavigate();
+  const [isBlurred, setIsBlurred] = useState(false);
+
+  // Scroll event listener to toggle blur effect
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      setIsBlurred(scrollTop > 50); // Adjust the scroll value threshold as needed
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   return (
-    <div className="flex w-full justify-between p-5 md:p-7">
+    <div
+      className={cn(
+        'sticky z-10 left-0 top-0 flex w-full justify-between p-5 md:p-7 transition duration-300',
+        isBlurred ? 'backdrop-blur-lg' : null,
+      )}
+    >
       <div className="flex items-center justify-center gap-4">
         <Button
           className="size-[44px] rounded-full bg-white p-0 shadow-xl hover:bg-white"
@@ -29,13 +52,13 @@ export function ClinicianNoteHeader(): React.ReactNode {
         </div>
       </div>
       {user?.adminActor ? (
-        <div className="flex items-center gap-3">
-          <Button
-            className="rounded-[12px] bg-white px-6 py-3 text-black shadow-md hover:bg-white"
-            onClick={() => updateActionPlan()}
-          >
-            {isUpdating ? <Spinner variant="primary" /> : 'Save'}
-          </Button>
+        <div className="flex items-center gap-4">
+          {isUpdating && (
+            <div className="flex items-center gap-2">
+              <Spinner variant="primary" />
+              <Body1>Saving...</Body1>
+            </div>
+          )}
           <div className="flex items-center gap-2 rounded-[12px] bg-white px-4 py-3 shadow-md">
             <p className="text-sm">Preview</p>
             <Switch

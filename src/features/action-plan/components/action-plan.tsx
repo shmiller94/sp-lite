@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+import { useDebouncedCallback } from 'use-debounce';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,6 +9,7 @@ import { BlockEditor } from '@/features/action-plan/components/editor/editor';
 import { Protocol } from '@/features/action-plan/components/protocol';
 import { RecommendedItems } from '@/features/action-plan/components/recommended-items';
 import { ACTION_PLAN_INPUT_STYLE } from '@/features/action-plan/const/action-plan-input';
+import { ACTION_PLAN_SAVE_DELAY } from '@/features/action-plan/const/delay';
 import { usePlan } from '@/features/action-plan/stores/plan-store';
 import { cn } from '@/lib/utils';
 
@@ -26,7 +28,13 @@ export function ActionPlanComponent() {
     changeTitle,
     addGoal,
     changeDescription,
+    updateActionPlan,
   } = usePlan((s) => s);
+
+  const debouncedTitle = useDebouncedCallback(async (value) => {
+    changeTitle(value);
+    await updateActionPlan();
+  }, ACTION_PLAN_SAVE_DELAY);
 
   if (type !== 'DEFAULT') {
     return null;
@@ -43,8 +51,8 @@ export function ActionPlanComponent() {
             type="text"
             placeholder="Title"
             className={ACTION_PLAN_INPUT_STYLE}
-            value={title}
-            onChange={(e) => changeTitle(e.target.value)}
+            defaultValue={title ?? ''}
+            onChange={(e) => debouncedTitle(e.target.value)}
             disabled={!isAdmin}
           />
         </div>

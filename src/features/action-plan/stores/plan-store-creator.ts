@@ -33,6 +33,7 @@ export interface PlanStore {
   goals: PlanGoal[];
   videoFileId?: string;
   annualReport?: AnnualReport;
+
   changeTitle: (title: string) => void;
   changeDescription: (description: string) => void;
   addGoal: (goalType?: PlanGoalType) => void;
@@ -84,28 +85,61 @@ export const planStoreCreator = (initProps: PlanStoreProps) => {
         isUpdating: false,
         annualReport: initialPlan.annualReport,
 
-        changeTitle: (title: string) => set(() => ({ title })),
-
-        changeAnnualReportTitle: (title: string) =>
+        /*
+         * Following functions handle server updates via useDebounce hook
+         * to prevent updates on every letter change
+         * */
+        changeTitle: (title) => set(() => ({ title })),
+        changeAnnualReportTitle: (title) =>
           set((state) => ({
             annualReport: {
               ...state.annualReport!,
               title,
             },
           })),
-
-        changeDescription: (description: string) =>
-          set(() => ({ description })),
-
-        changeAnnualReportDescription: (description: string) =>
+        changeDescription: (description) => set(() => ({ description })),
+        changeAnnualReportDescription: (description) =>
           set((state) => ({
             annualReport: {
               ...state.annualReport!,
               description,
             },
           })),
+        changeGoalTitle: (title, goalId) =>
+          set((state) => ({
+            goals: state.goals.map(
+              (goal) => (goal.id === goalId ? { ...goal, title } : goal), // Update goal by goalId
+            ),
+          })),
+        changeGoalDescription: (content, goalId) =>
+          set((state) => ({
+            goals: state.goals.map(
+              (goal) =>
+                goal.id === goalId ? { ...goal, description: content } : goal, // Update by goalId
+            ),
+          })),
+        changeGoalItemDescription: (goalId, goalItem, description) =>
+          set((state) => ({
+            goals: state.goals.map((goal) =>
+              goal.id === goalId
+                ? {
+                    ...goal,
+                    goalItems: goal.goalItems.map(
+                      (item) =>
+                        item.itemId === goalItem.itemId
+                          ? { ...item, description }
+                          : item, // Update item by itemId within the specified goalId
+                    ),
+                  }
+                : goal,
+            ),
+          })),
 
-        addGoal: (goalType = 'DEFAULT') =>
+        /*
+         * Following functions handle updates directly inside because once action done we can't perform
+         * the same action immediately (relatively ~500ms)
+         * */
+        addGoal: (goalType = 'DEFAULT') => {
           set((state) => ({
             goals: [
               ...state.goals,
@@ -119,29 +153,17 @@ export const planStoreCreator = (initProps: PlanStoreProps) => {
                 goalItems: [],
               },
             ],
-          })),
+          }));
+
+          get().updateActionPlan();
+        },
 
         deleteGoal: (goalId) => {
           set((state) => ({
             goals: state.goals.filter((goal) => goal.id !== goalId), // Filter by goalId
           }));
-        },
 
-        changeGoalTitle: (title, goalId) => {
-          set((state) => ({
-            goals: state.goals.map(
-              (goal) => (goal.id === goalId ? { ...goal, title } : goal), // Update goal by goalId
-            ),
-          }));
-        },
-
-        changeGoalDescription: (content: string, goalId: string) => {
-          set((state) => ({
-            goals: state.goals.map(
-              (goal) =>
-                goal.id === goalId ? { ...goal, description: content } : goal, // Update by goalId
-            ),
-          }));
+          get().updateActionPlan();
         },
 
         changeGoalDate: (date, goalId) => {
@@ -153,6 +175,8 @@ export const planStoreCreator = (initProps: PlanStoreProps) => {
                   : goal, // Update by goalId
             ),
           }));
+
+          get().updateActionPlan();
         },
 
         deleteGoalItem: (goalId, itemId) => {
@@ -168,6 +192,8 @@ export const planStoreCreator = (initProps: PlanStoreProps) => {
                 : goal,
             ),
           }));
+
+          get().updateActionPlan();
         },
 
         insertGoalItem: (selectedItems, type, goalId) => {
@@ -187,24 +213,8 @@ export const planStoreCreator = (initProps: PlanStoreProps) => {
                 : goal,
             ),
           }));
-        },
 
-        changeGoalItemDescription: (goalId, goalItem, description) => {
-          set((state) => ({
-            goals: state.goals.map((goal) =>
-              goal.id === goalId
-                ? {
-                    ...goal,
-                    goalItems: goal.goalItems.map(
-                      (item) =>
-                        item.itemId === goalItem.itemId
-                          ? { ...item, description }
-                          : item, // Update item by itemId within the specified goalId
-                    ),
-                  }
-                : goal,
-            ),
-          }));
+          get().updateActionPlan();
         },
 
         changeItemDeadline: (goalId, goalItem, deadline) => {
@@ -223,6 +233,7 @@ export const planStoreCreator = (initProps: PlanStoreProps) => {
                 : goal,
             ),
           }));
+          get().updateActionPlan();
         },
 
         updateIsAdmin: (isAdmin) => set({ isAdmin }),

@@ -1,6 +1,7 @@
 import { format } from 'date-fns';
 import { CalendarIcon, Dot, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -14,6 +15,7 @@ import { Body1 } from '@/components/ui/typography';
 import { useProducts } from '@/features/action-plan/api/get-products';
 import { ActionPlanBiomarkerRow } from '@/features/action-plan/components/data-view';
 import { ACTION_PLAN_INPUT_STYLE } from '@/features/action-plan/const/action-plan-input';
+import { ACTION_PLAN_SAVE_DELAY } from '@/features/action-plan/const/delay';
 import { usePlan } from '@/features/action-plan/stores/plan-store';
 import { useBiomarkers } from '@/features/biomarkers/api/get-biomarkers';
 import { useServices } from '@/features/services/api/get-services';
@@ -22,7 +24,7 @@ import { HealthcareService, PlanGoalItem, Product } from '@/types/api';
 
 export type ActionPlanItemRowProps = {
   item: PlanGoalItem;
-  goalId?: string;
+  goalId: string;
 };
 
 export function ActionPlanItemRow(
@@ -46,7 +48,7 @@ export function ActionPlanItemRow(
             goalItem={item}
             goalId={goalId}
           />
-          {isAdmin && typeof goalId === 'string' && (
+          {isAdmin && (
             <div
               role="presentation"
               className="flex h-10 min-w-10 cursor-pointer items-center justify-center rounded-full shadow-md"
@@ -69,7 +71,7 @@ export function ActionPlanItemRow(
             goalItem={item}
             goalId={goalId}
           />
-          {isAdmin && typeof goalId === 'string' && (
+          {isAdmin && (
             <div
               role="presentation"
               className="flex h-10 min-w-10 cursor-pointer items-center justify-center rounded-full shadow-md"
@@ -88,7 +90,7 @@ export function ActionPlanItemRow(
       return biomarker ? (
         <div className="flex w-full flex-1 items-center justify-center gap-4">
           <ActionPlanBiomarkerRow biomarker={biomarker} />
-          {isAdmin && typeof goalId === 'string' && (
+          {isAdmin && (
             <div
               role="presentation"
               className="flex h-10 min-w-10 cursor-pointer items-center justify-center rounded-full shadow-md"
@@ -108,7 +110,7 @@ export function ActionPlanItemRow(
 interface ActionPlanProductRowInterface {
   product: Product;
   goalItem: PlanGoalItem;
-  goalId?: string;
+  goalId: string;
 }
 
 function ActionPlanProductRow({
@@ -116,7 +118,14 @@ function ActionPlanProductRow({
   goalItem,
   goalId,
 }: ActionPlanProductRowInterface): JSX.Element {
-  const { isAdmin, changeGoalItemDescription } = usePlan((s) => s);
+  const { isAdmin, changeGoalItemDescription, updateActionPlan } = usePlan(
+    (s) => s,
+  );
+  const debouncedInstructions = useDebouncedCallback(async (value: string) => {
+    changeGoalItemDescription(goalId, goalItem, value);
+    await updateActionPlan();
+  }, ACTION_PLAN_SAVE_DELAY);
+
   return (
     <div
       role="presentation"
@@ -145,11 +154,8 @@ function ActionPlanProductRow({
           }
           maxLength={75}
           disabled={!isAdmin}
-          value={goalItem.description}
-          onChange={(e) =>
-            typeof goalId === 'string' &&
-            changeGoalItemDescription(goalId, goalItem, e.target.value)
-          }
+          defaultValue={goalItem.description}
+          onChange={(e) => debouncedInstructions(e.target.value)}
         />
       </div>
     </div>
@@ -159,7 +165,7 @@ function ActionPlanProductRow({
 interface ActionPlanServiceRowInterface {
   service: HealthcareService;
   goalItem: PlanGoalItem;
-  goalId?: string;
+  goalId: string;
 }
 
 function ActionPlanServiceRow({
@@ -167,7 +173,15 @@ function ActionPlanServiceRow({
   goalId,
   goalItem,
 }: ActionPlanServiceRowInterface): JSX.Element {
-  const { isAdmin, changeGoalItemDescription } = usePlan((s) => s);
+  const { isAdmin, changeGoalItemDescription, updateActionPlan } = usePlan(
+    (s) => s,
+  );
+
+  const debouncedInstructions = useDebouncedCallback(async (value: string) => {
+    changeGoalItemDescription(goalId, goalItem, value);
+    await updateActionPlan();
+  }, ACTION_PLAN_SAVE_DELAY);
+
   return (
     <div className="flex h-[96px] w-full items-center justify-between rounded-[20px] bg-zinc-50 p-3 transition">
       <div className="flex w-full items-center space-x-6">
@@ -193,7 +207,7 @@ function ActionPlanServiceRow({
           <Input
             className={cn(
               ACTION_PLAN_INPUT_STYLE,
-              'placeholder:italic text-base placeholder:text-base text-zinc-500 bg-zinc-50 disabled:bg-zinc-50',
+              'italic placeholder:italic text-base placeholder:text-base text-zinc-500 bg-zinc-50 disabled:bg-zinc-50',
             )}
             placeholder={
               !isAdmin
@@ -202,11 +216,8 @@ function ActionPlanServiceRow({
             }
             maxLength={75}
             disabled={!isAdmin}
-            value={goalItem.description}
-            onChange={(e) =>
-              typeof goalId === 'string' &&
-              changeGoalItemDescription(goalId, goalItem, e.target.value)
-            }
+            defaultValue={goalItem.description}
+            onChange={(e) => debouncedInstructions(e.target.value)}
           />
         </div>
       </div>
@@ -219,7 +230,7 @@ function ActionPlanServiceRow({
 
 interface ActionPlanItemDatePickerInterface {
   goalItem: PlanGoalItem;
-  goalId?: string;
+  goalId: string;
 }
 
 function ActionPlanItemDatePicker({
@@ -236,7 +247,7 @@ function ActionPlanItemDatePicker({
   }, []);
 
   useEffect(() => {
-    if (date && typeof goalId === 'string') {
+    if (date) {
       changeItemDeadline(goalId, goalItem, date);
     }
   }, [date]);

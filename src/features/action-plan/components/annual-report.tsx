@@ -1,3 +1,5 @@
+import { useDebouncedCallback } from 'use-debounce';
+
 import { Input } from '@/components/ui/input';
 import { CoreMonitoredIssues } from '@/features/action-plan/components/core-monitored-issues';
 import { BlockEditor } from '@/features/action-plan/components/editor/editor';
@@ -5,6 +7,7 @@ import { PhilosophyBlocks } from '@/features/action-plan/components/philosophy-b
 import { Protocol } from '@/features/action-plan/components/protocol';
 import { SecondaryIssues } from '@/features/action-plan/components/secondary-issues';
 import { ACTION_PLAN_INPUT_STYLE } from '@/features/action-plan/const/action-plan-input';
+import { ACTION_PLAN_SAVE_DELAY } from '@/features/action-plan/const/delay';
 import { usePlan } from '@/features/action-plan/stores/plan-store';
 
 const REPORT_STYLE = 'space-y-8 rounded-3xl bg-white p-8 shadow-md md:p-12';
@@ -18,6 +21,12 @@ export const AnnualReportComponent = () => {
   const changeAnnualReportDescription = usePlan(
     (s) => s.changeAnnualReportDescription,
   );
+  const updateActionPlan = usePlan((s) => s.updateActionPlan);
+
+  const debouncedTitle = useDebouncedCallback(async (value) => {
+    changeAnnualReportTitle(value);
+    await updateActionPlan();
+  }, ACTION_PLAN_SAVE_DELAY);
 
   if (!isAnnualReportType) {
     return null;
@@ -30,8 +39,8 @@ export const AnnualReportComponent = () => {
           type="text"
           placeholder="Title"
           className={ACTION_PLAN_INPUT_STYLE}
-          value={annualReport?.title}
-          onChange={(e) => changeAnnualReportTitle(e.target.value)}
+          defaultValue={annualReport?.title}
+          onChange={(e) => debouncedTitle(e.target.value)}
           disabled={!isAdmin}
         />
 
