@@ -3,6 +3,7 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Body2 } from '@/components/ui/typography';
 import { ActionPlanGoal } from '@/features/action-plan/components/action-plan-goal';
 import { BlockEditor } from '@/features/action-plan/components/editor/editor';
@@ -11,6 +12,7 @@ import { RecommendedItems } from '@/features/action-plan/components/recommended-
 import { ACTION_PLAN_INPUT_STYLE } from '@/features/action-plan/const/action-plan-input';
 import { ACTION_PLAN_SAVE_DELAY } from '@/features/action-plan/const/delay';
 import { usePlan } from '@/features/action-plan/stores/plan-store';
+import { useOrders } from '@/features/orders/api';
 import { cn } from '@/lib/utils';
 
 import { ConsultationCard } from './schedule-consultant-card';
@@ -19,15 +21,17 @@ const PLAN_STYLE = 'space-y-8 rounded-3xl bg-white p-8 shadow-md md:p-12';
 
 export function ActionPlanComponent() {
   const {
-    timestamp,
     title,
     type,
     description,
     isAdmin,
+    orderId,
     changeTitle,
     changeDescription,
     updateActionPlan,
   } = usePlan((s) => s);
+
+  const ordersQuery = useOrders();
 
   const debouncedTitle = useDebouncedCallback(async (value) => {
     changeTitle(value);
@@ -38,12 +42,18 @@ export function ActionPlanComponent() {
     return null;
   }
 
+  const relatedOrder = ordersQuery.data?.orders.find((o) => o.id === orderId);
+
   return (
     <div className="mb-10 w-full max-w-[728px] space-y-2.5">
       <div className={PLAN_STYLE}>
         <div className="space-y-3">
           <Body2 className="text-zinc-400">
-            {format(new Date(timestamp ?? Date.now()), 'PP')}
+            {ordersQuery.isLoading ? (
+              <Skeleton className="h-5 w-14" />
+            ) : (
+              format(new Date(relatedOrder?.timestamp ?? Date.now()), 'PP')
+            )}
           </Body2>
           <Input
             type="text"
