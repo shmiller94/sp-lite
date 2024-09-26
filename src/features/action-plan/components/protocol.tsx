@@ -19,7 +19,7 @@ export const Protocol = ({ className }: { className?: string }) => {
   }
 
   return (
-    <div className={cn(className)}>
+    <div className={cn(className, 'break-words')}>
       <div className="space-y-4">
         <H2>Your protocol</H2>
         <Body1 className="text-zinc-500">

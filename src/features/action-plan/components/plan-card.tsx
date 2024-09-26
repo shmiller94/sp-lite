@@ -22,10 +22,10 @@ import { Spinner } from '@/components/ui/spinner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Body1, Body2, H2 } from '@/components/ui/typography';
 import {
+  useCreatePlan,
   usePlanDates,
   usePlans,
   useProducts,
-  useCreatePlan,
 } from '@/features/action-plan/api';
 import { ActionPlanCheckoutModal } from '@/features/action-plan/components/checkout-modal';
 import { PlanStoreProvider } from '@/features/action-plan/stores/plan-store';
@@ -359,7 +359,7 @@ const ServicesTab = ({ orderId }: { orderId?: string }) => {
 
 const ActionPlanGoalContainer = ({ goalItem }: { goalItem: PlanGoal }) => {
   return (
-    <div>
+    <div className="w-full break-words">
       <h4 className="text-[#A1A1AA]">
         {goalItem.title}{' '}
         <span className="hidden md:inline">({goalItem.goalItems.length})</span>
