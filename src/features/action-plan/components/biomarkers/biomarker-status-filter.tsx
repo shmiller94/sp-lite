@@ -1,4 +1,4 @@
-import { Circle, ChevronDown } from 'lucide-react';
+import { ChevronDown, Circle } from 'lucide-react';
 import React from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -36,7 +36,10 @@ export function BiomarkerStatusFilter({
 
   // Updated function to select only one status at a time
   const selectStatus = (value: string) => {
-    if (selectedValues.has(value)) {
+    if (value === '') {
+      // If 'All Ranges' is selected, clear statuses to reset to default
+      clearStatuses();
+    } else if (selectedValues.has(value)) {
       clearStatuses();
     } else {
       setStatuses([value]);
