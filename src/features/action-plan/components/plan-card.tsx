@@ -298,7 +298,7 @@ const ProductsTab = ({ orderId }: { orderId?: string }) => {
 
   return (
     <TabsContent value="PRODUCT" className="pt-8">
-      <div className="space-y-8">
+      <div className="max-h-[50vh] space-y-8 overflow-auto">
         {products?.map((product, indx) => (
           <ActionPlanGoalContainer goalItem={product} key={indx} />
         ))}
@@ -346,8 +346,8 @@ const ServicesTab = ({ orderId }: { orderId?: string }) => {
   }
   return (
     <TabsContent value="SERVICE" className="pt-8">
-      <div>
-        <div className="space-y-2">
+      <div className="max-h-[50vh] overflow-auto">
+        <div className=" space-y-2">
           {services?.map((service, index) => (
             <ActionPlanGoalContainer goalItem={service} key={index} />
           ))}

@@ -25,7 +25,7 @@ export const ReviewStep = (): JSX.Element => {
       <div className="px-6 py-2.5 md:hidden">
         <H2>Checkout</H2>
       </div>
-      <div className="flex flex-col gap-6 p-6">
+      <div className="flex max-h-[50vh] flex-col gap-6 overflow-auto p-6">
         {goals
           .filter((g) => g.type === 'ANNUAL_REPORT_PROTOCOLS')
           .map((goal, index) => {
@@ -60,7 +60,7 @@ export const ReviewStep = (): JSX.Element => {
             return null;
           })}
       </div>
-      <div className="flex w-full flex-col-reverse items-center gap-6 px-6 pb-14 pt-4 md:w-auto md:flex-row md:justify-end md:px-14 md:pt-0">
+      <div className="mt-4 flex w-full flex-col-reverse items-center gap-6 px-6 pb-14 pt-4 md:w-auto md:flex-row md:justify-end md:px-14 md:pt-0">
         <div className="flex flex-col items-center md:items-end">
           <Body1 className="text-zinc-500">
             Subtotal ({selectedProducts.length} items)
