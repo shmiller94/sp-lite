@@ -123,13 +123,6 @@ const PlanCardFooter = ({
 
   return (
     <div className="flex w-full flex-col items-center justify-end gap-4 px-6 pb-6 md:px-[72px] md:pb-[72px] lg:flex-row">
-      <Button
-        className="w-full lg:w-auto"
-        variant="outline"
-        onClick={() => navigate(`./plans/${orderId}`)}
-      >
-        See Doctor’s Note
-      </Button>
       {tab === 'PRODUCT' ? (
         products.length === 0 ? (
           <Button
@@ -146,6 +139,13 @@ const PlanCardFooter = ({
           </PlanStoreProvider>
         )
       ) : null}
+      <Button
+        className="w-full lg:w-auto"
+        variant="outline"
+        onClick={() => navigate(`./plans/${orderId}`)}
+      >
+        See Doctor’s Note
+      </Button>
     </div>
   );
 };
@@ -361,7 +361,7 @@ const ActionPlanGoalContainer = ({ goalItem }: { goalItem: PlanGoal }) => {
   return (
     <div>
       <h4 className="text-[#A1A1AA]">
-        {goalItem.title}
+        {goalItem.title}{' '}
         <span className="hidden md:inline">({goalItem.goalItems.length})</span>
       </h4>
       <div className="mt-5 space-y-2">

@@ -1,10 +1,12 @@
 import { useProducts } from '@/features/action-plan/api';
+import { HealthcareServiceDialog } from '@/features/orders/components/healthcare-service-dialog';
 import { useServices } from '@/features/services/api';
 import { PlanGoalItem } from '@/types/api';
 
 export const PlanItemList = ({ item }: { item: PlanGoalItem }) => {
   const servicesQuery = useServices();
   const productsQuery = useProducts();
+
   switch (item.itemType) {
     case 'PRODUCT': {
       const product = productsQuery.data?.products.find(
@@ -17,6 +19,8 @@ export const PlanItemList = ({ item }: { item: PlanGoalItem }) => {
             <a
               href={product.url}
               className="cursor-pointer text-vermillion-900 hover:text-vermillion-500"
+              target="_blank"
+              rel="noreferrer"
             >
               {product.name}
             </a>
@@ -33,7 +37,12 @@ export const PlanItemList = ({ item }: { item: PlanGoalItem }) => {
       return service ? (
         <li className="text-base text-vermillion-900">
           <span className="text-zinc-600">
-            {service.name} {item.description ? `- ${item.description}` : null}
+            <HealthcareServiceDialog healthcareService={service}>
+              <span className="text-vermillion-900 hover:text-vermillion-500">
+                {service.name}
+              </span>{' '}
+            </HealthcareServiceDialog>
+            {item.description ? `- ${item.description}` : null}
           </span>
         </li>
       ) : null;
