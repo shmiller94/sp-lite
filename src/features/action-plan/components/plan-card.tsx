@@ -132,7 +132,11 @@ const PlanCardFooter = ({
             Go to marketplace
           </Button>
         ) : (
-          <PlanStoreProvider initialPlan={specificPlan} isAdmin={false}>
+          <PlanStoreProvider
+            key={orderId}
+            initialPlan={specificPlan}
+            isAdmin={false}
+          >
             <ActionPlanCheckoutModal>
               <Button className="w-full md:w-auto">Get Products</Button>
             </ActionPlanCheckoutModal>
@@ -225,29 +229,33 @@ const ActionPlanDatePicker = ({
           <CommandEmpty>Select Date</CommandEmpty>
           <CommandList>
             <CommandGroup>
-              {planDates?.map((option, index) => (
+              {planDates?.map((option) => (
                 <CommandItem
-                  key={index}
-                  value={new Date(option.timestamp).toISOString()}
-                  onSelect={(currentValue) => {
+                  className="cursor-pointer"
+                  key={option.orderId}
+                  value={option.orderId}
+                  onSelect={() => {
                     /*
-                    NB: upper case is neeeded because for some interesting
-                    reason T and Z is transformed into t and z
+                    NB: upper case is needed if you use onSelect's currentValue
+                    because for some interesting reason T and Z is transformed into t and z
 
                     so like you get:
-
                     2024-05-09t16:00:00.000z
+
                     instead of
                     2024-05-09T16:00:00.000Z
-
                     which brakes format()
                     */
-                    setCurrentDate(new Date(currentValue.toUpperCase()));
+                    setCurrentDate(
+                      option.timestamp ? new Date(option.timestamp) : null,
+                    );
                     setOpen(false);
                     setOrderId(option.orderId);
                   }}
                 >
-                  {format(new Date(option.timestamp), 'PP')}
+                  {option.timestamp
+                    ? format(new Date(option.timestamp), 'PP')
+                    : 'No Date'}
                 </CommandItem>
               ))}
             </CommandGroup>

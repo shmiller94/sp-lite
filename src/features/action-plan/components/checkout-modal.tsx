@@ -1,6 +1,5 @@
 import { X } from 'lucide-react';
 import { ReactNode } from 'react';
-import * as React from 'react';
 
 import {
   Dialog,
@@ -101,5 +100,5 @@ function ActionPlanCheckoutContent() {
     activeStep: s.activeStep,
   }));
 
-  return <div className="w-full">{steps[activeStep].content}</div>;
+  return <div className="w-full break-all">{steps[activeStep].content}</div>;
 }
