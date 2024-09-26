@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { useState } from 'react';
 
 import { Scheduler } from '@/components/shared/scheduler';
 import { Button } from '@/components/ui/button';
@@ -10,6 +11,34 @@ import { useUpdateOrder } from '@/features/orders/api/update-order';
 import { useServices } from '@/features/services/api/get-services';
 import { useStepper } from '@/lib/stepper';
 
+const ScheduleLater = ({
+  setScheduleLater,
+}: {
+  setScheduleLater: () => void;
+}) => {
+  const { jump } = useStepper((s) => s);
+
+  return (
+    <>
+      <div className="space-y-1">
+        <H2>Remember to schedule your service later</H2>
+        <Body1 className="text-zinc-500">
+          You will be able to pick a time for your lab draw and service bookings
+          once you’re on the platform. You can use the “To be scheduled” tab on
+          the services page to do so. Don’t forget to schedule it to get your
+          test results.
+        </Body1>
+      </div>
+      <div className="flex flex-col-reverse gap-4 pt-12 md:flex-row md:justify-end">
+        <Button variant="outline" onClick={setScheduleLater}>
+          Back
+        </Button>
+        <Button onClick={() => jump('digital-twin')}>Continue</Button>
+      </div>
+    </>
+  );
+};
+
 export const PickDate = () => {
   const { nextOnboardingStep, prevStep } = useStepper((s) => s);
   const { data, isLoading } = useServices({});
@@ -20,6 +49,7 @@ export const PickDate = () => {
     serviceAddress,
     updateBloodTimezone,
   } = useOnboarding();
+  const [scheduleLater, setScheduleLater] = useState(false);
 
   const updateOrderMutation = useUpdateOrder({});
   const superpowerBloodPanel = data?.services.find(
@@ -50,6 +80,10 @@ export const PickDate = () => {
     await nextOnboardingStep();
   };
 
+  if (scheduleLater) {
+    return <ScheduleLater setScheduleLater={() => setScheduleLater(false)} />;
+  }
+
   return (
     <section id="main">
       <div className="space-y-1">
@@ -59,6 +93,17 @@ export const PickDate = () => {
           selected time slot. We recommend booking with 2 hours of waking up to
           ensure the most accurate measurement of blood hormone levels
         </Body1>
+        <div className="flex justify-end py-2">
+          <Button
+            variant="ghost"
+            className="p-0 text-zinc-500"
+            onClick={() => {
+              setScheduleLater((prev) => !prev);
+            }}
+          >
+            Skip this for now
+          </Button>
+        </div>
       </div>
       {allowSchedulerRender ? (
         <Scheduler
