@@ -17,7 +17,7 @@ export const CoreMonitoredIssues: ({
     s.goals.filter((goal) => goal.type === 'ANNUAL_REPORT_PRIMARY'),
   );
 
-  if (!goals) {
+  if (!isAdmin && !goals.length) {
     return null;
   }
 

@@ -17,7 +17,7 @@ export const SecondaryIssues: ({
     s.goals.filter((goal) => goal.type === 'ANNUAL_REPORT_SECONDARY'),
   );
 
-  if (!goals) {
+  if (!isAdmin && !goals.length) {
     return null;
   }
 
