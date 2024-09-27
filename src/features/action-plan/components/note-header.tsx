@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
@@ -7,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { Switch } from '@/components/ui/switch';
 import { Body2 } from '@/components/ui/typography';
+import { getPlansQueryOptions } from '@/features/action-plan/api';
 import { usePlan } from '@/features/action-plan/stores/plan-store';
 import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
@@ -38,6 +40,30 @@ export function ClinicianNoteHeader(): React.ReactNode {
     };
   }, []);
 
+  const queryClient = useQueryClient();
+
+  const closePlan = async () => {
+    /**
+     * We don't use isAdmin because we can overwrite it with "Preview"
+     */
+    if (user?.adminActor) {
+      /**
+       * Always save plan before closing
+       */
+      await updateActionPlan();
+      /**
+       *  We invalidate here because action plan store doesn't use React Query,
+       *  therefore by the time we come back from editing our RTK cache might still be present
+       *  it will load action plan with cached value and overwrite it if we don't revalidate cache
+       */
+      await queryClient.invalidateQueries({
+        queryKey: getPlansQueryOptions().queryKey,
+      });
+    }
+
+    navigate('/', { replace: true });
+  };
+
   return (
     <div
       className={cn(
@@ -48,7 +74,7 @@ export function ClinicianNoteHeader(): React.ReactNode {
       <div className="flex items-center justify-center gap-4">
         <Button
           className="size-[44px] rounded-full bg-white p-0 shadow-xl hover:bg-white"
-          onClick={() => navigate('/', { replace: true })}
+          onClick={closePlan}
         >
           <X width="16px" height="16px" color="#52525B" />
         </Button>
