@@ -2,6 +2,7 @@ import { Widget } from '@typeform/embed-react';
 import { useNavigate } from 'react-router-dom';
 
 import { OnboardingLayout } from '@/components/layouts/onboarding-layout';
+import { env } from '@/config/env';
 import { api } from '@/lib/api-client';
 import { useUser } from '@/lib/auth';
 
@@ -26,20 +27,19 @@ export const TypeformIntegration = () => {
     window.location.reload();
   };
 
-  // Check if in development environment
-  const isDev = import.meta.env.DEV;
+  const typeformFormId = env.TYPEFORM_FORM_ID;
 
   return (
     <section id="main">
       <Widget
-        id="VVOeB9wb"
+        id={typeformFormId}
         className="h-dvh w-full pt-24 sm:h-[80dvh] md:w-[80dvw]"
         opacity={0}
-        enableSandbox={isDev}
         fullScreen
         transitiveSearchParams={['email']}
         hidden={{
           email: user?.email ?? '',
+          user_id: user?.userIdentity?.userId ?? '',
         }}
         onSubmit={completeOnboarding}
       />

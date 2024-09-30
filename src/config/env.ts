@@ -14,6 +14,7 @@ const createEnv = () => {
     VITAL_ENV: z.string(),
     GOOGLE_API_KEY: z.string(),
     CALENDLY_TOKEN: z.string(),
+    TYPEFORM_FORM_ID: z.string(),
   });
 
   const envVars = Object.entries(import.meta.env).reduce<
