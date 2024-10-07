@@ -1,7 +1,6 @@
 import { X } from 'lucide-react';
 import moment from 'moment-timezone';
 import { ReactNode } from 'react';
-import * as React from 'react';
 
 import {
   Dialog,
@@ -16,16 +15,19 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { Body1, Body2 } from '@/components/ui/typography';
+import { useOrders } from '@/features/orders/api';
 import {
   OrderStoreProvider,
   useOrder,
 } from '@/features/orders/stores/order-store';
 import { getDefaultCollectionMethod } from '@/features/orders/utils/get-default-collection-method';
+import { getDraftCollectionMethod } from '@/features/orders/utils/get-draft-collection-method';
 import { getStepsFromService } from '@/features/orders/utils/get-steps-for-service';
 import { useGetSchedulingLink } from '@/features/services/api/get-scheduling-link';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 import { StepperStoreProvider, useStepper } from '@/lib/stepper';
 import { HealthcareService } from '@/types/api';
+
 /**
  * This component is the main renderer of the scheduling process for all services.
  * It first retrieves the relevant steps and wraps them into order and stepper contexts for navigation and ordering.
@@ -47,14 +49,22 @@ export const HealthcareServiceDialog = ({
   draftOrderId?: string;
 }) => {
   const schedulingLinkQuery = useGetSchedulingLink();
+  const { data } = useOrders();
+
+  const draftOrder = data?.orders.find((order) => order.id === draftOrderId);
+  const draftOrderCollectionMethod = getDraftCollectionMethod(
+    draftOrder?.method,
+  );
 
   const steps = getStepsFromService(
     healthcareService,
     schedulingLinkQuery.data?.link,
-    draftOrderId,
+    draftOrder?.id,
   );
 
-  const collectionMethod = getDefaultCollectionMethod(healthcareService);
+  const collectionMethod = draftOrderCollectionMethod
+    ? draftOrderCollectionMethod
+    : getDefaultCollectionMethod(healthcareService);
 
   return (
     <StepperStoreProvider steps={steps}>
@@ -62,7 +72,7 @@ export const HealthcareServiceDialog = ({
         service={healthcareService}
         tz={moment.tz.guess()}
         collectionMethod={collectionMethod}
-        draftOrderId={draftOrderId ? draftOrderId : null}
+        draftOrder={draftOrder ? draftOrder : null}
       >
         <HealthcareServiceDialogConsumer>
           {children}

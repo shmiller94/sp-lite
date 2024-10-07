@@ -1,6 +1,8 @@
 import moment from 'moment';
 import { ReactNode } from 'react';
+import { toast } from 'sonner';
 
+import { DotIcon } from '@/components/icons/dot';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
@@ -11,6 +13,7 @@ import {
   useUpdateOrder,
 } from '@/features/orders/api';
 import { useOrder } from '@/features/orders/stores/order-store';
+import { getDraftCollectionMethod } from '@/features/orders/utils/get-draft-collection-method';
 import { useService } from '@/features/services/api';
 import { usePaymentMethods } from '@/features/settings/api';
 import { useStepper } from '@/lib/stepper';
@@ -27,7 +30,7 @@ export function OrderSummary(): ReactNode {
     slot,
     collectionMethod,
     tz,
-    draftOrderId,
+    draftOrder,
     informedConsent,
     updateCreatedOrderId,
   } = useOrder((s) => s);
@@ -85,8 +88,13 @@ export function OrderSummary(): ReactNode {
    * we will just update existing order
    * */
   const updateOrderFn = async (): Promise<void> => {
+    if (!draftOrder) {
+      toast.warning('No orderId found for previous order. Contact support.');
+      return;
+    }
+
     const response = await updateOrderMutation.mutateAsync({
-      orderId: draftOrderId as string,
+      orderId: draftOrder.id,
       data: {
         location: location ? location : {},
         timezone: tz || moment.tz.guess(),
@@ -134,7 +142,7 @@ export function OrderSummary(): ReactNode {
             Back
           </Button>
           <Button
-            onClick={draftOrderId ? updateOrderFn : createOrderFn}
+            onClick={draftOrder ? updateOrderFn : createOrderFn}
             className="w-full md:w-auto"
           >
             {isMutationLoading ? <Spinner /> : 'Confirm'}
@@ -156,9 +164,7 @@ function CreateOrderSummaryItem(): ReactNode {
     items,
   });
 
-  const code = window.localStorage.getItem('superpower-code');
-
-  const basePrice = code === 'SPPROMO' ? 0 : data?.service.price ?? 0; // Default to 0 if undefined
+  const basePrice = data?.service.price ?? 0; // Default to 0 if undefined
 
   return (
     <div className="flex flex-col items-start justify-between space-y-4 py-3 sm:flex-row sm:items-center sm:space-y-0">
@@ -173,26 +179,26 @@ function CreateOrderSummaryItem(): ReactNode {
           />
         )}
         <div className="flex flex-col">
-          <p className="text-primary">{service.name}</p>
-          <p className="space-x-2 text-sm text-zinc-500">
+          <Body1>{service.name}</Body1>
+          <div className="flex items-center gap-2">
             {service.phlebotomy && (
               <>
-                <span>
+                <Body2 className="text-zinc-400">
                   {collectionMethod === 'IN_LAB'
-                    ? 'In-lab visit'
-                    : 'At-home visit'}
-                </span>
-                <span>-</span>
+                    ? 'In person lab'
+                    : 'At home visit'}
+                </Body2>
+                <DotIcon />
               </>
             )}
             {slot && (
-              <span>
+              <Body2 className="text-zinc-400">
                 {moment(slot.start).tz(tz).format('MMMM Do, h:mma')}
                 {'-'}
                 {moment(slot.end).tz(tz).format('h:mma z')}
-              </span>
+              </Body2>
             )}
-          </p>
+          </div>
         </div>
         <div className="flex gap-2 md:hidden">
           Total: <Price basePrice={basePrice} isLoading={isLoading} />
@@ -212,13 +218,22 @@ const Price = ({
   basePrice: number;
   isLoading: boolean;
 }) => {
-  const { draftOrderId } = useOrder((s) => s);
+  const { draftOrder } = useOrder((s) => s);
+
+  const draftOrderCollectionMethod = getDraftCollectionMethod(
+    draftOrder?.method,
+  );
+
+  const isAtHome = draftOrder && draftOrderCollectionMethod !== 'IN_LAB';
+
+  // TODO: move this logic to server instead
+  basePrice = draftOrder ? (isAtHome ? 0 : 7900) : basePrice;
 
   return (
     <div className="text-primary">
       {isLoading ? (
         <Spinner size="xs" variant="primary" />
-      ) : basePrice === 0 || draftOrderId ? (
+      ) : basePrice === 0 ? (
         'Included in subscription'
       ) : (
         formatMoney(basePrice)

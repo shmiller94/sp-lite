@@ -47,13 +47,16 @@ export const FinishScheduleList = () => {
 
   return (
     <div className="grid grid-cols-1 gap-1 sm:gap-x-3 sm:gap-y-9 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      {filteredServices.map((service, i: number) => (
-        <ServiceCard
-          key={i}
-          service={service}
-          draftOrderId={draftOrders[i].id}
-        />
-      ))}
+      {filteredServices.map((service) => {
+        const draftOrder = draftOrders.find((o) => o.serviceId === service.id);
+        return (
+          <ServiceCard
+            key={service.id}
+            service={service}
+            draftOrderId={draftOrder?.id}
+          />
+        );
+      })}
     </div>
   );
 };

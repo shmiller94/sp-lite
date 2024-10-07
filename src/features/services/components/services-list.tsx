@@ -37,8 +37,8 @@ export const ServicesList = () => {
 
   return (
     <div className="grid grid-cols-1 gap-1 sm:gap-x-3 sm:gap-y-9 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      {filteredServices.map((service, i: number) => (
-        <ServiceCard key={i} service={service} />
+      {filteredServices.map((service) => (
+        <ServiceCard key={service.id} service={service} />
       ))}
     </div>
   );

@@ -1,13 +1,16 @@
-import { CollectionMethodsType } from '@/features/orders/types/collection-method';
+import { CollectionOptionType } from '@/features/orders/types/collection-method';
 
-export const COLLECTION_METHODS: CollectionMethodsType[] = [
-  {
+export const COLLECTION_METHODS: Record<
+  'AT_HOME' | 'IN_LAB',
+  CollectionOptionType
+> = {
+  IN_LAB: {
     name: 'In-person lab',
     value: 'IN_LAB',
     description: 'Perform testing at a partner clinic.',
     price: 0,
   },
-  {
+  AT_HOME: {
     name: 'At-home visit',
     value: 'AT_HOME',
     description:
@@ -15,4 +18,4 @@ export const COLLECTION_METHODS: CollectionMethodsType[] = [
     cancelationText: 'Late cancellation or rescheduling fees apply.',
     price: 7900,
   },
-];
+};

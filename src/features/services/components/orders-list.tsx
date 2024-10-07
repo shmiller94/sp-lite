@@ -45,15 +45,15 @@ export function OrdersList(): JSX.Element {
     <>
       <Collapsible open={open} onOpenChange={setOpen}>
         <div className="grid gap-5 lg:grid-cols-2">
-          {vibileOrders.map((order, index) => (
-            <OrderCard {...order} key={index} />
+          {vibileOrders.map((order) => (
+            <OrderCard {...order} key={order.id} />
           ))}
         </div>
 
         <CollapsibleContent>
           <div className="mt-5 grid gap-5 md:grid-cols-2">
-            {restOrders.map((order, index) => (
-              <OrderCard {...order} key={index} />
+            {restOrders.map((order) => (
+              <OrderCard {...order} key={order.id} />
             ))}
           </div>
         </CollapsibleContent>

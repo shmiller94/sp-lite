@@ -38,11 +38,10 @@ export const OrderStoreProvider = ({
 
   useEffect(() => {
     orderStoreRef.current?.setState({
-      draftOrderId: props.draftOrderId,
+      draftOrder: props.draftOrder,
     });
-  }, [props.draftOrderId]);
+  }, [props.draftOrder]);
 
-  // TODO: double check this, maybe better to initialize service as null and then reset it
   useEffect(() => {
     orderStoreRef.current?.setState({
       service: props.service,

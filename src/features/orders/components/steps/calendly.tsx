@@ -16,7 +16,7 @@ import { CalendlyScheduledEventInfo } from '@/types/calendly';
 
 export function Calendly(): JSX.Element {
   const { data: user } = useUser();
-  const { service, createdOrderId, draftOrderId } = useOrder((s) => s);
+  const { service, createdOrderId, draftOrder } = useOrder((s) => s);
   const updateOrderMutation = useUpdateOrder();
   const [success, setSuccess] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,7 +27,7 @@ export function Calendly(): JSX.Element {
   /*
    * User either went through order flow or finishes previous booking
    * */
-  const previousOrderId = createdOrderId ?? draftOrderId;
+  const previousOrderId = createdOrderId ?? draftOrder?.id;
 
   if (getSchedulingLinkQuery.isLoading) {
     return (
@@ -82,7 +82,7 @@ export function Calendly(): JSX.Element {
               if (service === null)
                 throw Error('There was a problem creating the order.');
 
-              if (previousOrderId === null)
+              if (previousOrderId === null || !previousOrderId)
                 throw Error('Initial order was not created for this.');
 
               const result = await updateOrderMutation.mutateAsync({

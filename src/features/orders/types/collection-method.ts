@@ -1,6 +1,6 @@
 import { CollectionMethodType } from '@/types/api';
 
-export type CollectionMethodsType = {
+export type CollectionOptionType = {
   name: string;
   value: CollectionMethodType;
   description: string;

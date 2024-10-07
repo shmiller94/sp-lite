@@ -6,37 +6,24 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Spinner } from '@/components/ui/spinner';
-import { Body1, Body2, Body3, H2, H3 } from '@/components/ui/typography';
-import { CUSTOM_BLOOD_PANEL, SUPERPOWER_BLOOD_PANEL } from '@/const';
+import { Body1, Body2, Body3, H2 } from '@/components/ui/typography';
 import {
   useGetServiceability,
   usePhlebotomyLocations,
 } from '@/features/orders/api';
-import { COLLECTION_METHODS } from '@/features/orders/const/collection-methods';
 import { useOrder } from '@/features/orders/stores/order-store';
-import { getDefaultCollectionMethod } from '@/features/orders/utils/get-default-collection-method';
 import { useDebounce } from '@/hooks/use-debounce';
 import { useUser } from '@/lib/auth';
 import { useStepper } from '@/lib/stepper';
 import { cn } from '@/lib/utils';
 import { PhlebotomyLocation } from '@/types/api';
 import { formatAddress } from '@/utils/format';
-import { formatMoney } from '@/utils/format-money';
+
+import { CreateOrderPhlebotomyLocationSelector } from '../phlebotomy-location-selector';
 
 export const PhlebotomyLocationSelect = () => {
-  const {
-    collectionMethod,
-    location,
-    updateCollectionMethod,
-    service,
-    updateLocation,
-  } = useOrder((s) => s);
+  const { collectionMethod, location } = useOrder((s) => s);
   const { activeStep, nextStep, steps, prevStep } = useStepper((s) => s);
-
-  useEffect(() => {
-    updateCollectionMethod(getDefaultCollectionMethod(service));
-    updateLocation(null);
-  }, []);
 
   return (
     <>
@@ -48,9 +35,11 @@ export const PhlebotomyLocationSelect = () => {
           </div>
           {collectionMethod === 'IN_LAB' ? (
             <CreateOrderPhlebotomyInLab />
-          ) : (
+          ) : null}
+          {collectionMethod === 'AT_HOME' ||
+          collectionMethod === 'PHLEBOTOMY_KIT' ? (
             <CreateOrderPhlebotomyAtHome />
-          )}
+          ) : null}
         </div>
       </div>
       <div className="flex items-center px-6 pb-12 md:justify-between md:px-14">
@@ -155,7 +144,7 @@ function CreateOrderPhlebotomyAtHome(): JSX.Element {
     };
 
     checkServiceable();
-  }, []);
+  }, [collectionMethod]);
 
   if (!user?.primaryAddress) {
     return (
@@ -213,90 +202,6 @@ function CreateOrderPhlebotomyAtHome(): JSX.Element {
         </Body2>
       ) : null}
     </div>
-  );
-}
-
-function CreateOrderPhlebotomyLocationSelector(): JSX.Element {
-  const { collectionMethod, service, updateCollectionMethod, updateLocation } =
-    useOrder((s) => s);
-
-  const code = localStorage.getItem('superpower-code');
-
-  return (
-    <RadioGroup
-      defaultValue={collectionMethod ?? 'AT_HOME'}
-      className="flex flex-col sm:flex-row"
-    >
-      {COLLECTION_METHODS.map((option, index) => {
-        let interpretedMethod = option.value;
-        if (
-          option.value === 'AT_HOME' &&
-          service.name !== SUPERPOWER_BLOOD_PANEL &&
-          service.name !== CUSTOM_BLOOD_PANEL
-        ) {
-          interpretedMethod = 'PHLEBOTOMY_KIT';
-        }
-
-        return (
-          <div
-            key={index}
-            className={cn(
-              'flex space-x-4 border-2 rounded-3xl p-6 flex-1 bg-white',
-              interpretedMethod === collectionMethod
-                ? 'border-zinc-500 bg-zinc-50'
-                : 'border-zinc-200 hover:bg-zinc-50',
-              option.value === 'IN_LAB' &&
-                service.name !== SUPERPOWER_BLOOD_PANEL &&
-                service.name !== CUSTOM_BLOOD_PANEL
-                ? 'bg-zinc-50'
-                : '',
-            )}
-            role="presentation"
-            onClick={() => {
-              if (
-                option.value === 'IN_LAB' &&
-                service.name !== SUPERPOWER_BLOOD_PANEL &&
-                service.name !== CUSTOM_BLOOD_PANEL
-              )
-                return;
-
-              updateCollectionMethod(interpretedMethod);
-              updateLocation(null);
-            }}
-          >
-            <RadioGroupItem
-              value={interpretedMethod}
-              id={interpretedMethod}
-              checked={interpretedMethod === collectionMethod}
-              disabled={
-                option.value === 'IN_LAB' &&
-                service.name !== SUPERPOWER_BLOOD_PANEL &&
-                service.name !== CUSTOM_BLOOD_PANEL
-              }
-              className="mt-0.5 min-w-5"
-            />
-            <Label htmlFor={option.value} className="w-full">
-              <div className="flex h-[140px] flex-col justify-between sm:h-[172px]">
-                <div className="space-y-3">
-                  <H3>{option.name}</H3>
-                  <Body1 className="text-zinc-500">{option.description}</Body1>
-                  {option.cancelationText && (
-                    <p className="text-xs leading-normal text-zinc-500">
-                      {option.cancelationText}
-                    </p>
-                  )}
-                </div>
-                <Body1 className="text-zinc-500">
-                  {option.price === 0 || code === 'SPPROMO'
-                    ? 'Included'
-                    : `+${formatMoney(option.price)}`}
-                </Body1>
-              </div>
-            </Label>
-          </div>
-        );
-      })}
-    </RadioGroup>
   );
 }
 

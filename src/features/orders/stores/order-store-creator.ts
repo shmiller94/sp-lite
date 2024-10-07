@@ -4,6 +4,7 @@ import {
   CollectionMethodType,
   HealthcareService,
   Location,
+  Order,
   ServiceItem,
   Slot,
 } from '@/types/api';
@@ -12,17 +13,17 @@ export interface OrderStoreProps {
   service: HealthcareService;
   tz: string;
   collectionMethod: CollectionMethodType | null;
-  draftOrderId: string | null;
+  draftOrder: Order | null;
 }
 
-/*
+/**
  * NB:
- * @param {string} draftOrderId - Draft order id that we only PASS into order store (for example if we already created order before)
+ * @param {Order} draftOrder - Draft order that we only PASS into order store (for example if we already created order before)
  * @param {string} createdOrderId - Can be updated as we set it on summary step after successful booking
  *
- * `draftOrderId` typically corresponds to id of order of status `DRAFT`
+ * `draftOrder` typically corresponds to order of status `DRAFT`
  * `createdOrderId` typically corresponds to id of order of status `PENDING`
- * */
+ */
 export interface OrderStore extends OrderStoreProps {
   items: ServiceItem[];
   updateItems: (item: ServiceItem) => void;
@@ -46,10 +47,9 @@ export interface OrderStore extends OrderStoreProps {
 export type OrderStoreApi = ReturnType<typeof orderStoreCreator>;
 
 // Define the initial state
+// We don't want to reset collectionMethod and draftOrder here because we would need to refetch them if we do
 const initialState = {
   items: [],
-  draftOrderId: null,
-  collectionMethod: null,
   location: null,
   slot: null,
   createdOrderId: null,

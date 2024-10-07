@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 
 import { getOrdersQueryOptions } from '@/features/orders/api/get-orders';
+import { getServicesQueryOptions } from '@/features/services/api';
 import { addressInputSchema } from '@/features/users/api';
 import { api } from '@/lib/api-client';
 import { MutationConfig } from '@/lib/react-query';
@@ -84,6 +85,9 @@ export const useCreateOrder = ({
     onSuccess: (...args) => {
       queryClient.invalidateQueries({
         queryKey: getOrdersQueryOptions().queryKey,
+      });
+      queryClient.invalidateQueries({
+        queryKey: getServicesQueryOptions().queryKey,
       });
       onSuccess?.(...args);
     },
