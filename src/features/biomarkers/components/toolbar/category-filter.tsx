@@ -83,9 +83,10 @@ export function CategoryFilter<TData>({
           <div className="grid gap-x-6 gap-y-2.5 md:grid-cols-2">
             {CATEGORY_OPTIONS.map((option) => {
               return (
-                <div
+                <Label
                   key={option.id}
-                  className="flex w-full items-center gap-2 p-2"
+                  htmlFor={option.id}
+                  className="group flex w-full cursor-pointer items-center gap-2 p-2"
                 >
                   <Checkbox
                     id={option.id}
@@ -108,13 +109,10 @@ export function CategoryFilter<TData>({
                       'flex h-5 w-5 items-center justify-center rounded-sm bg-zinc-100 border-0 data-[state=checked]:bg-vermillion-100 data-[state=checked]:text-vermillion-900',
                     )}
                   />
-                  <Label
-                    className="line-clamp-1 text-nowrap text-sm text-zinc-500"
-                    htmlFor={option.id}
-                  >
+                  <Body2 className="line-clamp-1 text-nowrap text-sm text-zinc-500 group-hover:text-vermillion-700">
                     {option.label}
-                  </Label>
-                </div>
+                  </Body2>
+                </Label>
               );
             })}
           </div>
