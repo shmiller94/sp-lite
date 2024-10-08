@@ -13,6 +13,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -30,7 +31,11 @@ import {
 import { useUser } from '@/lib/auth';
 import { Address } from '@/types/api';
 
-export function AddAddressForm(): JSX.Element {
+export function AddAddressForm({
+  onSuccess,
+}: {
+  onSuccess?: () => void;
+}): JSX.Element {
   const { data: user } = useUser();
   const { mutateAsync, isPending, isSuccess } = useUpdateProfile();
 
@@ -61,15 +66,22 @@ export function AddAddressForm(): JSX.Element {
 
   useEffect(() => {
     if (isSuccess) {
-      window.location.reload();
+      onSuccess && onSuccess();
     }
   }, [isSuccess]);
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-1 pt-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-1 md:pt-8"
+      >
         <div className="flex flex-col gap-4">
+          <Label className="text-zinc-600" htmlFor="full-name">
+            Full Name
+          </Label>
           <Input
+            id="full-name"
             placeholder="Name"
             disabled
             value={`${user?.firstName} ${user?.lastName}`}
@@ -151,7 +163,7 @@ export function AddAddressForm(): JSX.Element {
             )}
           />
 
-          <div className="flex w-full justify-end gap-4 pt-6">
+          <div className="flex w-full flex-col gap-4 pt-6 md:flex-row md:justify-end">
             <DialogTrigger asChild>
               {!isSuccess && (
                 <Button type="button" variant="outline">

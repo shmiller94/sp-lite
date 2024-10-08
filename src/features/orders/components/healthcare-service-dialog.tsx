@@ -118,13 +118,10 @@ const HealthcareServiceDialogConsumer = ({
     return (
       <Sheet onOpenChange={handleOpenChange}>
         <SheetTrigger asChild>{children}</SheetTrigger>
-        <SheetContent
-          side="bottom"
-          className="flex max-h-full flex-col rounded-t-[10px]"
-        >
+        <SheetContent className="flex max-h-full flex-col rounded-t-[10px]">
           <div className="flex items-center justify-between px-4 pt-16 md:pb-4">
             <SheetClose>
-              <div className="flex h-[44px] min-w-[44px] items-center justify-center rounded-full bg-[#F7F7F7]">
+              <div className="flex h-[44px] min-w-[44px] items-center justify-center rounded-full bg-zinc-100">
                 <X className="h-4 min-w-4" />
               </div>
             </SheetClose>

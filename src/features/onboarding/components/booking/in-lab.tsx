@@ -4,8 +4,10 @@ import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Spinner } from '@/components/ui/spinner';
-import { Body1, Body2, H2, H3, H4 } from '@/components/ui/typography';
+import { Body1, Body2, Body3, H2, H3, H4 } from '@/components/ui/typography';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import { usePhlebotomyLocations } from '@/features/orders/api';
 import { useDebounce } from '@/hooks/use-debounce';
@@ -29,7 +31,8 @@ const InLabServiceCard = () => {
 };
 
 export const InLab = () => {
-  const { prevStep } = useStepper((s) => s);
+  const { prevStep, nextOnboardingStep } = useStepper((s) => s);
+  const serviceAddress = useOnboarding((s) => s.serviceAddress);
   const { data: user } = useUser();
   const [zipCode, setZipCode] = useState(
     user?.primaryAddress?.address?.postalCode ?? '',
@@ -81,6 +84,9 @@ export const InLab = () => {
           <Button variant="outline" onClick={prevStep}>
             Back
           </Button>
+          <Button onClick={nextOnboardingStep} disabled={!serviceAddress}>
+            Continue
+          </Button>
         </div>
       </div>
     </section>
@@ -93,7 +99,6 @@ function LocationList({
   locations: PhlebotomyLocation[];
 }): JSX.Element {
   const { updateServiceAddress, serviceAddress } = useOnboarding();
-  const { nextOnboardingStep } = useStepper((s) => s);
 
   if (!locations || locations.length === 0) {
     return (
@@ -104,90 +109,48 @@ function LocationList({
   }
 
   return (
-    <div className="max-h-[240px] overflow-y-scroll rounded-2xl border border-zinc-200 p-2">
-      <div className="flex flex-col">
+    <div className="max-h-[240px] overflow-y-scroll rounded-2xl border border-zinc-200 bg-white p-2">
+      <RadioGroup
+        className="flex flex-col"
+        defaultValue={formatAddress(serviceAddress?.address)}
+      >
         {locations?.map((option, index) => (
-          <button
-            key={index}
+          <Label
+            key={option.id}
             className={cn(
-              'rounded-lg p-4 text-left transition-all hover:bg-accent',
-              // selected && formatAddress(selected?.address) === formatAddress(item.address) && 'bg-muted'
+              'rounded-lg py-4 px-6 text-left transition-all hover:bg-accent flex cursor-pointer items-center gap-4',
+              formatAddress(serviceAddress?.address) ===
+                formatAddress(option.address)
+                ? 'bg-accent'
+                : null,
             )}
             onClick={async () => {
               updateServiceAddress({ address: option.address, id: nanoid() });
-              await nextOnboardingStep();
             }}
+            htmlFor={`item-${index}`}
           >
             <div className="flex items-center gap-4">
-              <RadioIcon
-                checked={
-                  !!serviceAddress &&
-                  formatAddress(serviceAddress?.address) ===
-                    formatAddress(option.address)
-                }
+              <RadioGroupItem
+                value={formatAddress(option.address)}
+                id={`item-${index}`}
               />
-              <div className="flex flex-col items-start">
-                <h3 className="text-[#52525B]">
+              <div className="flex flex-col items-start gap-1">
+                <Body1 className="text-zinc-600">
                   {formatAddress(option.address)}
-                </h3>
-                <div className="flex flex-row items-center text-[#A1A1AA]">
-                  <MapPin className="mr-1 size-4" />
-                  <p className="text-sm">
+                </Body1>
+                <div className="flex flex-row items-center gap-px">
+                  <MapPin className="h-4 min-w-4 text-zinc-400" />
+                  <Body3 className="text-zinc-400">
                     {option.name
                       ? `${option.name} ( ${option.distance} mile${option.distance > 1 ? 's' : ''} )`
                       : `${option.distance} mile${option.distance > 1 ? 's' : ''}`}
-                  </p>
+                  </Body3>
                 </div>
               </div>
             </div>
-          </button>
+          </Label>
         ))}
-      </div>
+      </RadioGroup>
     </div>
-  );
-}
-
-export interface RadioIconProps {
-  checked?: boolean;
-}
-
-export function RadioIcon({ checked = false }: RadioIconProps): JSX.Element {
-  return checked ? <RadioChecked /> : <RadioEmpty />;
-}
-
-function RadioEmpty(): JSX.Element {
-  return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <rect x="0.5" y="0.5" width="23" height="23" rx="11.5" stroke="#E4E4E7" />
-    </svg>
-  );
-}
-
-function RadioChecked(): JSX.Element {
-  return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <rect
-        x="1"
-        y="1"
-        width="22"
-        height="22"
-        rx="11"
-        stroke="#18181B"
-        strokeWidth="2"
-      />
-      <rect x="4" y="4" width="16" height="16" rx="8" fill="#18181B" />
-    </svg>
   );
 }

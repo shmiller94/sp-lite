@@ -25,7 +25,10 @@ export const LocationList = ({
 
   return (
     <div className="max-h-[240px] overflow-y-scroll rounded-2xl border border-zinc-200 bg-white p-2">
-      <RadioGroup className="flex flex-col">
+      <RadioGroup
+        className="flex flex-col"
+        defaultValue={formatAddress(location?.address)}
+      >
         {locations?.map((option, index) => (
           <Label
             key={option.id}
@@ -45,7 +48,7 @@ export const LocationList = ({
               id={`item-${index}`}
             />
             <div className="flex flex-col items-start gap-1">
-              <Body1 className="text-[#52525B]">
+              <Body1 className="text-zinc-600">
                 {formatAddress(option.address)}
               </Body1>
               <div className="flex flex-row items-center gap-px">
