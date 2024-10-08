@@ -1,4 +1,4 @@
-import { AtHome, InLab } from '@/features/onboarding/components/booking';
+import { AtHome, InLab, Event } from '@/features/onboarding/components/booking';
 import { ImageContentLayout } from '@/features/onboarding/components/layouts';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 
@@ -7,6 +7,10 @@ const Booking = () => {
 
   if (collectionMethod === 'IN_LAB') {
     return <InLab />;
+  }
+
+  if (collectionMethod === 'EVENT') {
+    return <Event />;
   }
 
   return <AtHome />;

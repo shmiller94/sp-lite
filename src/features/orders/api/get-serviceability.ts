@@ -7,7 +7,7 @@ import { Serviceable } from '@/types/api';
 
 export const getServiceabilityInputSchema = z.object({
   zipCode: z.string().min(5, 'Required'),
-  collectionMethod: z.enum(['AT_HOME', 'IN_LAB', 'PHLEBOTOMY_KIT']),
+  collectionMethod: z.enum(['AT_HOME', 'IN_LAB', 'PHLEBOTOMY_KIT', 'EVENT']),
 });
 
 export type GetServiceabilityInput = z.infer<

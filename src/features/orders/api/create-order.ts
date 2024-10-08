@@ -45,7 +45,7 @@ export const createOrderInputSchema = z.object({
   timestamp: z.string().min(1, 'Required'),
   externalId: z.string().optional(),
   timezone: z.string().min(1, 'Required'),
-  method: z.array(z.enum(['AT_HOME', 'IN_LAB', 'PHLEBOTOMY_KIT'])),
+  method: z.array(z.enum(['AT_HOME', 'IN_LAB', 'PHLEBOTOMY_KIT', 'EVENT'])),
   status: z
     .enum([
       'UPCOMING',

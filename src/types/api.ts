@@ -268,9 +268,14 @@ export enum OrderStatus {
   cancelled = 'CANCELLED',
   revoked = 'REVOKED',
   draft = 'DRAFT',
+  pending = 'PENDING',
 }
 
-export type CollectionMethodType = 'AT_HOME' | 'IN_LAB' | 'PHLEBOTOMY_KIT';
+export type CollectionMethodType =
+  | 'AT_HOME'
+  | 'IN_LAB'
+  | 'PHLEBOTOMY_KIT'
+  | 'EVENT';
 
 export interface InformedConsent {
   agreedAt: string;

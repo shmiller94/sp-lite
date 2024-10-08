@@ -48,31 +48,40 @@ export function CouponCodeAccessForm({
   useEffect(() => {
     const rewardfulCoupon = (window as any).Rewardful?.coupon?.id;
 
-    // give priority to rewardfulCoupon
+    /**
+     * TODO: change order here after EVENT
+     */
+    const code = searchParams.get('accessCode');
+
+    /**
+     * Get priority to access code for now (that we get via ?accessCode=CODE)
+     */
+    if (code) {
+      setAccessCode(code.toUpperCase());
+    }
+
+    /**
+     * Otherwise use rewardfulCoupon if present
+     */
     if (rewardfulCoupon) {
       setAccessCode(rewardfulCoupon);
       setIsRewardful(true);
       return;
     }
-
-    // otherwise check for access code
-    const code = searchParams.get('accessCode');
-
-    if (code) {
-      setAccessCode(code.toUpperCase());
-    }
   }, []);
 
   useEffect(() => {
-    // should be always present but just as an extra check
+    /**
+     * This is more of extra check to make sure we have access code
+     */
     if (!accessCode) {
       return;
     }
 
     if (accessCodeQuery.isSuccess) {
       codeValidated();
-      /*
-       * upper casing for OUR coupon codes needs to happen on the FE so that on the backend
+      /**
+       * toUpperCase() for OUR coupon codes needs to happen on the FE so that on the backend
        * we can verify we don't uppercase all coupon codes
        *
        * rewardfulCoupon doesn't require uppercasing

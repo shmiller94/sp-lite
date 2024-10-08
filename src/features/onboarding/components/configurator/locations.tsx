@@ -1,39 +1,20 @@
-import React from 'react';
+import { useEffect } from 'react';
 
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Body1, Body2, H2 } from '@/components/ui/typography';
+import { EVENT_SPECIAL_CODE } from '@/features/onboarding/const/special-code';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
+import { OnboardingLocation } from '@/features/onboarding/types/location';
+import { getLocations } from '@/features/onboarding/utils/get-locations';
 import { cn } from '@/lib/utils';
 import { CollectionMethodType } from '@/types/api';
 import { formatMoney } from '@/utils/format-money';
-
-type Location = {
-  displayName: string;
-  description: string;
-  price: number;
-  type: CollectionMethodType;
-};
-
-const locations: Location[] = [
-  {
-    displayName: 'In-person lab',
-    description: 'Get testing at a partner clinic.',
-    price: 0,
-    type: 'IN_LAB',
-  },
-  {
-    displayName: 'At-home visit',
-    description: 'Stress-free at your home or office.',
-    price: 7900,
-    type: 'AT_HOME',
-  },
-];
 
 const LocationTestCard = ({
   location,
   selected,
 }: {
-  location: Location;
+  location: OnboardingLocation;
   selected: boolean;
 }) => {
   return (
@@ -49,8 +30,13 @@ const LocationTestCard = ({
             <div className="flex gap-1.5">
               <Body1 className="text-zinc-900">{location.displayName}</Body1>
               {location.type === 'AT_HOME' && (
-                <div className="w-fit rounded-[6px] bg-[#FFEDD5] px-2 py-1 text-[11px] text-[#FC5F2B] xs:text-xs">
+                <div className="w-fit rounded-[6px] bg-vermillion-100 px-2 py-1 text-[11px] text-vermillion-900 xs:text-xs">
                   Recommended
+                </div>
+              )}
+              {location.type === 'EVENT' && (
+                <div className="w-fit rounded-[6px] bg-vermillion-100 px-2 py-1 text-[11px] text-vermillion-900 xs:text-xs">
+                  Special
                 </div>
               )}
             </div>
@@ -74,6 +60,20 @@ const LocationTestCard = ({
 
 const SectionLocations = () => {
   const { collectionMethod, updateCollectionMethod } = useOnboarding();
+
+  const locations = getLocations();
+
+  /**
+   * In case we have event here, we want to owerwrite current collection method
+   */
+  useEffect(() => {
+    const accessCode = localStorage.getItem('superpower-code');
+
+    if (accessCode === EVENT_SPECIAL_CODE) {
+      updateCollectionMethod('EVENT');
+    }
+  }, [updateCollectionMethod]);
+
   return (
     <section id="location" className="w-full max-w-[500px] space-y-6">
       <div className="space-y-2">

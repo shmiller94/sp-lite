@@ -13,6 +13,19 @@ export const BookingSuccess = () => {
   const { nextOnboardingStep } = useStepper((s) => s);
   const { serviceAddress, slots, collectionMethod } = useOnboarding();
 
+  let nextTimelineItem = 'In-person lab';
+  switch (collectionMethod) {
+    case 'IN_LAB':
+      break;
+    case 'EVENT':
+      nextTimelineItem = 'Event - Superpower';
+      break;
+    case 'AT_HOME':
+    case 'PHLEBOTOMY_KIT':
+      nextTimelineItem = 'At-home visit';
+      break;
+  }
+
   const timeline: TimelineType[] = [
     { title: 'Membership confirmed', complete: true },
     {
@@ -20,7 +33,7 @@ export const BookingSuccess = () => {
       complete: true,
     },
     {
-      title: collectionMethod === 'IN_LAB' ? 'In-person lab' : 'At-home visit',
+      title: nextTimelineItem,
       complete: false,
     },
     { title: 'Test results processed within 10 days', complete: false },
