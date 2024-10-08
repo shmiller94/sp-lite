@@ -1,6 +1,5 @@
-import { CopyIcon } from 'lucide-react';
-
 import { Card } from '@/components/ui/card';
+import { CopyToClipboard } from '@/components/ui/copy-to-clipboard';
 import { Separator } from '@/components/ui/separator';
 import { Spinner } from '@/components/ui/spinner';
 import { Body1 } from '@/components/ui/typography';
@@ -9,12 +8,6 @@ import { cn } from '@/lib/utils';
 
 export function AffiliateLink(): JSX.Element {
   const { data, isLoading } = useAffiliateLinks();
-
-  const onClick = async (copyText: string | undefined): Promise<void> => {
-    if (!copyText) return;
-
-    await navigator.clipboard.writeText(copyText);
-  };
 
   if (isLoading) {
     return (
@@ -39,12 +32,11 @@ export function AffiliateLink(): JSX.Element {
             links.length > 0 ? '' : 'cursor-auto',
           )}
           role="presentation"
-          onClick={() => onClick(links[0])}
         >
           <Body1 className="line-clamp-1 text-vermillion-900">
             {links[0] || 'On request'}
           </Body1>
-          {links.length > 0 && <CopyIcon className="text-vermillion-900" />}
+          {links.length > 0 && <CopyToClipboard link={links[0]} />}
         </div>
       </div>
     </Card>
