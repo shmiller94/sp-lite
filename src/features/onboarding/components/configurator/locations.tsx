@@ -1,8 +1,5 @@
-import { useEffect } from 'react';
-
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Body1, Body2, H2 } from '@/components/ui/typography';
-import { EVENT_SPECIAL_CODE } from '@/features/onboarding/const/special-code';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import { OnboardingLocation } from '@/features/onboarding/types/location';
 import { getLocations } from '@/features/onboarding/utils/get-locations';
@@ -62,17 +59,6 @@ const SectionLocations = () => {
   const { collectionMethod, updateCollectionMethod } = useOnboarding();
 
   const locations = getLocations();
-
-  /**
-   * In case we have event here, we want to owerwrite current collection method
-   */
-  useEffect(() => {
-    const accessCode = localStorage.getItem('superpower-code');
-
-    if (accessCode === EVENT_SPECIAL_CODE) {
-      updateCollectionMethod('EVENT');
-    }
-  }, [updateCollectionMethod]);
 
   return (
     <section id="location" className="w-full max-w-[500px] space-y-6">

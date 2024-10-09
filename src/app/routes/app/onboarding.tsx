@@ -3,6 +3,8 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { steps } from '@/features/onboarding/components/steps';
+import { EVENT_SPECIAL_CODE } from '@/features/onboarding/const/special-code';
+import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import { useUser } from '@/lib/auth';
 import { StepperStoreProvider, useStepper } from '@/lib/stepper';
 import { cn } from '@/lib/utils';
@@ -40,6 +42,7 @@ export const onboardingLoader = () => async () => {
 export const OnboardingRoute = () => {
   const { data: user } = useUser({});
   const navigate = useNavigate();
+  const updateCollectionMethod = useOnboarding((s) => s.updateCollectionMethod);
 
   useEffect(() => {
     if (!user) return;
@@ -50,6 +53,17 @@ export const OnboardingRoute = () => {
       });
     }
   }, [user?.onboarding]);
+
+  /**
+   * In case we have event here, we want to owerwrite current collection method
+   */
+  useEffect(() => {
+    const accessCode = localStorage.getItem('superpower-code');
+
+    if (accessCode === EVENT_SPECIAL_CODE) {
+      updateCollectionMethod('EVENT');
+    }
+  }, [updateCollectionMethod]);
 
   return (
     <AnimatePresence>

@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+import { getOnboardingCollectionMethod } from '@/features/onboarding/utils/get-collection-method';
 import {
   ActiveAddress,
   CollectionMethodType,
@@ -80,7 +81,7 @@ export const useOnboarding = create<OnboardingStore>()(
       updateMembership: (membership) => set({ membership: membership }),
       bloodPackage: 'BASELINE',
       updateBloodPackage: (bloodPackage) => set({ bloodPackage: bloodPackage }),
-      collectionMethod: 'IN_LAB',
+      collectionMethod: getOnboardingCollectionMethod(),
       updateCollectionMethod: (collectionMethod) =>
         set({ collectionMethod: collectionMethod }),
       additionalServices: [],
