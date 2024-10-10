@@ -77,6 +77,7 @@ export const getStepsFromService = (
         { id: 'success', content: <Success /> },
       ];
     case CONTINUOUS_GLUCOSE_MONITOR:
+    case GUT_MICROBIOME_ANALYSIS:
       return [
         { id: 'info', content: <HealthcareServiceDetails /> },
         { id: 'summary', content: <OrderSummary /> },
@@ -86,7 +87,6 @@ export const getStepsFromService = (
     case VO2_MAX_TEST:
     case DEXA_SCAN:
     case HEART_CALCIUM_SCAN:
-    case GUT_MICROBIOME_ANALYSIS:
     case FULL_GENETIC_SEQUENCING:
       return [
         { id: 'info', content: <HealthcareServiceDetails /> },

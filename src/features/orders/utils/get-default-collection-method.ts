@@ -1,6 +1,7 @@
 import {
   ADVISORY_CALL,
   CUSTOM_BLOOD_PANEL,
+  GUT_MICROBIOME_ANALYSIS,
   SUPERPOWER_BLOOD_PANEL,
 } from '@/const';
 import { CollectionMethodType, HealthcareService } from '@/types/api';
@@ -33,7 +34,10 @@ export const getDefaultCollectionMethod = (
   /*
    * Extend with more services if needed
    * */
-  if (service.name === ADVISORY_CALL) {
+  if (
+    service.name === ADVISORY_CALL ||
+    service.name === GUT_MICROBIOME_ANALYSIS
+  ) {
     return null;
   }
 
