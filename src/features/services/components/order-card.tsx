@@ -4,6 +4,11 @@ import { TimestampDisplay } from '@/components/shared/timestamp-display';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Body1, Body2 } from '@/components/ui/typography';
+import {
+  ADVISORY_CALL,
+  CUSTOM_BLOOD_PANEL,
+  SUPERPOWER_BLOOD_PANEL,
+} from '@/const';
 import { useCancelOrder } from '@/features/orders/api/cancel-order';
 import { useServices } from '@/features/services/api';
 import { OrderStatusBadge } from '@/features/services/components/order-status-badge';
@@ -66,12 +71,10 @@ function OrderCardBadge({ id, name, status, timestamp }: Order): JSX.Element {
 
   const actions: { label: string; onClick: () => void }[] = [];
   if (
-    ([
-      '1-1 Advisory Call',
-      'Superpower Blood Panel',
-      'Custom Blood Panel',
-    ].includes(name) &&
-      status.toUpperCase() === 'UPCOMING' &&
+    ([ADVISORY_CALL, SUPERPOWER_BLOOD_PANEL, CUSTOM_BLOOD_PANEL].includes(
+      name,
+    ) &&
+      status.toUpperCase() === OrderStatus.upcoming &&
       new Date(timestamp).getTime() >
         new Date().getTime() - 24 * 60 * 60 * 1000) ||
     Boolean(user?.adminActor)

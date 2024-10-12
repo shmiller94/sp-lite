@@ -19,7 +19,7 @@ export function SchedulerDaySlot({ day }: { day: Moment }): JSX.Element {
         'p-4 border rounded-2xl w-full border-zinc-200 cursor-pointer',
         disabled ? 'cursor-not-allowed' : '',
         selected && !disabled
-          ? 'border-2 border-zinc-900 bg-[#F7F7F7] cursor-default'
+          ? 'border-2 border-zinc-900 bg-zinc-50 cursor-default'
           : '',
       )}
       onClick={() => {

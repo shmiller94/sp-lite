@@ -5,7 +5,6 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Body1, H3 } from '@/components/ui/typography';
 import { useOrder } from '@/features/orders/stores/order-store';
 import { getCollectionMethods } from '@/features/orders/utils/get-collection-methods';
-import { getDraftCollectionMethod } from '@/features/orders/utils/get-draft-collection-method';
 import { cn } from '@/lib/utils';
 import { CollectionMethodType } from '@/types/api';
 import { formatMoney } from '@/utils/format-money';
@@ -19,12 +18,6 @@ export const CreateOrderPhlebotomyLocationSelector = () => {
     updateSlot,
     draftOrder,
   } = useOrder((s) => s);
-
-  const draftOrderCollectionMethod = getDraftCollectionMethod(
-    draftOrder?.method,
-  );
-
-  const isAtHome = draftOrder && draftOrderCollectionMethod !== 'IN_LAB';
 
   const handleOptionClick = (optionValue: CollectionMethodType) => {
     updateCollectionMethod(optionValue);
@@ -71,7 +64,7 @@ export const CreateOrderPhlebotomyLocationSelector = () => {
                 )}
               </div>
               <Body1 className="text-zinc-500">
-                {option.price === 0 || isAtHome
+                {option.price === 0 || draftOrder
                   ? 'Included'
                   : `+${formatMoney(option.price)}`}
               </Body1>

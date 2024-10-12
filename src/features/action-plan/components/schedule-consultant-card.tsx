@@ -22,7 +22,7 @@ export const ScheduleConsultDoctorCard: ({
   return (
     <div
       className={cn(
-        'cursor-pointer flex bg-[#F7F7F7]',
+        'cursor-pointer flex bg-zinc-50',
         'gap-3 p-4 w-full rounded-2xl',
         className,
       )}

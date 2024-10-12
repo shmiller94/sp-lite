@@ -33,12 +33,16 @@ const packages: Package[] = [
   // },
 ];
 
-const BloodTestPackageCard = ({
-  bloodPackage,
-  selected,
-}: {
+interface BloodTestPackageCardProps
+  extends React.HTMLAttributes<HTMLDivElement> {
   bloodPackage: Package;
   selected: boolean;
+}
+
+const BloodTestPackageCard: React.FC<BloodTestPackageCardProps> = ({
+  bloodPackage,
+  selected,
+  ...rest
 }) => {
   return (
     <div
@@ -46,6 +50,7 @@ const BloodTestPackageCard = ({
         'flex flex-row items-center rounded-xl border border-zinc-200 p-4 sm:px-6 sm:py-5',
         selected ? 'bg-zinc-50' : null,
       )}
+      {...rest}
     >
       <div className="flex w-full flex-row items-center justify-between">
         <div className="flex flex-row gap-x-4">
@@ -96,17 +101,13 @@ const SectionPackages = () => {
         </a>
       </div>
       <div className="space-y-2">
-        <RadioGroup
-          onValueChange={(value: BloodPackageType) => {
-            updateBloodPackage(value);
-          }}
-          defaultValue={bloodPackage ?? 'BASELINE'}
-        >
+        <RadioGroup value={bloodPackage ?? 'BASELINE'}>
           {packages.map((bp, i) => (
             <BloodTestPackageCard
               key={i}
               bloodPackage={bp}
               selected={bp.type === bloodPackage}
+              onClick={() => updateBloodPackage(bp.type)}
             />
           ))}
         </RadioGroup>

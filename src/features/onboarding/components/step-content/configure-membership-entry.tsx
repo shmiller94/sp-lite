@@ -1,13 +1,14 @@
 import { ChevronRight } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 import { H1, H4 } from '@/components/ui/typography';
 import { EntryLayout } from '@/features/onboarding/components/layouts';
 import { useUser } from '@/lib/auth';
 import { useStepper } from '@/lib/stepper';
 
 export const ConfigureMembershipEntry = () => {
-  const { nextOnboardingStep } = useStepper((s) => s);
+  const { nextOnboardingStep, updatingStep } = useStepper((s) => s);
   const { data } = useUser();
 
   return (
@@ -22,8 +23,9 @@ export const ConfigureMembershipEntry = () => {
       <Button
         className="mx-auto flex flex-row items-center justify-center gap-1 rounded-[50px] bg-white p-4 text-zinc-900 hover:bg-white/90"
         onClick={nextOnboardingStep}
+        disabled={updatingStep}
       >
-        Get Started
+        {updatingStep ? <Spinner /> : 'Get Started'}
         <ChevronRight className="size-4" />
       </Button>
     </section>

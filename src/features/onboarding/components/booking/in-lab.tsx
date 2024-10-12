@@ -31,7 +31,7 @@ const InLabServiceCard = () => {
 };
 
 export const InLab = () => {
-  const { prevStep, nextOnboardingStep } = useStepper((s) => s);
+  const { prevStep, nextOnboardingStep, updatingStep } = useStepper((s) => s);
   const serviceAddress = useOnboarding((s) => s.serviceAddress);
   const { data: user } = useUser();
   const [zipCode, setZipCode] = useState(
@@ -60,7 +60,7 @@ export const InLab = () => {
           </H4>
         </div>
         <div className="space-y-2">
-          <div className="flex flex-row items-center">
+          <div className="flex flex-row items-center gap-2">
             <Body2 className="text-zinc-500">My zip code</Body2>
             {phlebotomyLocationsMutation.isLoading && (
               <span>
@@ -84,8 +84,11 @@ export const InLab = () => {
           <Button variant="outline" onClick={prevStep}>
             Back
           </Button>
-          <Button onClick={nextOnboardingStep} disabled={!serviceAddress}>
-            Continue
+          <Button
+            onClick={nextOnboardingStep}
+            disabled={!serviceAddress || updatingStep}
+          >
+            {updatingStep ? <Spinner /> : 'Continue'}
           </Button>
         </div>
       </div>

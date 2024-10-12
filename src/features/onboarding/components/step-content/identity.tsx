@@ -11,7 +11,7 @@ import { useUser } from '@/lib/auth';
 import { useStepper } from '@/lib/stepper';
 
 export const Identity = () => {
-  const { nextOnboardingStep } = useStepper((s) => s);
+  const { nextOnboardingStep, updatingStep } = useStepper((s) => s);
   const createVerificationMutation = useCreateVerificationSession({});
 
   // used for stripe error types that we get back
@@ -86,7 +86,10 @@ export const Identity = () => {
 
   return (
     <section id="main">
-      <OneLineLoader loading={longPollingUser} duration={4000} />
+      <OneLineLoader
+        loading={longPollingUser || updatingStep}
+        duration={4000}
+      />
 
       <div className="mb-4 flex flex-col gap-8">
         <H2 className="text-zinc-900">
@@ -99,8 +102,8 @@ export const Identity = () => {
       </div>
       <div className="flex w-full justify-end py-12">
         {!isVerifying ? (
-          <Button onClick={verify}>
-            {createVerificationMutation.isPending ? (
+          <Button onClick={verify} disabled={updatingStep}>
+            {createVerificationMutation.isPending || updatingStep ? (
               <Spinner className="size-6" variant="light" />
             ) : stripeError ? (
               'Try again'

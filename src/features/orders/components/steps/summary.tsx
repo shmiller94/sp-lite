@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
 import { Body1, Body2, H2 } from '@/components/ui/typography';
+import { ADVISORY_CALL } from '@/const';
 import {
   CreateOrderInput,
   useCreateOrder,
@@ -16,7 +17,6 @@ import {
   useUpdateOrder,
 } from '@/features/orders/api';
 import { useOrder } from '@/features/orders/stores/order-store';
-import { getDraftCollectionMethod } from '@/features/orders/utils/get-draft-collection-method';
 import { useService } from '@/features/services/api';
 import { usePaymentMethods } from '@/features/settings/api';
 import { useStepper } from '@/lib/stepper';
@@ -70,10 +70,7 @@ export function OrderSummary(): ReactNode {
       timestamp: slot ? slot.start : new Date().toISOString(),
       timezone: tz || moment.tz.guess(),
       method: collectionMethod ? [collectionMethod] : [],
-      status:
-        service.name === '1-1 Advisory Call'
-          ? ('DRAFT' as OrderStatus)
-          : undefined,
+      status: service.name === ADVISORY_CALL ? OrderStatus.draft : undefined,
     };
 
     // if step requires consent, add it to the final data object we send to server
@@ -111,7 +108,7 @@ export function OrderSummary(): ReactNode {
         timezone: tz || moment.tz.guess(),
 
         timestamp: slot ? slot.start : new Date().toISOString(),
-        status: 'PENDING',
+        status: OrderStatus.pending,
       },
     });
 
@@ -123,7 +120,7 @@ export function OrderSummary(): ReactNode {
   return (
     <>
       <div className="p-6 md:p-14">
-        {existingDraftOrder && (
+        {existingDraftOrder && !draftOrder && (
           <Alert className="mb-12" variant="destructive">
             <TriangleAlert className="size-4" />
             <AlertTitle>Heads up!</AlertTitle>
@@ -242,20 +239,11 @@ const Price = ({
 }) => {
   const { draftOrder } = useOrder((s) => s);
 
-  const draftOrderCollectionMethod = getDraftCollectionMethod(
-    draftOrder?.method,
-  );
-
-  const isAtHome = draftOrder && draftOrderCollectionMethod !== 'IN_LAB';
-
-  // TODO: move this logic to server instead
-  basePrice = draftOrder ? (isAtHome ? 0 : 7900) : basePrice;
-
   return (
     <div className="text-primary">
       {isLoading ? (
         <Spinner size="xs" variant="primary" />
-      ) : basePrice === 0 ? (
+      ) : draftOrder ? (
         'Included in subscription'
       ) : (
         formatMoney(basePrice)

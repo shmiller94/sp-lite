@@ -110,8 +110,8 @@ const SectionServices = () => {
             />
           ))}
       <div className="space-y-2">
-        {services?.map((service, i) => (
-          <AdditionalServiceCard service={service} key={i} />
+        {services?.map((service) => (
+          <AdditionalServiceCard service={service} key={service.id} />
         ))}
       </div>
     </section>

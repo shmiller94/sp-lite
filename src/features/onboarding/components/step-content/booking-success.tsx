@@ -2,44 +2,20 @@ import React from 'react';
 
 import { AddToCalendar } from '@/components/shared/add-to-calendar-button';
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 import { Timeline } from '@/components/ui/timeline';
 import { H2 } from '@/components/ui/typography';
+import { SUPERPOWER_BLOOD_PANEL } from '@/const';
 import { ImageContentLayout } from '@/features/onboarding/components/layouts';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
+import { getOnboardingTimeline } from '@/features/onboarding/utils/get-onboarding-timeline';
 import { useStepper } from '@/lib/stepper';
-import { TimelineType } from '@/types/timeline';
 
 export const BookingSuccess = () => {
-  const { nextOnboardingStep } = useStepper((s) => s);
+  const { nextOnboardingStep, updatingStep } = useStepper((s) => s);
   const { serviceAddress, slots, collectionMethod } = useOnboarding();
 
-  let nextTimelineItem = 'In-person lab';
-  switch (collectionMethod) {
-    case 'IN_LAB':
-      break;
-    case 'EVENT':
-      nextTimelineItem = 'Event - Superpower';
-      break;
-    case 'AT_HOME':
-    case 'PHLEBOTOMY_KIT':
-      nextTimelineItem = 'At-home visit';
-      break;
-  }
-
-  const timeline: TimelineType[] = [
-    { title: 'Membership confirmed', complete: true },
-    {
-      title: 'Schedule your appointment',
-      complete: true,
-    },
-    {
-      title: nextTimelineItem,
-      complete: false,
-    },
-    { title: 'Test results processed within 10 days', complete: false },
-    { title: 'Results uploaded', complete: false },
-    { title: 'Schedule a follow-up appointment', complete: false },
-  ];
+  const timeline = getOnboardingTimeline(collectionMethod);
 
   return (
     <section id="main">
@@ -54,11 +30,13 @@ export const BookingSuccess = () => {
             <AddToCalendar
               address={serviceAddress.address}
               slot={slots.blood.slot}
-              service="Superpower Blood Panel"
+              service={SUPERPOWER_BLOOD_PANEL}
               collectionMethod={collectionMethod}
             />
           )}
-          <Button onClick={() => nextOnboardingStep()}>Done</Button>
+          <Button onClick={() => nextOnboardingStep()} disabled={updatingStep}>
+            {updatingStep ? <Spinner /> : 'Done'}
+          </Button>
         </div>
       </div>
     </section>

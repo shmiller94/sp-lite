@@ -18,7 +18,7 @@ export const ConsultCard = ({ consultId }: { consultId: string }) => {
 
   return (
     <div className="group relative">
-      <div className="flex flex-row items-center gap-x-3 gap-y-12 rounded-[20px] bg-[#F7F7F7] px-5 py-4 sm:flex-col sm:items-start sm:p-6">
+      <div className="flex flex-row items-center gap-x-3 gap-y-12 rounded-[20px] bg-zinc-50 px-5 py-4 sm:flex-col sm:items-start sm:p-6">
         <img
           src={`/src/assets/practitioners/${consultQuery.data.practitioner.replaceAll('.', '').replaceAll(' ', '_').trim()}.png`}
           alt={consultQuery.data.practitioner}

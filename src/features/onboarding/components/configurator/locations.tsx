@@ -4,18 +4,21 @@ import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import { OnboardingLocation } from '@/features/onboarding/types/location';
 import { getLocations } from '@/features/onboarding/utils/get-locations';
 import { cn } from '@/lib/utils';
-import { CollectionMethodType } from '@/types/api';
 import { formatMoney } from '@/utils/format-money';
 
-const LocationTestCard = ({
-  location,
-  selected,
-}: {
+interface LocationTestCardProps extends React.HTMLAttributes<HTMLDivElement> {
   location: OnboardingLocation;
   selected: boolean;
+}
+
+const LocationTestCard: React.FC<LocationTestCardProps> = ({
+  location,
+  selected,
+  ...rest
 }) => {
   return (
     <div
+      {...rest}
       className={cn(
         'flex flex-row items-center rounded-xl border border-zinc-200 p-4 sm:px-6 sm:py-5',
         selected ? 'bg-zinc-50' : null,
@@ -66,17 +69,13 @@ const SectionLocations = () => {
         <H2 className="text-[#1E1E1E]">Select service location</H2>
       </div>
       <div className="space-y-2">
-        <RadioGroup
-          onValueChange={(value: CollectionMethodType) => {
-            updateCollectionMethod(value);
-          }}
-          defaultValue={collectionMethod ?? 'IN_LAB'}
-        >
+        <RadioGroup value={collectionMethod ?? 'IN_LAB'}>
           {locations.map((location, i) => (
             <LocationTestCard
               key={i}
               location={location}
               selected={collectionMethod === location.type}
+              onClick={() => updateCollectionMethod(location.type)}
             />
           ))}
         </RadioGroup>

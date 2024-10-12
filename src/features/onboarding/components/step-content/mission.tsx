@@ -1,10 +1,11 @@
 import { OnboardingLayout } from '@/components/layouts/onboarding-layout';
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 import { Body1, H1, H3 } from '@/components/ui/typography';
 import { useStepper } from '@/lib/stepper';
 
 export const Mission = () => {
-  const { nextOnboardingStep } = useStepper((s) => s);
+  const { nextOnboardingStep, updatingStep } = useStepper((s) => s);
 
   return (
     <section
@@ -44,14 +45,13 @@ export const Mission = () => {
           </H3>
         </div>
         <Button
-          onClick={() => {
-            nextOnboardingStep();
-          }}
+          onClick={nextOnboardingStep}
+          disabled={updatingStep}
           type="submit"
           className="w-full"
           variant="white"
         >
-          Continue
+          {updatingStep ? <Spinner variant="primary" /> : 'Continue'}
         </Button>
       </div>
     </section>

@@ -4,13 +4,16 @@ import { cn } from '@/lib/utils';
 
 export const ConsentInfo = forwardRef<
   HTMLLabelElement,
-  React.HTMLAttributes<HTMLLabelElement> & { className?: string }
+  React.LabelHTMLAttributes<HTMLLabelElement> & { className?: string }
 >(({ className, ...props }, ref) => {
   return (
     <label
       {...props}
       ref={ref}
-      className={cn('text-sm leading-5 text-zinc-500', className)}
+      className={cn(
+        'text-sm leading-5 text-zinc-500 cursor-pointer',
+        className,
+      )}
     >
       I agree to Superpower’s{' '}
       <a

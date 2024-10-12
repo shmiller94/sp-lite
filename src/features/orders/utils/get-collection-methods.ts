@@ -19,21 +19,21 @@ export const getCollectionMethods = (
   const isBloodPanel =
     service.name === SUPERPOWER_BLOOD_PANEL ||
     service.name === CUSTOM_BLOOD_PANEL;
-  const AT_HOME = getInterpretedAtHomeMethod(service);
+  const INTERPRETED = getInterpretedAtHomeMethod(service);
 
   if (draftOrder) {
     const collectionMethod = getDraftCollectionMethod(draftOrder.method);
 
     if (collectionMethod) {
       return collectionMethod === 'IN_LAB'
-        ? [COLLECTION_METHODS.IN_LAB, AT_HOME]
-        : [AT_HOME];
+        ? [COLLECTION_METHODS.IN_LAB]
+        : [INTERPRETED];
     }
   }
 
   if (!isBloodPanel) {
-    return [AT_HOME];
+    return [INTERPRETED];
   }
 
-  return [COLLECTION_METHODS.IN_LAB, AT_HOME];
+  return [COLLECTION_METHODS.IN_LAB, INTERPRETED];
 };

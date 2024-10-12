@@ -43,7 +43,7 @@ export const ClinicianNote = ({ orderId }: ClinicianNoteProps) => {
 
 const ClinicianNoteLayout = () => {
   return (
-    <div className="flex min-h-screen flex-col items-center bg-[#F7F7F7] bg-dot-zinc-400/[0.4]">
+    <div className="flex min-h-screen flex-col items-center bg-zinc-50 bg-dot-zinc-400/[0.4]">
       <ClinicianNoteHeader />
       <div className="flex w-full items-start justify-center gap-8 p-6">
         <BiomarkerDataView />

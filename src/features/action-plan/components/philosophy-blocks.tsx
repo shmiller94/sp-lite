@@ -107,7 +107,7 @@ export const RefLink = ({
   return (
     <a
       className={cn(
-        'inline-flex h-7 w-fit items-center gap-1 rounded-[8px] bg-[#F7F7F7] pl-2 pr-[10px] cursor-pointer hover:bg-gray-300 transition-all duration-200 self-end',
+        'inline-flex h-7 w-fit items-center gap-1 rounded-[8px] bg-zinc-50 pl-2 pr-[10px] cursor-pointer hover:bg-gray-300 transition-all duration-200 self-end',
         className,
       )}
       href={href}

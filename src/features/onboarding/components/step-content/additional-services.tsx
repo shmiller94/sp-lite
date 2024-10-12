@@ -21,7 +21,7 @@ import { useUpdateOrder } from '@/features/orders/api/update-order';
 import { AddressSelect } from '@/features/users/components/address-select';
 import { useUser } from '@/lib/auth';
 import { useStepper } from '@/lib/stepper';
-import { HealthcareService, Slot } from '@/types/api';
+import { HealthcareService, OrderStatus, Slot } from '@/types/api';
 
 const ServiceCard = ({ service }: { service: HealthcareService }) => {
   return (
@@ -253,7 +253,9 @@ const OrderSummaryCase = ({
   setIndex: Dispatch<SetStateAction<number>>;
 }) => {
   const updateOrderMutation = useUpdateOrder({});
-  const { jump, nextOnboardingStep } = useStepper((s) => s);
+  const { jumpOnboarding, nextOnboardingStep, updatingStep } = useStepper(
+    (s) => s,
+  );
   const { additionalServices, slots } = useOnboarding();
 
   // filter out all services that user skipped
@@ -265,9 +267,9 @@ const OrderSummaryCase = ({
   useEffect(() => {
     if (filteredServices.length === 0) {
       // skip this step if no services were purchased
-      jump('digital-twin');
+      jumpOnboarding('digital-twin');
     }
-  }, [filteredServices.length, jump]); // Add dependencies to avoid unnecessary re-renders
+  }, [filteredServices.length, jumpOnboarding]); // Add dependencies to avoid unnecessary re-renders
 
   const updateBloodOrders = async () => {
     for (const as of filteredServices) {
@@ -284,7 +286,7 @@ const OrderSummaryCase = ({
           timestamp: orderInfo?.timestamp
             ? orderInfo.timestamp
             : new Date().toISOString(),
-          status: 'PENDING',
+          status: OrderStatus.pending,
         },
       });
     }
@@ -319,7 +321,9 @@ const OrderSummaryCase = ({
         <Button
           onClick={updateBloodOrders}
           disabled={
-            updateOrderMutation.isPending || updateOrderMutation.isError
+            updateOrderMutation.isPending ||
+            updateOrderMutation.isError ||
+            updatingStep
           }
         >
           {updateOrderMutation.isError ? (
@@ -337,16 +341,16 @@ const OrderSummaryCase = ({
 
 export const AdditionalServices = () => {
   const { additionalServices } = useOnboarding();
-  const { jump } = useStepper((s) => s);
+  const jumpOnboarding = useStepper((s) => s.jumpOnboarding);
 
   const [curIndex, setCurIndex] = useState(0);
 
   useEffect(() => {
     if (additionalServices.length === 0) {
       // skip this step if no services were purchased
-      jump('digital-twin');
+      jumpOnboarding('digital-twin');
     }
-  }, [additionalServices.length, jump]); // Add dependencies
+  }, [additionalServices.length, jumpOnboarding]); // Add dependencies
 
   const renderStep = (service: HealthcareService) => {
     switch (service.name) {

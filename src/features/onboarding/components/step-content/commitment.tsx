@@ -2,13 +2,14 @@ import { useState } from 'react';
 
 import { OnboardingLayout } from '@/components/layouts/onboarding-layout';
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 import { Body1, H1 } from '@/components/ui/typography';
 import { useStepper } from '@/lib/stepper';
 
 import { SignatureBlock } from '../signature-block';
 
 export const Commitment = () => {
-  const { nextOnboardingStep } = useStepper((s) => s);
+  const { nextOnboardingStep, updatingStep } = useStepper((s) => s);
 
   const [enableNext, setEnableNext] = useState(false);
 
@@ -48,12 +49,12 @@ export const Commitment = () => {
         </div>
         <Button
           onClick={() => nextOnboardingStep()}
-          disabled={!enableNext}
+          disabled={!enableNext || updatingStep}
           type="submit"
           className="w-full"
           variant="white"
         >
-          Next
+          {updatingStep ? <Spinner variant="primary" /> : 'Next'}
         </Button>
       </div>
     </section>

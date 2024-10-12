@@ -5,18 +5,20 @@ import { Scheduler } from '@/components/shared/scheduler';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { Body1, H2 } from '@/components/ui/typography';
+import { SUPERPOWER_BLOOD_PANEL } from '@/const';
 import { ImageContentLayout } from '@/features/onboarding/components/layouts';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import { useUpdateOrder } from '@/features/orders/api/update-order';
 import { useServices } from '@/features/services/api/get-services';
 import { useStepper } from '@/lib/stepper';
+import { OrderStatus } from '@/types/api';
 
 const ScheduleLater = ({
   setScheduleLater,
 }: {
   setScheduleLater: () => void;
 }) => {
-  const { jump } = useStepper((s) => s);
+  const { jumpOnboarding, updatingStep } = useStepper((s) => s);
 
   return (
     <>
@@ -33,14 +35,19 @@ const ScheduleLater = ({
         <Button variant="outline" onClick={setScheduleLater}>
           Back
         </Button>
-        <Button onClick={() => jump('digital-twin')}>Continue</Button>
+        <Button
+          onClick={() => jumpOnboarding('digital-twin')}
+          disabled={updatingStep}
+        >
+          {updatingStep ? <Spinner /> : 'Continue'}
+        </Button>
       </div>
     </>
   );
 };
 
 export const PickDate = () => {
-  const { nextOnboardingStep, prevStep } = useStepper((s) => s);
+  const { nextOnboardingStep, prevStep, updatingStep } = useStepper((s) => s);
   const { data, isLoading } = useServices({});
   const {
     updateBloodSlot,
@@ -53,7 +60,7 @@ export const PickDate = () => {
 
   const updateOrderMutation = useUpdateOrder({});
   const superpowerBloodPanel = data?.services.find(
-    (s) => s.name === 'Superpower Blood Panel',
+    (s) => s.name === SUPERPOWER_BLOOD_PANEL,
   );
 
   const allowOrder = slots.blood.orderId && superpowerBloodPanel?.id;
@@ -73,7 +80,7 @@ export const PickDate = () => {
         timestamp: slots.blood.slot
           ? slots.blood.slot.start
           : new Date().toISOString(),
-        status: 'PENDING',
+        status: OrderStatus.pending,
       },
     });
 
@@ -123,7 +130,7 @@ export const PickDate = () => {
         </div>
       ) : (
         <div className="flex justify-center py-10">
-          <Body1 className="text-[#B90090]">
+          <Body1 className="text-pink-700">
             Cannot load service scheduler. Contact support.
           </Body1>
         </div>
@@ -138,9 +145,13 @@ export const PickDate = () => {
         </Button>
         <Button
           onClick={updateBloodOrder}
-          disabled={!slots.blood.slot || !allowOrder}
+          disabled={!slots.blood.slot || !allowOrder || updatingStep}
         >
-          {updateOrderMutation.isPending ? <Spinner /> : 'Confirm appointment'}
+          {updateOrderMutation.isPending || updatingStep ? (
+            <Spinner />
+          ) : (
+            'Confirm appointment'
+          )}
         </Button>
       </div>
     </section>

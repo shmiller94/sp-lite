@@ -2,6 +2,7 @@ import moment from 'moment';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 import { Body1, Body3, H2, H3 } from '@/components/ui/typography';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import { useUpdateOrder } from '@/features/orders/api';
@@ -25,7 +26,7 @@ const EventServiceCard = () => {
 };
 
 export const Event = () => {
-  const { jump, prevStep } = useStepper((s) => s);
+  const { prevStep, jumpOnboarding, updatingStep } = useStepper((s) => s);
   const { slots } = useOnboarding();
   const updateOrderMutation = useUpdateOrder();
 
@@ -52,8 +53,10 @@ export const Event = () => {
       },
     });
 
-    jump('booking-success');
+    await jumpOnboarding('booking-success');
   };
+
+  const isLoading = updateOrderMutation.isPending || updatingStep;
 
   return (
     <section id="main" className="space-y-16">
@@ -64,10 +67,12 @@ export const Event = () => {
         </div>
         <div className="flex items-center justify-end">
           <div className="space-x-4">
-            <Button variant="outline" onClick={prevStep}>
+            <Button variant="outline" onClick={prevStep} disabled={isLoading}>
               Back
             </Button>
-            <Button onClick={confirm}>Confirm</Button>
+            <Button onClick={confirm} disabled={isLoading}>
+              {isLoading ? <Spinner /> : 'Confirm'}
+            </Button>
           </div>
         </div>
       </>

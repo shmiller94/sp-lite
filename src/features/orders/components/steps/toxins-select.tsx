@@ -12,6 +12,12 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Body1 } from '@/components/ui/typography';
+import {
+  ENVIRONMENTAL_TOXIN_TEST,
+  HEAVY_METALS_TEST,
+  MYCOTOXINS_TEST,
+  TOTAL_TOXIN_TEST,
+} from '@/const';
 import { ENVIRONMENTAL_TOXIN_PANEL } from '@/const/toxin-panel';
 import { useOrder } from '@/features/orders/stores/order-store';
 import { useServices } from '@/features/services/api';
@@ -56,10 +62,10 @@ export function ToxinsSelect(): ReactNode {
   }
 
   const sortOrder = [
-    'Total Toxin Test',
-    'Mycotoxins',
-    'Environmental Toxin',
-    'Heavy Metals',
+    TOTAL_TOXIN_TEST,
+    MYCOTOXINS_TEST,
+    ENVIRONMENTAL_TOXIN_TEST,
+    HEAVY_METALS_TEST,
   ];
 
   const filteredAndSortedToxins = servicesData.services

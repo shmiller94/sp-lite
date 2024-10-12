@@ -138,7 +138,7 @@ type TimelineItemProps = {
 
 const TimelineItem = (props: TimelineItemProps) => {
   return (
-    <div className="rounded-[24px] bg-[#F7F7F7] p-6">
+    <div className="rounded-[24px] bg-zinc-50 p-6">
       <div className="flex flex-row items-center justify-between">
         <div className="flex flex-row items-center gap-x-8">
           <img

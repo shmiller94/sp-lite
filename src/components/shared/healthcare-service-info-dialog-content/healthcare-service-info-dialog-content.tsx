@@ -39,7 +39,7 @@ export const HealthcareServiceInfoDialogContent = ({
     <DialogContent>
       <div className="max-h-[90vh] overflow-y-scroll rounded-xl">
         <div>
-          <div className="flex flex-row items-center justify-between bg-[#F7F7F7] px-12 pb-6 pt-12">
+          <div className="flex flex-row items-center justify-between bg-zinc-50 px-12 pb-6 pt-12">
             <Body1 className="text-zinc-500">Service</Body1>
             <DialogClose>
               <X className="size-6 cursor-pointer p-1" />
@@ -71,7 +71,7 @@ export function HealthcareServiceInfoDetails({
 
   return (
     <div>
-      <div className="flex flex-col justify-between gap-12 bg-[#F7F7F7] px-12 pb-16 sm:flex-row">
+      <div className="flex flex-col justify-between gap-12 bg-zinc-50 px-12 pb-16 sm:flex-row">
         <div className="flex max-w-[278px] flex-col justify-center gap-6">
           <div>
             <H2 className="text-zinc-900">{healthcareService.name}</H2>

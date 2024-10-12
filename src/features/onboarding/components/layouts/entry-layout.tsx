@@ -56,7 +56,7 @@ export const EntryLayout = (props: Props) => {
       <div
         className={cn(
           'flex min-h-screen w-full flex-col items-center p-8 md:p-6',
-          type === 'animation' && 'bg-[#F7F7F7]',
+          type === 'animation' && 'bg-zinc-50',
         )}
       >
         {imgBg && (

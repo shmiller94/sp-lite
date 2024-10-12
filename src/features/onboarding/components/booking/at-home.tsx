@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 import { Body1, Body3, H2, H3 } from '@/components/ui/typography';
 import { AddAddressForm } from '@/features/onboarding/components/add-address-form';
 import { CurrentAddressCard } from '@/features/onboarding/components/current-address-card';
@@ -28,7 +29,7 @@ const AtHomeServiceCard = () => {
 };
 
 export const AtHome = () => {
-  const { nextOnboardingStep, prevStep } = useStepper((s) => s);
+  const { nextOnboardingStep, prevStep, updatingStep } = useStepper((s) => s);
   const { data: user } = useUser();
   const { updateServiceAddress } = useOnboarding();
   const [isEditingAddress, setIsEditingAddress] = useState(false);
@@ -86,7 +87,9 @@ export const AtHome = () => {
             <Button variant="outline" onClick={prevStep}>
               Back
             </Button>
-            <Button onClick={next}>Next</Button>
+            <Button onClick={next} disabled={updatingStep}>
+              {updatingStep ? <Spinner /> : 'Next'}
+            </Button>
           </div>
         </div>
       </>

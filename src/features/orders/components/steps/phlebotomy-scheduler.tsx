@@ -4,7 +4,7 @@ import { Body1, H2 } from '@/components/ui/typography';
 import { useOrder } from '@/features/orders/stores/order-store';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 import { useStepper } from '@/lib/stepper';
-import { Address, CollectionMethodType, Slot } from '@/types/api';
+import { Address, Slot } from '@/types/api';
 
 export const PhlebotomyScheduler = () => {
   const { service, location, collectionMethod, updateSlot, setTz, slot } =
@@ -42,7 +42,7 @@ export const PhlebotomyScheduler = () => {
         </div>
         <div className="w-full rounded-xl py-6">
           <Scheduler
-            collectionMethod={collectionMethod as CollectionMethodType}
+            collectionMethod={collectionMethod}
             address={location?.address as Address}
             serviceId={service.id}
             onSlotUpdate={onSlotUpdate}

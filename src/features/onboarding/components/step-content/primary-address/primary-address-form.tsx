@@ -38,7 +38,7 @@ function FullPrimaryAddressForm({
 }: {
   googleAddres: FormAddressInput;
 }) {
-  const { nextOnboardingStep } = useStepper((s) => s);
+  const { nextOnboardingStep, updatingStep } = useStepper((s) => s);
   const { updateBlocked, updateServiceAddress } = useOnboarding();
   const user = useUser();
   const primaryAddress = user.data?.primaryAddress?.address;
@@ -180,7 +180,12 @@ function FullPrimaryAddressForm({
             </FormItem>
           )}
         />
-        <Button type="submit" variant="white" className="w-full">
+        <Button
+          type="submit"
+          variant="white"
+          className="w-full"
+          disabled={updatingStep}
+        >
           {getServiceabilityMutation.isPending ? (
             <Spinner className="size-6" variant="primary" />
           ) : (

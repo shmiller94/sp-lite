@@ -53,7 +53,7 @@ export function AddToCalendar({
             Invites are sent by default, if you didn&apos;t get one you can add
             it using links below
           </Body3>
-          <div className="flex gap-3 rounded-xl px-3 py-4 hover:cursor-pointer hover:bg-[#F7F7F7]">
+          <div className="flex gap-3 rounded-xl px-3 py-4 hover:cursor-pointer hover:bg-zinc-50">
             <img
               className="size-6 object-cover"
               src="/onboarding/calendar-ios.svg"
@@ -68,7 +68,7 @@ export function AddToCalendar({
               Apple calendar
             </a>
           </div>
-          <div className="flex gap-3 rounded-xl px-3 py-4 hover:cursor-pointer hover:bg-[#F7F7F7]">
+          <div className="flex gap-3 rounded-xl px-3 py-4 hover:cursor-pointer hover:bg-zinc-50">
             <img
               className="size-6 object-cover"
               src="/onboarding/calendar-google.svg"

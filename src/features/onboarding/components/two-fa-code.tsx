@@ -29,13 +29,13 @@ import { useStepper } from '@/lib/stepper';
 import { cn } from '@/lib/utils';
 
 const TwoFaCode = ({ phone, close }: { phone: string; close: () => void }) => {
-  const { nextStep } = useStepper((s) => s);
+  const { nextOnboardingStep } = useStepper((s) => s);
   const verifyOTPMutation = useVerifyOtp({
     mutationConfig: {
       onSuccess: () => {
         // timeout to show user that code worked
         setTimeout(() => {
-          nextStep();
+          nextOnboardingStep();
         }, 2000); // 2000 milliseconds = 2 seconds
       },
       onError: () => {
@@ -150,6 +150,7 @@ const TwoFaCode = ({ phone, close }: { phone: string; close: () => void }) => {
                   data: { phone: form.getValues().phone, toc: true },
                 });
               }}
+              disabled={sendOTPMutation.isPending}
             >
               {sendOTPMutation.isPending ? (
                 <Spinner

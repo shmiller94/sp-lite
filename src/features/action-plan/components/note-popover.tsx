@@ -325,7 +325,7 @@ function CategoryBlock({
   return (
     <div
       role="presentation"
-      className="flex w-full cursor-pointer items-center gap-[16px] p-[16px] hover:rounded-2xl hover:bg-[#F7F7F7]"
+      className="flex w-full cursor-pointer items-center gap-[16px] p-[16px] hover:rounded-2xl hover:bg-zinc-50"
       onClick={() => onClick(option.name)}
     >
       <div className="flex items-center justify-center rounded-[8px] bg-zinc-50">

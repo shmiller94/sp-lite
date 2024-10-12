@@ -37,7 +37,7 @@ import { useAddPaymentMethod } from '@/features/settings/api/add-payment-method'
 import { useUser } from '@/lib/auth';
 import { useStepper } from '@/lib/stepper';
 import { cn } from '@/lib/utils';
-import { Address } from '@/types/api';
+import { Address, OrderStatus } from '@/types/api';
 import { formatMoney } from '@/utils/format-money';
 
 export const ConfirmOrder = () => {
@@ -61,7 +61,7 @@ export const ConfirmOrder = () => {
   return (
     <section id="main" className="flex flex-col gap-8">
       <H2 className="text-zinc-900">Confirm Order</H2>
-      <div className="flex w-full flex-col rounded-[16px] bg-[#F7F7F7]">
+      <div className="flex w-full flex-col rounded-[16px] bg-zinc-50">
         <div className="flex items-center  justify-between px-6 py-5">
           <div>
             <Body1 className="text-zinc-900">
@@ -91,11 +91,11 @@ export const ConfirmOrder = () => {
           <div>
             <Separator />
             <div className="flex flex-col rounded-b-2xl px-6 py-5">
-              {collectionMethod === 'AT_HOME' && (
+              {collectionMethod === 'AT_HOME' ? (
                 <Body1 className="line-clamp-1 text-zinc-900">
                   1 x At-home collection
                 </Body1>
-              )}
+              ) : null}
               {additionalServices.map((as, index) => (
                 <Body1 className="line-clamp-1 text-zinc-900" key={index}>
                   1 x {as.name}
@@ -165,7 +165,7 @@ export const ConfirmOrder = () => {
 // };
 
 const CreditCardPaymentForm = () => {
-  const { nextOnboardingStep } = useStepper((s) => s);
+  const { nextOnboardingStep, updatingStep } = useStepper((s) => s);
   const elements = useElements();
   const stripe = useStripe();
   const servicesQuery = useServices({});
@@ -262,7 +262,7 @@ const CreditCardPaymentForm = () => {
         data: {
           items: [],
           serviceId: superpowerPanel.id,
-          status: 'DRAFT',
+          status: OrderStatus.draft,
           location: {
             address: user.data?.primaryAddress?.address as Address,
           },
@@ -284,7 +284,7 @@ const CreditCardPaymentForm = () => {
           data: {
             items: [],
             serviceId: as.id,
-            status: 'DRAFT',
+            status: OrderStatus.draft,
             location: {
               address: user.data?.primaryAddress?.address as Address,
             },
@@ -317,7 +317,7 @@ const CreditCardPaymentForm = () => {
 
   return (
     <div className="flex flex-col gap-8">
-      <OneLineLoader loading={processing} duration={4000} />
+      <OneLineLoader loading={processing || updatingStep} duration={4000} />
 
       <H2 className="text-zinc-900">Payment</H2>
       <form onSubmit={handleSubmit} className="grid gap-8">
@@ -360,14 +360,14 @@ const CreditCardPaymentForm = () => {
         </div>
         <div className="flex items-start space-x-2">
           <Checkbox
-            id="terms1"
+            id="terms"
             checked={consentGiven}
             onCheckedChange={(checked) =>
               checked ? setConsentGiven(true) : setConsentGiven(false)
             }
           />
 
-          <ConsentInfo />
+          <ConsentInfo htmlFor="terms" />
         </div>
         <div className="space-y-2">
           <Button
@@ -383,7 +383,8 @@ const CreditCardPaymentForm = () => {
               !servicesQuery.data?.services ||
               !user.data ||
               !!errorMessage ||
-              !consentGiven
+              !consentGiven ||
+              updatingStep
             }
           >
             Confirm

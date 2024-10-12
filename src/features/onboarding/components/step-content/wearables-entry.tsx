@@ -4,9 +4,10 @@ import { Body1, H1 } from '@/components/ui/typography';
 import { EntryLayout } from '@/features/onboarding/components/layouts';
 import { VitalLinkButton } from '@/features/settings/components/vital-button';
 import { useStepper } from '@/lib/stepper';
+import { cn } from '@/lib/utils';
 
 export const WearablesEntry = () => {
-  const { nextOnboardingStep } = useStepper((s) => s);
+  const { nextOnboardingStep, updatingStep } = useStepper((s) => s);
 
   return (
     <section
@@ -27,7 +28,10 @@ export const WearablesEntry = () => {
         <ChevronRight className="size-4" />
       </VitalLinkButton>
       <Body1
-        className="cursor-pointer text-white hover:text-white/90"
+        className={cn(
+          'cursor-pointer text-white hover:text-white/90',
+          updatingStep ? 'opacity-50' : null,
+        )}
         onClick={nextOnboardingStep}
       >
         Skip and connect later

@@ -30,7 +30,14 @@ const memberships: Membership[] = [
   },
 ];
 
-const MembershipCard = ({ membership }: { membership: Membership }) => {
+interface MembershipCardProps extends React.HTMLAttributes<HTMLDivElement> {
+  membership: Membership;
+}
+
+const MembershipCard: React.FC<MembershipCardProps> = ({
+  membership,
+  ...rest
+}) => {
   // get membership price
   const code = localStorage.getItem('superpower-code');
   const membershipQuery = useMembershipPrice({
@@ -39,7 +46,10 @@ const MembershipCard = ({ membership }: { membership: Membership }) => {
   });
 
   return (
-    <div className="flex flex-row items-center rounded-xl border border-zinc-200 bg-zinc-50 p-4">
+    <div
+      className="flex flex-row items-center rounded-xl border border-zinc-200 bg-zinc-50 p-4"
+      {...rest}
+    >
       <div className="flex w-full flex-row items-center justify-between">
         <div className="flex flex-row gap-x-4">
           <img
@@ -89,12 +99,13 @@ const SectionMembership = () => {
       </div>
 
       <div className="flex flex-col gap-2">
-        <RadioGroup
-          onValueChange={(value: MembershipType) => updateMembership(value)}
-          defaultValue={membership ?? 'DEFAULT'}
-        >
+        <RadioGroup value={membership ?? 'DEFAULT'}>
           {memberships.map((membership, index) => (
-            <MembershipCard membership={membership} key={index} />
+            <MembershipCard
+              membership={membership}
+              key={index}
+              onClick={() => updateMembership(membership.type)}
+            />
           ))}
         </RadioGroup>
         {metadata.map((meta, indx) => (

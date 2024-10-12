@@ -2,29 +2,30 @@ import { ArrowUpRight } from 'lucide-react';
 import React from 'react';
 
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 import { Body1, H2 } from '@/components/ui/typography';
 import { ImageContentLayout } from '@/features/onboarding/components/layouts';
 import { useStepper } from '@/lib/stepper';
 
 export const Schedule = () => {
-  const { nextOnboardingStep } = useStepper((s) => s);
+  const { nextOnboardingStep, updatingStep } = useStepper((s) => s);
   return (
     <section id="main">
       <div className="mb-4 flex flex-col gap-8">
         <H2 className="text-zinc-900">Schedule your first blood test</H2>
         <div className="flex flex-col gap-6">
-          <Body1 className="text-[#71717A]">
+          <Body1 className="text-zinc-500">
             Schedule you first blood test in one of our 2,000 partner labs or
             from the comfort of your home with one of our private nursing
             partners.
           </Body1>
-          <Body1 className="text-[#71717A]">
+          <Body1 className="text-zinc-500">
             Biomarker levels are most accurate in the morning and you will need
             to fast for 10 hours before the blood draw, so we recommend
             scheduling your visit early in the day.
           </Body1>
           <div className="flex flex-col gap-1 sm:flex-row sm:items-center">
-            <Body1 className="text-[#71717A]">You can view the</Body1>
+            <Body1 className="text-zinc-500">You can view the</Body1>
             <a
               href="https://superpower.com/biomarkers"
               target="_blank"
@@ -38,7 +39,9 @@ export const Schedule = () => {
         </div>
       </div>
       <div className="flex w-full justify-end py-12">
-        <Button onClick={nextOnboardingStep}>Continue</Button>
+        <Button onClick={nextOnboardingStep} disabled={updatingStep}>
+          {updatingStep ? <Spinner /> : 'Continue'}
+        </Button>
       </div>
     </section>
   );

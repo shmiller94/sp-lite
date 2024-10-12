@@ -1,5 +1,4 @@
 import { Widget } from '@typeform/embed-react';
-import { useNavigate } from 'react-router-dom';
 
 import { OnboardingLayout } from '@/components/layouts/onboarding-layout';
 import { env } from '@/config/env';
@@ -7,7 +6,6 @@ import { api } from '@/lib/api-client';
 import { useUser } from '@/lib/auth';
 
 export const TypeformIntegration = () => {
-  const navigate = useNavigate();
   const { data: user } = useUser();
   const { refetch } = useUser();
 
@@ -18,12 +16,13 @@ export const TypeformIntegration = () => {
 
     await refetch();
     localStorage.removeItem('onboarding');
-    navigate('/', {
-      replace: true,
-    });
 
-    // for some reason typeform doesnt unmount after we get
-    // to app so we need to manually refresh page
+    /**
+     * for some reason typeform doesnt unmount after we get
+     * so we use refresh to both navigate user and get rid of typeform
+     *
+     * useeffect in parent component will also take care of transferring user
+     */
     window.location.reload();
   };
 

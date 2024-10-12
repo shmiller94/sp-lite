@@ -1,6 +1,7 @@
 import { Skeleton } from '@/components/ui/skeleton';
 import { Body1 } from '@/components/ui/typography';
 import { useOrders } from '@/features/orders/api';
+import { OrderStatus } from '@/types/api';
 
 import { useServices } from '../api/get-services';
 
@@ -30,7 +31,7 @@ export const FinishScheduleList = () => {
   if (!servicesQuery.data || !ordersQuery.data) return null;
 
   const draftOrders = ordersQuery.data.orders.filter(
-    (o) => o.status === 'DRAFT',
+    (o) => o.status === OrderStatus.draft,
   );
 
   if (draftOrders.length === 0)

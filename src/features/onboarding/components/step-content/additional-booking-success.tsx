@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 import { Body1, H2 } from '@/components/ui/typography';
 import { AdditionalServiceCard } from '@/features/onboarding/components/additional-service-card';
 import { ImageContentLayout } from '@/features/onboarding/components/layouts';
@@ -7,7 +8,7 @@ import { getOrderInfo } from '@/features/onboarding/utils/get-order-info';
 import { useStepper } from '@/lib/stepper';
 
 const AdditionalBookingSuccess = () => {
-  const nextOnboardingStep = useStepper((s) => s.nextOnboardingStep);
+  const { nextOnboardingStep, updatingStep } = useStepper((s) => s);
   const { additionalServices, slots } = useOnboarding();
 
   // filter out all services that user skipped
@@ -29,7 +30,9 @@ const AdditionalBookingSuccess = () => {
         ))}
       </div>
       <div className="flex justify-end gap-4">
-        <Button onClick={nextOnboardingStep}>Done</Button>
+        <Button onClick={nextOnboardingStep} disabled={updatingStep}>
+          {updatingStep ? <Spinner /> : 'Done'}
+        </Button>
       </div>
     </section>
   );

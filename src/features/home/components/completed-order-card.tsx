@@ -7,6 +7,11 @@ import { FileUpload } from '@/components/shared/upload-wrapper';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  ADVISORY_CALL,
+  CUSTOM_BLOOD_PANEL,
+  SUPERPOWER_BLOOD_PANEL,
+} from '@/const';
 import { useCreateFile, useDownloadFile } from '@/features/files/api';
 import { downloadBlob } from '@/features/files/utils/download-blob';
 import { useServices } from '@/features/services/api/get-services';
@@ -36,12 +41,9 @@ export function CompletedOrderCard(order: Order): JSX.Element {
     (s) => s.id === order.serviceId,
   );
 
-  const SERVICES_WITH_ADDRESS = [
-    'Superpower Blood Panel',
-    'Custom Blood Panel',
-  ];
+  const SERVICES_WITH_ADDRESS = [SUPERPOWER_BLOOD_PANEL, CUSTOM_BLOOD_PANEL];
   const isBloodDraw = SERVICES_WITH_ADDRESS.includes(order.name);
-  const isOneOnOne = order.name === '1-1 Advisory Call';
+  const isOneOnOne = order.name === ADVISORY_CALL;
 
   const isAdmin = Boolean(user?.adminActor);
   const hasFile = Boolean(order.fileId);
@@ -110,7 +112,6 @@ export function CompletedOrderCard(order: Order): JSX.Element {
           <h2 className="line-clamp-1 text-primary lg:text-base">
             {order.name}
           </h2>
-          {/* <span className="text-secondary text-sm">Gut protocol</span> */}
           <span className="text-zinc-400 md:text-sm">
             <TimestampDisplay
               timestamp={new Date(order.timestamp)}

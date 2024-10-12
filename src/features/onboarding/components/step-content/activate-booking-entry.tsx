@@ -1,13 +1,14 @@
 import { ChevronRight } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 import { H1, H4 } from '@/components/ui/typography';
 import { EntryLayout } from '@/features/onboarding/components/layouts';
 import { useUser } from '@/lib/auth';
 import { useStepper } from '@/lib/stepper';
 
 export const ActivateBookingEntry = () => {
-  const { nextOnboardingStep } = useStepper((s) => s);
+  const { nextOnboardingStep, updatingStep } = useStepper((s) => s);
   const { data } = useUser();
   return (
     <section
@@ -20,10 +21,17 @@ export const ActivateBookingEntry = () => {
       </div>
       <Button
         className="mx-auto flex flex-row items-center justify-center gap-1 rounded-[50px] bg-white p-4 text-zinc-900 hover:bg-white/90"
+        disabled={updatingStep}
         onClick={nextOnboardingStep}
       >
-        Activate
-        <ChevronRight className="size-4" />
+        {updatingStep ? (
+          <Spinner variant="primary" />
+        ) : (
+          <>
+            Activate
+            <ChevronRight className="size-4" />
+          </>
+        )}
       </Button>
     </section>
   );

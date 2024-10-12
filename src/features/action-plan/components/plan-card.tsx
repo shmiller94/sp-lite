@@ -396,7 +396,7 @@ const Item = ({ item }: { item: PlanGoalItem }) => {
         <div
           role="presentation"
           className={cn(
-            `flex flex-row space-x-6 items-center bg-[#F7F7F7] transition rounded-[20px] p-3 h-[96px] w-full`,
+            `flex flex-row space-x-6 items-center bg-zinc-50 transition rounded-[20px] p-3 h-[96px] w-full`,
             'cursor-pointer',
           )}
           onClick={() => window.open(product?.url, '_blank')}
@@ -429,7 +429,7 @@ const Item = ({ item }: { item: PlanGoalItem }) => {
       );
 
       return (
-        <div className="flex h-[96px] w-full items-center justify-between rounded-[20px] bg-[#F7F7F7] p-3 transition">
+        <div className="flex h-[96px] w-full items-center justify-between rounded-[20px] bg-zinc-50 p-3 transition">
           <div className="flex w-full items-center space-x-6">
             {servicesQuery.isLoading ? (
               <Skeleton className="h-[72px] min-w-[72px] bg-zinc-300" />

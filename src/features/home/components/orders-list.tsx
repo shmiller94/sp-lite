@@ -39,8 +39,8 @@ export function CompletedOrdersList(): JSX.Element {
   return (
     <Carousel className="w-full">
       <CarouselContent className={cn('h-[270px] md:h-auto', '-ml-1')}>
-        {completedOrders.map((order: Order, index: number) => (
-          <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+        {completedOrders.map((order: Order) => (
+          <CarouselItem key={order.id} className="md:basis-1/2 lg:basis-1/3">
             <CompletedOrderCard {...order} />
           </CarouselItem>
         ))}

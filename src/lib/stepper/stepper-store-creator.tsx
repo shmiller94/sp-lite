@@ -20,8 +20,10 @@ export interface StepperStore extends StepperProps {
   resetSteps: () => void;
   jump: (id: string) => void;
 
-  /* We are exposing nextOnboardingStep only because server only allows to update if new value is greater than old one */
+  /* We can only use nextOnboardingStep for onboarding*/
   nextOnboardingStep: () => Promise<void>;
+  /* We can only use jumpOnboarding for onboarding */
+  jumpOnboarding: (id: string) => Promise<void>;
   /* Updating step is a loading state for step update call */
   updatingStep: boolean;
 }
@@ -50,6 +52,17 @@ export const stepperStoreCreator = (initProps?: Partial<StepperStore>) => {
     nextStep: () => set((state) => ({ activeStep: state.activeStep + 1 })),
     prevStep: () => set((state) => ({ activeStep: state.activeStep - 1 })),
     updatingStep: false,
+    jump: (id) => {
+      const steps = get().steps;
+
+      const stepIndex = steps.findIndex((step) => step.id === id);
+
+      if (stepIndex === -1) {
+        throw new Error('Step ID was not found.');
+      }
+
+      set({ activeStep: stepIndex });
+    },
     nextOnboardingStep: async () => {
       set({ updatingStep: true });
       const state = get();
@@ -62,7 +75,7 @@ export const stepperStoreCreator = (initProps?: Partial<StepperStore>) => {
         activeStep: state.activeStep + 1,
       }));
     },
-    jump: (id) => {
+    jumpOnboarding: async (id) => {
       const steps = get().steps;
 
       const stepIndex = steps.findIndex((step) => step.id === id);
@@ -71,7 +84,14 @@ export const stepperStoreCreator = (initProps?: Partial<StepperStore>) => {
         throw new Error('Step ID was not found.');
       }
 
-      set({ activeStep: stepIndex });
+      await api.put<boolean>(`users/onboarding`, {
+        progress: stepIndex,
+      });
+
+      set(() => ({
+        updatingStep: false,
+        activeStep: stepIndex,
+      }));
     },
     resetSteps: () => set(() => ({ activeStep: 0 })),
   }));

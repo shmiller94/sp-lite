@@ -21,8 +21,8 @@ export function SchedulerTimeSlot({
     <div
       className={cn(
         selected
-          ? 'bg-[#F7F7F7] text-zinc-900'
-          : 'text-zinc-500 hover:bg-[#F7F7F7] hover:text-zinc-900',
+          ? 'bg-zinc-50 text-zinc-900'
+          : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900',
         'col-span-1 flex flex-col rounded-[8px] cursor-pointer ease-in-out duration-200 lowercase p-4 text-left',
       )}
       key={timeSlot.start}

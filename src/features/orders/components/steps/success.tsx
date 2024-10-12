@@ -5,12 +5,44 @@ import { Button } from '@/components/ui/button';
 import { DialogClose } from '@/components/ui/dialog';
 import { Timeline } from '@/components/ui/timeline';
 import { H2 } from '@/components/ui/typography';
+import {
+  GRAIL_GALLERI_MULTI_CANCER_TEST,
+  SUPERPOWER_BLOOD_PANEL,
+} from '@/const';
 import { useOrder } from '@/features/orders/stores/order-store';
 import { getServiceTimeline } from '@/utils/service';
 
 export const Success = () => {
   const { slot, service, collectionMethod, location } = useOrder((s) => s);
   const timeline = getServiceTimeline(service);
+
+  const renderCalendarButton = () => {
+    if (!location?.address) {
+      return null;
+    }
+    if (!collectionMethod) {
+      return null;
+    }
+    if (!slot) {
+      return null;
+    }
+    if (
+      service.name !== SUPERPOWER_BLOOD_PANEL &&
+      service.name !== GRAIL_GALLERI_MULTI_CANCER_TEST
+    ) {
+      return null;
+    }
+
+    return (
+      <AddToCalendar
+        address={location.address}
+        slot={slot}
+        service={service.name}
+        collectionMethod={collectionMethod}
+        className="max-w-none"
+      />
+    );
+  };
 
   return (
     <>
@@ -21,18 +53,7 @@ export const Success = () => {
         <Timeline timeline={timeline} />
       </div>
       <div className="flex w-full flex-col gap-3 px-6 pb-12 md:flex-row md:justify-end md:px-14">
-        {location?.address && collectionMethod && slot && (
-          <AddToCalendar
-            address={location.address}
-            slot={slot}
-            service={
-              (service.name as 'Superpower Blood Panel') ||
-              'Grail Galleri Multi Cancer Test'
-            }
-            collectionMethod={collectionMethod}
-            className="max-w-none"
-          />
-        )}
+        {renderCalendarButton()}
         <DialogClose>
           <Button className="w-full md:w-auto">Done</Button>
         </DialogClose>
