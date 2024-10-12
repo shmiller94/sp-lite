@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
 import { Body2 } from '@/components/ui/typography';
-import { SERVICEABLE_STATES } from '@/features/onboarding/const/serviceable-states';
+import { US_STATE_CODES } from '@/const';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import { useGetServiceability } from '@/features/orders/api';
 import {
@@ -134,7 +134,7 @@ function FullAddressForm({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent className="text-zinc-600">
-                      {SERVICEABLE_STATES.map((state) => (
+                      {US_STATE_CODES.map((state) => (
                         <SelectItem value={state} key={state}>
                           {state}
                         </SelectItem>

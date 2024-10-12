@@ -20,8 +20,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
+import { US_STATE_CODES } from '@/const';
 import { OnboardingInput } from '@/features/onboarding/components/onboarding-input';
-import { SERVICEABLE_STATES } from '@/features/onboarding/const/serviceable-states';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import { useGetServiceability } from '@/features/orders/api';
 import {
@@ -57,12 +57,6 @@ function FullPrimaryAddressForm({
   });
 
   const onSubmit = async (data: FormAddressInput) => {
-    // reset state for UI purposes because states select won't have this option
-    if (!SERVICEABLE_STATES.includes(data.state)) {
-      form.setValue('state', '');
-      return;
-    }
-
     const { serviceable } = await getServiceabilityMutation.mutateAsync({
       data: {
         zipCode: data.postalCode,
@@ -149,7 +143,7 @@ function FullPrimaryAddressForm({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent className="text-zinc-600">
-                      {SERVICEABLE_STATES.map((state) => (
+                      {US_STATE_CODES.map((state) => (
                         <SelectItem value={state} key={state}>
                           {state}
                         </SelectItem>
