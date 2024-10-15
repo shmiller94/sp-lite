@@ -150,13 +150,6 @@ export const createRouter = (queryClient: QueryClient) =>
           errorElement: <MainErrorFallback />,
         },
         {
-          path: 'report',
-          lazy: async () => {
-            const { ReportRoute } = await import('./routes/app/report');
-            return { Component: ReportRoute };
-          },
-        },
-        {
           path: 'rdns',
           lazy: async () => {
             const { RdnsRoute } = await import('./routes/app/rdns');
@@ -171,13 +164,6 @@ export const createRouter = (queryClient: QueryClient) =>
           },
           loader: usersLoader(queryClient),
           errorElement: <MainErrorFallback />,
-        },
-        {
-          path: 'profile',
-          lazy: async () => {
-            const { ProfileRoute } = await import('./routes/app/profile');
-            return { Component: ProfileRoute };
-          },
         },
       ],
     },

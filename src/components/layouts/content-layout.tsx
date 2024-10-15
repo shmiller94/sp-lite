@@ -1,42 +1,42 @@
+import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
 
-import { H1 } from '@/components/ui/typography';
 import { cn } from '@/lib/utils';
 
 import { Head } from '../seo';
 
-type ContentLayoutProps = {
+const contentLayoutVariants = cva('grow space-y-6 md:space-y-12', {
+  variants: {
+    variant: {
+      default: 'px-6 py-16 sm:p-16',
+      noPadding: '',
+    },
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+});
+
+type ContentLayoutProps = React.HTMLAttributes<HTMLDivElement> & {
   children: React.ReactNode;
   title?: string;
-  className?: string;
-  bgColor?: 'white' | 'zinc';
-};
+} & VariantProps<typeof contentLayoutVariants>;
 
 export const ContentLayout = ({
   children,
   title,
+  variant,
   className,
-  bgColor = 'white',
+  ...rest
 }: ContentLayoutProps) => {
   return (
     <>
       <Head title={title} />
       <div
-        className={cn(
-          'w-full flex-grow flex flex-col',
-          bgColor === 'zinc' ? 'bg-zinc-50' : null,
-        )}
+        className={cn(contentLayoutVariants({ variant }), className)}
+        {...rest}
       >
-        <div
-          className={cn(
-            'container mx-auto px-6 py-16 space-y-6 sm:p-16 md:space-y-12',
-            className,
-          )}
-        >
-          {title && <H1>{title}</H1>}
-
-          {children}
-        </div>
+        {children}
       </div>
     </>
   );

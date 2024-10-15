@@ -2,6 +2,7 @@ import { QueryClient } from '@tanstack/react-query';
 
 import { ContentLayout } from '@/components/layouts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { H1 } from '@/components/ui/typography';
 import { getServicesQueryOptions } from '@/features/services/api/get-services';
 import { FinishScheduleList } from '@/features/services/components/finish-schedule-list';
 import { OrdersList } from '@/features/services/components/orders-list';
@@ -29,6 +30,7 @@ export const servicesLoader = (queryClient: QueryClient) => async () => {
 export const ServicesRoute = () => {
   return (
     <ContentLayout title="Services">
+      <H1>Services</H1>
       <section id="orders" className="space-y-6">
         <Tabs defaultValue="all" className="overflow-auto">
           <TabsList className="flex w-fit items-center justify-start overflow-x-auto">

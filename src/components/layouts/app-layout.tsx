@@ -1,50 +1,11 @@
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
-import { useLocation, useNavigation } from 'react-router-dom';
+import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import { Sidebar } from '@/components/shared/sidebar';
+import { Progress } from '@/components/ui/progress';
 import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
-
-const Progress = () => {
-  const { state, location } = useNavigation();
-
-  const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    setProgress(0);
-  }, [location?.pathname]);
-
-  useEffect(() => {
-    if (state === 'loading') {
-      const timer = setInterval(() => {
-        setProgress((oldProgress) => {
-          if (oldProgress === 100) {
-            clearInterval(timer);
-            return 100;
-          }
-          const newProgress = oldProgress + 10;
-          return newProgress > 100 ? 100 : newProgress;
-        });
-      }, 300);
-
-      return () => {
-        clearInterval(timer);
-      };
-    }
-  }, [state]);
-
-  if (state !== 'loading') {
-    return null;
-  }
-
-  return (
-    <div
-      className="fixed left-0 top-0 h-1 bg-vermillion-900 transition-all duration-200 ease-in-out"
-      style={{ width: `${progress}%` }}
-    ></div>
-  );
-};
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const { data } = useUser();
@@ -60,12 +21,16 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   const [open, setOpen] = useState(true);
 
+  const whiteBgPaths = ['services', 'members', 'upcoming'];
+  const isWhiteBg = whiteBgPaths.some((path) => pathname.includes(path));
+
   return (
     <>
       {!hideNavBar && <Sidebar open={open} setOpen={setOpen} />}
       <motion.div
         className={cn(
           'flex flex-col',
+          isWhiteBg ? 'bg-white' : 'bg-zinc-50',
           !hideNavBar
             ? 'mb-[72px] md:mb-0 min-h-[calc(100dvh-72px)] md:min-h-dvh'
             : 'min-h-screen',

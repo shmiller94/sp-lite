@@ -12,7 +12,7 @@ export const FilesRoute = () => {
   const navigate = useNavigate();
 
   return (
-    <ContentLayout bgColor="zinc">
+    <ContentLayout title="Files">
       <div
         className="hidden cursor-pointer items-center gap-2 md:flex"
         role="presentation"

@@ -8,7 +8,7 @@ import { useUser } from '@/lib/auth';
 export const HomeRoute = () => {
   const { data: user } = useUser();
   return (
-    <ContentLayout bgColor="zinc" className="space-y-[64px] md:space-y-[130px]">
+    <ContentLayout title="Home" className="space-y-[64px] md:space-y-[130px]">
       <H1>
         Welcome back,
         <br />

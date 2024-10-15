@@ -34,7 +34,7 @@ export const DataRoute = () => {
   const navigate = useNavigate();
 
   return (
-    <ContentLayout bgColor="zinc">
+    <ContentLayout title="Data">
       <div className="flex items-center justify-between">
         <H1>Data</H1>
         <Button

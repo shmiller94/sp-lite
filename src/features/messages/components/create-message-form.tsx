@@ -44,7 +44,7 @@ export const CreateMessageForm = (): JSX.Element => {
   return (
     <Form {...form}>
       <form
-        className="mt-[71px] flex w-full flex-col gap-6"
+        className="flex w-full flex-col gap-6"
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <FormField
