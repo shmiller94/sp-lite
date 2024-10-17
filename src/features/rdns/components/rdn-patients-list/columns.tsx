@@ -31,6 +31,11 @@ export const columns: ColumnDef<User>[] = [
     },
   },
   {
+    // Filter only
+    accessorKey: 'email',
+    header: 'Email',
+  },
+  {
     accessorKey: 'actions',
     header: () => {
       return (

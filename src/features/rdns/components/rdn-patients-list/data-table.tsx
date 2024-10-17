@@ -9,6 +9,7 @@ import {
 } from '@tanstack/react-table';
 import { useState } from 'react';
 
+import { Input } from '@/components/ui/input';
 import {
   Table,
   TableBody,
@@ -44,7 +45,15 @@ export function RdnMembersDataTable<TData, TValue>({
   });
 
   return (
-    <div>
+    <div className="space-y-4">
+      <Input
+        placeholder="Filter by email..."
+        value={table.getColumn('email')?.getFilterValue() as string}
+        onChange={(event) =>
+          table.getColumn('email')?.setFilterValue(event.target.value)
+        }
+        className="max-w-sm"
+      />
       <div className="rounded-md border">
         <Table>
           <TableHeader>
