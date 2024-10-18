@@ -82,7 +82,7 @@ export const PatientSelector = () => {
             >
               <div className="flex items-center gap-2">
                 <PersonStanding className="size-5 min-w-5 text-zinc-400" />
-                <Body1 className="text-zinc-500">Patient</Body1>
+                <Body1 className="text-zinc-500">Member</Body1>
               </div>
               <Separator orientation="vertical" className="h-5" />
               <Body1>{fullPatientName}</Body1>

@@ -34,7 +34,7 @@ export const useCurrentPatient = (
 
   const fullPatientName = selectedPatient
     ? `${selectedPatient.firstName} ${selectedPatient.lastName}`
-    : 'Select patient';
+    : 'Select member';
 
   /**
    * Handler for selecting a patient.
