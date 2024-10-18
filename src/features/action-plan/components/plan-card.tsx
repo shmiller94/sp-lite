@@ -26,7 +26,7 @@ import {
   usePlans,
   useProducts,
 } from '@/features/action-plan/api';
-import { ActionPlanCheckoutModal } from '@/features/action-plan/components/checkout-modal';
+import { ActionPlanCheckoutModal } from '@/features/action-plan/components/checkout/checkout-modal';
 import { useActionPlanDatePicker } from '@/features/action-plan/hooks/use-plan-dates';
 import { PlanStoreProvider } from '@/features/action-plan/stores/plan-store';
 import { filterGoalsByItemType } from '@/features/action-plan/utils/filter-goals-by-item-type';

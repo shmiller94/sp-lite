@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { H2, Mono } from '@/components/ui/typography';
-import { ActionPlanCheckoutModal } from '@/features/action-plan/components/checkout-modal';
+import { ActionPlanCheckoutModal } from '@/features/action-plan/components/checkout/checkout-modal';
 import { usePlan } from '@/features/action-plan/stores/plan-store';
 import { cn } from '@/lib/utils';
 

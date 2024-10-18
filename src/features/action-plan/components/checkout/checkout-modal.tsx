@@ -14,14 +14,15 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { Body1, H1 } from '@/components/ui/typography';
-import { CheckoutStep } from '@/features/action-plan/components/steps/checkout-step';
-import { ReviewStep } from '@/features/action-plan/components/steps/review-step';
 import {
   CheckoutStoreProvider,
   useCheckout,
 } from '@/features/action-plan/stores/checkout-store';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 import { StepItem, StepperStoreProvider, useStepper } from '@/lib/stepper';
+
+import { CheckoutStep } from './steps/checkout-step';
+import { ReviewStep } from './steps/review-step';
 
 export function ActionPlanCheckoutModal({ children }: { children: ReactNode }) {
   const steps: StepItem[] = [
@@ -52,7 +53,13 @@ function ActionPlanCheckoutModalConsumer({
   children: ReactNode;
 }) {
   const { width } = useWindowDimensions();
-  const reset = useCheckout((s) => s.reset);
+  const resetCheckout = useCheckout((s) => s.reset);
+  const resetSteps = useStepper((s) => s.resetSteps);
+
+  const reset = () => {
+    resetCheckout();
+    resetSteps();
+  };
 
   if (width <= 768) {
     return (

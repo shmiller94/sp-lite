@@ -544,8 +544,9 @@ export type Product = {
   id: string;
   name: string;
   image?: string;
-  price: string;
+  price: number;
   url: string;
+  discount: number;
 };
 
 export type ProductOrder = {

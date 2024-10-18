@@ -2,10 +2,12 @@ import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Body1, Body2, H2 } from '@/components/ui/typography';
+import { Body1, H2 } from '@/components/ui/typography';
 import { useProducts } from '@/features/action-plan/api';
+import { CheckoutPrice } from '@/features/action-plan/components/checkout/checkout-price';
 import { useCheckout } from '@/features/action-plan/stores/checkout-store';
 import { usePlan } from '@/features/action-plan/stores/plan-store';
+import { calculateTotals } from '@/features/action-plan/utils/calculate-totals';
 import { useStepper } from '@/lib/stepper';
 import { cn } from '@/lib/utils';
 import { Product } from '@/types/api';
@@ -15,11 +17,10 @@ export const ReviewStep = (): JSX.Element => {
   const productsQuery = useProducts();
   const goals = usePlan((s) => s.goals);
   const { selectedProducts } = useCheckout((s) => s);
+
   const products = productsQuery.data?.products ?? [];
 
-  const total = selectedProducts
-    .reduce((price, product) => price + Number(product.price), 0)
-    .toFixed(2);
+  const totals = calculateTotals(selectedProducts);
 
   return (
     <>
@@ -63,7 +64,7 @@ export const ReviewStep = (): JSX.Element => {
           <Body1 className="text-zinc-500">
             Subtotal ({selectedProducts.length} items)
           </Body1>
-          <Body1>${total}</Body1>
+          <Body1>${totals.total.toFixed(2)}</Body1>
         </div>
         <Button
           onClick={nextStep}
@@ -114,7 +115,7 @@ const ActionPlanProductCheckoutOptionRow = ({
           <div className="flex flex-col gap-1">
             <Body1>{item.name}</Body1>
             <div>
-              <Body2>${item.price}</Body2>
+              <CheckoutPrice item={item} />
             </div>
           </div>
           <Checkbox checked={checked} className="size-5" />

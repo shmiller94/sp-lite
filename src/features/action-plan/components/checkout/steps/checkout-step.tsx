@@ -1,8 +1,10 @@
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
-import { Body1, Body2, H2 } from '@/components/ui/typography';
+import { Body1, H2 } from '@/components/ui/typography';
 import { useCreateCheckoutUrl } from '@/features/action-plan/api';
+import { CheckoutPrice } from '@/features/action-plan/components/checkout/checkout-price';
 import { useCheckout } from '@/features/action-plan/stores/checkout-store';
+import { calculateTotals } from '@/features/action-plan/utils/calculate-totals';
 import { useStepper } from '@/lib/stepper';
 import { cn } from '@/lib/utils';
 
@@ -16,18 +18,14 @@ export const CheckoutStep = (): JSX.Element => {
   });
   const { selectedProducts } = useCheckout((s) => s);
   const { prevStep } = useStepper((s) => s);
-  const shipping = Number('0');
-  const total = selectedProducts
-    ? selectedProducts.reduce(
-        (price, product) => price + Number(product.price),
-        0,
-      )
-    : 0;
-  const subtotal = total - Number(shipping);
+  const shipping = 0;
+
+  const totals = calculateTotals(selectedProducts);
+  const subtotal = totals.total - shipping;
 
   const checkoutInfo = [
     { title: 'Subtotal', data: subtotal, text: 'text-[#A6A6A6]' },
-    { title: 'Total', data: total, text: 'text-[#18181B]' },
+    { title: 'Total', data: totals.total, text: 'text-[#18181B]' },
   ];
 
   return (
@@ -49,7 +47,7 @@ export const CheckoutStep = (): JSX.Element => {
               />
               <Body1>{selectedProduct.name}</Body1>
             </div>
-            <Body2>${selectedProduct.price}</Body2>
+            <CheckoutPrice item={selectedProduct} />
           </div>
         ))}
       </div>
@@ -80,7 +78,9 @@ export const CheckoutStep = (): JSX.Element => {
             <Button
               disabled={createCheckoutUrlMutation.isPending}
               onClick={() =>
-                createCheckoutUrlMutation.mutate({ data: selectedProducts })
+                createCheckoutUrlMutation.mutate({
+                  data: { products: selectedProducts },
+                })
               }
               className="w-full md:w-auto"
             >

@@ -2,18 +2,14 @@ import { useMutation } from '@tanstack/react-query';
 
 import { api } from '@/lib/api-client';
 import { MutationConfig } from '@/lib/react-query';
-import { CheckoutLineItem, Product } from '@/types/api';
+import { Product } from '@/types/api';
 
 export const createCheckoutUrl = ({
   data,
 }: {
-  data: Product[];
+  data: { products: Product[] };
 }): Promise<{ checkoutUrl: string }> => {
-  const lineItems: CheckoutLineItem[] = data.map((checkoutItem) => ({
-    productVariantId: checkoutItem.id,
-    quantity: 1,
-  }));
-  return api.post('/shop/checkout', { lineItems });
+  return api.post('/shop/checkout', data);
 };
 
 type UseCreateCheckoutUrlOptions = {
