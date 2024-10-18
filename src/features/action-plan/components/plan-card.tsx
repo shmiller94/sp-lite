@@ -354,32 +354,14 @@ const ServicesTab = ({ orderId }: { orderId?: string }) => {
 };
 
 const ActionPlanGoalContainer = ({ goalItem }: { goalItem: PlanGoal }) => {
-  const productsQuery = useProducts();
-
-  /**
-   * Semi weird hack to fix display of old products that are no longer available on marketplace in action plans
-   */
-  const filteredGoalItems = goalItem.goalItems.filter((item) => {
-    if (item.itemType === 'PRODUCT') {
-      return productsQuery.data?.products.some(
-        (product) => product.id === item.itemId,
-      );
-    }
-    return true;
-  });
-
-  if (!filteredGoalItems.length) {
-    return null;
-  }
-
   return (
     <div className="w-full break-words">
       <h4 className="text-[#A1A1AA]">
         {goalItem.title}{' '}
-        <span className="hidden md:inline">({filteredGoalItems.length})</span>
+        <span className="hidden md:inline">({goalItem.goalItems.length})</span>
       </h4>
       <div className="mt-5 space-y-2">
-        {filteredGoalItems.map(
+        {goalItem.goalItems.map(
           (item, indx): ReactNode => (
             <Item item={item} key={indx} />
           ),

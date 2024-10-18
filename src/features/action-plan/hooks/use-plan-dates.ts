@@ -11,6 +11,7 @@ export const useActionPlanDatePicker = ({
 }: UseActionPlanDatePickerProps) => {
   const [currentDate, setCurrentDate] = useState<Date | null>(null);
   const { data: planDatesData } = usePlanDates();
+
   const planDates = planDatesData?.availableDates;
 
   useEffect(() => {
@@ -20,10 +21,12 @@ export const useActionPlanDatePicker = ({
       setCurrentDate(null);
       setOrderId(undefined);
     } else {
-      setCurrentDate(new Date(planDates[0].timestamp));
-      setOrderId(planDates[0].orderId);
+      const { timestamp, orderId } = planDates[0];
+
+      setCurrentDate(new Date(timestamp));
+      setOrderId(orderId);
     }
-  }, [planDates, setOrderId]);
+  }, [planDates]);
 
   return {
     currentDate,

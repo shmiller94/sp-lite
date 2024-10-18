@@ -5,9 +5,7 @@ import { usePlan } from '@/features/action-plan/stores/plan-store';
 import { cn } from '@/lib/utils';
 
 export const RecommendedItems = ({ className }: { className?: string }) => {
-  const goals = usePlan((s) => s.goals).filter(
-    (g) => g.type === 'ANNUAL_REPORT_PROTOCOLS',
-  );
+  const goals = usePlan((s) => s.goals);
 
   const productItems = goals
     .flatMap((goal) => goal.goalItems)

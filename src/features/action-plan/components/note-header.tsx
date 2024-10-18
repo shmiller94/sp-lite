@@ -66,7 +66,7 @@ export const ClinicianNoteHeader = () => {
           <X width="16px" height="16px" color="#52525B" />
         </Button>
         <div>
-          <h1 className="text-sm">For: {fullPatientName}</h1>
+          {hasAllowedRole ? <Body2>For: {fullPatientName}</Body2> : null}
         </div>
       </div>
       {hasAllowedRole ? (
