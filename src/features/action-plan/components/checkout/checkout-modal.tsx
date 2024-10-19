@@ -13,7 +13,7 @@ import {
   SheetContent,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { Body1, H1 } from '@/components/ui/typography';
+import { Body1, H2 } from '@/components/ui/typography';
 import {
   CheckoutStoreProvider,
   useCheckout,
@@ -86,14 +86,19 @@ function ActionPlanCheckoutModalConsumer({
     <Dialog onOpenChange={reset}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
-        <div className="flex flex-col gap-2 px-7 pb-4 pt-7 md:px-14 md:pb-8 md:pt-14">
-          <div className="flex w-full items-center justify-between">
+        <div className="flex flex-col">
+          <div className="flex w-full items-center justify-between md:px-11 md:pb-6 md:pt-10">
             <Body1 className="text-zinc-500">Action plan</Body1>
             <DialogClose>
-              <X className="size-6 cursor-pointer p-1" />
+              <X
+                className="size-6 cursor-pointer p-1 text-zinc-500"
+                strokeWidth={3}
+              />
             </DialogClose>
           </div>
-          <H1>Checkout</H1>
+          <div className="px-10 pt-2">
+            <H2>Checkout</H2>
+          </div>
         </div>
         <ActionPlanCheckoutContent />
       </DialogContent>

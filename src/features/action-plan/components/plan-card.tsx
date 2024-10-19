@@ -137,7 +137,7 @@ const PlanCardFooter = ({
             isAdmin={false}
           >
             <ActionPlanCheckoutModal>
-              <Button className="w-full md:w-auto">Get Products</Button>
+              <Button className="w-full lg:w-auto">Get Products</Button>
             </ActionPlanCheckoutModal>
           </PlanStoreProvider>
         )

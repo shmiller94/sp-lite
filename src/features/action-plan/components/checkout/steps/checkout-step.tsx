@@ -1,6 +1,7 @@
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
-import { Body1, H2 } from '@/components/ui/typography';
+import { Body1 } from '@/components/ui/typography';
 import { useCreateCheckoutUrl } from '@/features/action-plan/api';
 import { CheckoutPrice } from '@/features/action-plan/components/checkout/checkout-price';
 import { useCheckout } from '@/features/action-plan/stores/checkout-store';
@@ -18,74 +19,63 @@ export const CheckoutStep = (): JSX.Element => {
   });
   const { selectedProducts } = useCheckout((s) => s);
   const { prevStep } = useStepper((s) => s);
-  const shipping = 0;
 
   const totals = calculateTotals(selectedProducts);
-  const subtotal = totals.total - shipping;
-
-  const checkoutInfo = [
-    { title: 'Subtotal', data: subtotal, text: 'text-[#A6A6A6]' },
-    { title: 'Total', data: totals.total, text: 'text-[#18181B]' },
-  ];
 
   return (
     <>
-      <div className="px-6 py-2.5 md:hidden">
-        <H2>Checkout</H2>
-      </div>
-      <div className="flex flex-col p-6 md:px-8">
+      <div className="flex flex-col gap-2 px-6 pb-4">
         {selectedProducts.map((selectedProduct, index) => (
           <div
-            className="flex w-full items-center justify-between md:px-6 md:py-3"
+            className="flex w-full items-center justify-between gap-1 p-2"
             key={index}
           >
             <div className="flex items-center gap-4">
               <img
                 alt={selectedProduct.name}
                 src={selectedProduct.image}
-                className="size-10 rounded-[8px] border border-solid border-[#E4E4E7] bg-white object-cover object-center"
+                className="size-14 rounded-[8px] border border-zinc-200 bg-white object-cover object-center"
               />
-              <Body1>{selectedProduct.name}</Body1>
+              <Body1 className="line-clamp-1">{selectedProduct.name}</Body1>
             </div>
             <CheckoutPrice item={selectedProduct} />
           </div>
         ))}
       </div>
-      <div className="w-full px-6 md:grid md:grid-cols-2 md:px-14">
-        <div className="flex flex-col gap-6" style={{ gridColumn: 2 }}>
-          {checkoutInfo.map((ci, index) => (
-            <div className="flex justify-between gap-5 md:gap-20" key={index}>
-              <Body1 className={`${ci.text}`}>{ci.title}:</Body1>
-              <Body1 className={`${ci.text}`}>${ci.data.toFixed(2)}</Body1>
-            </div>
-          ))}
-        </div>
-      </div>
       <div
         className={cn(
-          'flex w-full flex-col-reverse items-center gap-2 md:gap-6 px-6 py-14 md:px-14 md:w-auto md:flex-row md:justify-end',
+          'flex w-full flex-col-reverse items-center p-5 border-t border-t-zinc-200 md:w-auto md:flex-row md:justify-between gap-2',
         )}
       >
         {!createCheckoutUrlMutation.isSuccess && (
           <>
-            <Button
-              variant="outline"
-              onClick={prevStep}
-              className="w-full md:w-auto"
-            >
-              Back
-            </Button>
-            <Button
-              disabled={createCheckoutUrlMutation.isPending}
-              onClick={() =>
-                createCheckoutUrlMutation.mutate({
-                  data: { products: selectedProducts },
-                })
-              }
-              className="w-full md:w-auto"
-            >
-              {createCheckoutUrlMutation.isPending ? <Spinner /> : 'Order'}
-            </Button>
+            {totals.totalSavings > 0 ? (
+              <Badge className="hidden bg-vermillion-50 px-3 py-2 md:inline-flex">
+                <Body1 className="text-vermillion-900">
+                  Checkout and save ${totals.totalSavings.toFixed(2)}
+                </Body1>
+              </Badge>
+            ) : null}
+            <div className="flex w-full flex-col items-center gap-2 md:w-auto md:flex-row">
+              <Button
+                variant="outline"
+                onClick={prevStep}
+                className="w-full md:w-auto"
+              >
+                Back
+              </Button>
+              <Button
+                disabled={createCheckoutUrlMutation.isPending}
+                onClick={() =>
+                  createCheckoutUrlMutation.mutate({
+                    data: { products: selectedProducts },
+                  })
+                }
+                className="w-full md:w-auto"
+              >
+                {createCheckoutUrlMutation.isPending ? <Spinner /> : 'Order'}
+              </Button>
+            </div>
           </>
         )}
         {createCheckoutUrlMutation.isSuccess && (
