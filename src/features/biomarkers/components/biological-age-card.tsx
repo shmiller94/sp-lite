@@ -2,12 +2,14 @@ import { Spinner } from '@/components/ui/spinner';
 import { Body1, H1, H4 } from '@/components/ui/typography';
 import { useBiomarkers } from '@/features/biomarkers/api';
 import { calculateDNAmAge } from '@/features/biomarkers/utils/calculate-dnam-age';
+import { useCurrentPatient } from '@/features/rdns/hooks/use-current-patient';
 import { useUser } from '@/lib/auth';
 import { yearsSinceDate } from '@/utils/format';
 
 export const BiologicalAgeCard = (): JSX.Element => {
   const biomarkersQuery = useBiomarkers();
   const { data: user } = useUser();
+  const { selectedPatient } = useCurrentPatient();
 
   if (biomarkersQuery.isLoading) {
     return (
@@ -20,7 +22,9 @@ export const BiologicalAgeCard = (): JSX.Element => {
   if (!biomarkersQuery.data) return <></>;
   if (!user) return <></>;
 
-  const { dateOfBirth } = user;
+  const dateOfBirth = selectedPatient
+    ? selectedPatient.dateOfBirth
+    : user.dateOfBirth;
 
   const biologicalAge = calculateDNAmAge(
     biomarkersQuery.data.biomarkers,
