@@ -9,27 +9,48 @@ import {
   GUT_MICROBIOME_ANALYSIS,
   LEGAL_DESCLAIMERS,
 } from '@/const';
-import { HealthcareService } from '@/types/api';
+import { CollectionMethodType, HealthcareService } from '@/types/api';
 import { TimelineType } from '@/types/timeline';
 
 export const getServiceTimeline = (
   healthcareService: HealthcareService | null,
+  collectionMethod: CollectionMethodType | null,
 ): TimelineType[] => {
   if (!healthcareService) return [];
 
   if (healthcareService.phlebotomy) {
     return [
-      { title: 'Pre-appointment procedures', complete: true },
+      { title: 'Test ordered', complete: true },
+      { title: 'Schedule a test appointment', complete: true },
       {
         title:
-          'Phlebotomist completes your blood draw appointment in ~15 minutes',
+          collectionMethod === 'IN_LAB'
+            ? 'Phlebotomist completes your blood draw appointment in ~15 minutes'
+            : 'At-home testing',
         complete: false,
       },
       { title: 'Test results processed within 10 days', complete: false },
-      { title: 'Results uploaded ', complete: false },
+      { title: 'Results uploaded', complete: false },
+      { title: 'Schedule a follow-up appointment', complete: false },
     ];
-  } else {
-    return [];
+  }
+
+  switch (healthcareService.name) {
+    case GUT_MICROBIOME_ANALYSIS: {
+      return [
+        { title: 'Test ordered', complete: true },
+        {
+          title: 'At-home testing',
+          complete: false,
+        },
+        { title: 'Test results processed within 2-4 weeks', complete: false },
+        { title: 'Results uploaded', complete: false },
+        { title: 'Schedule a follow-up appointment', complete: false },
+      ];
+    }
+    default: {
+      return [];
+    }
   }
 };
 
@@ -322,20 +343,17 @@ Testing for PFAS chemicals in your blood is important because:
     },
     'Heart Calcium Scan': {
       "What's measured?": `Level of calcification in coronary arteries, indicating heart disease risk.`,
-      // priceTextOverride: 'Price available on request.',
-      // extendedDescription: `A coronary calcium score measures plaque built up in heart arteries and can reasonably predict the likelihood of a future heart attack.`,
       'Why is this test important?': `Important for assessing the risk of heart disease, especially in those with risk factors but no symptoms.`,
       'Test process': `A CT scan is used, involving brief exposure to radiation.`,
       'Pre-test considerations': `Involves radiation exposure; not recommended for routine screening in low-risk individuals.`,
     },
     'Gut Microbiome Analysis': {
-      "What's measured?": `Balance of bacteria, presence of harmful organisms, diversity, and health of microbiome.`,
-      'Why is this test important?': `Helps in understanding gut health, which can impact digestion, immunity, and even mood.`,
-      'Test process': `A stool sample is collected and sent to a lab for analysis.`,
-      'Pre-test considerations': `Non-invasive but requires careful sample collection. Diet and medication can influence results.`,
+      "What's measured?": `Four main indicators of gut health will be measured. The first is a gut diversity score, indicating the breath of species which indicate a healthier gut and immune system. The second is the levels of bacteria that support metabolic health and fight inflammation. Thirdly, we will look for red flags of intestinal permeability (“leaky gut”) that may contribute to disease. The last will be any common parasites, bacteria, and fungi that can cause infection.`,
+      'Why is this test important?': `A gut microbiome analysis is essential in better understanding the bacteria that comprise your gut health. Novel research in the last decade has shown the immense impact in which gut health can not only affect digestion, but even our immune system, metabolism, and mood. This can manifest in symptoms like brain fog, fatigue, and digestive issues.`,
+      'Test process': `A testing kit will be sent to you. A mess-free sample will be required from a soiled tissue paper in the comfort of your own home. This will then be shipped to a lab and analyzed.`,
+      'Pre-test considerations': `Non-invasive but requires at-home sample collection from a soiled tissue paper. Non-invasive but requires careful sample collection. Diet and medication can influence results.`,
     },
     'Full Body MRI': {
-      // extendedDescription: `This comprehensive scan uses magnetic resonance imaging to screen for early cancer and disease across your entire body with no exposure to radiation.`,
       "What's measured?": `The Full Body MRI takes a comprehensive and detailed set of images of your major organs, including the following:
 
       ° Brain

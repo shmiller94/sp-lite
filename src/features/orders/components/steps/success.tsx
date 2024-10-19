@@ -14,7 +14,7 @@ import { getServiceTimeline } from '@/utils/service';
 
 export const Success = () => {
   const { slot, service, collectionMethod, location } = useOrder((s) => s);
-  const timeline = getServiceTimeline(service);
+  const timeline = getServiceTimeline(service, collectionMethod);
 
   const renderCalendarButton = () => {
     if (!location?.address) {
@@ -39,7 +39,7 @@ export const Success = () => {
         slot={slot}
         service={service.name}
         collectionMethod={collectionMethod}
-        className="max-w-none"
+        className="max-w-none md:max-w-[244px]"
       />
     );
   };
@@ -52,7 +52,7 @@ export const Success = () => {
         </H2>
         <Timeline timeline={timeline} />
       </div>
-      <div className="flex w-full flex-col gap-3 px-6 pb-12 md:flex-row md:justify-end md:px-14">
+      <div className="flex w-full flex-col gap-3 px-6 pb-12 md:w-auto md:flex-row md:justify-end md:px-14">
         {renderCalendarButton()}
         <DialogClose>
           <Button className="w-full md:w-auto">Done</Button>
