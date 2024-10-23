@@ -50,8 +50,6 @@ if [ "${BUILD_ENV}" == "dev" ]; then
 else
     docker buildx build --push \
         --platform=linux/arm64 \
-        -t ${AWS_ECR_URL}/${SERVICE}:makefile \
         -t ${AWS_ECR_URL}/${SERVICE}:${VERSION} \
-        -t ${AWS_ECR_URL}/${SERVICE}:${BUILD_ENV} \
         -f ./Dockerfile .
 fi

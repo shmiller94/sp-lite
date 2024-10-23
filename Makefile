@@ -20,8 +20,9 @@ AWS_ECR_URL ?= $(AWS_ACCOUNT_ID).dkr.ecr.us-east-1.amazonaws.com
 STG_DEPLOYMENT_MSG = ":large_yellow_circle: *[STG]* Deployment :large_yellow_circle:"
 PRD_DEPLOYMENT_MSG = ":large_green_circle: *[PRD]* Deployment :large_green_circle:"
 SHARED_SCRIPT=./assets/scripts/shared.sh
-DEPLOYMENT_DIR ?= ./deployment
-DOPPLER_ENV ?= dev
+DEPLOY_SCRIPT=./assets/scripts/deploy.py
+KSP_SCRIPT=./assets/scripts/ksp.sh
+DOPPLER_CONFIG ?= dev
 
 # Utility functions
 check_defined = \
@@ -69,15 +70,37 @@ build/docker/app/stg: util/login-aws-ecr
 ### Deploy
 
 .PHONY: deploy/app/stg
-deploy/app/stg: description = Deploy app to stg (staging)
-deploy/app/stg: check-doppler-token check-doppler-secrets
-	@echo "Deploying $(SERVICE) to Kubernetes..."
-	aws eks update-kubeconfig --name staging-cluster --region $(AWS_REGION) && \
-	doppler secrets substitute -p $(SERVICE) -c stg $(DEPLOYMENT_DIR)/deploy.app.yaml | \
-	sed 's|__AWS_ECR_URL__|$(AWS_ECR_URL)|g' | \
-	sed 's|__SERVICE__|$(SERVICE)|g' | \
-	sed 's|__VERSION__|$(VERSION)|g' | \
-	kubectl apply -f -
+deploy/app/stg: description = Deploy app to staging
+deploy/app/stg: prereq
+	K8S_CLUSTER=staging-cluster \
+	DOPPLER_PROJECT=superpower-app \
+	DOPPLER_CONFIG=stg \
+	DEPLOY_ENV=STG \
+	DEPLOY_CONFIG=deployment/deploy.app.yaml \
+	KSP_SERVICE=app \
+	python3 $(DEPLOY_SCRIPT) -r superpower-app -t deploy/hidden
+
+.PHONY: deploy/story/stg
+deploy/worker/stg: description = Deploy story to staging
+deploy/worker/stg: prereq
+	K8S_CLUSTER=staging-cluster \
+	DOPPLER_PROJECT=superpower-app \
+	DOPPLER_CONFIG=stg \
+	DEPLOY_ENV=STG \
+	DEPLOY_CONFIG=deployment/superpower/deploy.story.yaml \
+	KSP_SERVICE=worker \
+	python3 $(DEPLOY_SCRIPT) -r superpower-app -t deploy/hidden
+
+#.PHONY: deploy/app/stg
+#deploy/app/stg: description = Deploy app to stg (staging)
+#deploy/app/stg: check-doppler-token check-doppler-secrets
+#	@echo "Deploying $(SERVICE) to Kubernetes..."
+#	aws eks update-kubeconfig --name staging-cluster --region $(AWS_REGION) && \
+#	doppler secrets substitute -p $(SERVICE) -c stg $(DEPLOYMENT_DIR)/deploy.app.yaml | \
+#	sed 's|__AWS_ECR_URL__|$(AWS_ECR_URL)|g' | \
+#	sed 's|__SERVICE__|$(SERVICE)|g' | \
+#	sed 's|__VERSION__|$(VERSION)|g' | \
+#	kubectl apply -f -
 
 .PHONY: deploy/story/stg
 deploy/story/stg: description = Deploy story to stg (staging)
@@ -165,7 +188,7 @@ util/install: description = Fetch and install Node.js dependencies
 util/install:
 	yarn install --network-timeout=1000000
 
-# Private targets
+# ------------------- "Hidden" / non-public targets --------------------
 
 # Check if user is logged into Doppler
 .PHONY: check-doppler-token
@@ -175,10 +198,41 @@ check-doppler-token:
     	bash $(SHARED_SCRIPT) fatal "Doppler is not configured. Please log in using 'doppler login'"; \
  	fi
 
-# Check if any secrets are missing (ie. have 'no-value') in Doppler (default DOPPLER_ENV to 'dev')
+# Check if any secrets are missing (ie. have 'no-value') in Doppler
 .PHONY: check-doppler-secrets
 check-doppler-secrets:
-	@bash $(SHARED_SCRIPT) info "Checking for missing secrets ..."
-	@if doppler secrets substitute -p $(SERVICE) -c $(DOPPLER_ENV) $(DEPLOYMENT_DIR)/deploy.app.yaml | grep -B 1 "<no value>"; then \
-		bash $(SHARED_SCRIPT) fatal "Found missing secret(s) in '$(DEPLOYMENT_DIR)/deploy.app.yaml'"; \
+	@bash $(SHARED_SCRIPT) info "Checking for missing secrets in $(DEPLOY_CONFIG) ..."
+	@if doppler secrets substitute -p $(SERVICE) -c $(DOPPLER_CONFIG) $(DEPLOY_CONFIG) | grep -B 1 "<no value>"; then \
+		bash $(SHARED_SCRIPT) fatal "Found missing secret(s) in '$(DEPLOY_CONFIG)'"; \
 	fi
+
+.PHONY: prereq
+prereq:
+	@bash $(SHARED_SCRIPT) info "Checking prerequisites ..."
+	@bash $(SHARED_SCRIPT) prereq
+
+.PHONY: debug/slack
+debug/slack:
+	@bash $(SHARED_SCRIPT) info "Sending a slack message ..."
+	@TARGET=$@ bash $(SHARED_SCRIPT) notify "This is a test message"
+
+.PHONY: debug/log
+debug/log:
+	@bash $(SHARED_SCRIPT) info "Installing tools ..."
+
+.PHONY: deploy/hidden
+deploy/hidden: prereq check-doppler-secrets
+	$(call check_defined, K8S_CLUSTER DOPPLER_PROJECT DOPPLER_CONFIG DEPLOY_CONFIG DEPLOY_ENV, Variable is not set)
+	@bash $(SHARED_SCRIPT) info "Performing K8S deployment to $(DEPLOY_ENV)..."
+	aws eks update-kubeconfig --name $(K8S_CLUSTER) --region $(AWS_REGION) || (echo "Failed to update kubeconfig" && exit 1)
+	@if [ "$(DEPLOY_ENV)" = "STG" ]; then \
+		bash $(SHARED_SCRIPT) notify $(STG_DEPLOYMENT_MSG); \
+	elif [ "$(DEPLOY_ENV)" = "PRD" ]; then \
+		bash $(SHARED_SCRIPT) notify $(PRD_DEPLOYMENT_MSG); \
+	fi
+	@bash $(SHARED_SCRIPT) info "Previous image: $(shell bash $(KSP_SCRIPT) image $(KSP_SERVICE))"
+	doppler secrets substitute -p $(DOPPLER_PROJECT) -c $(DOPPLER_CONFIG) $(DEPLOY_CONFIG) | \
+	sed "s/__VERSION__/$(VERSION)/g" | \
+	sed "s/__SERVICE__/$(SERVICE)/g" | \
+	sed "s/__AWS_ECR_URL__/$(AWS_ECR_URL)/g" | \
+	kubectl apply -f -
