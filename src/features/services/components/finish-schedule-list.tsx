@@ -41,20 +41,22 @@ export const FinishScheduleList = () => {
       </div>
     );
 
-  // Step 3: Filter services where service.id is in serviceIdSet
-  const filteredServices = servicesQuery.data.services.filter((service) =>
-    draftOrders.map((o) => o.serviceId).includes(service.id),
-  );
-
   return (
     <div className="grid grid-cols-1 gap-1 sm:gap-x-3 sm:gap-y-9 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      {filteredServices.map((service) => {
-        const draftOrder = draftOrders.find((o) => o.serviceId === service.id);
+      {draftOrders.map((draftOrder) => {
+        const service = servicesQuery.data.services.find(
+          (service) => service.id === draftOrder.serviceId,
+        );
+
+        if (!service) {
+          return null;
+        }
+
         return (
           <ServiceCard
-            key={service.id}
+            key={draftOrder.id}
             service={service}
-            draftOrderId={draftOrder?.id}
+            draftOrderId={draftOrder.id}
           />
         );
       })}

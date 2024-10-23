@@ -90,7 +90,7 @@ export function Calendly(): JSX.Element {
                 data: {
                   location: location,
                   timestamp: data.start_time,
-                  status: 'PENDING' as OrderStatus,
+                  status: OrderStatus.pending,
                 },
               });
 
