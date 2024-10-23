@@ -44,9 +44,3 @@ jobs:
         run: VERSION="${{ steps.vars.outputs.sha_short }}-stg" make build/docker/app/stg
         env:
           DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
-      - name: Create tag
-        uses: mathieudutour/github-tag-action@v6.1
-        id: create_tag
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          fetch_all_tags: true
