@@ -147,7 +147,7 @@ const PlanCardFooter = ({
         variant="outline"
         onClick={() => navigate(`./plans/${orderId}`)}
       >
-        See Doctor’s Note
+        See Clinical Note
       </Button>
     </div>
   );
