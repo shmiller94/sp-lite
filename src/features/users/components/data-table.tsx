@@ -39,6 +39,10 @@ export function UsersDataTable<TData, TValue>({
     phone: false,
     dateOfBirth: false,
     createdAt: false,
+    firstName: false,
+    lastName: false,
+    stripeCustomerId: false,
+    serviceRequests: false,
   });
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
