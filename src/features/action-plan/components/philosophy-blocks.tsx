@@ -1,44 +1,11 @@
 import { ArrowRight } from 'lucide-react';
 import { ReactNode } from 'react';
 
+import { HealthGradeComponent } from '@/components/ui/health-grade';
 import { AnnualReportBiomarkersTable } from '@/features/action-plan/components/biomarkers/annual-report-biomarkers-table';
 import { BlockAccordion } from '@/features/action-plan/components/block-accordion';
 import { cn } from '@/lib/utils';
 import { Block, BlockGroup, BlockGroupItem } from '@/types/api';
-
-export const HealthGradeComponent: ({
-  grade,
-}: {
-  grade: string;
-}) => ReactNode = ({ grade }) => {
-  const backgroundColor = getHealthGradeColor(grade);
-  return (
-    <div
-      className={`${backgroundColor} flex size-[28px] shrink-0 items-center justify-center rounded-full`}
-    >
-      <span className="text-sm">{grade}</span>
-    </div>
-  );
-};
-
-const getHealthGradeColor = (grade: string): string => {
-  switch (grade) {
-    case 'A':
-      return 'bg-emerald-100';
-    case 'B':
-      return 'bg-[rgba(232,252,0,0.8)]';
-    case 'C':
-      return 'bg-[#FF68DE66]';
-    case 'D':
-      return 'bg-[#FF68DE66]';
-    case 'E':
-      return 'bg-[#FF68DE66]';
-    case 'F':
-      return 'bg-[#FF68DE66]';
-    default:
-      return 'bg-gray-200';
-  }
-};
 
 const renderItemRefs = (itemRefs: BlockGroupItem['ref']) => {
   if (!itemRefs) return null;

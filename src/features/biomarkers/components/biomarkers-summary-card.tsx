@@ -1,14 +1,15 @@
 import moment from 'moment';
 
+import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
-import { Body1, H4 } from '@/components/ui/typography';
+import { Body1, Body2, H3, H4 } from '@/components/ui/typography';
 import { useBiomarkers } from '@/features/biomarkers/api';
+import { ScoreDialog } from '@/features/biomarkers/components/score-dialog/score-dialog';
 import { biomarkerStatusCount } from '@/features/biomarkers/utils/biomarkers-status-count';
 import { useUser } from '@/lib/auth';
 
-export const BiomarkersSummaryCard = (): JSX.Element => {
+export const BiomarkersList = () => {
   const biomarkers = useBiomarkers();
-  const { data: user } = useUser();
 
   if (biomarkers.isLoading) {
     return (
@@ -20,12 +21,6 @@ export const BiomarkersSummaryCard = (): JSX.Element => {
 
   if (!biomarkers.data) return <></>;
 
-  if (!user) {
-    return <div className="md:p-16">No profile information found.</div>;
-  }
-
-  const { createdAt } = user;
-
   const numInRange = biomarkerStatusCount(biomarkers.data.biomarkers, [
     'OPTIMAL',
   ]);
@@ -36,6 +31,8 @@ export const BiomarkersSummaryCard = (): JSX.Element => {
     'HIGH',
     'LOW',
   ]);
+  const numLimited =
+    biomarkers.data.biomarkers.length - numInRange - numNormal - numOutOfRange;
 
   /*
    * https://tailwindcss.com/docs/content-configuration#dynamic-class-names
@@ -48,72 +45,65 @@ export const BiomarkersSummaryCard = (): JSX.Element => {
   const statuses = [
     {
       num: numInRange,
-      text: `text-[#00FCA1]`,
-      background: `#00FCA1`,
+      text: `text-green-500`,
       label: 'Optimal',
     },
     {
       num: numNormal,
-      text: `text-[#D7DB0E]`,
-      background: `#D7DB0E`,
+      text: `text-yellow-500`,
       label: 'Normal',
     },
     {
       num: numOutOfRange,
-      text: `text-[#FF68DE]`,
-      background: `#FF68DE`,
+      text: `text-pink-500`,
       label: 'Out of range',
+    },
+    {
+      num: numLimited,
+      text: `text-zinc-400`,
+      label: 'Limited data',
     },
   ];
 
-  const totalBiomarkerCount = statuses.reduce(
-    (acc, status) => acc + status.num,
-    0,
+  return (
+    <div className="flex flex-col">
+      {statuses.map((status, index) => (
+        <div
+          className="grid grid-cols-[1.5rem,1fr] items-baseline gap-2"
+          key={index}
+        >
+          <H3 className={`${status.text}`}>{status.num}</H3>
+          <Body2 className="line-clamp-1 text-zinc-400">{status.label}</Body2>
+        </div>
+      ))}
+    </div>
   );
+};
+
+export const BiomarkersSummaryCard = () => {
+  const { data: user } = useUser();
+
+  if (!user) {
+    return <div className="md:p-16">No profile information found.</div>;
+  }
+
+  const { createdAt } = user;
 
   return (
-    <div className="flex h-[375px] w-full flex-col justify-between rounded-3xl bg-[#18181B] p-6">
-      <div>
-        <H4 className="text-white">
-          Results as of {moment(createdAt).format('DD MMMM')}
-        </H4>
-        <Body1 className="text-zinc-600">
-          {moment(createdAt).format('YYYY')}
+    <div className="flex h-[276px] w-full flex-col items-center justify-between rounded-3xl bg-primary p-6">
+      <div className="flex flex-col items-center">
+        <H4 className="text-white">Results Summary</H4>
+        <Body1 className="text-zinc-400">
+          As of {moment(createdAt).format('DD MMM')}
         </Body1>
       </div>
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-2">
-          <div className="flex flex-col gap-1">
-            {statuses.map((status, index) => (
-              // make sure to keep it like that (refer to comment above statuses)
-              <H4 key={index} className={`${status.text} text-[18px]`}>
-                {status.num}
-              </H4>
-            ))}
-          </div>
-          <div className="flex flex-col gap-1">
-            {statuses.map((status, index) => (
-              <H4 key={index} className="text-[18px] text-zinc-400">
-                {status.label}
-              </H4>
-            ))}
-          </div>
-        </div>
-        <div className="flex w-full">
-          {totalBiomarkerCount > 0 &&
-            statuses.map((status, index) => (
-              <div
-                key={index}
-                className="flex h-full rounded-md"
-                style={{
-                  backgroundColor: status.background,
-                  width: `${(status.num / totalBiomarkerCount) * 100}%`,
-                  height: '6px',
-                  margin: '2px',
-                }}
-              />
-            ))}
-        </div>
+      <div className="flex w-full items-end justify-between">
+        <BiomarkersList />
+        <ScoreDialog>
+          <Button className="border border-zinc-700 bg-zinc-800 px-4 py-3">
+            Score Report
+          </Button>
+        </ScoreDialog>
       </div>
     </div>
   );

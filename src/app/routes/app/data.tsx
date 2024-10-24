@@ -10,6 +10,7 @@ import { getBiomarkersQueryOptions } from '@/features/biomarkers/api';
 import { BiologicalAgeCard } from '@/features/biomarkers/components/biological-age-card';
 import { BiomarkersDataTable } from '@/features/biomarkers/components/biomarkers-data-table/biomarker-data-table';
 import { BiomarkersSummaryCard } from '@/features/biomarkers/components/biomarkers-summary-card';
+import { ScoreCard } from '@/features/biomarkers/components/score-card';
 
 export const dataLoader = (queryClient: QueryClient) => async () => {
   /**
@@ -48,8 +49,9 @@ export const DataRoute = () => {
       </div>
       <section
         id="summary"
-        className="flex flex-col gap-5 pt-6 lg:flex-row lg:pb-16"
+        className="flex flex-col gap-5 pt-6 xl:flex-row xl:pb-16"
       >
+        <ScoreCard />
         <BiologicalAgeCard />
         <BiomarkersSummaryCard />
       </section>

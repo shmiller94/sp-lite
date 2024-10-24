@@ -1,22 +1,33 @@
 import { X } from 'lucide-react';
+import { ReactNode } from 'react';
 import * as React from 'react';
 
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import {
-  SheetContent,
-  SheetTrigger,
   Sheet,
   SheetClose,
+  SheetContent,
+  SheetTrigger,
 } from '@/components/ui/sheet';
 import { Body2 } from '@/components/ui/typography';
-import { BiomarkerCard } from '@/features/biomarkers/components/biomarker-card/biomarker-card';
+import { useLatestHealthScore } from '@/features/biomarkers/api/get-latest-healthscore';
+import { ScoreContent } from '@/features/biomarkers/components/score-dialog/score-content';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 
-export function BiomarkerTableDialogRow({
-  children,
-  biomarker,
-}: any): JSX.Element {
+export const ScoreDialog = ({ children }: { children: ReactNode }) => {
+  const getLatestHealthScoreQuery = useLatestHealthScore();
   const { width } = useWindowDimensions();
+
+  if (!getLatestHealthScoreQuery.data) {
+    return null;
+  }
+
+  const latestScore = getLatestHealthScoreQuery.data.healthScoreResult;
+
+  if (!latestScore) {
+    return null;
+  }
+
   if (width <= 768) {
     return (
       <Sheet>
@@ -32,7 +43,7 @@ export function BiomarkerTableDialogRow({
             <div className="min-w-[44px]" />
           </div>
           <div className="overflow-y-auto">
-            <BiomarkerCard biomarker={biomarker} />
+            <ScoreContent latestScore={latestScore} />
           </div>
         </SheetContent>
       </Sheet>
@@ -41,10 +52,11 @@ export function BiomarkerTableDialogRow({
 
   return (
     <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogTrigger>{children}</DialogTrigger>
+
       <DialogContent>
-        <BiomarkerCard biomarker={biomarker} />
+        <ScoreContent latestScore={latestScore} />
       </DialogContent>
     </Dialog>
   );
-}
+};

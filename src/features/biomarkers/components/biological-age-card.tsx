@@ -1,5 +1,5 @@
 import { Spinner } from '@/components/ui/spinner';
-import { Body1, H1, H4 } from '@/components/ui/typography';
+import { Body2, H1, H4 } from '@/components/ui/typography';
 import { useBiomarkers } from '@/features/biomarkers/api';
 import { calculateDNAmAge } from '@/features/biomarkers/utils/calculate-dnam-age';
 import { useCurrentPatient } from '@/features/rdns/hooks/use-current-patient';
@@ -37,29 +37,25 @@ export const BiologicalAgeCard = (): JSX.Element => {
 
   return (
     <div
-      className="h-[375px] w-full rounded-2xl px-8 py-12"
+      className="flex h-[276px] w-full flex-col items-center justify-between rounded-3xl p-6"
       style={{
-        backgroundImage:
-          user.gender.toUpperCase() === 'MALE'
-            ? 'url("/cards/male_stance_blurry_2.png")'
-            : 'url("/cards/female_stance_blurry.jpg")',
+        backgroundImage: 'url("/cards/age-card.webp")',
         backgroundSize: 'cover',
+        backgroundPosition: 'center',
       }}
     >
-      <div className="flex h-full flex-col justify-between space-y-20">
-        <div className="flex items-center justify-between">
-          <H4 className="text-white">Biological Age</H4>
-          <Body1 className="text-white opacity-60">superpower.com</Body1>
-        </div>
-        <div>
-          <H1 className="text-white">{biologicalAge || '--'}</H1>
-          <Body1 className="text-white/80">
-            {ageDifference !== null ? Math.abs(ageDifference) : '--'} years{' '}
-            {ageDifference && ageDifference > 0 ? 'younger' : 'older'} than your
-            chronological age
-          </Body1>
-        </div>
+      <H4 className="text-white">Biological Age</H4>
+
+      <div className="flex flex-col items-center">
+        <H1 className="text-6xl text-white">{biologicalAge || '--'}</H1>
+        <Body2 className="text-white">years old</Body2>
       </div>
+
+      <Body2 className="text-white">
+        {ageDifference !== null ? Math.abs(ageDifference) : '--'} years{' '}
+        {ageDifference && ageDifference > 0 ? 'younger' : 'older'} than your
+        actual age
+      </Body2>
     </div>
   );
 };

@@ -228,6 +228,26 @@ export type VerifyOPT = {
   success: boolean;
 };
 
+/* HEALTH SCORES */
+export type HealthScoreResult = {
+  categoryScores: {
+    prevention: CategoryScore[];
+    environmental: CategoryScore[];
+    nutrition: CategoryScore[];
+    lookAndFeel: CategoryScore[];
+  };
+  finalScore: number;
+  finalScoreStatus: string;
+};
+export type ScoreType = 'A' | 'B' | 'C' | '-';
+export type ScoreStatus = 'optimal' | 'normal' | 'out of range';
+
+export type CategoryScore = {
+  categoryName: string;
+  score: ScoreType;
+  status: ScoreStatus;
+};
+
 /* SUBSCRIPTIONS */
 
 export type SubscriptionName = 'membership';
