@@ -55,11 +55,11 @@ export const ScoreContent = ({
           blockTitle="Environmental toxins"
         />
         <ReportBlock
-          categoryScores={latestScore.categoryScores.lookAndFeel}
+          categoryScores={latestScore.categoryScores.nutrition}
           blockTitle="Nutrition & Gut"
         />
         <ReportBlock
-          categoryScores={latestScore.categoryScores.nutrition}
+          categoryScores={latestScore.categoryScores.lookAndFeel}
           blockTitle="Look & feel"
         />
       </div>

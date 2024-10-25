@@ -15,7 +15,7 @@ export const scoreBiomarker = (
       unit: 'points',
     },
     status: getStatusForScore(hs.healthScoreResult.finalScore),
-    timestamp: new Date().toISOString(),
+    timestamp: hs.createdAt,
   }));
 
   return {

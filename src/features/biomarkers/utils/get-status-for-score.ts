@@ -5,7 +5,7 @@ export const getStatusForScore = (score: number): BiomarkerStatus => {
     return 'LOW';
   } else if (score >= 60 && score < 80) {
     return 'NORMAL';
-  } else if (score > 80) {
+  } else if (score >= 80) {
     return 'OPTIMAL';
   }
 

@@ -7,7 +7,7 @@ import { HealthScoreResult } from '@/types/api';
 export type GetHealthScoresResponse = {
   healthScoreResult: HealthScoreResult;
   orderId: string;
-  timestamp: string;
+  createdAt: string;
 };
 
 export const getHealthScores = async (): Promise<{
