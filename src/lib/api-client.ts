@@ -103,7 +103,9 @@ api.interceptors.response.use(
           setActiveLogin({
             accessToken: token,
             refreshToken: tokens.data.refresh_token,
-            profile: tokens.data.profile,
+            profile: {
+              userId: tokens.data.profile.userId,
+            },
           });
 
           originalRequest.headers.Authorization = `Bearer ${token}`;

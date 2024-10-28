@@ -15,6 +15,13 @@ const createEnv = () => {
     GOOGLE_API_KEY: z.string(),
     CALENDLY_TOKEN: z.string(),
     TYPEFORM_FORM_ID: z.string(),
+    NEW_RELIC_INFO_LICENSE_KEY: z.string(),
+    NEW_RELIC_INFO_APPLICATION_ID: z.string(),
+    NEW_RELIC_LOADER_ACCOUNT_ID: z.string(),
+    NEW_RELIC_LOADER_TRUST_KEY: z.string(),
+    NEW_RELIC_LOADER_AGENT_ID: z.string(),
+    NEW_RELIC_LOADER_LICENSE_KEY: z.string(),
+    NEW_RELIC_LOADER_APPLICATION_ID: z.string(),
   });
 
   const envVars = Object.entries(import.meta.env).reduce<

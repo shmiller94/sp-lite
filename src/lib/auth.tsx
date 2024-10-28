@@ -247,7 +247,9 @@ const verifyTokens = async (tokens: TokenResponse) => {
   setActiveLogin({
     accessToken: token,
     refreshToken: tokens.refresh_token,
-    profile: tokens.profile,
+    profile: {
+      userId: tokens.profile.userId,
+    },
   });
 };
 

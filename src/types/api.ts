@@ -75,7 +75,7 @@ export type TokenResponse = {
   access_token: string;
   refresh_token: string;
   expires_in: number;
-  profile: User;
+  profile: { userId: string };
 };
 
 /**
@@ -92,7 +92,7 @@ export enum OAuthGrantType {
 }
 
 export type LoginState = {
-  profile: User;
+  profile: { userId: string };
   accessToken: string;
   refreshToken: string;
 };
