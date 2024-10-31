@@ -89,12 +89,14 @@ const SectionServices = () => {
 
   let services = servicesQuery.data?.services;
 
-  services = services?.filter(
-    (service) =>
-      service.name === GRAIL_GALLERI_MULTI_CANCER_TEST ||
-      service.name === GUT_MICROBIOME_ANALYSIS ||
-      service.name === TOTAL_TOXIN_TEST,
-  );
+  services = services
+    ?.filter(
+      (service) =>
+        service.name === GRAIL_GALLERI_MULTI_CANCER_TEST ||
+        service.name === GUT_MICROBIOME_ANALYSIS ||
+        service.name === TOTAL_TOXIN_TEST,
+    )
+    .filter((s) => s.active === true);
 
   return (
     <section id="services" className="w-full max-w-[500px] space-y-8">

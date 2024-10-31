@@ -29,16 +29,16 @@ export const US_STATE_CODES: string[] = [
   'NE', // Nebraska
   'NV', // Nevada
   'NH', // New Hampshire
-  // 'NJ', // New Jersey // Temporarily blocked because Vital dddoes not support
+  'NJ', // New Jersey
   'NM', // New Mexico
-  //'NY', // New York // Temporarily blocked because Vital does not support
+  'NY', // New York
   'NC', // North Carolina
   'ND', // North Dakota
   'OH', // Ohio
   'OK', // Oklahoma
   'OR', // Oregon
   'PA', // Pennsylvania
-  // 'RI', // Rhode Island // Temporarily blocked because Vital dddoes not support
+  // 'RI', // Rhode Island // Temporarily blocked because Vital does not support
   'SC', // South Carolina
   'SD', // South Dakota
   'TN', // Tennessee
