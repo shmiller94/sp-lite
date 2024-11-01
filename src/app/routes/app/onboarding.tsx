@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { steps } from '@/features/onboarding/components/steps';
 import { EVENT_SPECIAL_CODE } from '@/features/onboarding/const/special-code';
+import { useSyncOnboardingStorage } from '@/features/onboarding/hooks/use-sync-onboarding-storage';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import { useUser } from '@/lib/auth';
 import { StepperStoreProvider, useStepper } from '@/lib/stepper';
@@ -43,6 +44,13 @@ export const OnboardingRoute = () => {
   const { data: user } = useUser({});
   const navigate = useNavigate();
   const updateCollectionMethod = useOnboarding((s) => s.updateCollectionMethod);
+
+  /**
+   * We introduce this to try to fix the bug where we dont update local storage
+   *
+   * This will fetch most recent draft order and update local storage with ID and collection method
+   */
+  useSyncOnboardingStorage();
 
   useEffect(() => {
     if (!user) return;
