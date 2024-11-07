@@ -63,7 +63,7 @@ export function CouponCodeAccessForm({
     /**
      * Otherwise use rewardfulCoupon if present
      */
-    if (rewardfulCoupon) {
+    if (!code && rewardfulCoupon) {
       setAccessCode(rewardfulCoupon);
       setIsRewardful(true);
       return;
