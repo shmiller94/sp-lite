@@ -9,7 +9,6 @@ import {
   setActiveLogin,
 } from '@/lib/utils';
 import { OAuthGrantType, TokenResponse, User } from '@/types/api';
-import { parseJWTPayload } from '@/utils/jwt';
 
 function authRequestInterceptor(config: InternalAxiosRequestConfig) {
   if (config.headers) {
@@ -91,14 +90,6 @@ api.interceptors.response.use(
           );
 
           const token = tokens.data.access_token;
-
-          // Verify token has not expired
-          const tokenPayload = parseJWTPayload(token);
-          if (Date.now() >= (tokenPayload.exp as number) * 1000) {
-            clearActiveLogin();
-            window.location.reload();
-            throw new Error('Token expired');
-          }
 
           setActiveLogin({
             accessToken: token,

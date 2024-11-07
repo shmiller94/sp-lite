@@ -48,7 +48,6 @@ export function stringify(value: any, pretty?: boolean): string {
 }
 
 export const setActiveLogin = (login: LoginState) => {
-  clearActiveLogin();
   setLocalStorageObject('activeLogin', login);
 };
 
