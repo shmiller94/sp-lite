@@ -32,7 +32,7 @@ export const Schedule = () => {
               rel="noreferrer"
               className="flex flex-row items-center space-x-1 text-sm text-[#FC5F2B]"
             >
-              <span>full list of biomarkers test here</span>
+              <span>full list of biomarkers tested here</span>
               <ArrowUpRight className="size-4" />
             </a>
           </div>
