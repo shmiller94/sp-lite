@@ -28,7 +28,12 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>): JSX.Element {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [sorting, setSorting] = React.useState<SortingState>([
+    {
+      desc: true,
+      id: 'uploadedAt',
+    },
+  ]);
   const { width } = useWindowDimensions();
   const table = useReactTable({
     data,
