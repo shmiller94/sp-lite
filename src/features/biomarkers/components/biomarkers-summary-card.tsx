@@ -3,6 +3,7 @@ import moment from 'moment';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { Body1, Body2, H3, H4 } from '@/components/ui/typography';
+import { SUPERPOWER_BLOOD_PANEL } from '@/const';
 import { useBiomarkers } from '@/features/biomarkers/api';
 import { ScoreDialog } from '@/features/biomarkers/components/score-dialog/score-dialog';
 import { biomarkerStatusCount } from '@/features/biomarkers/utils/biomarkers-status-count';
@@ -86,30 +87,23 @@ export const BiomarkersSummaryCard = () => {
 
   const orders = data?.orders.filter(
     (o) =>
-      o.status === OrderStatus.completed && o.name === 'Superpower Blood Panel',
+      o.status === OrderStatus.completed && o.name === SUPERPOWER_BLOOD_PANEL,
   );
 
-  if (orders === undefined || orders.length === 0) {
-    return <div className="md:p-16">Results not available yet.</div>;
-  }
-
-  const dates = orders.map((obj) => {
-    const date = new Date(obj.timestamp);
-    if (isNaN(date.getTime())) {
-      throw new Error('Invalid date format detected');
-    }
-    return date.getTime();
-  });
-
-  const latestDate = new Date(Math.max.apply(null, dates));
+  // we have this filter: orderBy: [{ createdAt: 'desc' }] on backend for orders
+  const mostRecentOrder = orders?.[0];
 
   return (
     <div className="flex h-[276px] w-full flex-col items-center justify-between rounded-3xl bg-primary p-6">
       <div className="flex flex-col items-center">
         <H4 className="text-white">Results Summary</H4>
-        <Body1 className="text-zinc-400">
-          As of {moment(latestDate).format('DD MMM')}
-        </Body1>
+        {mostRecentOrder ? (
+          <Body1 className="text-zinc-400">
+            As of {moment(mostRecentOrder.timestamp).format('DD MMM')}
+          </Body1>
+        ) : (
+          <Body1 className="text-zinc-400">Not available yet.</Body1>
+        )}
       </div>
       <div className="flex w-full items-end justify-between">
         <BiomarkersList />
