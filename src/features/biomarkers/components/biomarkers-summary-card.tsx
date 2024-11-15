@@ -6,7 +6,8 @@ import { Body1, Body2, H3, H4 } from '@/components/ui/typography';
 import { useBiomarkers } from '@/features/biomarkers/api';
 import { ScoreDialog } from '@/features/biomarkers/components/score-dialog/score-dialog';
 import { biomarkerStatusCount } from '@/features/biomarkers/utils/biomarkers-status-count';
-import { useUser } from '@/lib/auth';
+import { useOrders } from '@/features/orders/api';
+import { OrderStatus } from '@/types/api';
 
 export const BiomarkersList = () => {
   const biomarkers = useBiomarkers();
@@ -81,20 +82,33 @@ export const BiomarkersList = () => {
 };
 
 export const BiomarkersSummaryCard = () => {
-  const { data: user } = useUser();
+  const { data } = useOrders();
 
-  if (!user) {
-    return <div className="md:p-16">No profile information found.</div>;
+  const orders = data?.orders.filter(
+    (o) =>
+      o.status === OrderStatus.completed && o.name === 'Superpower Blood Panel',
+  );
+
+  if (orders === undefined || orders.length === 0) {
+    return <div className="md:p-16">Results not available yet.</div>;
   }
 
-  const { createdAt } = user;
+  const dates = orders.map((obj) => {
+    const date = new Date(obj.timestamp);
+    if (isNaN(date.getTime())) {
+      throw new Error('Invalid date format detected');
+    }
+    return date.getTime();
+  });
+
+  const latestDate = new Date(Math.max.apply(null, dates));
 
   return (
     <div className="flex h-[276px] w-full flex-col items-center justify-between rounded-3xl bg-primary p-6">
       <div className="flex flex-col items-center">
         <H4 className="text-white">Results Summary</H4>
         <Body1 className="text-zinc-400">
-          As of {moment(createdAt).format('DD MMM')}
+          As of {moment(latestDate).format('DD MMM')}
         </Body1>
       </div>
       <div className="flex w-full items-end justify-between">
