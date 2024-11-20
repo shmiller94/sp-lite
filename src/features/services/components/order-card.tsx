@@ -44,14 +44,14 @@ export function OrderCard(order: Order) {
         <div className="flex items-center justify-between">
           <OrderCardFeatureImage imagePath={service.image} />
           <div className="block md:hidden">
-            <OrderCardBadge {...order} />
+            <OrderCardBadge order={order} />
           </div>
         </div>
         <div className="flex w-full flex-col justify-between">
           <div className="flex justify-between">
             <Body1 className="line-clamp-1">{service.name}</Body1>
             <div className="hidden md:block">
-              <OrderCardBadge {...order} />
+              <OrderCardBadge order={order} />
             </div>
           </div>
           <OrderCardDetails {...order} />
@@ -61,7 +61,8 @@ export function OrderCard(order: Order) {
   );
 }
 
-function OrderCardBadge({ id, name, status, timestamp }: Order): JSX.Element {
+function OrderCardBadge({ order }: { order: Order }): JSX.Element {
+  const { id, name, status, timestamp } = order;
   const { checkAdminActorAccess } = useAuthorization();
   const { mutateAsync } = useCancelOrder({
     mutationConfig: {
@@ -94,6 +95,7 @@ function OrderCardBadge({ id, name, status, timestamp }: Order): JSX.Element {
       className="w-fit select-none"
       variant={status.toLowerCase() as any}
       actions={actions}
+      order={order}
     />
   );
 }

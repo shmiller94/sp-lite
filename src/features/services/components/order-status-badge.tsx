@@ -1,6 +1,8 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 import { ChevronDown } from 'lucide-react';
+import { toast } from 'sonner';
 
+import { FileUpload } from '@/components/shared/upload-wrapper';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -8,7 +10,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown';
+import { useCreateFile } from '@/features/files/api';
+import { useCompleteOrder } from '@/features/orders/api/complete-order';
+import { useAuthorization } from '@/lib/authorization';
 import { cn } from '@/lib/utils';
+import { Order } from '@/types/api';
 import { capitalize } from '@/utils/format';
 
 const orderStatusBadgeVariants = cva(
@@ -31,12 +37,14 @@ export interface OrderStatusBadgeProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof orderStatusBadgeVariants> {
   actions: { label: string; onClick: () => void }[];
+  order: Order;
 }
 
 export const OrderStatusBadge = ({
   actions,
   className,
   variant,
+  order,
   ...props
 }: OrderStatusBadgeProps): JSX.Element => {
   if (!variant) throw Error('OrderStatusBadge variant was not provided.');
@@ -65,17 +73,37 @@ export const OrderStatusBadge = ({
           ) : null}
         </div>
       </DropdownMenuTrigger>
-      <OrderCardActions actions={actions} />
+      <OrderCardActions actions={actions} order={order} />
     </DropdownMenu>
   );
 };
 
 function OrderCardActions({
+  order,
   actions,
 }: {
+  order: Order;
   actions?: { label: string; onClick: () => void }[];
 }) {
+  const { checkAdminActorAccess } = useAuthorization();
+  const { mutateAsync: createFile } = useCreateFile({
+    mutationConfig: {
+      onSuccess: () => {
+        toast.success('Added file!');
+      },
+    },
+  });
+  const { mutate: completeOrder } = useCompleteOrder({
+    mutationConfig: {
+      onSuccess: () => {
+        toast.success('Completed order!');
+      },
+    },
+  });
+
   if (!actions || actions.length === 0) return <></>;
+
+  const isAdmin = checkAdminActorAccess();
 
   return (
     <DropdownMenuContent align="end" className="w-[30px]">
@@ -84,6 +112,20 @@ function OrderCardActions({
           {action.label}
         </DropdownMenuItem>
       ))}
+      {isAdmin && (
+        <FileUpload
+          onChange={async (files) => {
+            const file = files[0];
+            const spFile = await createFile({ data: { file } });
+            completeOrder({
+              data: { fileId: spFile.file.id },
+              orderId: order.id,
+            });
+          }}
+        >
+          <DropdownMenuItem>Upload file</DropdownMenuItem>
+        </FileUpload>
+      )}
     </DropdownMenuContent>
   );
 }
