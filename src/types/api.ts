@@ -51,6 +51,73 @@ export interface User extends BaseUser {
   userIdentity?: UserIdentity;
   role: UserRole[];
   rdn?: Rdn;
+  typeforms?: TypeformWebhook[]; // weird I know, but we do not have a typeform DTO at the moment.
+}
+
+export interface TypeformWebhook {
+  SCORES: { name: string; id: string }[];
+  formResponse: FormResponse;
+  userId: string;
+  formId: string;
+}
+
+export interface FormResponse {
+  form_id: string;
+  submitted_at: string;
+  event_type: string;
+  token: string;
+  calculated?: {
+    score?: number;
+  };
+  hidden: {
+    email: string;
+    user_id: string;
+  };
+  answers: Answer[];
+  definition: {
+    fields: Field[];
+    title: string;
+    endings: any[];
+  };
+}
+
+export interface Field {
+  id: string;
+  ref: string;
+  type: string;
+  title: string;
+  choices?: Choice[];
+}
+
+export interface Choice {
+  id: string;
+  ref: string;
+  label: string;
+}
+
+export interface Answer {
+  type: string;
+  field: {
+    id: string;
+    ref: string;
+    type: string;
+    title?: string;
+  };
+  text?: string;
+  choice?: {
+    id: string;
+    ref: string;
+    label: string;
+  };
+  choices?: {
+    ids: string[];
+    refs: string[];
+    labels: string[];
+  };
+  boolean?: string;
+  number?: number;
+  description?: string;
+  question: string;
 }
 
 export type ActiveAddress = Entity<{

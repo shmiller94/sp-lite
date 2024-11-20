@@ -1,9 +1,8 @@
-import { differenceInYears, parseISO } from 'date-fns';
 import { PersonStanding, X } from 'lucide-react';
+import moment from 'moment';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { DotIcon } from '@/components/icons/dot';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -16,7 +15,7 @@ import { Body1 } from '@/components/ui/typography';
 import { useRdnPatients } from '@/features/rdns/api/get-rdn-patients';
 import { useCurrentPatient } from '@/features/rdns/hooks/use-current-patient';
 import { cn } from '@/lib/utils';
-import { capitalize } from '@/utils/format';
+import { User } from '@/types/api';
 
 export const PatientSelector = () => {
   const { pathname } = useLocation();
@@ -34,19 +33,34 @@ export const PatientSelector = () => {
 
   const shouldHide = hiddenPaths.some((path) => pathname.includes(path));
 
-  const {
-    hasAllowedRole,
-    fullPatientName,
-    selectedPatient,
-    setPatient,
-    removePatient,
-  } = useCurrentPatient(() => setOpen(false));
+  const { hasAllowedRole, selectedPatient, setPatient, removePatient } =
+    useCurrentPatient(() => setOpen(false));
 
   const { data } = useRdnPatients({
     queryConfig: {
       enabled: hasAllowedRole,
     },
   });
+
+  const formatPatient = (p: User | undefined) => {
+    if (!p) {
+      return '';
+    }
+
+    const birthDate = moment(p.dateOfBirth.split('T')[0]).format('MMM D, YYYY');
+    const gender = p.gender.charAt(0);
+
+    return (
+      <>
+        <Body1 className="text-zinc-500">
+          {p.firstName} {p.lastName}{' '}
+          <span className="text-zinc-400">
+            ({gender}) - {birthDate}
+          </span>
+        </Body1>
+      </>
+    );
+  };
 
   const filteredUsers = data?.patients.filter((p) =>
     `${p.firstName} ${p.lastName}`
@@ -70,7 +84,7 @@ export const PatientSelector = () => {
           <div
             className={cn(
               'flex w-full items-center gap-2 max-w-[400px]',
-              selectedPatient ? 'max-w-[458px]' : null,
+              selectedPatient ? 'max-w-[600px]' : null,
             )}
           >
             <Button
@@ -85,7 +99,7 @@ export const PatientSelector = () => {
                 <Body1 className="text-zinc-500">Member</Body1>
               </div>
               <Separator orientation="vertical" className="h-5" />
-              <Body1>{fullPatientName}</Body1>
+              {formatPatient(selectedPatient)}
             </Button>
             {selectedPatient ? (
               <Button
@@ -98,7 +112,7 @@ export const PatientSelector = () => {
             ) : null}
           </div>
         </PopoverTrigger>
-        <PopoverContent className="w-auto rounded-xl border border-zinc-50 p-0 shadow-xl sm:w-[400px]">
+        <PopoverContent className="w-auto rounded-xl border border-zinc-50 p-0 shadow-xl sm:w-[460px]">
           <div className="flex items-center gap-1 px-6 py-3">
             <Input
               className="rounded-none border-0 p-0 caret-vermillion-900 shadow-none focus-visible:bg-white focus-visible:ring-0"
@@ -116,12 +130,6 @@ export const PatientSelector = () => {
           </div>
           <div className="max-h-[200px] overflow-y-auto p-2">
             {filteredUsers?.map((p) => {
-              const gender = capitalize(p.gender.toLowerCase());
-              const age = differenceInYears(
-                new Date(),
-                parseISO(p.dateOfBirth),
-              );
-
               return (
                 <div
                   role="presentation"
@@ -132,13 +140,7 @@ export const PatientSelector = () => {
                     selectedPatient?.id === p.id ? 'bg-zinc-100' : null,
                   )}
                 >
-                  <Body1 className="text-zinc-500">
-                    {p.firstName} {p.lastName}
-                  </Body1>
-                  <DotIcon />
-                  <Body1 className="text-zinc-400">
-                    {gender}, {age}
-                  </Body1>
+                  {formatPatient(p)}
                 </div>
               );
             })}
