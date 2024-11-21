@@ -57,12 +57,10 @@ export const AnnualReportComponent = () => {
       <CoreMonitoredIssues
         title={'Monitored issues'}
         goalType={'ANNUAL_REPORT_PRIMARY'}
-        className={REPORT_STYLE}
       />
       <CoreMonitoredIssues
         title={'Your protocol'}
         goalType={'ANNUAL_REPORT_PROTOCOLS'}
-        className={REPORT_STYLE}
       />
       <ConsultationCard className={REPORT_STYLE} />
       <RecommendedItems className={REPORT_STYLE} />

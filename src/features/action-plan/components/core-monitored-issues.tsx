@@ -7,6 +7,8 @@ import { usePlan } from '@/features/action-plan/stores/plan-store';
 import { cn } from '@/lib/utils';
 import { PlanGoalType } from '@/types/api';
 
+const REPORT_STYLE = 'space-y-8 rounded-3xl bg-white p-8 shadow-md md:p-12';
+
 export const CoreMonitoredIssues: ({
   title,
   className,
@@ -27,7 +29,7 @@ export const CoreMonitoredIssues: ({
   }
 
   return (
-    <div className={cn(className)}>
+    <div className={cn(className, REPORT_STYLE)}>
       <H2>{title}</H2>
       {goals.map((goal, idx) => (
         <ActionPlanGoal

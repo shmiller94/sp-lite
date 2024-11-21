@@ -28,6 +28,38 @@ import { parseInitialContent } from '../../utils/parse-initial-content';
 import { defaultExtensions } from './extensions';
 import { slashCommand, suggestionItems } from './slash-command';
 
+interface Node {
+  type: string;
+  content?: Node[];
+  text?: string;
+  marks?: any[];
+}
+
+interface TipTapContent {
+  type: string;
+  content?: Node[];
+}
+
+function hasContent(content: TipTapContent | null | undefined): boolean {
+  if (!content?.content) return false;
+  function hasContentNode(node: Node): boolean {
+    // If it has non-empty text, it has content
+    if (node.text && node.text.trim().length > 0) {
+      return true;
+    }
+    // If it's a meaningful node type, it has content
+    if (['image', 'horizontalRule', 'hardBreak'].includes(node.type)) {
+      return true;
+    }
+    // Check children recursively
+    if (node.content) {
+      return node.content.some(hasContentNode);
+    }
+    return false;
+  }
+  return content.content.some(hasContentNode);
+}
+
 const extensions = [...defaultExtensions, slashCommand];
 
 interface BlockEditorProps {
@@ -57,12 +89,7 @@ export const BlockEditor = ({
   }, ACTION_PLAN_EDITOR_SAVE_DELAY);
 
   // If no content, do not render to resolve spacing issues.
-  if (
-    !isAdmin &&
-    content?.content.length === 1 &&
-    (content?.content[0]?.content?.length === undefined ||
-      content?.content[0]?.content?.length === 0)
-  ) {
+  if (!isAdmin && !hasContent(content)) {
     return <div className="h-4"></div>;
   }
 

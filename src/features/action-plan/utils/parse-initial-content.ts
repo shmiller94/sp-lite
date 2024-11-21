@@ -23,7 +23,7 @@ export const parseInitialContent = (initialContent: string) => {
             child.type === 'text'
               ? {
                   ...child,
-                  text: initialContent || "Start writing patient's notes here",
+                  text: initialContent || '',
                 }
               : child,
           ),
