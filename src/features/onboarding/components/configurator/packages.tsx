@@ -19,7 +19,7 @@ const packages: Package[] = [
   // superpower blood panel service
   {
     displayName: 'Baseline',
-    description: '65 biomarkers',
+    description: '100+ biomarkers',
     price: 0,
     type: 'BASELINE',
   },
