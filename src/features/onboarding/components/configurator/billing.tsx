@@ -7,6 +7,7 @@ import {
 } from '@stripe/react-stripe-js';
 import { StripeElementStyle, StripeError } from '@stripe/stripe-js';
 import { FormEvent, useState } from 'react';
+import { toast } from 'sonner';
 
 import { ConsentInfo } from '@/components/shared/consent-info';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -59,6 +60,10 @@ export const SectionBilling = () => {
 
   const handleSubmit = async (event: FormEvent) => {
     if (!user) return;
+    if (!consentGiven) {
+      toast.warning('You need to give consent first!');
+      return;
+    }
     // We don't want to let default form submission happen here,
     // which would refresh the page.
     event.preventDefault();
