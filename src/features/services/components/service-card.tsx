@@ -30,7 +30,12 @@ const DesktopCard = ({
   service: HealthcareService;
   draftOrder?: Order;
 }) => {
-  const schedulingLinkQuery = useGetSchedulingLink();
+  const schedulingLinkQuery = useGetSchedulingLink({
+    queryConfig: {
+      enabled: service.name === ADVISORY_CALL,
+    },
+  });
+
   const noSchedulingLink =
     service.name === ADVISORY_CALL &&
     (!schedulingLinkQuery.data?.link || schedulingLinkQuery.data.link === '');
@@ -55,6 +60,7 @@ const DesktopCard = ({
       <Button
         variant="white"
         className="border border-zinc-200 px-5 py-3 hover:bg-white/30"
+        disabled={schedulingLinkQuery.isLoading}
       >
         {schedulingLinkQuery.isLoading ? (
           <Spinner variant="primary" />
