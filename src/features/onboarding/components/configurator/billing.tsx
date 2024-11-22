@@ -17,11 +17,13 @@ import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import {
   useAddPaymentMethod,
   useCreateSubscription,
+  useMembershipPrice,
 } from '@/features/settings/api';
 import { useUser } from '@/lib/auth';
 import { useStepper } from '@/lib/stepper';
 import { cn } from '@/lib/utils';
 
+import { trackSubscription } from '../../utils/gtm';
 // TODO: bring into reusable components
 const STRIPE_INPUT_STYLE: { style: StripeElementStyle } = {
   style: {
@@ -57,6 +59,10 @@ export const SectionBilling = () => {
   const consentGiven = useOnboarding((s) => s.consentGiven);
   const setConsentGiven = useOnboarding((s) => s.setConsentGiven);
   const nextOnboardingStep = useStepper((s) => s.nextOnboardingStep);
+  const code = localStorage.getItem('superpower-code');
+  const membershipQuery = useMembershipPrice({
+    code: code ?? undefined,
+  });
 
   const handleSubmit = async (event: FormEvent) => {
     if (!user) return;
@@ -103,14 +109,22 @@ export const SectionBilling = () => {
         return;
       }
 
-      await createSubscriptionMutation.mutateAsync({
+      const subscription = await createSubscriptionMutation.mutateAsync({
         data: {
-          code: localStorage.getItem('superpower-code') ?? undefined,
+          code: code ?? undefined,
           referralId: (window as any)?.Rewardful?.referral,
         },
       });
 
-      await nextOnboardingStep(user.onboarding.id);
+      if (subscription) {
+        // Track but don't await or let errors bubble up
+        try {
+          trackSubscription(membershipQuery.data);
+        } catch (e) {
+          console.error('Failed to track subscription:', e);
+        }
+        await nextOnboardingStep(user.onboarding.id);
+      }
     } catch (e) {
       setProcessing(false);
       return;
