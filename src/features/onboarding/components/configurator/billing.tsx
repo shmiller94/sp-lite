@@ -6,6 +6,7 @@ import {
   useStripe,
 } from '@stripe/react-stripe-js';
 import { StripeElementStyle, StripeError } from '@stripe/stripe-js';
+import { motion } from 'framer-motion';
 import { FormEvent, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -133,7 +134,28 @@ export const SectionBilling = () => {
 
   return (
     <div className="space-y-8">
-      <H2 className="text-zinc-900">Payment</H2>
+      <div className="flex items-center justify-between gap-2">
+        <H2 className="text-zinc-900">Payment</H2>
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{
+            type: 'spring',
+            stiffness: 300,
+            damping: 20,
+            delay: 0.3,
+          }}
+          className={cn(
+            'text-xs font-medium w-fit',
+            'px-2.5 py-0.5 rounded-full',
+            'bg-gradient-to-r from-vermillion-500/10 via-vermillion-200/10 to-vermillion-900/10',
+            'text-vermillion-900',
+            'ring-1 ring-vermillion-500',
+          )}
+        >
+          Billed annually
+        </motion.div>
+      </div>
       <form onSubmit={handleSubmit} className="grid gap-8" id="billingForm">
         <div className="space-y-2">
           <Label
