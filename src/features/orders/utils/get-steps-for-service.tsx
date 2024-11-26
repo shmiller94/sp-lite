@@ -22,7 +22,6 @@ import { HealthcareService } from '@/types/api';
 import {
   ConfirmAddress,
   EarlyAccessContent,
-  InviteFriend,
   Success,
   OrderSummary,
   Calendly,
@@ -65,7 +64,7 @@ export const getStepsFromService = (
         { id: StepID.SCHEDULER, content: <PhlebotomyScheduler /> },
         { id: StepID.SUMMARY, content: <OrderSummary /> },
         { id: StepID.SUCCESS, content: <Success /> },
-        { id: StepID.REFERRAL, content: <InviteFriend /> },
+        // { id: StepID.REFERRAL, content: <InviteFriend /> },
       ];
     case GRAIL_GALLERI_MULTI_CANCER_TEST:
       return [
@@ -75,7 +74,7 @@ export const getStepsFromService = (
         { id: StepID.SCHEDULER, content: <PhlebotomyScheduler /> },
         { id: StepID.SUMMARY, content: <OrderSummary /> },
         { id: StepID.SUCCESS, content: <Success /> },
-        { id: StepID.REFERRAL, content: <InviteFriend /> },
+        // { id: StepID.REFERRAL, content: <InviteFriend /> },
       ];
     case ENVIRONMENTAL_TOXINS:
       return [
@@ -85,7 +84,7 @@ export const getStepsFromService = (
         { id: StepID.CONFIRM_ADDRESS, content: <ConfirmAddress /> },
         { id: StepID.SUMMARY, content: <OrderSummary /> },
         { id: StepID.SUCCESS, content: <Success /> },
-        { id: StepID.REFERRAL, content: <InviteFriend /> },
+        // { id: StepID.REFERRAL, content: <InviteFriend /> },
       ];
     case CONTINUOUS_GLUCOSE_MONITOR:
     case GUT_MICROBIOME_ANALYSIS:
@@ -95,7 +94,7 @@ export const getStepsFromService = (
         { id: StepID.CONFIRM_ADDRESS, content: <ConfirmAddress /> },
         { id: StepID.SUMMARY, content: <OrderSummary /> },
         { id: StepID.SUCCESS, content: <Success /> },
-        { id: StepID.REFERRAL, content: <InviteFriend /> },
+        // { id: StepID.REFERRAL, content: <InviteFriend /> },
       ];
     case FULL_BODY_MRI:
     case VO2_MAX_TEST:
@@ -109,15 +108,6 @@ export const getStepsFromService = (
     case ADVISORY_CALL: {
       const haveRdn = dataLink && dataLink !== '';
 
-      // If user have assigned RDN and draftOrderId was passed (finish order)
-      if (haveRdn) {
-        return [
-          { id: StepID.CALENDLY, content: <Calendly /> },
-          { id: StepID.SUCCESS, content: <Success /> },
-          { id: StepID.REFERRAL, content: <InviteFriend /> },
-        ];
-      }
-
       // If user has assigned RDN and draftOrderId was not passed (fresh order)
       if (haveRdn) {
         return [
@@ -125,7 +115,7 @@ export const getStepsFromService = (
           { id: StepID.SUMMARY, content: <OrderSummary /> },
           { id: StepID.CALENDLY, content: <Calendly /> },
           { id: StepID.SUCCESS, content: <Success /> },
-          { id: StepID.REFERRAL, content: <InviteFriend /> },
+          // { id: StepID.REFERRAL, content: <InviteFriend /> },
         ];
       }
 
@@ -142,7 +132,7 @@ export const getStepsFromService = (
         { id: StepID.CONFIRM_ADDRESS, content: <ConfirmAddress /> },
         { id: StepID.SUMMARY, content: <OrderSummary /> },
         { id: StepID.SUCCESS, content: <Success /> },
-        { id: StepID.REFERRAL, content: <InviteFriend /> },
+        // { id: StepID.REFERRAL, content: <InviteFriend /> },
       ];
 
     default:
