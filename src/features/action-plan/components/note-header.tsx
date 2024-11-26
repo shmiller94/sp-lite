@@ -48,7 +48,7 @@ export const ClinicianNoteHeader = () => {
       });
     }
 
-    navigate('/', { replace: true });
+    navigate(-1);
   };
 
   return (

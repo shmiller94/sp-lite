@@ -1,29 +1,22 @@
 import { X } from 'lucide-react';
 import moment from 'moment-timezone';
-import { ReactNode, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetTrigger,
-} from '@/components/ui/sheet';
+import { SheetClose, SheetContent } from '@/components/ui/sheet';
 import { H3, H4, Body2 } from '@/components/ui/typography';
 import { useCurrentPatient } from '@/features/rdns/hooks/use-current-patient';
 import { sortTypeformAnswers } from '@/lib/utils';
 import { FormResponse } from '@/types/api';
-
-interface TypeformModalProps {
-  children: ReactNode;
-}
 
 const QAItem = ({
   question,
@@ -52,16 +45,26 @@ const QAItem = ({
   </div>
 );
 
-export const TypeformModal = ({ children }: TypeformModalProps) => {
+export const TypeformModal = () => {
   const { selectedPatient: patient, typeforms } = useCurrentPatient();
 
   const [selectedFormId, setSelectedFormId] = useState<string | undefined>(
-    typeforms && typeforms[0]?.formId,
+    undefined,
   );
 
-  const selectedForm = typeforms?.find(
-    (form) => form.formId === selectedFormId,
-  );
+  useEffect(() => {
+    if (typeforms && typeforms.length > 0) {
+      setSelectedFormId(typeforms[0].formId);
+    } else {
+      setSelectedFormId(undefined);
+    }
+  }, [typeforms]);
+
+  if (!typeforms || !patient) {
+    return null;
+  }
+
+  const selectedForm = typeforms.find((form) => form.formId === selectedFormId);
 
   // TODO: move the association of question to answers to the backend ~ MG 2024-11-13
   const displayAnswers = (formResponse: FormResponse) => {
@@ -119,142 +122,138 @@ export const TypeformModal = ({ children }: TypeformModalProps) => {
   };
 
   return (
-    <Sheet>
-      <SheetTrigger asChild>{children}</SheetTrigger>
-      <SheetContent className="flex size-full flex-col rounded-none shadow-lg">
-        <div className="flex items-center justify-between border-b p-4">
-          <div className="flex items-center space-x-4">
-            <p className="text-lg font-semibold text-zinc-800">
-              Typeform Responses
-            </p>
-            <Select
-              value={selectedFormId}
-              onValueChange={(value) => setSelectedFormId(value)}
-            >
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Select Form" />
-              </SelectTrigger>
-              <SelectContent>
-                {typeforms?.map((form) => (
+    <SheetContent className="flex max-h-full flex-col rounded-t-[10px]">
+      <div className="flex items-center justify-between border-b p-4">
+        <div className="flex items-center space-x-4">
+          <p className="text-lg font-semibold text-zinc-800">
+            Typeform Responses
+          </p>
+          <Select
+            value={selectedFormId}
+            onValueChange={(value) => setSelectedFormId(value)}
+          >
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Select Form" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {!typeforms.length ? (
+                  <SelectLabel>No typeforms found!</SelectLabel>
+                ) : null}
+                {typeforms.map((form) => (
                   <SelectItem key={form.formId} value={form.formId}>
                     {form.formResponse.definition.title}
                   </SelectItem>
                 ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <SheetClose>
-            <Button className="flex items-center justify-center rounded-full bg-gray-200 p-2 hover:bg-gray-300">
-              <X className="size-5 text-zinc-700" />
-            </Button>
-          </SheetClose>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
 
-        {/* Modal Body */}
-        <div className="max-h-[calc(100vh-150px)] overflow-y-auto p-4">
-          {selectedForm ? (
-            <div>
-              <div className="mb-4 border bg-vermillion-300 p-4">
-                <H3 className="text-center">
-                  {selectedForm.formResponse.definition.title}
-                </H3>
-                <div className="mt-4 flex">
-                  <div className="w-1/2">
-                    <div className="mb-2 flex">
-                      <span className="w-auto pr-2 font-bold text-zinc-800">
-                        Patient Name:
-                      </span>
-                      <p className="font-bold text-zinc-800">
-                        {patient?.firstName} {patient?.lastName} (
-                        {patient?.gender.charAt(0)})
-                      </p>
-                    </div>
-                    <div className="mb-2 flex">
-                      <span className="w-auto pr-2 font-bold text-zinc-800">
-                        Patient DOB:
-                      </span>
-                      <p className="font-bold text-zinc-800">
-                        {moment(patient?.dateOfBirth).format('MMMM D, YYYY')}{' '}
-                        <span className="text-sm text-zinc-600">
-                          (Age: {moment().diff(patient?.dateOfBirth, 'years')})
-                        </span>
-                      </p>
-                    </div>
-                    <div className="mb-2 flex">
-                      <span className="w-auto pr-2 font-bold text-zinc-800">
-                        Patient Email:
-                      </span>
-                      <p className="font-bold text-zinc-800">
-                        {patient?.email}
-                      </p>
-                    </div>
-                    <div className="mb-2 flex">
-                      <span className="w-auto pr-2 font-bold text-zinc-800">
-                        Patient ID:
-                      </span>
-                      <p className="font-bold text-zinc-800">{patient?.id}</p>
-                    </div>
-                    <div className="mb-2 flex">
-                      <span className="w-auto pr-2 font-bold text-zinc-800">
-                        Calculated Score:
-                      </span>
-                      <p className="font-bold text-zinc-800">
-                        {selectedForm.formResponse.calculated?.score ?? 'N/A'}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="w-1/2">
-                    <div className="mb-2 flex">
-                      <span className="w-auto pr-2 font-bold text-zinc-800">
-                        Form ID:
-                      </span>
-                      <p className="font-bold text-zinc-800">
-                        {selectedForm.formId}
-                      </p>
-                    </div>
-                    <div className="mb-2 flex">
-                      <span className="w-auto pr-2 font-bold text-zinc-800">
-                        Submitted At:
-                      </span>
-                      <p className="font-bold text-zinc-800">
-                        {moment(selectedForm.formResponse.submitted_at).format(
-                          'MMMM Do YYYY, h:mm:ss a',
-                        )}
-                      </p>
-                    </div>
-                    <div className="mb-2 flex">
-                      <span className="w-auto pr-2 font-bold text-zinc-800">
-                        Event Type:
-                      </span>
-                      <p className="font-bold text-zinc-800">
-                        {selectedForm.formResponse.event_type}
-                      </p>
-                    </div>
+        <SheetClose asChild>
+          <Button className="flex items-center justify-center rounded-full bg-gray-200 p-2 hover:bg-gray-300">
+            <X className="size-5 text-zinc-700" />
+          </Button>
+        </SheetClose>
+      </div>
 
-                    <div className="mb-2 flex">
-                      <span className="w-auto pr-2 font-bold text-zinc-800">
-                        Token:
-                      </span>
-                      <p className="font-bold text-zinc-800">
-                        {selectedForm.formResponse.token}
-                      </p>
-                    </div>
-                  </div>
+      {selectedForm ? (
+        <div className="overflow-auto">
+          <div className="mb-4 border bg-vermillion-300 p-4">
+            <H3 className="text-center">
+              {selectedForm.formResponse.definition.title}
+            </H3>
+            <div className="mt-4 flex">
+              <div className="w-1/2">
+                <div className="mb-2 flex">
+                  <span className="w-auto pr-2 font-bold text-zinc-800">
+                    Patient Name:
+                  </span>
+                  <p className="font-bold text-zinc-800">
+                    {patient.firstName} {patient.lastName} (
+                    {patient.gender.charAt(0)})
+                  </p>
+                </div>
+                <div className="mb-2 flex">
+                  <span className="w-auto pr-2 font-bold text-zinc-800">
+                    Patient DOB:
+                  </span>
+                  <p className="font-bold text-zinc-800">
+                    {moment(patient.dateOfBirth).format('MMMM D, YYYY')}{' '}
+                    <span className="text-sm text-zinc-600">
+                      (Age: {moment().diff(patient?.dateOfBirth, 'years')})
+                    </span>
+                  </p>
+                </div>
+                <div className="mb-2 flex">
+                  <span className="w-auto pr-2 font-bold text-zinc-800">
+                    Patient Email:
+                  </span>
+                  <p className="font-bold text-zinc-800">{patient.email}</p>
+                </div>
+                <div className="mb-2 flex">
+                  <span className="w-auto pr-2 font-bold text-zinc-800">
+                    Patient ID:
+                  </span>
+                  <p className="font-bold text-zinc-800">{patient.id}</p>
+                </div>
+                <div className="mb-2 flex">
+                  <span className="w-auto pr-2 font-bold text-zinc-800">
+                    Calculated Score:
+                  </span>
+                  <p className="font-bold text-zinc-800">
+                    {selectedForm.formResponse.calculated?.score ?? 'N/A'}
+                  </p>
                 </div>
               </div>
+              <div className="w-1/2">
+                <div className="mb-2 flex">
+                  <span className="w-auto pr-2 font-bold text-zinc-800">
+                    Form ID:
+                  </span>
+                  <p className="font-bold text-zinc-800">
+                    {selectedForm.formId}
+                  </p>
+                </div>
+                <div className="mb-2 flex">
+                  <span className="w-auto pr-2 font-bold text-zinc-800">
+                    Submitted At:
+                  </span>
+                  <p className="font-bold text-zinc-800">
+                    {moment(selectedForm.formResponse.submitted_at).format(
+                      'MMMM Do YYYY, h:mm:ss a',
+                    )}
+                  </p>
+                </div>
+                <div className="mb-2 flex">
+                  <span className="w-auto pr-2 font-bold text-zinc-800">
+                    Event Type:
+                  </span>
+                  <p className="font-bold text-zinc-800">
+                    {selectedForm.formResponse.event_type}
+                  </p>
+                </div>
 
-              <div>
-                <p className="mb-1 text-lg font-semibold text-zinc-800">
-                  Answers:
-                </p>
-                {displayAnswers(selectedForm.formResponse)}
+                <div className="mb-2 flex">
+                  <span className="w-auto pr-2 font-bold text-zinc-800">
+                    Token:
+                  </span>
+                  <p className="font-bold text-zinc-800">
+                    {selectedForm.formResponse.token}
+                  </p>
+                </div>
               </div>
             </div>
-          ) : (
-            <Body2>No Typeform responses available.</Body2>
-          )}
+          </div>
+
+          <div className="p-4">
+            <p className="mb-1 text-lg font-semibold text-zinc-800">Answers:</p>
+            {displayAnswers(selectedForm.formResponse)}
+          </div>
         </div>
-      </SheetContent>
-    </Sheet>
+      ) : (
+        <Body2 className="p-4">No Typeform responses available.</Body2>
+      )}
+    </SheetContent>
   );
 };
