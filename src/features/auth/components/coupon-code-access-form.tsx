@@ -47,6 +47,7 @@ export function CouponCodeAccessForm({
 
   useEffect(() => {
     const rewardfulCoupon = (window as any).Rewardful?.coupon?.id;
+    const rewardfulCode = searchParams.get('rewardfulCode') || rewardfulCoupon;
 
     /**
      * TODO: change order here after EVENT
@@ -63,8 +64,8 @@ export function CouponCodeAccessForm({
     /**
      * Otherwise use rewardfulCoupon if present
      */
-    if (!code && rewardfulCoupon) {
-      setAccessCode(rewardfulCoupon);
+    if (!code && rewardfulCode) {
+      setAccessCode(rewardfulCode);
       setIsRewardful(true);
       return;
     }
