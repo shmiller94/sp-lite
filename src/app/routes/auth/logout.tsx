@@ -18,7 +18,7 @@ export const LogoutRoute = () => {
 
     // remove patient if RDN selected it before
     if (selectedPatient) {
-      removePatient();
+      removePatient(false);
     }
     // kill access / refresh tokens so user wont be refetched immidiately
     clearActiveLogin();

@@ -93,7 +93,7 @@ export const PatientSelector = () => {
               <Button
                 variant="ghost"
                 className="rounded-full border border-zinc-200 bg-white p-4 shadow-lg"
-                onClick={removePatient}
+                onClick={() => removePatient()}
               >
                 <X />
               </Button>

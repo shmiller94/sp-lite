@@ -10,7 +10,7 @@ type UseCurrentPatientProps = {
   selectedPatient: User | undefined;
   typeforms: TypeformWebhook[] | undefined;
   setPatient: (patient: User) => void;
-  removePatient: () => void;
+  removePatient: (shouldRefetch?: boolean) => void;
 };
 
 /**
@@ -58,9 +58,12 @@ export const useCurrentPatient = (
     }
   };
 
-  const removePatient = () => {
+  const removePatient = (shouldRefetch: boolean = true) => {
     removePatientFromStore();
-    queryClient.refetchQueries();
+
+    if (shouldRefetch) {
+      queryClient.refetchQueries();
+    }
   };
 
   return {
