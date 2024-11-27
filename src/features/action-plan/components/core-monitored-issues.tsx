@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import { H2 } from '@/components/ui/typography';
 import { ActionPlanGoal } from '@/features/action-plan/components/action-plan-goal';
 import { usePlan } from '@/features/action-plan/stores/plan-store';
@@ -31,13 +32,36 @@ export const CoreMonitoredIssues: ({
   return (
     <div className={cn(className, REPORT_STYLE)}>
       <H2>{title}</H2>
+      {title.toLowerCase().includes('your protocol') && (
+        <p className="text-zinc-500">
+          Based on your action plan your clinician recommends you do the
+          following:
+        </p>
+      )}
+      {title.toLowerCase().includes('monitored issues') && (
+        <p className="text-zinc-500">
+          We map your action plan to our core pillars of functional health and
+          longevity.{' '}
+          <a
+            href="https://superpower.com/editorial/superpower-baseline-recommendations"
+            className="text-vermillion-900"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Read More
+          </a>
+        </p>
+      )}
       {goals.map((goal, idx) => (
-        <ActionPlanGoal
-          key={goal.id}
-          goal={goal}
-          goalIndex={idx}
-          className="mt-8"
-        />
+        <>
+          <ActionPlanGoal
+            key={goal.id}
+            goal={goal}
+            goalIndex={idx}
+            className="mt-8"
+          />
+          {idx !== goals.length - 1 && <Separator />}
+        </>
       ))}
       {isAdmin && (
         <div className="my-6">

@@ -34,7 +34,7 @@ export const AnnualReportComponent = () => {
   }
 
   return (
-    <div className="mb-10 w-full max-w-[728px] space-y-2.5">
+    <div className="mb-10 w-full max-w-[768px] space-y-2.5">
       <div className={REPORT_STYLE}>
         <Input
           type="text"

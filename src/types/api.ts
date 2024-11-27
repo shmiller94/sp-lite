@@ -640,6 +640,7 @@ export type Product = {
   price: number;
   url: string;
   discount: number;
+  type?: string;
 };
 
 export type ProductOrder = {
