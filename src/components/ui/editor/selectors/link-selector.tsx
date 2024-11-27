@@ -21,7 +21,7 @@ export function isValidUrl(url: string) {
 export function getUrlFromString(str: string) {
   if (isValidUrl(str)) return str;
   try {
-    if (str.includes('.') && !str.includes(' ')) {
+    if ((str.includes('.') || !str.startsWith('http')) && !str.includes(' ')) {
       return new URL(`https://${str}`).toString();
     }
   } catch (_e) {
