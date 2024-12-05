@@ -249,7 +249,14 @@ export function TimeSeriesChart({
             fontSize: '12px',
             fontWeight: '500',
           },
-          formatter: function () {
+          formatter: function (this) {
+            // hide label on projected point (placeholder)
+            if (
+              showsFuturePoint &&
+              this.key?.toString() === (seriesData.length - 1).toString()
+            )
+              return '';
+
             return this.y?.toFixed(1); // Format the value to 1 decimal place
           },
         },
@@ -269,7 +276,7 @@ export function TimeSeriesChart({
         pointerEvents: 'auto',
       },
       formatter: function (this) {
-        const isPlaceholder = (this.point as any).placeholder;
+        const isPlaceholder = (this.point as any).isPlaceholder;
         const [integerPart, decimalPart = '0'] =
           this.y?.toString().split('.') || [];
 
