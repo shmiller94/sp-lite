@@ -26,7 +26,6 @@ export function toChartPlotBands(
             verticalAlign: 'top',
             y: 14,
             x: -20,
-            // x: 20,
             style: {
               color: '#26936B',
             },

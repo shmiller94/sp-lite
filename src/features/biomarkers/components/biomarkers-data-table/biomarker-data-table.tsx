@@ -1,7 +1,7 @@
 import { ColumnFiltersState, VisibilityState } from '@tanstack/react-table';
 import React from 'react';
 
-import { Spinner } from '@/components/ui/spinner';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useBiomarkers } from '@/features/biomarkers/api';
 import { Biomarker } from '@/types/api';
 
@@ -24,8 +24,15 @@ export function BiomarkersDataTable(
 
   if (isLoading) {
     return (
-      <div className="flex h-48 w-full items-center justify-center">
-        <Spinner variant="primary" size="md" />
+      <div className="space-y-8">
+        <Skeleton className="h-[120px] w-full rounded-2xl" />
+        <div className="space-y-3">
+          {Array(12)
+            .fill(0)
+            .map((_, i) => (
+              <Skeleton className="h-[104px] w-full rounded-2xl" key={i} />
+            ))}
+        </div>
       </div>
     );
   }
@@ -38,7 +45,6 @@ export function BiomarkersDataTable(
     <DataTable
       columns={columns}
       data={props?.biomarkers ? props.biomarkers : biomarkersData.biomarkers}
-      loading={isLoading}
       {...props}
     />
   );

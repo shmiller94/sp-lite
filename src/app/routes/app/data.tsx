@@ -1,4 +1,3 @@
-import { QueryClient } from '@tanstack/react-query';
 import { Database } from 'lucide-react';
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -6,30 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { ContentLayout } from '@/components/layouts';
 import { Button } from '@/components/ui/button';
 import { Body1, H1 } from '@/components/ui/typography';
-import { getBiomarkersQueryOptions } from '@/features/biomarkers/api';
-import { BiologicalAgeCard } from '@/features/biomarkers/components/biological-age-card';
 import { BiomarkersDataTable } from '@/features/biomarkers/components/biomarkers-data-table/biomarker-data-table';
-import { BiomarkersSummaryCard } from '@/features/biomarkers/components/biomarkers-summary-card';
-import { ScoreCard } from '@/features/biomarkers/components/score-card';
-
-export const dataLoader = (queryClient: QueryClient) => async () => {
-  /**
-   * Loads biomarkers only when the current URL does not include '/data'.
-   * Biomarkers page is quite heavy and thus we want loading animations to happen directly in component rather then prefetch
-   *
-   * A bit hacky, any other solutions are welcome via PR =)
-   */
-  if (window.location.pathname.includes('/data')) {
-    return null;
-  }
-
-  const query = getBiomarkersQueryOptions();
-
-  return (
-    queryClient.getQueryData(query.queryKey) ??
-    (await queryClient.fetchQuery(query))
-  );
-};
+import { DataCards } from '@/features/biomarkers/components/data-cards';
 
 export const DataRoute = () => {
   const navigate = useNavigate();
@@ -47,14 +24,7 @@ export const DataRoute = () => {
           <Body1 className="text-zinc-500">Health records</Body1>
         </Button>
       </div>
-      <section
-        id="summary"
-        className="flex flex-col gap-5 pt-6 xl:flex-row xl:pb-16"
-      >
-        <ScoreCard variant="biomarkers" />
-        <BiologicalAgeCard variant="biomarkers" />
-        <BiomarkersSummaryCard variant="biomarkers" />
-      </section>
+      <DataCards />
       <section id="data">
         <BiomarkersDataTable />
       </section>

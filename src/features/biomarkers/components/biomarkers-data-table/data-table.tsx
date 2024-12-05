@@ -9,11 +9,11 @@ import {
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table';
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
-import { Spinner } from '@/components/ui/spinner';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
   TableBody,
@@ -33,10 +33,9 @@ import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 import { cn } from '@/lib/utils';
 import { Biomarker } from '@/types/api';
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-  loading: boolean;
+interface DataTableProps {
+  columns: ColumnDef<Biomarker>[];
+  data: Biomarker[];
   columnFilters?: ColumnFiltersState;
   columnVisibility?: VisibilityState;
   disableToolbar?: boolean;
@@ -44,35 +43,98 @@ interface DataTableProps<TData, TValue> {
   cellClassName?: string;
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable({
   columns,
   data,
-  loading,
   columnFilters = [],
   columnVisibility,
   disableToolbar = false,
   disableHeader = false,
   cellClassName = '',
-}: DataTableProps<TData, TValue>): JSX.Element {
+}: DataTableProps): JSX.Element {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [filters, onColumnFiltersChange] =
     useState<ColumnFiltersState>(columnFilters);
+  const [isFiltering, setIsFiltering] = useState(false);
   const { width } = useWindowDimensions();
 
   const visibility = columnVisibility
     ? columnVisibility
     : {
         category: false,
+        orderId: false,
         status: width > 1280,
         range: width > 1024,
         value: width > 1024,
       };
 
+  /**
+   * Callback to handle column filter changes
+   */
+  const handleColumnFiltersChange = useCallback(
+    (
+      updater:
+        | ColumnFiltersState
+        | ((prev: ColumnFiltersState) => ColumnFiltersState),
+    ) => {
+      setIsFiltering(true);
+      onColumnFiltersChange(updater);
+    },
+    [],
+  );
+
+  /**
+   * This cleans up filtering set by handler above (handleColumnFiltersChange)
+   */
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+    if (isFiltering) {
+      timer = setTimeout(() => {
+        setIsFiltering(false);
+      }, 600); // 600ms delay
+    }
+
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [isFiltering]);
+
   const healthcareServices = useServices({});
 
+  /**
+   * Since we dont have any better way right now to get this data from server, we manually filter data array we get
+   *
+   * This is not too bad as we also optimize # of calls we make to server
+   */
+  const filteredData = useMemo(() => {
+    const orderFilter = filters.find(
+      (filter) => filter.id === 'orderId',
+    )?.value;
+
+    if (orderFilter) {
+      return data
+        .map((biomarker) => ({
+          ...biomarker,
+          value: biomarker.value.filter(
+            (result) => result.orderId === orderFilter,
+          ),
+        }))
+        .filter((biomarker) => biomarker.value.length > 0);
+    }
+
+    return data;
+  }, [filters]);
+
   const table = useReactTable({
-    data,
-    columns,
+    data: filteredData,
+    columns: isFiltering
+      ? columns.map((column) => ({
+          ...column,
+          cell: () => <Skeleton className="h-[48px] w-full" />,
+        }))
+      : columns,
     state: {
       sorting,
       columnFilters: filters,
@@ -80,7 +142,7 @@ export function DataTable<TData, TValue>({
     },
     onSortingChange: setSorting,
     getFilteredRowModel: getFilteredRowModel(),
-    onColumnFiltersChange: onColumnFiltersChange,
+    onColumnFiltersChange: handleColumnFiltersChange,
     getSortedRowModel: getSortedRowModel(),
     getCoreRowModel: getCoreRowModel(),
   });
@@ -195,15 +257,6 @@ export function DataTable<TData, TValue>({
         </div>
       ) : null}
       {getTabContent()}
-      {loading ? <ResultsLoading loading={loading} /> : null}
-    </div>
-  );
-}
-
-function ResultsLoading({ loading }: { loading: boolean }): JSX.Element {
-  return (
-    <div className="flex h-24 items-center justify-center text-center text-gray-400">
-      {loading ? <Spinner /> : <span>No results available.</span>}
     </div>
   );
 }

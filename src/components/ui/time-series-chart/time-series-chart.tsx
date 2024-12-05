@@ -1,56 +1,32 @@
-import Highcharts from 'highcharts';
-import highchartsMore from 'highcharts/highcharts-more.js';
-import highchartsItems from 'highcharts/modules/item-series.js';
-import { HighchartsReact } from 'highcharts-react-official';
+import * as Highcharts from 'highcharts';
+import HighchartsReact from 'highcharts-react-official';
 import moment from 'moment';
-import React from 'react';
+import React, { useRef } from 'react';
 
+import { Body1 } from '@/components/ui/typography';
 import { Biomarker, Range } from '@/types/api';
-import { ChartPoint } from '@/types/charts';
 
+import { ChartColor, ChartPoint } from './types';
 import {
   toChartPoint,
-  calculateYMin,
   calculateYMax,
   toChartPlotLines,
   toChartPlotBands,
+  constructZones,
 } from './utils';
-
-if (typeof Highcharts === 'object') {
-  highchartsMore(Highcharts);
-  highchartsItems(Highcharts);
-}
 
 export type TimeSeriesChartProps = {
   biomarker: Biomarker;
 };
 
-export enum ChartColor {
-  GREY = '#EDEEF1',
-  GREEN = '#11C182',
-  YELLOW = '#D7DB0E',
-  RED = '#FF68DE',
-}
-
-export enum PlotBandColor {
-  GREY = '#71717A',
-  WHITE = '#FFFFFF',
-  BLACK = '#000000',
-}
-
-/*
- * This component is real mess and needs to be reengineered from zero
- *
- * We are still using it because we don't have a lot of time for refactor
- * */
 export function TimeSeriesChart({
   biomarker,
 }: TimeSeriesChartProps): JSX.Element {
   const { range, value } = biomarker;
+  const chartComponentRef = useRef<HighchartsReact.RefObject>(null);
+  const data = value.map(toChartPoint);
 
-  let data = value.map(toChartPoint);
-
-  const min = calculateYMin(value, range);
+  const min = 0;
   const max = calculateYMax(value, range);
 
   const normalRange: Range | undefined = biomarker.range.find(
@@ -63,6 +39,8 @@ export function TimeSeriesChart({
       return range.status.toUpperCase() === 'OPTIMAL';
     },
   );
+
+  const zones = constructZones(biomarker.range);
 
   let softMin = -Infinity;
   let softMax = Infinity;
@@ -83,17 +61,6 @@ export function TimeSeriesChart({
   const plotLines = toChartPlotLines(range);
   const plotBands = toChartPlotBands(range);
 
-  const today = new Date();
-  const lastWeek = new Date();
-  lastWeek.setDate(lastWeek.getDate() - 7);
-
-  const placeholderData: ChartPoint[] = [
-    { y: null as any, x: today.getTime() },
-    { y: null as any, x: lastWeek.getTime() },
-  ];
-
-  data = data.length ? data : placeholderData;
-
   data.sort((a, b) => new Date(a.x).getTime() - new Date(b.x).getTime());
   if (data.length === 1) {
     const laterDate = new Date(data[0].x);
@@ -101,37 +68,34 @@ export function TimeSeriesChart({
     data.push({
       ...data[0],
       x: laterDate.getTime(),
-      placeholder: true,
+      isPlaceholder: true,
     });
   }
 
-  const orderedDates = data.map((pt) => pt.x);
-  const showsFuturePoint = data.find((pt) => pt.placeholder);
+  const showsFuturePoint = data.find((pt) => pt.isPlaceholder);
 
-  // map the data into points formatted for
-  const seriesData = data.map((pt: ChartPoint, i) => ({
-    x: i,
-    y: pt.y,
-    date: new Date(pt.x).toISOString().split('T')[0],
-    marker: pt.placeholder ? { fillColor: '#c6c6c6' } : undefined,
-  }));
+  const seriesData = data.map((pt: ChartPoint, i) => {
+    return {
+      x: i,
+      y: pt.y,
+      marker: pt.isPlaceholder ? { fillColor: '#c6c6c6' } : undefined,
+      isPlaceholder: pt.isPlaceholder,
+    };
+  });
 
-  let mainSeriesData = seriesData;
-  let lastSegmentData: ChartPoint[] = [];
-  if (showsFuturePoint) {
-    // Create two series: one for all points except the last segment, and one for the last segment
-    mainSeriesData = seriesData.slice(0, -1);
-    lastSegmentData = seriesData.slice(-2);
-  }
+  const ColorStatus = {
+    [ChartColor.GREEN]: 'Optimal',
+    [ChartColor.RED]: 'Out of Range',
+    [ChartColor.YELLOW]: 'Normal',
+    [ChartColor.GREY]: 'Pending',
+  };
 
   const options: Highcharts.Options = {
     chart: {
       backgroundColor: undefined,
       borderWidth: 0,
-      // position: 'inherit',
       type: 'line',
       height: 400,
-      // skipClone: true,
       spacing: [0, 0, 0, 0],
       events: {
         render: () => {
@@ -166,36 +130,6 @@ export function TimeSeriesChart({
     credits: {
       enabled: false,
     },
-    xAxis: {
-      tickPixelInterval: 110,
-      type: 'category',
-      labels: {
-        enabled: !!data.length,
-        formatter: function (this: any) {
-          return `<div style="text-align: center;"><span style="color: #71717A; font-size: 18px;">${moment(
-            orderedDates[this.value], // to display how we want, the x value is the array index (not the date itself)
-          ).format(
-            'MMM DD',
-          )}</span><br /><span style="color: #A1A1AA; font-size: 14px;">${moment(
-            orderedDates[this.value],
-          ).format('YYYY')}</span></div>`;
-        },
-        useHTML: true,
-        style: {
-          color: PlotBandColor.BLACK,
-          fontSize: '14px',
-          opacity: 0.4,
-        },
-      },
-      ordinal: false,
-      tickmarkPlacement: 'on',
-      // gridLineDashStyle: 'Dot',
-      // gridLineWidth: 1,
-      // gridLineColor: PlotBandColor.GREY,
-      lineWidth: 0,
-      lineColor: 'rgb(0,0,0,0.5)',
-      gridZIndex: 0,
-    },
     yAxis: {
       visible: true,
       min,
@@ -204,30 +138,18 @@ export function TimeSeriesChart({
       startOnTick: false,
       labels: {
         enabled: false,
-        // style: {
-        //   color: dark ? PlotBandColor.WHITE : PlotBandColor.BLACK,
-        //   fontSize: '12px',
-        //   opacity: 0.5,
-        //   lineWidth: 0,
-        // },
       },
-      title: {
-        text: undefined,
-        style: {
-          color: 'black',
-        },
-      },
+      title: undefined,
       lineWidth: 0,
       lineColor: 'rgb(0,0,0,0.5)',
       gridLineWidth: 0,
       minorGridLineWidth: 0,
+      // lines that go from data points on Y axes
       plotLines: plotLines.concat([
         {
           color: ChartColor.GREY,
-          // '#E4E4E7', // Color value
           dashStyle: 'Dash', // Style of the plot line. Default to solid
-          value: isFinite(min) ? min : 0, // Value of where the line will appear
-          width: 1, // Width of the line
+          value: min,
           zIndex: 5,
         },
       ]),
@@ -270,156 +192,130 @@ export function TimeSeriesChart({
         },
       ]),
     },
+    xAxis: {
+      tickPixelInterval: 110,
+      type: 'category',
+      labels: {
+        enabled: !!data.length,
+        formatter: function (this) {
+          const date = moment(data[Number(this.value)].x);
+          const dm = date.format('MMM DD');
+          const yr = date.format('YYYY');
+
+          return `<div class="text-center">
+              <h2 class="text-[18px] font-sans text-zinc-500">${dm}</h2>
+              <p class="text-xs font-sans text-zinc-400">${yr}</p>
+            </div>`;
+        },
+        useHTML: true,
+      },
+      ordinal: false,
+      tickmarkPlacement: 'on',
+      lineWidth: 0,
+      lineColor: 'rgb(0,0,0,0.5)',
+      gridZIndex: 0,
+    },
+
     legend: {
       enabled: false,
     },
     plotOptions: {
+      line: {
+        states: {
+          hover: {
+            halo: {
+              size: 16,
+            },
+          },
+        },
+      },
       series: {
-        lineWidth: 6,
         dashStyle: showsFuturePoint ? 'Dash' : undefined,
         shadow: false,
-        // lineColor: 'silver',
         marker: {
-          radius: 8,
-          symbol: 'circle',
-          lineColor: 'white',
+          radius: 7,
           lineWidth: 4,
           states: {
             hover: {
-              lineWidth: 8,
-              lineColor: 'green',
+              radiusPlus: 1,
             },
           },
-          // borderRadius: 4,
         },
         dataLabels: {
           enabled: true,
           padding: 14,
-          // You can customize data label properties here
-          formatter: function (this) {
-            if (
-              showsFuturePoint &&
-              this.key?.toString() === (seriesData.length - 1).toString()
-            )
-              return '';
-
-            return `<span>${this.y?.toString().split('.')[0]}</span><span style="color: grey;">.${
-              this.y?.toString().split('.')[1] || '0'
-            }</span>`;
-          },
-          useHTML: true,
-          // format: '{y}', // Display the Y-axis value as the label
           style: {
-            color: 'black',
-            fontSize: '14px',
+            color: '#18181B',
+            fontSize: '12px',
             fontWeight: '500',
           },
+          formatter: function () {
+            return this.y?.toFixed(1); // Format the value to 1 decimal place
+          },
         },
-        borderColor: 'white',
-        borderWidth: 4,
-        // fillOpacity: 0.25,
       },
     },
     tooltip: {
-      enabled: false,
+      enabled: true,
+      shape: 'rect',
+      useHTML: true,
+      backgroundColor: 'white',
+      borderWidth: 0,
+      borderRadius: 10,
+      padding: 0,
+      hideDelay: 0,
+      shadow: false,
+      style: {
+        pointerEvents: 'auto',
+      },
+      formatter: function (this) {
+        const isPlaceholder = (this.point as any).placeholder;
+        const [integerPart, decimalPart = '0'] =
+          this.y?.toString().split('.') || [];
+
+        if (isPlaceholder) {
+          return `
+       <div class="shadow bg-white flex flex-col gap-2.5 items-center pb-4 pt-[18px] px-4 rounded-md font-sans">
+        <p class="text-zinc-500">Schedule your<br /> annual re-test</p>
+        <button class="bg-primary text-white px-4 py-2.5 rounded-lg"><a href="/services">Book now</a></button>
+      </div>
+    `;
+        }
+        return `
+      <div class="shadow bg-white flex flex-row gap-x-2 py-2 px-4 rounded-md font-sans text-primary">
+        <div class="rounded-full size-3" style="background: ${this.color};"></div>
+        <p>${ColorStatus[this.color as ChartColor]}</p>
+        <p>${integerPart}.${decimalPart}</p>
+        <p class="text-zinc-500">${biomarker.unit}</p>
+      </div>
+    `;
+      },
     },
     series: [
-      // Last segment series in grey (with all hover effects disabled)
       {
-        data: showsFuturePoint ? lastSegmentData : [],
-        color: '#C6C6C6',
-        lineWidth: 3,
-        enableMouseTracking: false,
-        stickyTracking: false,
-        states: {
-          hover: {
-            enabled: false,
-          },
-          inactive: {
-            opacity: 1,
-          },
-        },
-        marker: {
-          states: {
-            hover: {
-              enabled: false,
-            },
-            select: {
-              enabled: false,
-            },
-          },
-        },
+        data: seriesData,
+        zoneAxis: 'y',
+        zones,
+        lineWidth: 2,
         threshold: null,
-        type: 'line',
-        zIndex: 1,
-      },
-      // Main series with colored zones
-      {
-        data: mainSeriesData,
-        zIndex: 2,
-        zones: [
-          {
-            value: softMin,
-            color: isFinite(softMin) ? ChartColor.RED : ChartColor.GREY,
-          },
-          normalRange?.low?.value &&
-          optimalRange?.low?.value &&
-          normalRange?.low?.value < optimalRange?.low?.value
-            ? {
-                value: optimalRange?.low?.value,
-                color: ChartColor.YELLOW,
-              }
-            : undefined,
-          {
-            value: optimalRange?.high?.value ?? softMax,
-            color:
-              (optimalRange?.high?.value ?? softMax) !== undefined
-                ? ChartColor.GREEN
-                : ChartColor.GREY,
-          },
-          optimalRange?.high?.value
-            ? {
-                value: softMax,
-                color:
-                  isFinite(softMin) || isFinite(softMax)
-                    ? ChartColor.YELLOW
-                    : ChartColor.GREY,
-              }
-            : undefined,
-          {
-            color: isFinite(softMax) ? ChartColor.RED : ChartColor.GREY,
-          },
-        ].filter(
-          (z) => z !== undefined,
-        ) as Highcharts.SeriesZonesOptionsObject[],
-        color: 'silver',
-        lineWidth: 3,
-        states: {
-          hover: {
-            enabled: false,
-          },
-        },
-        threshold: null,
-        // tooltip: {
-        //   // fontFamily: 'Stationery, Helvetica, Arial, sans-serif',
-        //   headerFormat: undefined,
-        //   pointFormat: `{point.y} ${unit || ''}`,
-        // },
         type: 'line',
       },
     ],
   };
 
-  if (showsFuturePoint) {
-    options.plotOptions!.series!.dashStyle = 'Dash';
-  }
-
-  if (!data.length && (!isFinite(max) || !isFinite(min))) {
+  if (!biomarker.value.length) {
     return (
-      <div className="flex size-full items-center justify-center bg-white pt-5">
-        <p className="text-black opacity-50">No data yet</p>
+      <div className="flex h-[400px] w-full flex-col items-center justify-center gap-2 bg-white">
+        <Body1 className="text-zinc-500">No data yet</Body1>
       </div>
     );
   }
-  return <HighchartsReact highcharts={Highcharts} options={options} />;
+
+  return (
+    <HighchartsReact
+      highcharts={Highcharts}
+      options={options}
+      ref={chartComponentRef}
+    />
+  );
 }

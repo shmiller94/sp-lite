@@ -18,9 +18,15 @@ type UseAffiliateLinksOptions = {
   queryConfig?: QueryConfig<typeof getAffiliateLinksQueryOptions>;
 };
 
-export const useAffiliateLinks = ({
-  queryConfig,
-}: UseAffiliateLinksOptions = {}) => {
+/**
+ * We enable only in prod because its not available in staging
+ * @param queryConfig
+ */
+export const useAffiliateLinks = (
+  { queryConfig }: UseAffiliateLinksOptions = {
+    queryConfig: { enabled: import.meta.env.PROD },
+  },
+) => {
   return useQuery({
     ...getAffiliateLinksQueryOptions(),
     ...queryConfig,

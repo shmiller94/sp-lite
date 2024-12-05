@@ -7,15 +7,15 @@ import { Biomarker, MetadataContent } from '@/types/api';
 
 import { BiomarkerTimeSeriesChart } from '../charts/biomarker-time-series-chart';
 
-import { BiomarkerCardFooter } from './biomarker-card-footer';
-import { BiomarkerCardHeader } from './biomarker-card-header';
-import { BiomarkerCardMetadata } from './biomarker-card-metadata';
+import { BiomarkerDialogFooter } from './biomarker-dialog-footer';
+import { BiomarkerDialogHeader } from './biomarker-dialog-header';
+import { BiomarkerDialogMetadata } from './biomarker-dialog-metadata';
 
 export interface BiomarkerDetailsProps {
   biomarker: Biomarker | undefined;
 }
 
-export function BiomarkerCard({
+export function BiomarkerDialog({
   biomarker,
 }: BiomarkerDetailsProps): JSX.Element {
   const { data, isError } = useAffiliateLinks();
@@ -49,7 +49,7 @@ export function BiomarkerCard({
   // Value is always the last data point in the time series data.
   return (
     <>
-      <BiomarkerCardHeader
+      <BiomarkerDialogHeader
         name={name}
         status={status}
         result={sortedBiomarkerValues[0]}
@@ -65,14 +65,14 @@ export function BiomarkerCard({
         <ShareButtons message={shareMessage} />
       </div>
       <Separator />
-      <BiomarkerCardMetadata
+      <BiomarkerDialogMetadata
         className="space-y-8 p-6"
         name={name}
         description={description}
         content={content}
         importance={importance}
       />
-      <BiomarkerCardFooter
+      <BiomarkerDialogFooter
         containerClassName="sticky bottom-0"
         className="text-zinc-500"
         source={biomarker.metadata.source}

@@ -52,6 +52,10 @@ Rather, think of it as a directional measurement of how your body may be aging i
           value: Number(ageInYears.toFixed(2)),
           comparator: 'LESS_THAN_EQUALS',
         },
+        low: {
+          value: 0,
+          comparator: 'GREATER_THAN_EQUALS',
+        },
       },
     ],
     unit: 'yrs',

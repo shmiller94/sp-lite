@@ -1,4 +1,3 @@
-import { Spinner } from '@/components/ui/spinner';
 import { Body2, H1, H4 } from '@/components/ui/typography';
 import { useBiomarkers } from '@/features/biomarkers/api';
 import { calculateDNAmAge } from '@/features/biomarkers/utils/calculate-dnam-age';
@@ -15,14 +14,6 @@ export const BiologicalAgeCard = ({
   const biomarkersQuery = useBiomarkers();
   const { data: user } = useUser();
   const { selectedPatient } = useCurrentPatient();
-
-  if (biomarkersQuery.isLoading) {
-    return (
-      <div className="flex h-48 w-full items-center justify-center">
-        <Spinner variant="primary" />
-      </div>
-    );
-  }
 
   if (!biomarkersQuery.data) return <></>;
   if (!user) return <></>;

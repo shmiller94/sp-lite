@@ -3,10 +3,9 @@ import { Spinner } from '@/components/ui/spinner';
 import { Body2, H3 } from '@/components/ui/typography';
 import { useAffiliateLinks } from '@/features/affiliate/api';
 import { ShareButtons } from '@/features/affiliate/components/share-buttons';
-import { useBiomarkers } from '@/features/biomarkers/api';
-import { useHealthScores } from '@/features/biomarkers/api/get-all-healthscores';
-import { BiomarkerCardHeader } from '@/features/biomarkers/components/biomarker-card/biomarker-card-header';
-import { BiomarkerCardMetadata } from '@/features/biomarkers/components/biomarker-card/biomarker-card-metadata';
+import { useBiomarkers, useHealthScores } from '@/features/biomarkers/api';
+import { BiomarkerDialogHeader } from '@/features/biomarkers/components/biomarker-dialog/biomarker-dialog-header';
+import { BiomarkerDialogMetadata } from '@/features/biomarkers/components/biomarker-dialog/biomarker-dialog-metadata';
 import { BiomarkerTimeSeriesChart } from '@/features/biomarkers/components/charts/biomarker-time-series-chart';
 import { ReportBlock } from '@/features/biomarkers/components/score-dialog/record-block';
 import { calculateDNAmAge } from '@/features/biomarkers/utils/calculate-dnam-age';
@@ -58,7 +57,7 @@ export const ScoreContent = ({
 
   return (
     <>
-      <BiomarkerCardHeader
+      <BiomarkerDialogHeader
         name={transformedScore.name}
         status={transformedScore.status}
         result={transformedScore.value[0]}
@@ -95,7 +94,7 @@ export const ScoreContent = ({
       </div>
       <Separator />
       <div className="flex flex-col gap-7 px-10 py-8">
-        <BiomarkerCardMetadata
+        <BiomarkerDialogMetadata
           className="space-y-8"
           name={transformedScore.name}
           description={transformedScore.description}

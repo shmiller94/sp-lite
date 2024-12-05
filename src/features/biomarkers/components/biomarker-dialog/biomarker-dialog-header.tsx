@@ -7,20 +7,20 @@ import { STATUS_TO_BG } from '@/features/biomarkers/const/status-to-bg';
 import { cn } from '@/lib/utils';
 import { BiomarkerResult, BiomarkerStatus } from '@/types/api';
 
-export interface BiomarkerCardHeaderProps extends BiomarkerValueProps {
+export interface BiomarkerDialogHeaderProps extends BiomarkerValueProps {
   name: string;
   status: BiomarkerStatus;
   unit?: string;
   className?: string;
 }
 
-export function BiomarkerCardHeader({
+export function BiomarkerDialogHeader({
   name,
   status,
   unit,
   result,
   className,
-}: BiomarkerCardHeaderProps): JSX.Element {
+}: BiomarkerDialogHeaderProps): JSX.Element {
   return (
     <div
       className={cn(

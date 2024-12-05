@@ -9,17 +9,17 @@ import {
 import { cn } from '@/lib/utils';
 import { MetadataSource } from '@/types/api';
 
-export interface BiomarkerCardFooterProps {
+export interface BiomarkerDialogFooterProps {
   source: MetadataSource[];
   className?: string;
   containerClassName?: string;
 }
 
-export function BiomarkerCardFooter({
+export function BiomarkerDialogFooter({
   source,
   className,
   containerClassName,
-}: BiomarkerCardFooterProps): JSX.Element {
+}: BiomarkerDialogFooterProps): JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
 
   const onOpenChange = (): void => {

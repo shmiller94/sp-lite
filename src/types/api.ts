@@ -240,6 +240,7 @@ export interface BiomarkerResult {
   timestamp: string;
   status?: BiomarkerStatus;
   biomarkerId?: string;
+  orderId?: string;
 }
 
 export interface BiomarkerMetadata {

@@ -7,9 +7,10 @@ import {
 export const queryConfig = {
   queries: {
     // throwOnError: true,
+    refetchOnMount: false,
     refetchOnWindowFocus: false,
     retry: false,
-    staleTime: 1000 * 60,
+    staleTime: 1000 * 60 * 5, // 5 minutes stale time
   },
 } satisfies DefaultOptions;
 

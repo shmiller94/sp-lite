@@ -6,6 +6,7 @@ import { ToolbarCategoryType } from '@/features/biomarkers/types/filters';
 
 import CategoryBar from './category-bar';
 import CategoryFilter from './category-filter';
+import DateFilter from './date-filter';
 import MobileFilter from './mobile-filter';
 import SearchBar from './searchbar';
 import StatusFilter from './status-filter';
@@ -41,6 +42,7 @@ export function BiomarkerDataTableToolbar<TData>({
               <div className="hidden flex-row items-center gap-x-3 md:flex">
                 <StatusFilter table={table} />
                 <CategoryFilter table={table} />
+                <DateFilter table={table} />
               </div>
             )}
             <div className="md:hidden">

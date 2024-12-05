@@ -3,7 +3,7 @@ import { Body1, H3 } from '@/components/ui/typography';
 import { usePlan } from '@/features/action-plan/stores/plan-store';
 import { useBiomarkers } from '@/features/biomarkers/api';
 import { useHealthScoreByOrderId } from '@/features/biomarkers/api/get-healthscore-by-orderid';
-import { BiomarkersList } from '@/features/biomarkers/components/biomarkers-summary-card';
+import { BiomarkersList } from '@/features/biomarkers/components/biomarker-cards';
 import { ScoreChart } from '@/features/biomarkers/components/charts/score-chart';
 import { ScoreDialog } from '@/features/biomarkers/components/score-dialog/score-dialog';
 import { calculateDNAmAge } from '@/features/biomarkers/utils/calculate-dnam-age';

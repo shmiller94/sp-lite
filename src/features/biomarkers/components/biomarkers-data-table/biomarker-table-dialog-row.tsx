@@ -9,7 +9,7 @@ import {
   SheetClose,
 } from '@/components/ui/sheet';
 import { Body2 } from '@/components/ui/typography';
-import { BiomarkerCard } from '@/features/biomarkers/components/biomarker-card/biomarker-card';
+import { BiomarkerDialog } from '@/features/biomarkers/components/biomarker-dialog/biomarker-dialog';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 
 export function BiomarkerTableDialogRow({
@@ -32,7 +32,7 @@ export function BiomarkerTableDialogRow({
             <div className="min-w-[44px]" />
           </div>
           <div className="overflow-y-auto">
-            <BiomarkerCard biomarker={biomarker} />
+            <BiomarkerDialog biomarker={biomarker} />
           </div>
         </SheetContent>
       </Sheet>
@@ -43,7 +43,7 @@ export function BiomarkerTableDialogRow({
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
-        <BiomarkerCard biomarker={biomarker} />
+        <BiomarkerDialog biomarker={biomarker} />
       </DialogContent>
     </Dialog>
   );

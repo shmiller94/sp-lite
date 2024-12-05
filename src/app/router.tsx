@@ -135,10 +135,6 @@ export const createRouter = (queryClient: QueryClient) =>
             const { DataRoute } = await import('./routes/app/data');
             return { Component: DataRoute };
           },
-          loader: async () => {
-            const { dataLoader } = await import('./routes/app/data');
-            return dataLoader(queryClient)();
-          },
           errorElement: <MainErrorFallback />,
         },
         {

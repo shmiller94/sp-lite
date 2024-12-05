@@ -4,7 +4,7 @@ import { Body1 } from '@/components/ui/typography';
 import { pluralizeIs } from '@/features/biomarkers/utils/pluralize';
 import { MetadataContent } from '@/types/api';
 
-export interface BiomarkerCardMetadata {
+export interface BiomarkerDialogMetadataProps {
   name: string;
   description: string;
   importance: string;
@@ -12,13 +12,13 @@ export interface BiomarkerCardMetadata {
   className?: string;
 }
 
-export function BiomarkerCardMetadata({
+export function BiomarkerDialogMetadata({
   name,
   description,
   importance,
   content,
   className,
-}: BiomarkerCardMetadata): JSX.Element {
+}: BiomarkerDialogMetadataProps): JSX.Element {
   const metadata = [...content];
 
   importance.length > 0 &&

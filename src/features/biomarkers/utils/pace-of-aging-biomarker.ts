@@ -64,6 +64,10 @@ export const paceOfAgingBiomarker = (
           value: 100,
           comparator: 'LESS_THAN_EQUALS',
         },
+        low: {
+          value: 0,
+          comparator: 'GREATER_THAN_EQUALS',
+        },
       },
     ],
     unit: '%',

@@ -29,6 +29,10 @@ export const scoreBiomarker = (
     range: [
       {
         status: 'LOW',
+        low: {
+          value: 0,
+          comparator: 'GREATER_THAN_EQUALS',
+        },
         high: {
           value: 60,
           comparator: 'LESS_THAN',
@@ -36,17 +40,21 @@ export const scoreBiomarker = (
       },
       {
         status: 'NORMAL',
-        low: {
-          value: 60,
-          comparator: 'GREATER_THAN_EQUALS',
-        },
         high: {
           value: 80,
           comparator: 'LESS_THAN',
         },
+        low: {
+          value: 60,
+          comparator: 'GREATER_THAN_EQUALS',
+        },
       },
       {
         status: 'OPTIMAL',
+        high: {
+          value: 100,
+          comparator: 'LESS_THAN_EQUALS',
+        },
         low: {
           value: 80,
           comparator: 'GREATER_THAN_EQUALS',

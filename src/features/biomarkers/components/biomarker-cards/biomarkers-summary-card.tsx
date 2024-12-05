@@ -98,7 +98,7 @@ export const BiomarkersSummaryCard = ({
         variant === 'biomarkers' ? 'items-center h-[276px]' : 'h-[188px]',
       )}
     >
-      <div className="flex flex-col">
+      <div className="flex flex-col items-center">
         <H4 className="text-white">Results</H4>
         {mostRecentOrder ? (
           <Body1 className="text-zinc-400">

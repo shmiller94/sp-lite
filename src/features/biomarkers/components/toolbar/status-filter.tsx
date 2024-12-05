@@ -108,7 +108,7 @@ export function StatusFilter<TData>({
                           ?.setFilterValue(option.filters);
                       }
                     }}
-                    className="flex w-full cursor-pointer gap-2 rounded-lg p-2 hover:bg-slate-50"
+                    className="flex w-full cursor-pointer gap-2 rounded-lg p-2 hover:bg-zinc-50"
                   >
                     <div
                       className={cn(

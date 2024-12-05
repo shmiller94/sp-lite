@@ -65,6 +65,11 @@ export const getCols = (): ColumnDef<Biomarker>[] => [
     },
   },
   {
+    // we always return true because this filter is semi hacky / specific, check <DataTable /> component
+    accessorKey: 'orderId',
+    filterFn: () => true,
+  },
+  {
     accessorKey: 'status',
     header: ({ column }) => {
       return (
