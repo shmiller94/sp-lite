@@ -52,7 +52,7 @@ export const MembershipCard = (): JSX.Element => {
           membershipType === 'Advanced Membership'
             ? 'bg-advanced-membership'
             : null,
-          !isActive && !isLoading && 'grayscale',
+          !isActive && !isLoading && 'bg-baseline-membership grayscale',
           isLoading ? 'animate-pulse bg-muted' : '',
         )}
       >

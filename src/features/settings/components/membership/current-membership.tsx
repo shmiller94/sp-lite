@@ -52,7 +52,9 @@ export const CurrentMembership = (): JSX.Element => {
               </span>
             </div>
           </Card>
-          <div className="my-3 hidden border-l border-zinc-100 lg:block" />
+          {superpowerMembership ? (
+            <div className="my-3 hidden border-l border-zinc-100 lg:block" />
+          ) : null}
           <CancelMembershipDialog membership={superpowerMembership}>
             <Card
               className={cn(
@@ -81,11 +83,11 @@ export const CurrentMembership = (): JSX.Element => {
                     <ChevronDown className="size-4 text-zinc-400" />
                   </div>
                 )}
-                {superpowerMembership?.status === 'active' && (
+                {superpowerMembership?.status === 'active' ? (
                   <span className="hidden whitespace-nowrap text-xs text-zinc-400 md:block">
                     Update, cancel, and more
                   </span>
-                )}
+                ) : null}
               </div>
             </Card>
           </CancelMembershipDialog>
