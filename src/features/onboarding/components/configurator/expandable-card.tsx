@@ -40,6 +40,8 @@ const ExpandableCard = () => {
 
   useOutsideClick(ref, () => setIsExpanded(false));
 
+  const discountText = `Applied ${discount} discount`;
+
   return (
     <>
       <AnimatePresence>
@@ -48,137 +50,167 @@ const ExpandableCard = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            transition={{
+              type: 'spring',
+              stiffness: 300,
+              damping: 30,
+              duration: 0.4,
+            }}
             className="absolute inset-0 z-10 w-full bg-white/70"
           />
         )}
       </AnimatePresence>
-      <div
-        ref={ref}
-        className="fixed bottom-7 z-50 w-[calc(100%-32px)] max-w-[535px] rounded-3xl border border-zinc-200 bg-zinc-900 shadow-2xl transition-all md:bottom-10 md:w-full"
-      >
-        <AnimatePresence>
-          {isExpanded ? (
-            <motion.div
-              initial={{
-                height: 0,
-                opacity: 0,
-              }}
-              animate={{
-                height: 'auto',
-                opacity: 1,
-              }}
-              exit={{
-                height: 0,
-                opacity: 0,
-              }}
-              transition={{
-                type: 'spring',
-                stiffness: 300,
-                damping: 30,
-                duration: 0.4,
-              }}
-              className="shrink-0 overflow-hidden"
-            >
-              <div className="flex flex-col gap-6 border-b border-b-zinc-700 p-6">
-                <div className="flex w-full items-center justify-between">
-                  <H3 className="text-white">Summary</H3>
-                  <X
-                    className="size-6 cursor-pointer text-zinc-400 transition-colors hover:text-zinc-100"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsExpanded((prev) => !prev);
-                    }}
-                  />
-                </div>
-                <div className="flex w-full items-center justify-between">
-                  <Body1 className="text-white">Superpower Membership</Body1>
-                  <Body1 className="text-zinc-400">
-                    {availableSubscriptionsQuery.isLoading ? (
-                      <Skeleton className="h-5 w-10" />
-                    ) : (
-                      formatMoney(selectedSubscription?.subtotal ?? 0)
-                    )}
-                  </Body1>
-                </div>
-                {discount ? (
-                  <div className="flex w-full items-center justify-between">
-                    <Body1 className="text-white">Applied discount</Body1>
-                    <Body1 className="text-zinc-400">
-                      {availableSubscriptionsQuery.isLoading ? (
-                        <Skeleton className="h-5 w-10" />
-                      ) : (
-                        discount
-                      )}
-                    </Body1>
+      <div className="fixed bottom-7 z-50 w-[calc(100%-32px)] max-w-[535px] md:bottom-10 md:w-full">
+        <div className="rounded-3xl bg-zinc-700">
+          {discount ? (
+            <AnimatePresence>
+              {!isExpanded && (
+                <motion.div
+                  className="rounded-t-3xl bg-zinc-700 text-white" // The element starts invisible and collapsed
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.1, ease: 'easeInOut' }}
+                >
+                  <div className="flex w-full items-center justify-center gap-2 px-2 py-1.5">
+                    <TextShimmer className="line-clamp-1 text-base [--base-color:white] [--base-gradient-color:#a1a1aa]">
+                      {discountText}
+                    </TextShimmer>
                   </div>
-                ) : null}
-              </div>
-              <div className="flex flex-col border-b border-b-zinc-700 px-6 py-4">
-                <div className="flex w-full justify-between">
-                  <Body1 className="text-white">Annual Total</Body1>
-                  <div className="flex flex-col items-end">
-                    <Body1 className="text-white">
-                      {formatMoney(annualTotal)}
-                    </Body1>
-                    <Body2 className="text-zinc-400">
-                      {formatMoney(annualTotal / 12)}/mo
-                    </Body2>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           ) : null}
-        </AnimatePresence>
-        <div className="flex w-full items-center justify-between px-6 py-4">
-          <div>
-            <div className="flex items-center gap-2">
-              <Body1 className="text-white sm:hidden">
-                {formatMoney(annualTotal / 12)}/mo
-              </Body1>
-
-              <H4 className="hidden text-white sm:block">My membership</H4>
-              <H4 className="hidden text-zinc-400 sm:block">
-                {formatMoney(annualTotal)}/yr
-              </H4>
-            </div>
-            <button
-              type="button"
-              className="w-fit"
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsExpanded((prev) => !prev);
-              }}
-            >
-              <Body2 className="cursor-pointer text-zinc-400 hover:text-vermillion-900">
-                View Details
-              </Body2>
-            </button>
-          </div>
-          <Button
-            className="rounded-lg border border-zinc-500 bg-zinc-700 px-6 py-4"
-            disabled={
-              availableSubscriptionsQuery.isLoading ||
-              processing ||
-              !consentGiven
-            }
-            type="submit"
-            form="billingForm"
-            onClick={async (e) => {
-              e.stopPropagation();
-            }}
+          <div
+            ref={ref}
+            className="rounded-3xl border border-zinc-500 bg-zinc-900 shadow-2xl transition-all"
           >
-            {processing ? (
-              <TextShimmer
-                className="line-clamp-1 text-base [--base-color:white] [--base-gradient-color:#a1a1aa]"
-                duration={1}
+            <AnimatePresence>
+              {isExpanded ? (
+                <motion.div
+                  initial={{
+                    height: 0,
+                    opacity: 0,
+                  }}
+                  animate={{
+                    height: 'auto',
+                    opacity: 1,
+                  }}
+                  exit={{
+                    height: 0,
+                    opacity: 0,
+                  }}
+                  transition={{
+                    type: 'spring',
+                    stiffness: 300,
+                    damping: 30,
+                    duration: 0.4,
+                  }}
+                  className="shrink-0 overflow-hidden"
+                >
+                  <div className="flex flex-col gap-6 border-b border-b-zinc-700 p-6">
+                    <div className="flex w-full items-center justify-between">
+                      <H3 className="text-white">Summary</H3>
+                      <X
+                        className="size-6 cursor-pointer text-zinc-400 transition-colors hover:text-zinc-100"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsExpanded((prev) => !prev);
+                        }}
+                      />
+                    </div>
+                    <div className="flex w-full items-center justify-between">
+                      <Body1 className="text-white">
+                        Superpower Membership
+                      </Body1>
+                      <Body1 className="text-zinc-400">
+                        {availableSubscriptionsQuery.isLoading ? (
+                          <Skeleton className="h-5 w-10" />
+                        ) : (
+                          formatMoney(selectedSubscription?.subtotal ?? 0)
+                        )}
+                      </Body1>
+                    </div>
+                    {discount ? (
+                      <div className="flex w-full items-center justify-between">
+                        <Body1 className="text-white">Applied discount</Body1>
+                        <Body1 className="text-zinc-400">
+                          {availableSubscriptionsQuery.isLoading ? (
+                            <Skeleton className="h-5 w-10" />
+                          ) : (
+                            discount
+                          )}
+                        </Body1>
+                      </div>
+                    ) : null}
+                  </div>
+                  <div className="flex flex-col border-b border-b-zinc-700 px-6 py-4">
+                    <div className="flex w-full justify-between">
+                      <Body1 className="text-white">Annual Total</Body1>
+                      <div className="flex flex-col items-end">
+                        <Body1 className="text-white">
+                          {formatMoney(annualTotal)}
+                        </Body1>
+                        <Body2 className="text-zinc-400">
+                          {formatMoney(annualTotal / 12)}/mo
+                        </Body2>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
+            <div className="flex w-full items-center justify-between px-6 py-4">
+              <div>
+                <div className="flex items-center gap-2">
+                  <Body1 className="text-white sm:hidden">
+                    {formatMoney(annualTotal)}/yr
+                  </Body1>
+
+                  <H4 className="hidden text-white sm:block">My membership</H4>
+                  <H4 className="hidden text-zinc-400 sm:block">
+                    {formatMoney(annualTotal)}/yr
+                  </H4>
+                </div>
+                <button
+                  type="button"
+                  className="w-fit"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsExpanded((prev) => !prev);
+                  }}
+                >
+                  <Body2 className="cursor-pointer text-zinc-400 hover:text-vermillion-900">
+                    View Details
+                  </Body2>
+                </button>
+              </div>
+              <Button
+                className="rounded-lg border border-zinc-500 bg-zinc-700 px-6 py-4"
+                disabled={
+                  availableSubscriptionsQuery.isLoading ||
+                  processing ||
+                  !consentGiven
+                }
+                type="submit"
+                form="billingForm"
+                onClick={async (e) => {
+                  e.stopPropagation();
+                }}
               >
-                Confirming…
-              </TextShimmer>
-            ) : (
-              'Checkout'
-            )}
-          </Button>
+                {processing ? (
+                  <TextShimmer
+                    className="line-clamp-1 text-base [--base-color:white] [--base-gradient-color:#a1a1aa]"
+                    duration={1}
+                  >
+                    Confirming…
+                  </TextShimmer>
+                ) : (
+                  'Checkout'
+                )}
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </>
