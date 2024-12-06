@@ -1,5 +1,5 @@
 import React, { forwardRef, useCallback } from 'react';
-import { useTimescape, type Options } from 'timescape/react';
+import { type Options, useTimescape } from 'timescape/react';
 
 import { cn } from '@/lib/utils';
 
@@ -158,11 +158,13 @@ export const DatetimePicker = forwardRef<HTMLDivElement, DateTimeInput>(
       },
       [onChange],
     );
+
     const timescape = useTimescape({
       date: value,
       onChangeDate: handleDateChange,
       ...dtOptions,
     });
+
     return (
       <DatetimeGrid
         format={format}

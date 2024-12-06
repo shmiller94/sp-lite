@@ -98,7 +98,13 @@ const registerWithEmailAndPassword = (
 ): Promise<LoginAuthenticationResponse> => {
   const registerData = {
     ...data,
-    dateOfBirth: data.dateOfBirth.toISOString(),
+    dateOfBirth: new Date(
+      Date.UTC(
+        data.dateOfBirth.getFullYear(),
+        data.dateOfBirth.getMonth(),
+        data.dateOfBirth.getDate(),
+      ),
+    ),
   };
   return api.post('/auth/newuser', registerData);
 };
