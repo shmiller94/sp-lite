@@ -1,10 +1,20 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+import { getTimelineQueryOptions } from '@/features/home/api/get-timeline';
 import { getOrdersQueryOptions } from '@/features/orders/api/get-orders';
+import {
+  getServiceQueryOptions,
+  getServicesQueryOptions,
+} from '@/features/services/api';
 import { api } from '@/lib/api-client';
 import { MutationConfig } from '@/lib/react-query';
+import { Order } from '@/types/api';
 
-export const cancelOrder = ({ orderId }: { orderId: string }) => {
+export const cancelOrder = ({
+  orderId,
+}: {
+  orderId: string;
+}): Promise<{ order: Order }> => {
   return api.post(`/orders/${orderId}/cancel`);
 };
 
@@ -24,6 +34,21 @@ export const useCancelOrder = ({
       queryClient.invalidateQueries({
         queryKey: getOrdersQueryOptions().queryKey,
       });
+      queryClient.invalidateQueries({
+        queryKey: getTimelineQueryOptions().queryKey,
+      });
+      queryClient.invalidateQueries({
+        queryKey: getServicesQueryOptions().queryKey,
+      });
+
+      const { serviceId, method } = args[0].order;
+      queryClient.invalidateQueries({
+        queryKey: getServiceQueryOptions(
+          serviceId,
+          method.length > 0 ? method[0] : null,
+        ).queryKey,
+      });
+
       onSuccess?.(...args);
     },
     ...restConfig,

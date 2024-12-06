@@ -7,7 +7,9 @@ import {
 export const queryConfig = {
   queries: {
     // throwOnError: true,
-    refetchOnMount: false,
+    // if this is true, then even if you invalidate query it won't refetch it if staleTime is still active
+    // https://stackoverflow.com/questions/76670546/invalidate-all-queries-but-refetch-only-active
+    //refetchOnMount: false,
     refetchOnWindowFocus: false,
     retry: false,
     staleTime: 1000 * 60 * 5, // 5 minutes stale time

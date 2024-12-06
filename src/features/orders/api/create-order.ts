@@ -3,7 +3,10 @@ import { z } from 'zod';
 
 import { getTimelineQueryOptions } from '@/features/home/api/get-timeline';
 import { getOrdersQueryOptions } from '@/features/orders/api/get-orders';
-import { getServicesQueryOptions } from '@/features/services/api';
+import {
+  getServiceQueryOptions,
+  getServicesQueryOptions,
+} from '@/features/services/api';
 import { addressInputSchema } from '@/features/users/api';
 import { api } from '@/lib/api-client';
 import { MutationConfig } from '@/lib/react-query';
@@ -93,6 +96,15 @@ export const useCreateOrder = ({
       queryClient.invalidateQueries({
         queryKey: getTimelineQueryOptions().queryKey,
       });
+
+      const { serviceId, method } = args[0].order;
+      queryClient.invalidateQueries({
+        queryKey: getServiceQueryOptions(
+          serviceId,
+          method.length > 0 ? method[0] : null,
+        ).queryKey,
+      });
+
       onSuccess?.(...args);
     },
     ...restConfig,
