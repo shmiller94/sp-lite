@@ -79,6 +79,27 @@ export const getDetailsForService = (
 
 ° Text the Superpower SMS Concierge if you have any questions or concerns ahead of testing.`,
     },
+
+    'Advanced Blood Panel': {
+      'Why is this test important?': `Proactive laboratory testing can provide targeted insight into you body's current health status, identifying areas of optimal and suboptimal physiologic function. The advanced panel dives into further areas of health that are not covered in our baseline panel, including heavy metal testing, certain key nutrients like omega fatty acids, and even critical hormones like cortisol that may be causing you stress. Furthermore, this test can serve to track how your body is responding to your Superpower action plan.`,
+      'Test Process': `"1. Order and schedule your advanced blood panel.
+
+2. Fast and prepare for your at-home appointment.
+
+3. Receive your phlebotomist and have your blood draw done.
+
+4. Receive your results within 10 days.
+
+5. Schedule a consultation with your clinical team to review your results and create an action plan."`,
+      'Pre-test considerations': `°  Hydrate for 24 hours prior to sample collection and after your blood draw is completed.
+
+° No eating 10 hours prior to the appointment. The sample should be collected in a fasted state.
+
+° No caffeine 10 hours prior to your appointment -- just water.
+
+° Continue taking your medications and supplements as scheduled.`,
+    },
+
     'Custom Blood Panel': {
       'Why is this test important?': `Proactive laboratory testing can provide targeted insight into you body's current health status, identifying areas of optimal and suboptimal physiologic function. Establish a baseline or track how your body is responding to your Superpower action plan.`,
       'Test Process': `1. Order and schedule your custom blood panel.
@@ -100,6 +121,7 @@ export const getDetailsForService = (
 
 ° Text the Superpower SMS Concierge if you have any questions or concerns ahead of testing.`,
     },
+
     'Grail Galleri Multi Cancer Test': {
       "What's measured?": `Galleri is a cancer screening test that leverages DNA sequencing and pattern-recognition technology to screen for the presence of a cancer signal and predict its most likely origin. Galleri uses DNA sequencing technology to analyze DNA fragments circulating in the blood, also known as cell-free DNA (cfDNA). Both non-cancer and cancer cells release cfDNA into the blood, but cfDNA from cancer cells has methylation patterns that are specific to cancer. Galleri checks over 1 million methylation sites covering >100,000 genomic regions in cfDNA and applies machine learning and pattern-recognition to identify abnormal methylation patterns that could signal the presence of cancer.
 
@@ -120,6 +142,7 @@ Before ordering the test, you will meet with your dedicated Superpower physician
       'Pre-test considerations': `There are no fasting requirements associated with this test. 
 Connect with your membership advisor if you have any questions or concerns ahead of testing.`,
     },
+
     'Food & Environmental Allergy Testing': {
       "What's measured?": `This test measures IgE antibodies to over 150 food and environmental allergens as well as IgG antibodies to over 250 food allergens across the following categories:
 
@@ -158,6 +181,7 @@ It's best practice to measure IgE and IgG antibodies together as they independen
 3. Continue taking any nutritional supplements and medications unless advised differently by your healthcare provider.
     `,
     },
+
     'Total Toxins': {
       "What's measured?": `This test is a highly comprehensive test that measures your mycotoxins, heavy metals and environmental toxins which all elevate oxidative stress and increase demand on the body's detoxification pathways.
 
@@ -209,6 +233,7 @@ Heavy metal exposure may also be the root cause of neurological disorders, gastr
       'Pre-test considerations': `Urine test is required. There are no fasting requirements associated with this test.
 Connect with your membership advisor if you have any questions or concerns ahead of testing`,
     },
+
     'Environmental Toxin': {
       "What's measured?": `The Environmental Toxins panel measures levels of environmental toxins in the body. Environmental toxins or toxicants are substances that are man-made or that occur naturally in the environment and can cause acute or chronic toxic overload when absorbed, inhaled, or ingested.
 
@@ -226,6 +251,7 @@ Testing for environmental toxins can help patients uncover the root causes of to
       'Pre-test considerations': `Urine test is required. There are no fasting requirements associated with this test.
 Connect with your membership advisor if you have any questions or concerns ahead of testing.`,
     },
+
     Mycotoxins: {
       "What's measured?": `Mycotoxins are toxic compounds produced by certain types of fungi. These fungi can grow on various agricultural products such as grains, nuts, spices, dried fruits, apples, and coffee beans.
 
@@ -250,6 +276,7 @@ Your clinician may ask you to discontinue medications or dietary supplements. Sp
       'Pre-test considerations': `Urine test is required. There are no fasting requirements associated with this test.
 Connect with your membership advisor if you have any questions or concerns ahead of testing.`,
     },
+
     'Environmental Toxins': {
       'Why is this test important?': `Toxic overload can manifest in a variety of biological organs, tissue, and cellular-level systems. Testing for environmental toxins can help uncover the root causes of toxicity and chronic illness from environmental sources and create personalized wellness solutions to begin healing.`,
       'Test process': `1. Order your test kit -- we'll deliver it directly to your house or confirmed in 3-5 days
@@ -266,6 +293,7 @@ Connect with your membership advisor if you have any questions or concerns ahead
 3. Please consult your healthcare practitioner prior to fasting. 
 4. Do not drink more than 8 oz water 1 hour prior to urine collection. `,
     },
+
     'Intestinal Permeability Panel': {
       "What's measured?": `
       The following key markers can be found within the Wheat Zoomer tests:
@@ -304,6 +332,7 @@ Uncovering wheat sensitivities is an easy and critical step in developing a nutr
 3. Freeze the provided ice packs for at least 24 hours prior to your blood draw.
     `,
     },
+
     'PFAS Chemicals': {
       "What's measured?": `The PFAS chemical test measures 21 different toxin markers in your blood associated with exposure to perfluoroalkyl and polyfluoroalkyl chemicals, commonly called ‘PFAS.’`,
       'Test process': `1. Order your test kit -- we'll deliver it directly to your house or confirmed in 3-5 days
