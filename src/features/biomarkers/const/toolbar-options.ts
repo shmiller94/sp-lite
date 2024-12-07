@@ -19,11 +19,11 @@ export const CATEGORY_OPTIONS = [
   },
   {
     id: 'liver-and-kidney-health',
-    label: 'Liver & Kidney Health',
+    label: 'Liver and Kidney Health',
   },
   {
     id: 'nutrition-and-inflammation',
-    label: 'Nutrition & Inflammation',
+    label: 'Nutrition and Inflammation',
   },
   {
     id: 'toxins',

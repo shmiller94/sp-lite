@@ -59,7 +59,7 @@ export function CategoryFilter<TData>({
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className="min-w-[456px] rounded-lg border-0 bg-white p-4 shadow-lg"
+        className="w-auto rounded-lg border-0 bg-white p-4 shadow-lg"
         align="end"
         side="bottom"
       >
