@@ -146,9 +146,10 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
                     <FormControl>
                       <PhoneInput
                         {...field}
-                        placeholder="+1 555 123 9876"
-                        international
-                        maxLength={15}
+                        placeholder="(555) 123-9876"
+                        defaultCountry="US"
+                        // 14 because 10 + "(", ")", " " and "-"
+                        maxLength={14}
                         inputComponent={Input}
                       />
                     </FormControl>
