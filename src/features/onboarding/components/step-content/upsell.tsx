@@ -151,10 +151,6 @@ const Upsell = () => {
         <Body1 className="text-zinc-500">
           Get an even more comprehensive view of your health.
         </Body1>
-        <Body1 className="text-zinc-500">
-          If you add these items now, we will bundle a free review with an
-          expert longevity clinician.
-        </Body1>
       </div>
       <div className="space-y-2">
         {isLoading
