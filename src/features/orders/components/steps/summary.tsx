@@ -1,4 +1,4 @@
-import { Check } from 'lucide-react';
+import { Calendar, Check, MapPin } from 'lucide-react';
 import moment from 'moment';
 import React, { ReactNode } from 'react';
 import { toast } from 'sonner';
@@ -196,6 +196,7 @@ export function OrderSummary(): ReactNode {
             {price !== undefined ? (
               <CreateOrderSummaryItem basePrice={price} />
             ) : null}
+            <CreateOrderAppointmentDetails />
             {price && price > 0 ? <CurrentPaymentMethodCard /> : null}
           </>
         ) : null}
@@ -235,22 +236,67 @@ export function OrderSummary(): ReactNode {
   );
 }
 
+function CreateOrderAppointmentDetails() {
+  const { slot, tz, location } = useOrder((s) => s);
+
+  if (!slot && !location) {
+    return null;
+  }
+
+  return (
+    <div className="space-y-4 rounded-2xl border border-zinc-200 p-6">
+      <Body1>Appointment details</Body1>
+      {slot ? (
+        <div className="flex gap-4">
+          <Calendar className="size-5 text-zinc-500" />
+          <div className="space-y-1">
+            <Body2 className="text-zinc-500">Date scheduled</Body2>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4">
+              <Body1>{moment(slot.start).tz(tz).format('MMM Do, YYYY')}</Body1>
+              <DotIcon fill="#18181B" className="hidden sm:block" />
+              <Body1>
+                {moment(slot.start).tz(tz).format('h:mma')} -{' '}
+                {moment(slot.end).tz(tz).format('h:mma z')}
+              </Body1>
+            </div>
+          </div>
+        </div>
+      ) : null}
+      {location?.address ? (
+        <div className="flex gap-4">
+          <MapPin className="size-5 text-zinc-500" />
+          <div className="space-y-1">
+            <Body2 className="text-zinc-500">Location</Body2>
+            <div>
+              <Body1>{location.address.line}</Body1>
+              <Body1>
+                {location.address.city}, {location.address.state},{' '}
+                {location.address.postalCode}
+              </Body1>
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 function CreateOrderSummaryItem({
   basePrice,
 }: {
   basePrice: number;
 }): ReactNode {
-  const { service, slot, collectionMethod, tz } = useOrder((s) => s);
+  const { service, collectionMethod } = useOrder((s) => s);
 
   return (
-    <div className="flex flex-col items-start justify-between space-y-4 py-3 sm:flex-row sm:items-center sm:space-y-0">
+    <div className="flex flex-col items-start justify-between sm:flex-row sm:items-center">
       <div className="flex w-full flex-col gap-4 rounded-2xl border border-zinc-200 p-6 md:flex-row md:items-center md:border-none md:p-0">
         <img
           src={service.image}
           alt={service.name}
           className="size-12 rounded-xl border border-zinc-200 object-cover object-center"
         />
-        <div className="flex flex-col">
+        <div>
           <Body1>{service.name}</Body1>
           <div className="flex items-center gap-2">
             {service.phlebotomy && (
@@ -260,15 +306,7 @@ function CreateOrderSummaryItem({
                     ? 'In person lab'
                     : 'At home visit'}
                 </Body2>
-                <DotIcon />
               </>
-            )}
-            {slot && (
-              <Body2 className="text-zinc-400">
-                {moment(slot.start).tz(tz).format('MMMM Do, h:mma')}
-                {'-'}
-                {moment(slot.end).tz(tz).format('h:mma z')}
-              </Body2>
             )}
           </div>
         </div>

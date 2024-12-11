@@ -15,7 +15,7 @@ export function SchedulerTimeSlot({
   const { tz, onSlotUpdate, updateSelectedSlot, selectedSlot, showCreateBtn } =
     useScheduler((s) => s);
 
-  const selected = timeSlot === selectedSlot;
+  const selected = timeSlot.start === selectedSlot?.start;
 
   return (
     <div

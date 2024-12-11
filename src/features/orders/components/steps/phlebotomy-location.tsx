@@ -100,7 +100,7 @@ function CreateOrderPhlebotomyInLab(): JSX.Element {
           closest to you.
         </Body1>
       </div>
-      <form className="space-y-2">
+      <div className="space-y-2">
         <div className="flex items-center gap-1">
           <Body2 className="text-zinc-500">My zip code</Body2>
           {phlebotomyLocationsMutation.isLoading && (
@@ -115,7 +115,7 @@ function CreateOrderPhlebotomyInLab(): JSX.Element {
           placeholder="5-digit zip code"
           onChange={(e) => setZipCode(e.target.value)}
         />
-      </form>
+      </div>
       <LocationList
         locations={phlebotomyLocationsMutation.data?.locations || []}
       />
