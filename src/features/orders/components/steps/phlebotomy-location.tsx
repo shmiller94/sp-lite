@@ -97,7 +97,8 @@ function CreateOrderPhlebotomyInLab(): JSX.Element {
         <H2>Nearby Labs</H2>
         <Body1 className="text-zinc-500">
           Please enter your zip code and we will find a partner laboratory
-          closest to you.
+          closest to you. After selecting a laboratory, you will be able to
+          proceed to the next step.
         </Body1>
       </div>
       <div className="space-y-2">
