@@ -94,7 +94,10 @@ export const TimelineList = () => {
         }
       })}
       {currentItems.length ? (
-        <TimelineSpacer className="mb-2 pb-0">
+        <TimelineSpacer
+          className="mb-2 pb-0"
+          shouldRenderConnector={!!onboardingItems.length}
+        >
           <TimelineLabel>Next steps</TimelineLabel>
         </TimelineSpacer>
       ) : null}

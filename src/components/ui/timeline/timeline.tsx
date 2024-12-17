@@ -44,16 +44,18 @@ const TimelineConnector = React.forwardRef<
 TimelineConnector.displayName = 'TimelineConnector';
 
 const TimelineSpacer = ({
+  shouldRenderConnector = true,
   className,
   children,
 }: {
+  shouldRenderConnector?: boolean;
   className?: string;
   children?: ReactNode;
 }) => {
   return (
     <TimelineItem className={cn('py-6', className)}>
       {children}
-      <TimelineConnector />
+      {shouldRenderConnector ? <TimelineConnector /> : null}
     </TimelineItem>
   );
 };
