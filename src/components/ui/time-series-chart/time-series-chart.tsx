@@ -62,26 +62,30 @@ export function TimeSeriesChart({
   const plotBands = toChartPlotBands(range);
 
   data.sort((a, b) => new Date(a.x).getTime() - new Date(b.x).getTime());
-  if (data.length === 1) {
-    const laterDate = new Date(data[0].x);
-    laterDate.setMonth(laterDate.getMonth() + 6);
-    data.push({
-      ...data[0],
-      x: laterDate.getTime(),
-      isPlaceholder: true,
-    });
-  }
 
-  const showsFuturePoint = data.find((pt) => pt.isPlaceholder);
-
-  const seriesData = data.map((pt: ChartPoint, i) => {
-    return {
-      x: i,
-      y: pt.y,
-      marker: pt.isPlaceholder ? { fillColor: '#c6c6c6' } : undefined,
-      isPlaceholder: pt.isPlaceholder,
-    };
+  const lastPoint = data[data.length - 1];
+  const laterDate = new Date(lastPoint.x);
+  laterDate.setMonth(laterDate.getMonth() + 6);
+  data.push({
+    ...lastPoint,
+    x: laterDate.getTime(),
+    isPlaceholder: true,
   });
+
+  const seriesData = data
+    .map((pt: ChartPoint, i) => {
+      return {
+        x: i,
+        y: pt.y,
+        marker: pt.isPlaceholder ? { fillColor: '#c6c6c6' } : undefined,
+        isPlaceholder: pt.isPlaceholder,
+      };
+    })
+    /**
+     * We slice here to get rid of last data point (which is placeholder)
+     * To later show it in different series
+     */
+    .slice(0, -1);
 
   const ColorStatus = {
     [ChartColor.GREEN]: 'Optimal',
@@ -198,7 +202,13 @@ export function TimeSeriesChart({
       labels: {
         enabled: !!data.length,
         formatter: function (this) {
-          const date = moment(data[Number(this.value)].x);
+          const currentCP = data[Number(this.value)];
+
+          if (!currentCP) {
+            return ``;
+          }
+
+          const date = moment(currentCP.x);
           const dm = date.format('MMM DD');
           const yr = date.format('YYYY');
 
@@ -230,7 +240,6 @@ export function TimeSeriesChart({
         },
       },
       series: {
-        dashStyle: showsFuturePoint ? 'Dash' : undefined,
         shadow: false,
         marker: {
           radius: 7,
@@ -250,13 +259,6 @@ export function TimeSeriesChart({
             fontWeight: '500',
           },
           formatter: function (this) {
-            // hide label on projected point (placeholder)
-            if (
-              showsFuturePoint &&
-              this.key?.toString() === (seriesData.length - 1).toString()
-            )
-              return '';
-
             return this.y?.toFixed(1); // Format the value to 1 decimal place
           },
         },
@@ -275,6 +277,7 @@ export function TimeSeriesChart({
       style: {
         pointerEvents: 'auto',
       },
+      shared: false,
       formatter: function (this) {
         const isPlaceholder = (this.point as any).isPlaceholder;
         const [integerPart, decimalPart = '0'] =
@@ -282,11 +285,11 @@ export function TimeSeriesChart({
 
         if (isPlaceholder) {
           return `
-       <div class="shadow bg-white flex flex-col gap-2.5 items-center pb-4 pt-[18px] px-4 rounded-md font-sans">
-        <p class="text-zinc-500">Schedule your<br /> annual re-test</p>
-        <button class="bg-primary text-white px-4 py-2.5 rounded-lg"><a href="/services">Book now</a></button>
-      </div>
-    `;
+             <div class="shadow bg-white flex flex-col gap-2.5 items-center pb-4 pt-[18px] px-4 rounded-md font-sans">
+              <p class="text-zinc-500">Schedule your<br /> annual re-test</p>
+              <button class="bg-primary text-white px-4 py-2.5 rounded-lg"><a href="/services">Book now</a></button>
+            </div>
+          `;
         }
         return `
       <div class="shadow bg-white flex flex-row gap-x-2 py-2 px-4 rounded-md font-sans text-primary">
@@ -306,6 +309,29 @@ export function TimeSeriesChart({
         lineWidth: 2,
         threshold: null,
         type: 'line',
+        zIndex: 1,
+      },
+      {
+        data: [
+          seriesData[seriesData.length - 1],
+          {
+            x: seriesData[seriesData.length - 1].x + 1,
+            y: seriesData[seriesData.length - 1].y,
+            isPlaceholder: true,
+          } as Highcharts.PointOptionsObject,
+        ],
+        showInLegend: false,
+        linkedTo: ':previous',
+        type: 'line',
+        dashStyle: 'Dash',
+        color: '#c6c6c6',
+        shadow: false,
+        marker: {
+          symbol: 'circle',
+        },
+        dataLabels: {
+          enabled: false,
+        },
       },
     ],
   };
