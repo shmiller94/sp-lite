@@ -28,6 +28,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       {!hideNavBar && <Sidebar open={open} setOpen={setOpen} />}
+      <Progress />
       <motion.div
         className={cn(
           'flex flex-col',
@@ -43,7 +44,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             : null,
         )}
       >
-        <Progress />
         {children}
       </motion.div>
     </>

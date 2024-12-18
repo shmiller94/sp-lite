@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 
 import { SuperpowerLogo } from '@/components/icons/superpower-logo';
 import { Head } from '@/components/seo';
@@ -27,17 +27,20 @@ const AuthStepLayoutHeader = () => {
 
 export const AuthLayout = ({ children, title }: LayoutProps) => {
   const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get('redirectTo');
+
   const user = useUser();
 
   const navigate = useNavigate();
 
   useEffect(() => {
     if (user.data) {
-      navigate('/', {
+      navigate(redirectTo ? redirectTo : '/', {
         replace: true,
       });
     }
-  }, [user.data, navigate]);
+  }, [user.data, navigate, redirectTo]);
 
   return (
     <>

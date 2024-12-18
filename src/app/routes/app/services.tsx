@@ -1,31 +1,9 @@
-import { QueryClient } from '@tanstack/react-query';
-
 import { ContentLayout } from '@/components/layouts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { H1 } from '@/components/ui/typography';
-import { getServicesQueryOptions } from '@/features/services/api/get-services';
 import { FinishScheduleList } from '@/features/services/components/finish-schedule-list';
 import { OrdersList } from '@/features/services/components/orders-list';
 import { ServicesList } from '@/features/services/components/services-list';
-
-export const servicesLoader = (queryClient: QueryClient) => async () => {
-  /**
-   * Loads the services data only when the current URL does not include '/services'.
-   * Services page is quite heavy and thus we want loading animations to happen directly in component rather then prefetch
-   *
-   * A bit hacky, any other solutions are welcome via PR =)
-   */
-  if (window.location.pathname.includes('/services')) {
-    return null;
-  }
-
-  const query = getServicesQueryOptions();
-
-  return (
-    queryClient.getQueryData(query.queryKey) ??
-    (await queryClient.fetchQuery(query))
-  );
-};
 
 export const ServicesRoute = () => {
   return (

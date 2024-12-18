@@ -1,4 +1,3 @@
-import { QueryClient, useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
@@ -7,7 +6,7 @@ import { ProtectedRoute } from '@/lib/auth';
 
 import { AppRoot } from './routes/app/root';
 
-export const createRouter = (queryClient: QueryClient) =>
+export const createRouter = () =>
   createBrowserRouter([
     {
       path: '/register',
@@ -66,10 +65,6 @@ export const createRouter = (queryClient: QueryClient) =>
           lazy: async () => {
             const { ServicesRoute } = await import('./routes/app/services');
             return { Component: ServicesRoute };
-          },
-          loader: async () => {
-            const { servicesLoader } = await import('./routes/app/services');
-            return servicesLoader(queryClient)();
           },
           errorElement: <MainErrorFallback />,
         },
@@ -178,9 +173,11 @@ export const createRouter = (queryClient: QueryClient) =>
   ]);
 
 export const AppRouter = () => {
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
-  const router = useMemo(() => createRouter(queryClient), [queryClient]);
+  // we can later pass queryClient as createRouter(queryClient)
+  // if we need direct access to it inside loader
+  const router = useMemo(() => createRouter(), []);
 
   return <RouterProvider router={router} />;
 };
