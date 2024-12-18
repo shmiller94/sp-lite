@@ -3,6 +3,7 @@ import { EnvironmentalToxinPanel } from '@/types/toxin';
 export const ENVIRONMENTAL_TOXIN_PANEL: EnvironmentalToxinPanel[] = [
   {
     name: 'Total Toxins',
+    pdfUrl: '/sample-reports/total-toxins.pdf',
   },
   {
     name: 'Mycotoxins',

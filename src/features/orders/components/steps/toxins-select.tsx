@@ -152,11 +152,11 @@ function ToxinPanelSelection({
   index: number;
 }): JSX.Element {
   const showBadge = index === 0;
-  const showAccordion = index !== 0;
   const toxinPackage = ENVIRONMENTAL_TOXIN_PANEL.find(
     (panel) => panel.name === toxinPanel.name,
   );
   const pdfReportSampleLink = toxinPackage?.pdfUrl;
+
   return (
     <div className="relative cursor-pointer ">
       <div
@@ -188,32 +188,30 @@ function ToxinPanelSelection({
                 {toxinPanel.description}
               </p>
             )}
-            {showAccordion && (
-              <Accordion type="single" collapsible className="mt-1">
-                <AccordionItem value={`item-${index}`}>
-                  <AccordionTrigger className="flex flex-row items-center space-x-1 text-sm text-zinc-500 [&[data-state=open]>svg]:rotate-180">
-                    See more
-                    <ChevronDown className="size-4 shrink-0 transition-transform duration-200" />
-                  </AccordionTrigger>
-                  <AccordionContent className="overflow-hidden pt-2 transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
-                    <p className="line-clamp-2 text-sm leading-5 text-zinc-500">
-                      {toxinPanel.description}
-                    </p>
-                    {pdfReportSampleLink && (
-                      <a
-                        href={pdfReportSampleLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-2 flex cursor-pointer items-center space-x-1 text-sm text-primary"
-                      >
-                        <span>View sample report</span>
-                        <ArrowUpRight className="size-4 text-vermillion-900" />
-                      </a>
-                    )}
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
-            )}
+            <Accordion type="single" collapsible className="mt-1">
+              <AccordionItem value={`item-${index}`}>
+                <AccordionTrigger className="flex flex-row items-center space-x-1 text-sm text-zinc-500 [&[data-state=open]>svg]:rotate-180">
+                  See more
+                  <ChevronDown className="size-4 shrink-0 transition-transform duration-200" />
+                </AccordionTrigger>
+                <AccordionContent className="overflow-hidden pt-2 transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
+                  <p className="line-clamp-2 text-sm leading-5 text-zinc-500">
+                    {toxinPanel.description}
+                  </p>
+                  {pdfReportSampleLink && (
+                    <a
+                      href={pdfReportSampleLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-2 flex cursor-pointer items-center space-x-1 text-sm text-primary"
+                    >
+                      <span>View sample report</span>
+                      <ArrowUpRight className="size-4 text-vermillion-900" />
+                    </a>
+                  )}
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
             <Label className="mt-1 md:hidden" htmlFor={toxinPanel.name}>
               <span className="text-zinc-500">
                 {formatMoney(toxinPanel.price)}
