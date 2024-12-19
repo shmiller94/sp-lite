@@ -1,7 +1,16 @@
 import * as React from 'react';
+import { Fragment } from 'react';
 
+import {
+  Carousel,
+  CarouselMainContainer,
+  SliderMainItem,
+  CarouselThumbsContainer,
+  CarouselIndicator,
+} from '@/components/ui/carousel';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useBiomarkers, useLatestHealthScore } from '@/features/biomarkers/api';
+import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 
 import {
   BiologicalAgeCard,
@@ -9,9 +18,22 @@ import {
   ScoreCard,
 } from './biomarker-cards';
 
+const DATA_CARDS = [
+  {
+    content: <ScoreCard variant="biomarkers" />,
+  },
+  {
+    content: <BiologicalAgeCard variant="biomarkers" />,
+  },
+  {
+    content: <BiomarkersSummaryCard variant="biomarkers" />,
+  },
+];
+
 export const DataCards = () => {
   const getLatestHealthScoreQuery = useLatestHealthScore();
   const biomarkersQuery = useBiomarkers();
+  const { width } = useWindowDimensions();
 
   if (biomarkersQuery.isLoading || getLatestHealthScoreQuery.isLoading) {
     return (
@@ -28,14 +50,31 @@ export const DataCards = () => {
     );
   }
 
+  if (width <= 1280) {
+    return (
+      <Carousel>
+        <CarouselMainContainer>
+          {DATA_CARDS.map((card, index) => (
+            <SliderMainItem key={index}>{card.content}</SliderMainItem>
+          ))}
+        </CarouselMainContainer>
+        <CarouselThumbsContainer className="justify-center gap-x-1">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <CarouselIndicator key={index} index={index} />
+          ))}
+        </CarouselThumbsContainer>
+      </Carousel>
+    );
+  }
+
   return (
     <section
       id="summary"
       className="flex flex-col gap-5 pt-6 xl:flex-row xl:pb-16"
     >
-      <ScoreCard variant="biomarkers" />
-      <BiologicalAgeCard variant="biomarkers" />
-      <BiomarkersSummaryCard variant="biomarkers" />
+      {DATA_CARDS.map((card, index) => (
+        <Fragment key={index}>{card.content}</Fragment>
+      ))}
     </section>
   );
 };

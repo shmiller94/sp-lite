@@ -1,5 +1,3 @@
-'use client';
-
 import { ChevronLeftIcon } from '@radix-ui/react-icons';
 import { EmblaOptionsType } from 'embla-carousel';
 import useEmblaCarousel from 'embla-carousel-react';
@@ -12,6 +10,29 @@ import React, {
   useState,
   createContext,
 } from 'react';
+
+/**
+ * Usage Example:
+ *
+ * <Carousel
+ *   carouselOptions={
+ *     // Check embla carousel for these options
+ *   }
+ *   orientation="vertical"
+ * >
+ *   <CarouselMainContainer className="h-60">
+ *     <SliderMainItem> slide 1 </SliderMainItem>
+ *     <SliderMainItem> slide 2 </SliderMainItem>
+ *     <SliderMainItem> ... </SliderMainItem>
+ *   </CarouselMainContainer>
+ *
+ *   <CarouselThumbsContainer className="h-60">
+ *     <SliderThumbItem index={1}> slide 1 </SliderThumbItem>
+ *     <SliderThumbItem index={2}> slide 2 </SliderThumbItem>
+ *     <SliderThumbItem index={...}> ... </SliderThumbItem>
+ *   </CarouselThumbsContainer>
+ * </Carousel>
+ */
 
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -196,7 +217,6 @@ const Carousel = forwardRef<
       >
         <div
           {...props}
-          // tabIndex={0}
           ref={ref}
           onKeyDownCapture={handleKeyDown}
           className={cn(
@@ -272,7 +292,7 @@ const SliderMainItem = forwardRef<
       {...props}
       ref={ref}
       className={cn(
-        `min-w-0 shrink-0 grow-0 basis-full bg-background p-1 ${
+        `min-w-0 shrink-0 grow-0 basis-full p-1 ${
           orientation === 'vertical' ? 'pb-1' : 'pr-1'
         }`,
         className,
@@ -295,8 +315,8 @@ const SliderThumbItem = forwardRef<
   const isSlideActive = activeIndex === index;
   return (
     <div
-      role="presentation"
       {...props}
+      role="presentation"
       ref={ref}
       onClick={() => onThumbClick(index)}
       className={cn(
@@ -330,7 +350,7 @@ const CarouselIndicator = forwardRef<
       size="icon"
       className={cn(
         'h-1 w-6 rounded-full',
-        "data-[active='false']:bg-primary/50 data-[active='true']:bg-primary",
+        "data-[active='false']:bg-zinc-200 data-[active='true']:bg-primary",
         className,
       )}
       data-active={isSlideActive}

@@ -1,5 +1,12 @@
 import React, { Fragment } from 'react';
 
+import {
+  Carousel,
+  CarouselIndicator,
+  CarouselMainContainer,
+  CarouselThumbsContainer,
+  SliderMainItem,
+} from '@/components/ui/carousel';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AffiliateInviteCard } from '@/features/affiliate/components/affiliate-invite-card';
 import { useBiomarkers, useLatestHealthScore } from '@/features/biomarkers/api';
@@ -9,11 +16,28 @@ import {
 } from '@/features/biomarkers/components/biomarker-cards';
 import { useTimeline } from '@/features/home/api/get-timeline';
 import { CompleteOnboardingCard } from '@/features/home/components/complete-onboarding-card';
+import { useWindowDimensions } from '@/hooks/use-window-dimensions';
+
+const LATEST_CARDS = [
+  {
+    content: <CompleteOnboardingCard />,
+  },
+  {
+    content: <ScoreCard />,
+  },
+  {
+    content: <BiologicalAgeCard />,
+  },
+  {
+    content: <AffiliateInviteCard />,
+  },
+];
 
 export const LatestList = () => {
   const getLatestHealthScoreQuery = useLatestHealthScore();
   const biomarkersQuery = useBiomarkers();
   const timelineQuery = useTimeline();
+  const { width } = useWindowDimensions();
 
   if (
     biomarkersQuery.isLoading ||
@@ -31,24 +55,26 @@ export const LatestList = () => {
     );
   }
 
-  const cards = [
-    {
-      content: <CompleteOnboardingCard />,
-    },
-    {
-      content: <ScoreCard />,
-    },
-    {
-      content: <BiologicalAgeCard />,
-    },
-    {
-      content: <AffiliateInviteCard />,
-    },
-  ];
+  if (width <= 1280) {
+    return (
+      <Carousel>
+        <CarouselMainContainer>
+          {LATEST_CARDS.map((card, index) => (
+            <SliderMainItem key={index}>{card.content}</SliderMainItem>
+          ))}
+        </CarouselMainContainer>
+        <CarouselThumbsContainer className="justify-center gap-x-1">
+          {Array.from({ length: LATEST_CARDS.length }).map((_, index) => (
+            <CarouselIndicator key={index} index={index} />
+          ))}
+        </CarouselThumbsContainer>
+      </Carousel>
+    );
+  }
 
   return (
     <div className="space-y-3">
-      {cards.map((c, index) => (
+      {LATEST_CARDS.map((c, index) => (
         <Fragment key={index}>{c.content}</Fragment>
       ))}
     </div>
