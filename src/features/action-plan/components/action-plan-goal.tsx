@@ -1,5 +1,4 @@
 import { Trash2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { Input } from '@/components/ui/input';
@@ -9,6 +8,7 @@ import {
   TOTAL_TOXIN_TEST,
 } from '@/const';
 import { useProducts } from '@/features/action-plan/api/get-products';
+import { Disclaimer } from '@/features/action-plan/components/disclaimer';
 import { BlockEditor } from '@/features/action-plan/components/editor/editor';
 import { ACTION_PLAN_INPUT_STYLE } from '@/features/action-plan/const/action-plan-input';
 import { ACTION_PLAN_SAVE_DELAY } from '@/features/action-plan/const/delay';
@@ -34,17 +34,34 @@ export function ActionPlanGoal({ goal, className }: ActionPlanGoalProps) {
   const changeGoalDescription = usePlan((s) => s.changeGoalDescription);
   const changeGoalTitle = usePlan((s) => s.changeGoalTitle);
   const updateActionPlan = usePlan((s) => s.updateActionPlan);
-  const servicesQuery = useServices();
-  const [showPhysicianDisclaimer, setShowPhysicianDisclaimer] = useState(false);
-  const [showSupplementDisclaimer, setShowSupplementDisclaimer] =
-    useState(false);
 
+  const servicesQuery = useServices();
   const productsQuery = useProducts();
+
+  const cancerService = servicesQuery.data?.services.find(
+    (s) => s.name === GRAIL_GALLERI_MULTI_CANCER_TEST,
+  );
+  const totalToxinService = servicesQuery.data?.services.find(
+    (s) => s.name === TOTAL_TOXIN_TEST,
+  );
+
+  const showPhysicianDisclaimer = goal.goalItems.some(
+    (goalItem) =>
+      goalItem.itemId === cancerService?.id ||
+      goalItem.itemId === totalToxinService?.id,
+  );
+
+  const supplements =
+    productsQuery.data?.products.filter(
+      (p) => p.type === PRODUCT_TYPE_SUPPLEMENT,
+    ) ?? [];
+
+  const showSupplementDisclaimer = goal.goalItems.some((goalItem) =>
+    supplements.some((s) => s.id === goalItem.itemId),
+  );
 
   const renderEditor = () => {
     switch (goal.type) {
-      // case 'ANNUAL_REPORT_PROTOCOLS':
-      //   return null;
       default:
         return (
           <BlockEditor
@@ -55,37 +72,7 @@ export function ActionPlanGoal({ goal, className }: ActionPlanGoalProps) {
     }
   };
 
-  useEffect(() => {
-    goal.goalItems.forEach((item) => {
-      const service = servicesQuery.data?.services.find(
-        (s) => s.id === item.itemId,
-      );
-      const product = productsQuery.data?.products.find(
-        (p) => p.id === item.itemId,
-      );
-
-      switch (item.itemType) {
-        case 'SERVICE':
-          if (service?.name === GRAIL_GALLERI_MULTI_CANCER_TEST) {
-            setShowPhysicianDisclaimer(true);
-          }
-          if (service?.name === TOTAL_TOXIN_TEST) {
-            setShowPhysicianDisclaimer(true);
-          }
-          break;
-        case 'PRODUCT':
-          if (product?.type?.valueOf() === PRODUCT_TYPE_SUPPLEMENT) {
-            setShowSupplementDisclaimer(true);
-          }
-          break;
-      }
-    });
-  }, [goal, servicesQuery.data?.services]);
-
   const getInputClassName = () => {
-    // if (goal.type === 'ANNUAL_REPORT_PROTOCOLS') {
-    //   return 'text-base placeholder:text-base';
-    // }
     return 'text-xl placeholder:text-2xl';
   };
 
@@ -119,34 +106,32 @@ export function ActionPlanGoal({ goal, className }: ActionPlanGoalProps) {
         {renderEditor()}
 
         {goal.type === 'ANNUAL_REPORT_PROTOCOLS' && !isAdmin ? (
-          <>
+          <div className="space-y-4">
             <ul className="ml-5 list-outside list-disc">
               {goal.goalItems.map((goalItem, idx) => (
                 <PlanItemList item={goalItem} key={idx} />
               ))}
             </ul>
             {showSupplementDisclaimer ? (
-              <div className="mt-2 rounded-lg bg-zinc-50 p-4 text-sm">
-                <p className="mb-2">Disclaimer</p>
+              <Disclaimer>
                 <p className="text-zinc-500">
                   Consult your primary care physician before starting new
                   supplement, especially if you have health conditions or take
                   medications
                 </p>
-              </div>
+              </Disclaimer>
             ) : null}
             {showPhysicianDisclaimer ? (
-              <div className="mt-2 rounded-lg bg-zinc-50 p-4 text-sm">
-                <p className="mb-2">Disclaimer</p>
+              <Disclaimer>
                 <p className="text-zinc-500">
                   The Grail Galleri test and the Total Toxins test are advanced
                   screenings that require further evaluation and approval by one
                   of SuperPower&#39;s qualified and licensed physicians or nurse
                   practitioners.
                 </p>
-              </div>
+              </Disclaimer>
             ) : null}
-          </>
+          </div>
         ) : (
           <div className="flex flex-col gap-1">
             {goal.goalItems.map((goalItem) => (

@@ -90,7 +90,7 @@ export const BlockEditor = ({
 
   // If no content, do not render to resolve spacing issues.
   if (!isAdmin && !hasContent(content)) {
-    return <div className="h-4"></div>;
+    return <div className="py-4" />;
   }
 
   return (

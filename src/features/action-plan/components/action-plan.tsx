@@ -67,10 +67,10 @@ export function ActionPlanComponent() {
       </div>
 
       <HealthScore className={PLAN_STYLE} />
-      <CoreMonitoredIssues title={'Monitored issues'} goalType={'DEFAULT'} />
+      <CoreMonitoredIssues title="Monitored issues" goalType="DEFAULT" />
       <CoreMonitoredIssues
-        title={'Your protocol'}
-        goalType={'ANNUAL_REPORT_PROTOCOLS'}
+        title="Your protocol"
+        goalType="ANNUAL_REPORT_PROTOCOLS"
       />
       <ConsultationCard className={PLAN_STYLE} />
       <RecommendedItems className={PLAN_STYLE} />

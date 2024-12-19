@@ -57,16 +57,27 @@ export const AnnualReportComponent = () => {
 
         <PhilosophyBlocks philosophyBlocks={annualReportBlocks} />
 
-        <Disclaimer />
+        <Disclaimer>
+          <p className="text-zinc-500">
+            The scores generated under Health Optimization, Environmental,
+            Nutrition, Look and Feel are system-generated using unique data
+            shared about your medical history and health background. This report
+            is exclusively intended to be used for health optimization and
+            wellness purposes. These scores are not intended to diagnose or
+            treat disease, or to substitute a physicianʼs consultation. These
+            insights are determined by evaluating current research and may
+            change over time to reflect the most up to date research available.
+          </p>
+        </Disclaimer>
       </div>
       <HealthScore className={REPORT_STYLE} />
       <CoreMonitoredIssues
-        title={'Monitored issues'}
-        goalType={'ANNUAL_REPORT_PRIMARY'}
+        title="Monitored issues"
+        goalType="ANNUAL_REPORT_PRIMARY"
       />
       <CoreMonitoredIssues
-        title={'Your protocol'}
-        goalType={'ANNUAL_REPORT_PROTOCOLS'}
+        title="Your protocol"
+        goalType="ANNUAL_REPORT_PROTOCOLS"
       />
       <ConsultationCard className={REPORT_STYLE} />
       <RecommendedItems className={REPORT_STYLE} />

@@ -20,7 +20,9 @@ interface BiomarkerDataTableProps {
 export function BiomarkersDataTable(
   props: BiomarkerDataTableProps,
 ): React.ReactNode {
-  const { data: biomarkersData, isLoading } = useBiomarkers();
+  const { data: biomarkersData, isLoading } = useBiomarkers({
+    queryConfig: { enabled: !props.biomarkers },
+  });
 
   if (isLoading) {
     return (

@@ -89,7 +89,7 @@ export function DataTable<TData, TValue>({
           <CategoryFilter table={table} />
         </div>
       </div>
-      <Table className="grid">
+      <Table className="grid overflow-x-auto scrollbar scrollbar-track-zinc-50 scrollbar-thumb-zinc-600">
         <TableHeader className="grid [&_tr]:border-b-0">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow
