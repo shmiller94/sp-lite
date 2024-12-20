@@ -206,7 +206,7 @@ export const CreatePolicyForm = ({ onSuccess }: { onSuccess: () => void }) => {
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
-                <PopoverContent className="w-full p-0">
+                <PopoverContent className="w-[340px] p-0 sm:w-[372px]">
                   <Command>
                     <CommandInput
                       placeholder="Search providers..."
@@ -277,7 +277,7 @@ export const CreatePolicyForm = ({ onSuccess }: { onSuccess: () => void }) => {
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
-                <PopoverContent className="w-full p-0">
+                <PopoverContent className="w-[340px] p-0 sm:w-[372px]">
                   <Command>
                     <CommandInput placeholder="Search states..." />
                     <CommandList>
