@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { cn } from '@/lib/utils';
+
 import {
   FancySwitchProps,
   OptionObject,
@@ -47,6 +49,7 @@ export function FancySwitch<T extends OptionType>({
   disabledKey = 'disabled' as keyof T & string,
   value,
   onChange,
+  className,
   radioClassName,
   highlighterClassName,
   highlighterIncludeMargin = false,
@@ -211,7 +214,12 @@ export function FancySwitch<T extends OptionType>({
             'aria-checked': isSelected,
             tabIndex: isSelected && !option.disabled ? 0 : -1,
             onClick: () => handleChange(index),
-            className: radioClassName,
+            className: cn(
+              'relative mx-2 flex h-9 cursor-pointer items-center justify-center capitalize',
+              'rounded-full px-3.5 text-sm font-medium transition-colors focus:outline-none data-[checked]:text-primary-foreground',
+              'data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50',
+              radioClassName,
+            ),
             ...(isSelected ? { 'data-checked': true } : {}),
             ...(option.disabled
               ? { 'aria-disabled': true, 'data-disabled': true }
@@ -228,7 +236,12 @@ export function FancySwitch<T extends OptionType>({
           // aria-checked={isSelected}
           tabIndex={isSelected && !option.disabled ? 0 : -1}
           onClick={() => handleChange(index)}
-          className={radioClassName}
+          className={cn(
+            'relative mx-2 flex h-9 cursor-pointer items-center justify-center capitalize',
+            'rounded-full px-3.5 text-sm font-medium transition-colors focus:outline-none data-[checked]:text-primary-foreground',
+            'data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50',
+            radioClassName,
+          )}
           {...(isSelected ? { 'data-checked': true } : {})}
           {...(option.disabled
             ? { 'aria-disabled': true, 'data-disabled': true }
@@ -268,6 +281,7 @@ export function FancySwitch<T extends OptionType>({
       role="presentation"
       aria-label="Fancy switch options"
       ref={containerRef}
+      className={cn('flex rounded-full bg-transparent p-2', className)}
       onKeyDown={(e) => {
         props.onKeyDown?.(e);
 
@@ -296,7 +310,7 @@ export function FancySwitch<T extends OptionType>({
       {...props}
     >
       <div
-        className={highlighterClassName}
+        className={cn('bg-primary rounded-full', highlighterClassName)}
         style={{
           position: 'absolute',
           transitionProperty: 'all',

@@ -10,7 +10,7 @@ import { PlanGoalType } from '@/types/api';
 
 const REPORT_STYLE = 'space-y-8 rounded-3xl bg-white p-8 shadow-md md:p-12';
 
-export const CoreMonitoredIssues: ({
+export const GoalsWrapper: ({
   title,
   className,
   goalType,

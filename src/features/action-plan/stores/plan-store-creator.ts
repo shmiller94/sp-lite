@@ -188,10 +188,15 @@ export const planStoreCreator = (initProps: PlanStoreProps) => {
          * @param goalType - Type of the goal to be added.
          */
         addGoal: (goalType: PlanGoalType = 'DEFAULT') => {
+          const title =
+            goalType === 'DEFAULT' || goalType === 'ANNUAL_REPORT_PRIMARY'
+              ? 'Goal'
+              : 'Protocol';
+
           set((state) => {
             state.goals.push({
               id: uuidv4(),
-              title: '',
+              title,
               description: '',
               type: goalType,
               from: new Date().toISOString(),
@@ -335,7 +340,9 @@ export const planStoreCreator = (initProps: PlanStoreProps) => {
 
           if (!result.success) {
             for (const error of result.error.errors) {
-              toast.error(error.message);
+              toast.warning('Action plan was not saved!', {
+                description: `Fix following error: ${error.message}`,
+              });
             }
 
             set({ isUpdating: false });

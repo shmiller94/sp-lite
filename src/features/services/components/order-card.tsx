@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Body1, Body2 } from '@/components/ui/typography';
 import {
+  ADVANCED_BLOOD_PANEL,
   ADVISORY_CALL,
   CUSTOM_BLOOD_PANEL,
   SUPERPOWER_BLOOD_PANEL,
@@ -74,9 +75,12 @@ function OrderCardBadge({ order }: { order: Order }): JSX.Element {
 
   const actions: { label: string; onClick: () => void }[] = [];
   if (
-    ([ADVISORY_CALL, SUPERPOWER_BLOOD_PANEL, CUSTOM_BLOOD_PANEL].includes(
-      name,
-    ) &&
+    ([
+      ADVISORY_CALL,
+      SUPERPOWER_BLOOD_PANEL,
+      CUSTOM_BLOOD_PANEL,
+      ADVANCED_BLOOD_PANEL,
+    ].includes(name) &&
       status.toUpperCase() === OrderStatus.upcoming &&
       new Date(timestamp).getTime() >
         new Date().getTime() - 24 * 60 * 60 * 1000) ||

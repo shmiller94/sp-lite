@@ -78,11 +78,8 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div
-      className="sticky top-28 hidden h-[664px] max-w-[728px] overflow-y-auto rounded-3xl bg-white px-12 pb-12 lg:block"
-      ref={tableContainerRef}
-    >
-      <div className="sticky top-0 z-10 flex items-center justify-between bg-white pb-6 pt-12">
+    <div className="h-[664px] space-y-6 overflow-auto" ref={tableContainerRef}>
+      <div className="flex items-center justify-between gap-5 rounded-lg bg-zinc-100 p-2">
         <SearchBar table={table} />
         <div className="flex items-center gap-3">
           <StatusFilter table={table} />
@@ -93,7 +90,7 @@ export function DataTable<TData, TValue>({
         <TableHeader className="grid [&_tr]:border-b-0">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow
-              className="flex w-full bg-white hover:bg-white"
+              className="flex bg-white hover:bg-white"
               key={headerGroup.id}
             >
               {headerGroup.headers.map((header) => {
@@ -142,11 +139,11 @@ export function DataTable<TData, TValue>({
                     <TableCell
                       key={cell.id}
                       className={cn(
-                        'flex items-center bg-zinc-50 px-0 py-2',
+                        'flex items-center bg-zinc-50 px-0 py-2 w-full',
                         index === row.getVisibleCells().length - 1 &&
-                          'justify-end', // Conditionally add 'justify-end'
+                          'justify-end',
                       )}
-                      style={{ width: cell.column.getSize() }}
+                      // style={{ width: cell.column.getSize() }}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,

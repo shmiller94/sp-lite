@@ -3,6 +3,7 @@ import { Search } from 'lucide-react';
 import * as React from 'react';
 
 import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
 
 function SearchBar<TData>(props: { table: Table<TData> }) {
   const table = props.table;
@@ -16,7 +17,8 @@ function SearchBar<TData>(props: { table: Table<TData> }) {
         onChange={(event) =>
           table.getColumn('name')?.setFilterValue(event.target.value.toString())
         }
-        className="
+        className={cn(
+          `
           w-full
           rounded-md
           border-0
@@ -35,7 +37,8 @@ function SearchBar<TData>(props: { table: Table<TData> }) {
           focus-visible:outline-transparent
           focus-visible:ring-0
           focus-visible:ring-offset-0
-          "
+          `,
+        )}
       />
     </div>
   );

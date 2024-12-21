@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog } from '@/components/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,7 +12,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown';
 import { PlansList } from '@/features/rdns/components/plans-list';
-import { TypeformModal } from '@/features/rdns/components/typeform-modal';
 import { useCurrentPatient } from '@/features/rdns/hooks/use-current-patient';
 import { User } from '@/types/api';
 
@@ -46,14 +45,8 @@ export const ActionCell = ({ patient }: { patient: User }) => {
           >
             Data
           </DropdownMenuItem>
-          <DialogTrigger asChild>
-            <DropdownMenuItem onSelect={() => setOpen(false)}>
-              View typeforms
-            </DropdownMenuItem>
-          </DialogTrigger>
           <PlansList />
         </DropdownMenuContent>
-        <TypeformModal />
       </DropdownMenu>
     </Dialog>
   );

@@ -12,7 +12,7 @@ import { ACTION_PLAN_SAVE_DELAY } from '@/features/action-plan/const/delay';
 import { usePlan } from '@/features/action-plan/stores/plan-store';
 import { useOrders } from '@/features/orders/api';
 
-import { CoreMonitoredIssues } from './core-monitored-issues';
+import { GoalsWrapper } from './goals-wrapper';
 import { ConsultationCard } from './schedule-consultant-card';
 
 const PLAN_STYLE = 'space-y-8 rounded-3xl bg-white p-8 shadow-md md:p-12';
@@ -67,11 +67,8 @@ export function ActionPlanComponent() {
       </div>
 
       <HealthScore className={PLAN_STYLE} />
-      <CoreMonitoredIssues title="Monitored issues" goalType="DEFAULT" />
-      <CoreMonitoredIssues
-        title="Your protocol"
-        goalType="ANNUAL_REPORT_PROTOCOLS"
-      />
+      <GoalsWrapper title="Monitored issues" goalType="DEFAULT" />
+      <GoalsWrapper title="Your protocol" goalType="ANNUAL_REPORT_PROTOCOLS" />
       <ConsultationCard className={PLAN_STYLE} />
       <RecommendedItems className={PLAN_STYLE} />
     </div>

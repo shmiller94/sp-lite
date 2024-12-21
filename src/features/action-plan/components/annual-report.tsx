@@ -1,9 +1,9 @@
 import { useDebouncedCallback } from 'use-debounce';
 
 import { Input } from '@/components/ui/input';
-import { CoreMonitoredIssues } from '@/features/action-plan/components/core-monitored-issues';
 import { Disclaimer } from '@/features/action-plan/components/disclaimer';
 import { BlockEditor } from '@/features/action-plan/components/editor/editor';
+import { GoalsWrapper } from '@/features/action-plan/components/goals-wrapper';
 import { HealthScore } from '@/features/action-plan/components/health-score';
 import { PhilosophyBlocks } from '@/features/action-plan/components/philosophy-blocks';
 import { RecommendedItems } from '@/features/action-plan/components/recommended-items';
@@ -71,14 +71,8 @@ export const AnnualReportComponent = () => {
         </Disclaimer>
       </div>
       <HealthScore className={REPORT_STYLE} />
-      <CoreMonitoredIssues
-        title="Monitored issues"
-        goalType="ANNUAL_REPORT_PRIMARY"
-      />
-      <CoreMonitoredIssues
-        title="Your protocol"
-        goalType="ANNUAL_REPORT_PROTOCOLS"
-      />
+      <GoalsWrapper title="Monitored issues" goalType="ANNUAL_REPORT_PRIMARY" />
+      <GoalsWrapper title="Your protocol" goalType="ANNUAL_REPORT_PROTOCOLS" />
       <ConsultationCard className={REPORT_STYLE} />
       <RecommendedItems className={REPORT_STYLE} />
     </div>
