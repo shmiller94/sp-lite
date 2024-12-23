@@ -77,6 +77,7 @@ export const SectionBilling = () => {
       if (error) {
         setError(error);
         setProcessing(false);
+        toast.error(error.message);
 
         return;
       }
