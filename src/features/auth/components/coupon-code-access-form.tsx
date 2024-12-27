@@ -52,7 +52,10 @@ export function CouponCodeAccessForm({
     /**
      * TODO: change order here after EVENT
      */
-    const code = searchParams.get('accessCode');
+    // Note: The growth team added something to webflow that is auto-lowercasing this param
+    // and means that we aren't picking it up otherwise.
+    const code =
+      searchParams.get('accessCode') || searchParams.get('accesscode');
 
     /**
      * Get priority to access code for now (that we get via ?accessCode=CODE)
