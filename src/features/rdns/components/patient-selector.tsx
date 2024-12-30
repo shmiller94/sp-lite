@@ -40,7 +40,7 @@ export const PatientSelector = () => {
       return <Body1 className="text-zinc-500">Select member</Body1>;
     }
 
-    const birthDate = moment(p.dateOfBirth).format('MMM D, YYYY');
+    const birthDate = moment.utc(p.dateOfBirth).format('MMM D, YYYY');
     const gender = p.gender.charAt(0);
 
     return (
