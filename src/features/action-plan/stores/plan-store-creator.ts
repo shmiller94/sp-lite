@@ -34,6 +34,7 @@ export interface PlanStore {
   orderId: string;
   timestamp: string;
   updatedAt: string;
+  dateOverride?: string;
   title: string;
   type: ActionPlanType;
   description: string;
@@ -43,6 +44,7 @@ export interface PlanStore {
 
   changeTitle: (title: string) => void;
   changeDescription: (description: string) => void;
+  changeDateOverride: (dateOverride: Date) => void;
   addGoal: (goalType?: PlanGoalType) => void;
   deleteGoal: (goalId: string) => void; // Updated to use goalId
   changeGoalTitle: (title: string, goalId: string) => void; // Updated to use goalId
@@ -93,6 +95,7 @@ export const planStoreCreator = (initProps: PlanStoreProps) => {
             new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
         ),
         updatedAt: initialPlan.updatedAt,
+        dateOverride: initialPlan.dateOverride,
         isUpdating: false,
         annualReport: initialPlan.annualReport,
 
@@ -122,6 +125,14 @@ export const planStoreCreator = (initProps: PlanStoreProps) => {
         changeDescription: (description) =>
           set((state) => {
             state.description = description;
+          }),
+
+        /**
+         * Handles the change of the plan's description.
+         */
+        changeDateOverride: (dateOverride) =>
+          set((state) => {
+            state.dateOverride = dateOverride.toISOString();
           }),
 
         /**
@@ -334,6 +345,9 @@ export const planStoreCreator = (initProps: PlanStoreProps) => {
             goals: state.goals,
             published: published ?? state.published,
             annualReport: state.annualReport,
+            dateOverride: state.dateOverride
+              ? new Date(state.dateOverride)
+              : undefined,
           };
 
           const result = updatePlanInputSchema.safeParse(dto);
@@ -357,6 +371,7 @@ export const planStoreCreator = (initProps: PlanStoreProps) => {
             set((state) => {
               state.published = response.actionPlan.published;
               state.updatedAt = response.actionPlan.updatedAt;
+              state.dateOverride = response.actionPlan.dateOverride;
             });
           } catch (e) {
             toast.error('Failed to update action plan...Try again later.');

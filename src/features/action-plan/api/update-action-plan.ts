@@ -21,6 +21,7 @@ const baseSchema = {
   description: z.string().optional(),
   published: z.boolean(),
   goals: z.array(actionPlanGoalSchema),
+  dateOverride: z.date().optional(),
   annualReport: annualReportPlanInputSchema.optional(),
 };
 

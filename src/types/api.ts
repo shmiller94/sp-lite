@@ -548,6 +548,7 @@ export type Plan = Entity<{
   videoFileId?: string;
   annualReport?: AnnualReport;
   updatedAt: string;
+  dateOverride?: string;
 }>;
 
 export type PlanGoal = Entity<{
