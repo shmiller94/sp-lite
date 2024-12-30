@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { toast } from 'sonner';
 
 import { TimestampDisplay } from '@/components/shared/timestamp-display';
@@ -63,7 +64,7 @@ export function OrderCard(order: Order) {
 }
 
 function OrderCardBadge({ order }: { order: Order }): JSX.Element {
-  const { id, name, status, timestamp } = order;
+  const { id, name, status, timestamp, timezone } = order;
   const { checkAdminActorAccess } = useAuthorization();
   const { mutateAsync } = useCancelOrder({
     mutationConfig: {
@@ -72,18 +73,20 @@ function OrderCardBadge({ order }: { order: Order }): JSX.Element {
   });
 
   const isAdmin = checkAdminActorAccess();
+  const isLessThan24Hours =
+    moment(timestamp).tz(timezone).diff(moment().tz(timezone), 'hours') <= 24;
+
+  const isUpcoming = status.toUpperCase() === OrderStatus.upcoming;
+  const isAllowedToCancelService = [
+    ADVISORY_CALL,
+    SUPERPOWER_BLOOD_PANEL,
+    CUSTOM_BLOOD_PANEL,
+    ADVANCED_BLOOD_PANEL,
+  ].includes(name);
 
   const actions: { label: string; onClick: () => void }[] = [];
   if (
-    ([
-      ADVISORY_CALL,
-      SUPERPOWER_BLOOD_PANEL,
-      CUSTOM_BLOOD_PANEL,
-      ADVANCED_BLOOD_PANEL,
-    ].includes(name) &&
-      status.toUpperCase() === OrderStatus.upcoming &&
-      new Date(timestamp).getTime() >
-        new Date().getTime() - 24 * 60 * 60 * 1000) ||
+    (isAllowedToCancelService && isUpcoming && !isLessThan24Hours) ||
     isAdmin
   ) {
     actions.push({
