@@ -77,16 +77,17 @@ export const registerInputSchema = z.object({
   dateOfBirth: z.date().refine((data) => {
     const today = new Date();
     const birthDate = new Date(data);
-    // Calculate the user's age.
     let age = today.getFullYear() - birthDate.getFullYear();
-    // Check if the user has already had their birthday this year.
+
+    // Check if the user has not had their birthday this year yet
     const m = today.getMonth() - birthDate.getMonth();
-    // If the user hasn't had their birthday yet, subtract one year.
     if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
       age--;
     }
-    return age >= 18;
-  }, 'You must be at least 18 years old to register.'),
+
+    // Return true if age is between 18 and 100, inclusive
+    return age >= 18 && age <= 100;
+  }, 'You must be at least 18 years old and no older than 100 to register.'),
   gender: z.enum(['MALE', 'FEMALE']),
   password: z.string().min(6, 'Password must be at least 6 characters long.'),
 });
