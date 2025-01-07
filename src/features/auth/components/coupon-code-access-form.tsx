@@ -21,6 +21,7 @@ import {
   ValidateInput,
   validateInputSchema,
 } from '@/features/auth/api/validate-coupon-code';
+import { updateAccessCode } from '@/utils/access-code';
 
 interface CouponCodeAccessFormProps {
   codeValidated: () => void;
@@ -31,7 +32,6 @@ export function CouponCodeAccessForm({
 }: CouponCodeAccessFormProps): JSX.Element {
   const [searchParams] = useSearchParams();
   const [accessCode, setAccessCode] = useState<string | undefined>(undefined);
-  const [isRewardful, setIsRewardful] = useState<boolean>(false);
 
   const accessCodeQuery = useValidateCode({
     accessCode: accessCode ?? '',
@@ -49,9 +49,6 @@ export function CouponCodeAccessForm({
     const rewardfulCoupon = (window as any).Rewardful?.coupon?.id;
     const rewardfulCode = searchParams.get('rewardfulCode') || rewardfulCoupon;
 
-    /**
-     * TODO: change order here after EVENT
-     */
     // Note: The growth team added something to webflow that is auto-lowercasing this param
     // and means that we aren't picking it up otherwise.
     const code =
@@ -59,17 +56,20 @@ export function CouponCodeAccessForm({
 
     /**
      * Get priority to access code for now (that we get via ?accessCode=CODE)
+     *
+     * toUpperCase() for OUR coupon codes needs to happen on the FE so that on the backend
+     * we can verify we don't uppercase all coupon codes
      */
     if (code) {
-      setAccessCode(code.toUpperCase());
+      setAccessCode(code.toUpperCase().trim());
+      return;
     }
 
     /**
      * Otherwise use rewardfulCoupon if present
      */
-    if (!code && rewardfulCode) {
-      setAccessCode(rewardfulCode);
-      setIsRewardful(true);
+    if (rewardfulCode) {
+      setAccessCode(rewardfulCode.trim());
       return;
     }
   }, []);
@@ -84,21 +84,12 @@ export function CouponCodeAccessForm({
 
     if (accessCodeQuery.isSuccess) {
       codeValidated();
-      /**
-       * toUpperCase() for OUR coupon codes needs to happen on the FE so that on the backend
-       * we can verify we don't uppercase all coupon codes
-       *
-       * rewardfulCoupon doesn't require uppercasing
-       * */
-      localStorage.setItem(
-        'superpower-code',
-        isRewardful ? accessCode : accessCode.toUpperCase(),
-      );
+      updateAccessCode(accessCode);
     }
   }, [accessCodeQuery.isSuccess, codeValidated]);
 
   function onFormSubmit(values: ValidateInput) {
-    setAccessCode(values.accessCode);
+    setAccessCode(values.accessCode.trim());
   }
 
   return (

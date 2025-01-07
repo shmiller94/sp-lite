@@ -3,6 +3,7 @@ import { useQuery, queryOptions } from '@tanstack/react-query';
 import { api } from '@/lib/api-client';
 import { QueryConfig } from '@/lib/react-query';
 import { AvailableSubscription } from '@/types/api';
+import { getAccessCode } from '@/utils/access-code';
 
 export const getAvailableSubscriptions = ({
   code,
@@ -33,7 +34,7 @@ export const useAvailableSubscriptions = ({
   code,
   queryConfig,
 }: UseAvailableSubscriptionsOptions = {}) => {
-  const coupon = localStorage.getItem('superpower-code') ?? undefined;
+  const coupon = getAccessCode();
 
   return useQuery({
     ...availableSubscriptionsQueryOptions(code ? code : coupon),

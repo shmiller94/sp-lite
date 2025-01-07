@@ -1,9 +1,10 @@
 import { RewardfulWindow } from '@/types/window';
+import { getAccessCode } from '@/utils/access-code';
 
 export const trackSubscription = (price: number | undefined) => {
   try {
     const win = window as RewardfulWindow;
-    const accessCode = localStorage.getItem('superpower-code');
+    const accessCode = getAccessCode();
 
     if (win.dataLayer) {
       win.dataLayer.push({
