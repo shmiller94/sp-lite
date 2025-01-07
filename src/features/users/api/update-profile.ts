@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 
 import { api } from '@/lib/api-client';
@@ -91,6 +91,7 @@ type UseUpdateProfileOptions = {
 export const useUpdateProfile = ({
   mutationConfig,
 }: UseUpdateProfileOptions = {}) => {
+  const queryClient = useQueryClient();
   const { refetch: refetchUser } = useUser();
 
   const { onSuccess, ...restConfig } = mutationConfig || {};
@@ -98,6 +99,8 @@ export const useUpdateProfile = ({
   return useMutation({
     onSuccess: (...args) => {
       refetchUser();
+      // we want to reset queries to cover all places we depend on address
+      queryClient.resetQueries();
       onSuccess?.(...args);
     },
     ...restConfig,

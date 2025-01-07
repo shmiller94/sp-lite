@@ -12,7 +12,6 @@ import {
 export interface OrderStoreProps {
   service: HealthcareService;
   tz: string;
-  collectionMethod: CollectionMethodType | null;
 }
 
 /**
@@ -24,6 +23,7 @@ export interface OrderStoreProps {
 export interface OrderStore extends OrderStoreProps {
   items: ServiceItem[];
   updateItems: (item: ServiceItem) => void;
+  collectionMethod: CollectionMethodType | null;
   updateCollectionMethod: (
     collectionMethod: CollectionMethodType | null,
   ) => void;
@@ -45,13 +45,13 @@ export interface OrderStore extends OrderStoreProps {
 export type OrderStoreApi = ReturnType<typeof orderStoreCreator>;
 
 // Define the initial state
-// We don't want to reset collectionMethod and draftOrder here because we would need to refetch them if we do
 const initialState = {
   items: [],
   location: null,
   slot: null,
   createdOrderId: null,
   informedConsent: null,
+  collectionMethod: null,
 };
 
 export const orderStoreCreator = (initProps: OrderStoreProps) => {
@@ -75,6 +75,7 @@ export const orderStoreCreator = (initProps: OrderStoreProps) => {
                 : [...state.items, item],
             };
           }),
+        collectionMethod: null,
         updateCollectionMethod: (collectionMethod) => set({ collectionMethod }),
         updateLocation: (location) => set({ location }),
         setTz: (tz) => set({ tz }),

@@ -46,12 +46,11 @@ interface TypedStepItem {
  *
  * @param {HealthcareService} healthcareService - The healthcare service for which to retrieve steps.
  * @param dataLink tells us if there is assigned RDN to this user
- * @param draftOrderId tells us if service was already booked and we need to drop some steps
  * @returns {TypedStepItem[]} An array of steps required for the given healthcare service.
  */
 export const getStepsFromService = (
   healthcareService: HealthcareService,
-  dataLink?: string,
+  dataLink: string,
 ): TypedStepItem[] => {
   if (!healthcareService.active) {
     return [{ id: StepID.EARLY_ACCESS, content: <EarlyAccessContent /> }];
@@ -121,7 +120,7 @@ export const getStepsFromService = (
         { id: StepID.CONCIERGE, content: <MessageConcierge /> },
       ];
     case ADVISORY_CALL: {
-      const haveRdn = dataLink && dataLink !== '';
+      const haveRdn = dataLink !== '';
 
       // If user has assigned RDN and draftOrderId was not passed (fresh order)
       if (haveRdn) {

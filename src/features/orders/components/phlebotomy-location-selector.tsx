@@ -5,11 +5,13 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Body1, H3 } from '@/components/ui/typography';
 import { useOrder } from '@/features/orders/stores/order-store';
 import { getCollectionMethods } from '@/features/orders/utils/get-collection-methods';
+import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 import { CollectionMethodType } from '@/types/api';
 import { formatMoney } from '@/utils/format-money';
 
 export const CreateOrderPhlebotomyLocationSelector = () => {
+  const { data: user } = useUser();
   const {
     collectionMethod,
     service,
@@ -24,7 +26,10 @@ export const CreateOrderPhlebotomyLocationSelector = () => {
     updateSlot(null);
   };
 
-  const options = useMemo(() => getCollectionMethods(service), [service]);
+  const options = useMemo(
+    () => getCollectionMethods(service, user?.primaryAddress),
+    [service, user?.primaryAddress],
+  );
 
   return (
     <RadioGroup

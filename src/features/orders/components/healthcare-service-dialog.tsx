@@ -26,7 +26,6 @@ import {
   useOrder,
 } from '@/features/orders/stores/order-store';
 import { StepID } from '@/features/orders/types/step-id';
-import { getDefaultCollectionMethod } from '@/features/orders/utils/get-default-collection-method';
 import { getStepsFromService } from '@/features/orders/utils/get-steps-for-service';
 import { useGetSchedulingLink } from '@/features/services/api/get-scheduling-link';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
@@ -59,24 +58,24 @@ export const HealthcareServiceDialog = ({
 }) => {
   const schedulingLinkQuery = useGetSchedulingLink();
 
+  if (!schedulingLinkQuery.data) {
+    return <></>;
+  }
+
   let steps = getStepsFromService(
     healthcareService,
-    schedulingLinkQuery.data?.link,
+    schedulingLinkQuery.data.link,
   );
 
   if (excludeSteps) {
     steps = steps.filter((step) => !excludeSteps.includes(step.id));
   }
 
-  const collectionMethod = getDefaultCollectionMethod(healthcareService);
+  // const collectionMethod = getDefaultCollectionMethod(healthcareService);
 
   return (
     <StepperStoreProvider steps={steps}>
-      <OrderStoreProvider
-        service={healthcareService}
-        tz={moment.tz.guess()}
-        collectionMethod={collectionMethod}
-      >
+      <OrderStoreProvider service={healthcareService} tz={moment.tz.guess()}>
         <HealthcareServiceDialogConsumer onSubmit={onSubmit}>
           {children}
         </HealthcareServiceDialogConsumer>
@@ -92,6 +91,7 @@ export const HealthcareServiceDialog = ({
  * `children` is expected to be a button that triggers the dialog, wrapped inside <DialogTrigger />.
  *
  * @param {ReactNode} children - A button or element used to trigger the dialog for scheduling services. If not provided, then won't render inside the modal
+ * @param onSubmit
  */
 const HealthcareServiceDialogConsumer = ({
   children,
