@@ -37,6 +37,12 @@ export const OnboardingTimelineItem = ({
       case 'ACTION_REQUIRED':
       case 'DEFAULT':
         return data.button;
+      case 'CURRENT':
+        // allow "continue" button on intake
+        if (timelineItem.name === 'Intake') {
+          return data.button;
+        }
+        return null;
       default:
         return null;
     }

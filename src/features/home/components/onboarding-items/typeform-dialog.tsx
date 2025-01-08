@@ -23,6 +23,13 @@ export const TypeformDialog = ({
 
   const typeformFormId = env.TYPEFORM_FORM_ID;
 
+  const updateQuestionnaire = (status: 'ACTIVE' | 'COMPLETE') => {
+    mutate({
+      data: { status },
+      questionnaireId: questionnaireId,
+    });
+  };
+
   const content = (
     <>
       <div className="flex w-full items-center justify-between p-6">
@@ -49,11 +56,9 @@ export const TypeformDialog = ({
           user_id: user?.id ?? '',
         }}
         onSubmit={() => {
-          mutate({
-            data: { status: 'ACTIVE' },
-            questionnaireId: questionnaireId,
-          });
           setOpen(false);
+          // we already have extra update for this on backend just in case, so this one is more for UI to refresh
+          updateQuestionnaire('COMPLETE');
         }}
       />
       <div className="flex w-full justify-center bg-primary/20 p-4">
@@ -69,7 +74,12 @@ export const TypeformDialog = ({
     return (
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
-          <Button variant="outline" className="bg-white" size="medium">
+          <Button
+            variant="outline"
+            className="bg-white"
+            size="medium"
+            onClick={() => updateQuestionnaire('ACTIVE')}
+          >
             Complete
           </Button>
         </SheetTrigger>
@@ -88,7 +98,12 @@ export const TypeformDialog = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="bg-white" size="medium">
+        <Button
+          variant="outline"
+          className="bg-white"
+          size="medium"
+          onClick={() => updateQuestionnaire('ACTIVE')}
+        >
           Complete
         </Button>
       </DialogTrigger>
