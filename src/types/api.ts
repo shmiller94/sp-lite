@@ -361,6 +361,12 @@ export type AvailableSubscription = {
   total: number;
   subtotal: number;
   type: SubscriptionType;
+  meta: MembershipPriceMeta[];
+};
+
+export type MembershipPriceMeta = {
+  title: string;
+  amount: string;
 };
 
 /* ORDERS */

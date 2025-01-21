@@ -5,6 +5,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Body1, H3 } from '@/components/ui/typography';
 import { useOrder } from '@/features/orders/stores/order-store';
 import { getCollectionMethods } from '@/features/orders/utils/get-collection-methods';
+import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 import { CollectionMethodType } from '@/types/api';
 import { formatMoney } from '@/utils/format-money';
@@ -17,6 +18,7 @@ export const CreateOrderPhlebotomyLocationSelector = () => {
     updateLocation,
     updateSlot,
   } = useOrder((s) => s);
+  const { data: user } = useUser();
 
   const handleOptionClick = (optionValue: CollectionMethodType) => {
     updateCollectionMethod(optionValue);
@@ -24,7 +26,10 @@ export const CreateOrderPhlebotomyLocationSelector = () => {
     updateSlot(null);
   };
 
-  const options = useMemo(() => getCollectionMethods(service), [service]);
+  const options = useMemo(
+    () => getCollectionMethods(service, user?.primaryAddress),
+    [service, user?.primaryAddress],
+  );
 
   return (
     <RadioGroup
@@ -39,14 +44,18 @@ export const CreateOrderPhlebotomyLocationSelector = () => {
             collectionMethod === option.value
               ? 'border-zinc-500 bg-zinc-50'
               : 'border-zinc-200 hover:bg-zinc-50',
+            option.disabled ? 'opacity-50' : null,
           )}
           role="presentation"
-          onClick={() => handleOptionClick(option.value)}
+          onClick={() =>
+            option.disabled ? undefined : handleOptionClick(option.value)
+          }
         >
           <RadioGroupItem
             value={option.value}
             checked={collectionMethod === option.value}
             className="mt-0.5 min-w-5"
+            disabled={option.disabled}
           />
           <Label htmlFor={option.value} className="w-full">
             <div className="flex h-[140px] flex-col justify-between sm:h-[172px]">

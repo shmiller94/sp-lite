@@ -1,14 +1,14 @@
 import { AvailableSubscription } from '@/types/api';
 
-export const getDiscountedPrice = (price?: AvailableSubscription) => {
-  if (!price) return null;
+export const getDiscountedPrice = (subscription?: AvailableSubscription) => {
+  if (!subscription) return null;
 
-  if (!price.coupon) return null;
+  if (!subscription.coupon) return null;
 
-  if (price.coupon?.amount_off) {
-    return `- $${price.coupon.amount_off / 100}`;
-  } else if (price.coupon?.percent_off) {
-    return `${price.coupon.percent_off}%`;
+  if (subscription.coupon?.amount_off) {
+    return `- $${subscription.coupon.amount_off / 100}`;
+  } else if (subscription.coupon?.percent_off) {
+    return `${subscription.coupon.percent_off}%`;
   }
 
   return null;

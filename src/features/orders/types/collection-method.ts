@@ -6,4 +6,5 @@ export type CollectionOptionType = {
   description: string;
   cancelationText?: string;
   price: number;
+  disabled: boolean;
 };

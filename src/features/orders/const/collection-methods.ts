@@ -9,6 +9,7 @@ export const COLLECTION_METHODS: Record<
     value: 'IN_LAB',
     description: 'Perform testing at a partner clinic.',
     price: 0,
+    disabled: false,
   },
   AT_HOME: {
     name: 'At-home visit',
@@ -17,5 +18,6 @@ export const COLLECTION_METHODS: Record<
       'Stress-free at your home or office. A nurse will come to you.',
     cancelationText: 'Late cancellation or rescheduling fees apply.',
     price: 7900,
+    disabled: false,
   },
 };

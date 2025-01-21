@@ -3,21 +3,18 @@ import { X } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
 import { TextShimmer } from '@/components/ui/text-shimmer';
 import { Body1, Body2, H3, H4 } from '@/components/ui/typography';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import { getDiscountedPrice } from '@/features/onboarding/utils/get-discounted-price';
 import { useAvailableSubscriptions } from '@/features/settings/api/get-available-subscriptions';
 import { useOutsideClick } from '@/hooks/use-outside-click';
-import { useUser } from '@/lib/auth';
 import { formatMoney } from '@/utils/format-money';
 
 const ExpandableCard = () => {
   const ref = useRef<HTMLDivElement>(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const { processing, consentGiven, membershipType } = useOnboarding();
-  const { data: user } = useUser();
 
   const availableSubscriptionsQuery = useAvailableSubscriptions();
 
@@ -121,37 +118,15 @@ const ExpandableCard = () => {
                         }}
                       />
                     </div>
-                    <div className="flex w-full items-center justify-between">
-                      <Body1 className="text-white">
-                        Superpower Membership
-                      </Body1>
-                      <Body1 className="text-zinc-400">
-                        {availableSubscriptionsQuery.isLoading ? (
-                          <Skeleton className="h-5 w-10" />
-                        ) : (
-                          formatMoney(selectedSubscription?.subtotal ?? 0)
-                        )}
-                      </Body1>
-                    </div>
-                    {/*TODO: we should return that from server*/}
-                    {user?.primaryAddress?.address.state === 'NY' ? (
-                      <div className="flex w-full items-center justify-between">
-                        <Body1 className="text-white">State surcharge</Body1>
-                        <Body1 className="text-zinc-400">$99</Body1>
+                    {selectedSubscription?.meta.map((m, index) => (
+                      <div
+                        className="flex w-full items-center justify-between"
+                        key={index}
+                      >
+                        <Body1 className="text-white">{m.title}</Body1>
+                        <Body1 className="text-zinc-400">{m.amount}</Body1>
                       </div>
-                    ) : null}
-                    {discount ? (
-                      <div className="flex w-full items-center justify-between">
-                        <Body1 className="text-white">Applied discount</Body1>
-                        <Body1 className="text-zinc-400">
-                          {availableSubscriptionsQuery.isLoading ? (
-                            <Skeleton className="h-5 w-10" />
-                          ) : (
-                            discount
-                          )}
-                        </Body1>
-                      </div>
-                    ) : null}
+                    ))}
                   </div>
                   <div className="flex flex-col border-b border-b-zinc-700 px-6 py-4">
                     <div className="flex w-full justify-between">
