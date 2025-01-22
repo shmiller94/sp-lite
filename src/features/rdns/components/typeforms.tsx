@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { H3, H4, Body1, Body2 } from '@/components/ui/typography';
+import { Body1, Body2, H3, H4 } from '@/components/ui/typography';
 import { useCurrentPatient } from '@/features/rdns/hooks/use-current-patient';
 import { getTypeformAnswerText } from '@/features/rdns/utils/get-typeform-answer-text';
 import { sortTypeformAnswers } from '@/features/rdns/utils/sort-typeform-answers';
@@ -103,9 +103,9 @@ export const TypeformAnswers = () => {
           <div className="flex items-center gap-2">
             <Body1>Patient DOB:</Body1>
             <Body1>
-              {moment(patient.dateOfBirth).format('MMMM D, YYYY')}{' '}
+              {moment.utc(patient.dateOfBirth).format('MMMM D, YYYY')}{' '}
               <span className="text-zinc-600">
-                (Age: {moment().diff(patient?.dateOfBirth, 'years')})
+                (Age: {moment.utc().diff(patient?.dateOfBirth, 'years')})
               </span>
             </Body1>
           </div>
