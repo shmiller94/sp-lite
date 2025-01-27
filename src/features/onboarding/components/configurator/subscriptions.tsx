@@ -71,7 +71,7 @@ const SectionSubscriptions = () => {
   return (
     <section id="subscriptions" className="w-full space-y-6">
       <div className="space-y-2">
-        <H2 className="text-[#1E1E1E]">Customize your membership</H2>
+        <H2 className="text-[#1E1E1E]">Your membership</H2>
         <p className="text-base text-zinc-500">
           Choose the blood test package would like as part of your membership.
         </p>
