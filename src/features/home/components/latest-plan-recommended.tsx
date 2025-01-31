@@ -43,17 +43,40 @@ const Product = ({ goalItem }: { goalItem: PlanGoalItem }) => {
 
   const product = products.find((p) => p.id === goalItem.itemId);
 
-  if (!product) return null;
+  if (product !== undefined) {
+    return (
+      <div className="flex gap-4 rounded-3xl bg-zinc-100 p-5">
+        <img
+          src={product?.image ?? ''}
+          alt={product.name}
+          className="size-12 rounded-lg object-cover"
+        />
+        <div>
+          <Body1 className="line-clamp-1">{product.name}</Body1>
+          <ActionPlanCheckoutModal>
+            <Button className="p-0 text-sm text-zinc-400" variant="ghost">
+              Get started
+              <ChevronRight className="size-3" />
+            </Button>
+          </ActionPlanCheckoutModal>
+        </div>
+      </div>
+    );
+  }
 
-  return (
+  // Product not found, but title was previously saved
+  if (goalItem.title !== undefined) {
     <div className="flex gap-4 rounded-3xl bg-zinc-100 p-5">
-      <img
-        src={product?.image ?? ''}
-        alt={product.name}
-        className="size-12 rounded-lg object-cover"
-      />
+      <div className="flex size-12 items-center justify-center rounded-lg bg-gray-100 text-gray-400">
+        <div
+          className="flex size-12 items-center justify-center rounded-lg bg-gray-100 text-gray-400 text-xs text-center font-medium"
+          aria-label={`${goalItem.title} (unavailable)`}
+        >
+          Product Image Missing
+        </div>
+      </div>
       <div>
-        <Body1 className="line-clamp-1">{product.name}</Body1>
+        <Body1 className="line-clamp-1">{goalItem.title}</Body1>
         <ActionPlanCheckoutModal>
           <Button className="p-0 text-sm text-zinc-400" variant="ghost">
             Get started
@@ -61,8 +84,11 @@ const Product = ({ goalItem }: { goalItem: PlanGoalItem }) => {
           </Button>
         </ActionPlanCheckoutModal>
       </div>
-    </div>
-  );
+    </div>;
+  }
+
+  // Product does not have title fallback
+  return;
 };
 
 const Service = ({ goalItem }: { goalItem: PlanGoalItem }) => {

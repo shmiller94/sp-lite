@@ -27,7 +27,7 @@ export const AnnualReportComponent = () => {
     updateActionPlan,
   } = usePlan(useShallow((s) => s));
 
-  const isAnnualReportType = type === 'ANNUAL_REPORT';
+  const isAnnualReportType = type.toUpperCase() === 'ANNUAL_REPORT';
 
   const debouncedTitle = useDebouncedCallback(async (value) => {
     changeAnnualReportTitle(value);

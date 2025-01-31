@@ -38,6 +38,7 @@ export interface PlanStore {
   title: string;
   type: ActionPlanType;
   description: string;
+
   published: boolean;
   goals: PlanGoal[];
   annualReport?: AnnualReport;
@@ -283,6 +284,7 @@ export const planStoreCreator = (initProps: PlanStoreProps) => {
               const items = selectedItems.map((selectedItem) => ({
                 id: uuidv4(),
                 itemId: selectedItem.id,
+                title: selectedItem.name,
                 itemType: type,
               }));
 

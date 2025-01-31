@@ -9,6 +9,7 @@ import { Plan } from '@/types/api';
 export const actionPlanGoalItemSchema = z.object({
   itemId: z.string().min(1, 'itemId must be present'),
   itemType: z.enum(['SERVICE', 'BIOMARKER', 'PRODUCT']),
+  title: z.string().optional().nullable(),
   description: z.string().optional().nullable(),
   timestamp: z.string().optional().nullable(),
 });

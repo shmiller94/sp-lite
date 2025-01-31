@@ -6,12 +6,20 @@ import { ActionPlanCheckoutModal } from '@/features/action-plan/components/check
 import { usePlan } from '@/features/action-plan/stores/plan-store';
 import { cn } from '@/lib/utils';
 
+import { useProducts } from '../api';
+
 export const RecommendedItems = ({ className }: { className?: string }) => {
+  const productsQuery = useProducts();
+  const productIds = productsQuery.data?.products.map((p) => p.id);
+
   const { goals } = usePlan(useShallow((s) => s));
 
   const productItems = goals
     .flatMap((goal) => goal.goalItems)
-    .filter((item) => item.itemType === 'PRODUCT');
+    .filter(
+      (item) =>
+        item.itemType === 'PRODUCT' && productIds?.includes(item.itemId),
+    );
 
   if (productItems.length === 0) {
     return null;

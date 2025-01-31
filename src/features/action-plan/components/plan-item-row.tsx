@@ -51,7 +51,7 @@ export function ActionPlanItemRow(
       const product = productsQuery.data?.products.find(
         (product) => product.id === item.itemId,
       );
-      return product ? (
+      return product || item.title ? (
         <div className="flex w-full items-center justify-center gap-4">
           <ActionPlanProductRow
             product={product}
@@ -118,7 +118,7 @@ export function ActionPlanItemRow(
 }
 
 interface ActionPlanProductRowInterface {
-  product: Product;
+  product: Product | undefined;
   goalItem: PlanGoalItem;
   goalId: string;
 }
@@ -136,6 +136,8 @@ function ActionPlanProductRow({
     await updateActionPlan();
   }, ACTION_PLAN_SAVE_DELAY);
 
+  if (product === undefined && goalItem.title === null) return <></>;
+
   return (
     <div
       role="presentation"
@@ -143,15 +145,28 @@ function ActionPlanProductRow({
         `flex flex-row space-x-6 items-center bg-zinc-50 transition rounded-[20px] p-3 h-[96px] w-full`,
         !isAdmin ? 'cursor-pointer' : '',
       )}
-      onClick={() => !isAdmin && window.open(product.url, '_blank')}
+      onClick={() =>
+        !isAdmin && product?.url && window.open(product.url, '_blank')
+      }
     >
-      <img
-        alt={product.name}
-        src={product.image}
-        className="size-[72px] rounded-[8px] bg-white object-cover object-center"
-      />
+      {product ? (
+        <img
+          alt={product.name}
+          src={product.image}
+          className="size-[72px] rounded-[8px] bg-white object-cover object-center"
+        />
+      ) : (
+        <div className="flex size-12 items-center justify-center rounded-lg bg-gray-100 text-gray-400">
+          <div
+            className="flex size-12 items-center justify-center rounded-lg bg-gray-100 text-gray-400 text-xs text-center font-medium"
+            aria-label={`${goalItem.title} (unavailable)`}
+          >
+            Product Image Missing
+          </div>
+        </div>
+      )}
       <div className="flex flex-1 flex-col gap-1">
-        <Body1>{product.name}</Body1>
+        <Body1>{product?.name || goalItem.title}</Body1>
         <Input
           className={cn(
             ACTION_PLAN_INPUT_STYLE,

@@ -570,6 +570,7 @@ export type PlanGoal = Entity<{
 export type PlanGoalItem = Entity<{
   itemId: string;
   itemType: PlanGoalItemType;
+  title?: string;
   description?: string;
   timestamp?: string;
 }>;

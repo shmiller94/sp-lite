@@ -1,3 +1,9 @@
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { useProducts } from '@/features/action-plan/api';
 import { HealthcareServiceDialog } from '@/features/orders/components/healthcare-service-dialog';
 import { useServices } from '@/features/services/api';
@@ -13,21 +19,50 @@ export const PlanItemList = ({ item }: { item: PlanGoalItem }) => {
         (product) => product.id === item.itemId,
       );
 
-      return product ? (
-        <li className="text-base text-vermillion-900">
-          <span className="text-zinc-600">
-            <a
-              href={product.url}
-              className="cursor-pointer text-vermillion-900 hover:text-vermillion-500"
-              target="_blank"
-              rel="noreferrer"
-            >
-              {product.name}
-            </a>
-            <span> {item.description ? `- ${item.description}` : null}</span>
-          </span>
-        </li>
-      ) : null;
+      // Shopify item is found
+      if (product !== undefined) {
+        return (
+          <li className="text-base text-vermillion-900">
+            <span className="text-zinc-600">
+              <a
+                href={product.url}
+                className="cursor-pointer text-vermillion-900 hover:text-vermillion-500"
+                target="_blank"
+                rel="noreferrer"
+              >
+                {product.name}
+              </a>
+              <span> {item.description ? `- ${item.description}` : null}</span>
+            </span>
+          </li>
+        );
+      }
+
+      // Shopify Item is missing
+      if (item.title !== null) {
+        return (
+          <li className="text-base text-vermillion-900">
+            <span className="text-zinc-600">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="cursor-default text-vermillion-900 hover:text-vermillion-500">
+                      {item.title}
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Product not currently available.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <span> {item.description ? `- ${item.description}` : null}</span>
+            </span>
+          </li>
+        );
+      }
+
+      // Shopify item is missing and name was not saved
+      return null;
     }
     case 'SERVICE': {
       const service = servicesQuery.data?.services.find(
