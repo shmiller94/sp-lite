@@ -18,7 +18,7 @@ We do not offer typical sick care, but rather, our longevity advisors are there 
   {
     display: 'Where do I go for my lab visit?',
     description:
-      'You will be tested at one of over 2,000 locations across the US, within 10 miles of nearly every home in the United States. Our lab partner performs over 50 million tests per year and is trusted by the entire medical community. We also offer at-home testing for an additional fee where a nurse will come to you.',
+      'We partner with over 2,000 locations across the US. Our lab partner performs billions of tests each year and is one of the leading labs in the nation. We also offer at-home testing for an additional fee where a private nurse will come to you',
   },
 ];
 
