@@ -659,6 +659,22 @@ export type Product = {
   type?: string;
 };
 
+export type PaginationInfo = {
+  page: number;
+  limit: number;
+  hasNextPage: boolean;
+};
+
+export type PaginatedResponse<T> = {
+  pagination: PaginationInfo;
+  data: T[];
+};
+
+export type ProductsResponse = {
+  pagination: PaginationInfo;
+  products: Product[];
+};
+
 export type ProductOrder = {
   id: string;
   name: string;

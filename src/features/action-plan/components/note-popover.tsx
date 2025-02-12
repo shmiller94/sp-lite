@@ -1,5 +1,6 @@
-import { X } from 'lucide-react';
-import React, { ReactNode, useState } from 'react';
+import { X, AlertTriangle, Search } from 'lucide-react';
+import React, { ReactNode, useState, useEffect } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { useShallow } from 'zustand/react/shallow';
 
 import { Button } from '@/components/ui/button';
@@ -10,15 +11,18 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Body1, Body2, Body3 } from '@/components/ui/typography';
-import { useProducts } from '@/features/action-plan/api/get-products';
 import { ACTION_PLAN_INPUT_STYLE } from '@/features/action-plan/const/action-plan-input';
 import { usePlan } from '@/features/action-plan/stores/plan-store';
 import { useBiomarkers } from '@/features/biomarkers/api/get-biomarkers';
 import { STATUS_OPTIONS } from '@/features/biomarkers/const/status-options';
 import { useServices } from '@/features/services/api/get-services';
+import { useDebounce } from '@/hooks/use-debounce';
 import { cn } from '@/lib/utils';
 import { Biomarker, HealthcareService, PlanGoal, Product } from '@/types/api';
+
+import { useInfiniteProducts } from '../api/get-products';
 
 interface PopoverOption {
   name: string;
@@ -91,13 +95,43 @@ export function ClinicianNotePopover({
 
   const biomarkersQuery = useBiomarkers();
   const servicesQuery = useServices();
-  const productsQuery = useProducts();
+  const debouncedSearch = useDebounce(query, 300);
+
+  const { ref, inView } = useInView({
+    threshold: 0.1,
+    rootMargin: '100px',
+  });
+
+  const infiniteProductsQuery = useInfiniteProducts({
+    search: selectedCategory === 'Product' ? debouncedSearch : undefined,
+    queryConfig: {
+      enabled: selectedCategory === 'Product',
+      getNextPageParam: (lastPage) =>
+        lastPage.pagination.hasNextPage
+          ? lastPage.pagination.page + 1
+          : undefined,
+      initialPageParam: 1,
+    },
+  });
+
+  useEffect(() => {
+    if (
+      inView &&
+      infiniteProductsQuery.hasNextPage &&
+      !infiniteProductsQuery.isFetchingNextPage &&
+      infiniteProductsQuery.data?.pages[
+        infiniteProductsQuery.data.pages.length - 1
+      ].pagination.hasNextPage
+    ) {
+      infiniteProductsQuery.fetchNextPage();
+    }
+  }, [inView, infiniteProductsQuery]);
 
   // Handle different goal types
   const getValidOptions = () => {
     switch (goal.type) {
+      // Allow only Products and Services for ANNUAL_REPORT_PROTOCOLS
       case 'ANNUAL_REPORT_PROTOCOLS':
-        // Allow only Products and Services for ANNUAL_REPORT_PROTOCOLS
         return options.filter(
           (option) => option.name === 'Product' || option.name === 'Service',
         );
@@ -166,24 +200,25 @@ export function ClinicianNotePopover({
     setSelectedServices([]);
   };
 
-  const renderList = (): HealthcareService[] | Biomarker[] | Product[] => {
+  const renderList = (): (HealthcareService | Biomarker | Product)[] => {
     switch (selectedCategory) {
       case 'Biomarker':
         return (
           biomarkersQuery.data?.biomarkers.filter((biomarker) =>
-            biomarker.name.toLowerCase().includes(query.toLowerCase()),
+            biomarker.name
+              .toLowerCase()
+              .includes(debouncedSearch.toLowerCase()),
           ) ?? []
         );
       case 'Product':
         return (
-          productsQuery.data?.products.filter((product) =>
-            product.name.toLowerCase().includes(query.toLowerCase()),
-          ) ?? []
+          infiniteProductsQuery.data?.pages.flatMap((page) => page.products) ??
+          []
         );
       case 'Service':
         return (
           servicesQuery.data?.services.filter((service) =>
-            service.name.toLowerCase().includes(query.toLowerCase()),
+            service.name.toLowerCase().includes(debouncedSearch.toLowerCase()),
           ) ?? []
         );
       default:
@@ -278,21 +313,70 @@ export function ClinicianNotePopover({
         )}
 
         <div className="max-h-[220px] overflow-y-auto">
-          {!selectedCategory
-            ? getValidOptions().map((option, index) => (
-                <CategoryBlock
-                  key={index}
-                  option={option}
-                  onClick={(option) => setSelectedCategory(option)}
-                />
-              ))
-            : renderList().map((filteredOption) => (
-                <OptionBlock
-                  key={filteredOption.id}
-                  option={renderOption(filteredOption)}
-                  onClick={(option) => updateItems(option)}
-                />
-              ))}
+          {!selectedCategory ? (
+            getValidOptions().map((option, index) => (
+              <CategoryBlock
+                key={index}
+                option={option}
+                onClick={(option) => setSelectedCategory(option)}
+              />
+            ))
+          ) : (
+            <>
+              {(selectedCategory === 'Product' &&
+                infiniteProductsQuery.isError) ||
+              (selectedCategory === 'Service' && servicesQuery.isError) ||
+              (selectedCategory === 'Biomarker' && biomarkersQuery.isError) ? (
+                <div className="flex h-[180px] flex-col items-center justify-center gap-2 p-4 text-center">
+                  <AlertTriangle className="size-8 text-vermillion-500" />
+                  <Body1 className="text-zinc-600">Failed to load items</Body1>
+                  <Body3 className="text-zinc-400">
+                    Please try again later
+                  </Body3>
+                </div>
+              ) : renderList().length === 0 &&
+                !infiniteProductsQuery.isLoading ? (
+                <div className="flex h-[180px] flex-col items-center justify-center gap-2 p-4 text-center">
+                  <Search className="size-8 text-zinc-400" />
+                  <Body1 className="text-zinc-600">No items found</Body1>
+                  <Body3 className="text-zinc-400">
+                    Try adjusting your search terms
+                  </Body3>
+                </div>
+              ) : (
+                <>
+                  {renderList().map((filteredOption) => (
+                    <OptionBlock
+                      key={filteredOption.id}
+                      option={renderOption(filteredOption)}
+                      onClick={(option) => updateItems(option)}
+                    />
+                  ))}
+
+                  {selectedCategory === 'Product' && (
+                    <>
+                      <div ref={ref} className="h-4" />
+                      {(infiniteProductsQuery.isLoading ||
+                        infiniteProductsQuery.isFetchingNextPage) && (
+                        <div className="space-y-3 p-4">
+                          {Array(5)
+                            .fill(0)
+                            .map((_, i) => (
+                              <div key={i} className="flex items-center gap-4">
+                                <Skeleton className="size-12 rounded-lg" />
+                                <div className="space-y-2">
+                                  <Skeleton className="h-4 w-32" />
+                                </div>
+                              </div>
+                            ))}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </>
+              )}
+            </>
+          )}
         </div>
 
         {selectedCategory && (
