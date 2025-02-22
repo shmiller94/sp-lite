@@ -9,6 +9,12 @@ const createEnv = () => {
       .refine((s) => s === 'true' || s === 'false')
       .transform((s) => s === 'true')
       .optional(),
+    MAINTENANCE_MODE: z
+      .string()
+      .refine((s) => s === 'true' || s === 'false')
+      .transform((s) => s === 'true')
+      .optional()
+      .default('false'),
     APP_URL: z.string().optional().default('http://localhost:3000'),
     APP_MOCK_API_PORT: z.string().optional().default('8080'),
     VITAL_ENV: z.string(),
