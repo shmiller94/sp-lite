@@ -40,9 +40,7 @@ export const Header = () => {
       <div className="flex justify-center pb-2">
         {isAdmin ? (
           <DatetimePicker
-            dtOptions={{
-              date: dateOverride ? new Date(dateOverride) : new Date(timestamp),
-            }}
+            value={dateOverride ? new Date(dateOverride) : new Date(timestamp)}
             onChange={(e) => debouncedDateOverride(e)}
             format={[['months', 'days', 'years'], []]}
             className="bg-white"

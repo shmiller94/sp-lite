@@ -1,5 +1,10 @@
-import React, { forwardRef, useCallback } from 'react';
-import { type Options, useTimescape } from 'timescape/react';
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -7,40 +12,33 @@ import { Input } from './input';
 
 const timePickerSeparatorBase = 'text-xs text-zinc-400';
 
-type DateFormat = 'days' | 'months' | 'years';
+type DateFormat = 'months' | 'days' | 'years';
 type TimeFormat = 'hours' | 'minutes' | 'seconds' | 'am/pm';
-
-type DateTimeArray<T extends DateFormat | TimeFormat> = T[];
+type DateTimeArray<T> = T[];
 type DateTimeFormatDefaults = [
   DateTimeArray<DateFormat>,
-  DateTimeArray<TimeFormat>,
+  DateTimeArray<TimeFormat>?,
 ];
 
-const DEFAULTS = [
-  ['months', 'days', 'years'],
-  ['hours', 'minutes', 'am/pm'],
-] as DateTimeFormatDefaults;
+const DEFAULTS = [['months', 'days', 'years'], []] as DateTimeFormatDefaults;
 
-type TimescapeReturn = ReturnType<typeof useTimescape>;
-type InputPlaceholders = Record<DateFormat | TimeFormat, string>;
+type InputPlaceholders = Record<DateFormat, string>;
 const INPUT_PLACEHOLDERS: InputPlaceholders = {
   months: 'MM',
   days: 'DD',
   years: 'YYYY',
-  hours: 'HH',
-  minutes: 'MM',
-  seconds: 'SS',
-  'am/pm': 'AM/PM',
 };
 
-const TEST_IDS: Record<DateFormat | TimeFormat, string> = {
+const TEST_IDS: Record<DateFormat, string> = {
   months: 'months',
   days: 'days',
   years: 'years',
-  hours: 'hours',
-  minutes: 'minutes',
-  seconds: 'seconds',
-  'am/pm': 'ampm',
+};
+
+const MAX_LENGTHS: Record<DateFormat, number> = {
+  months: 2,
+  days: 2,
+  years: 4,
 };
 
 const DatetimeGrid = forwardRef<
@@ -48,133 +46,183 @@ const DatetimeGrid = forwardRef<
   {
     format: DateTimeFormatDefaults;
     className?: string;
-    timescape: Pick<TimescapeReturn, 'getRootProps' | 'getInputProps'>;
+    values: Record<DateFormat, string>;
+    onChange: (type: DateFormat, value: string) => void;
     placeholders: InputPlaceholders;
   }
->(
-  (
-    {
-      format,
-      className,
-      timescape,
-      placeholders,
-    }: {
-      format: DateTimeFormatDefaults;
-      className?: string;
-      timescape: Pick<TimescapeReturn, 'getRootProps' | 'getInputProps'>;
-      placeholders: InputPlaceholders;
-    },
-    ref,
-  ) => {
-    return (
-      <div
-        className={cn(
-          'flex items-center px-6 py-4 border',
-          className,
-          'border-input rounded-xl gap-1 selection:bg-transparent selection:text-foreground',
-        )}
-        {...timescape.getRootProps()}
-        ref={ref}
-      >
-        {format?.length
-          ? format.map((group, i) => (
-              <React.Fragment key={i === 0 ? 'dates' : 'times'}>
-                {group?.length
-                  ? group.map((unit, j) => (
-                      <React.Fragment key={unit}>
-                        <Input
-                          className={cn(
-                            'p-0 inline  h-fit shadow-none border-none outline-none select-none content-box focus-visible:bg-zinc-100 rounded-sm w-full text-center focus-visible:ring-0 focus-visible:outline-none min-w-8',
-                            {
-                              'min-w-12': unit === 'years',
-                              'bg-foreground/15': unit === 'am/pm',
-                            },
-                          )}
-                          {...timescape.getInputProps(unit)}
-                          placeholder={placeholders[unit]}
-                          data-testid={TEST_IDS[unit]}
-                        />
-                        {i === 0 && j < group.length - 1 ? (
-                          // date separator
-                          <span className={timePickerSeparatorBase}>/</span>
-                        ) : (
-                          j < group.length - 2 && (
-                            // time separator
-                            <span className={timePickerSeparatorBase}>:</span>
-                          )
-                        )}
-                      </React.Fragment>
-                    ))
-                  : null}
-                {format[1]?.length && !i ? (
-                  // date-time separator - only if both date and time are present
-                  <span
-                    className={cn(
-                      timePickerSeparatorBase,
-                      'opacity-30 text-xl',
-                    )}
-                  >
-                    |
-                  </span>
-                ) : null}
-              </React.Fragment>
-            ))
-          : null}
-      </div>
-    );
-  },
-);
+>(({ format, className, values, onChange, placeholders }, ref) => {
+  const monthRef = useRef<HTMLInputElement>(null);
+  const dayRef = useRef<HTMLInputElement>(null);
+  const yearRef = useRef<HTMLInputElement>(null);
 
+  const handleChange = (type: DateFormat, value: string) => {
+    value = value.replace(/\D/g, '');
+
+    if (value.length > MAX_LENGTHS[type]) {
+      value = value.slice(0, MAX_LENGTHS[type]);
+    }
+
+    if (type === 'months') {
+      const num = parseInt(value, 10);
+      if (!isNaN(num) && num > 12) {
+        value = '12';
+      }
+    }
+    if (type === 'days') {
+      const num = parseInt(value, 10);
+      if (!isNaN(num) && num > 31) {
+        value = '31';
+      }
+    }
+
+    onChange(type, value);
+
+    if (value.length === MAX_LENGTHS[type]) {
+      switch (type) {
+        case 'months':
+          dayRef.current?.focus();
+          break;
+        case 'days':
+          yearRef.current?.focus();
+          break;
+        default:
+          break;
+      }
+    }
+  };
+
+  return (
+    <div
+      className={cn(
+        'flex items-center px-6 py-4 border',
+        className,
+        'border-input rounded-xl gap-1 selection:bg-transparent selection:text-foreground',
+      )}
+      ref={ref}
+    >
+      {(format[0] || []).map((unit, j) => (
+        <React.Fragment key={unit}>
+          <Input
+            ref={
+              unit === 'months' ? monthRef : unit === 'days' ? dayRef : yearRef
+            }
+            className={cn(
+              'p-0 inline h-fit shadow-none border-none outline-none select-none content-box focus-visible:bg-zinc-100 rounded-sm w-full text-center focus-visible:ring-0 focus-visible:outline-none min-w-8',
+              { 'min-w-12': unit === 'years' },
+            )}
+            value={values[unit]}
+            onChange={(e) => handleChange(unit, e.target.value)}
+            placeholder={placeholders[unit]}
+            data-testid={TEST_IDS[unit]}
+            maxLength={MAX_LENGTHS[unit]}
+          />
+          {j < (format[0]?.length || 0) - 1 && (
+            <span className={timePickerSeparatorBase}>/</span>
+          )}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+});
 DatetimeGrid.displayName = 'DatetimeGrid';
 
 interface DateTimeInput {
   value?: Date;
-  format: DateTimeFormatDefaults;
+  format?: DateTimeFormatDefaults;
   placeholders?: InputPlaceholders;
-  onChange?: Options['onChangeDate'];
-  dtOptions?: Options;
+  onChange?: (date: Date | undefined) => void;
   className?: string;
 }
 
-const DEFAULT_TS_OPTIONS = {
-  date: undefined,
-  hour12: true,
-};
 export const DatetimePicker = forwardRef<HTMLDivElement, DateTimeInput>(
   (
-    {
-      value = undefined,
-      format = DEFAULTS,
-      placeholders,
-      dtOptions = DEFAULT_TS_OPTIONS,
-      onChange,
-      className,
-    },
+    { value = undefined, format = DEFAULTS, placeholders, onChange, className },
     ref,
   ) => {
-    const handleDateChange = useCallback(
-      (nextDate: Date | undefined) => {
-        onChange ? onChange(nextDate) : console.log(nextDate);
+    const [month, setMonth] = useState<string>('');
+    const [day, setDay] = useState<string>('');
+    const [year, setYear] = useState<string>('');
+
+    useEffect(() => {
+      if (value && !isNaN(value.getTime())) {
+        setMonth(String(value.getMonth() + 1));
+        setDay(String(value.getDate()));
+        setYear(String(value.getFullYear()));
+      }
+    }, []);
+
+    const handleChange = useCallback(
+      (type: DateFormat, newValue: string) => {
+        let updatedMonth = month;
+        let updatedDay = day;
+        let updatedYear = year;
+        switch (type) {
+          case 'months':
+            setMonth(newValue);
+            updatedMonth = newValue;
+            break;
+          case 'days':
+            setDay(newValue);
+            updatedDay = newValue;
+            break;
+          case 'years':
+            setYear(newValue);
+            updatedYear = newValue;
+            break;
+        }
+        // Only update parent's value when all fields are nonempty.
+        if (updatedMonth === '' || updatedDay === '' || updatedYear === '') {
+          return;
+        }
+        const finalMonth = parseInt(updatedMonth, 10);
+        const finalDay = parseInt(updatedDay, 10);
+        const finalYear = parseInt(updatedYear, 10);
+        if (
+          !isNaN(finalMonth) &&
+          !isNaN(finalDay) &&
+          !isNaN(finalYear) &&
+          finalMonth >= 1 &&
+          finalMonth <= 12 &&
+          finalDay >= 1 &&
+          finalDay <= 31 &&
+          finalYear >= 1900
+        ) {
+          const newDate = new Date(finalYear, finalMonth - 1, finalDay);
+          onChange?.(newDate);
+        }
       },
-      [onChange],
+      [month, day, year, onChange],
     );
 
-    const timescape = useTimescape({
-      date: value,
-      onChangeDate: handleDateChange,
-      ...dtOptions,
-    });
+    const values: Record<DateFormat, string> = {
+      months: month,
+      days: day,
+      years: year,
+    };
 
     return (
       <DatetimeGrid
         format={format}
         className={className}
-        timescape={timescape}
+        values={values}
+        onChange={(type, value) => {
+          switch (type) {
+            case 'months':
+              setMonth(value);
+              break;
+            case 'days':
+              setDay(value);
+              break;
+            case 'years':
+              setYear(value);
+              break;
+          }
+          handleChange(type, value);
+        }}
         placeholders={placeholders ?? INPUT_PLACEHOLDERS}
         ref={ref}
       />
     );
   },
 );
-
 DatetimePicker.displayName = 'DatetimePicker';
