@@ -3,7 +3,10 @@ import moment from 'moment';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { Body1, Body2, H4 } from '@/components/ui/typography';
-import { SUPERPOWER_BLOOD_PANEL } from '@/const';
+import {
+  SUPERPOWER_ADVANCED_BLOOD_PANEL,
+  SUPERPOWER_BLOOD_PANEL,
+} from '@/const';
 import { useBiomarkers } from '@/features/biomarkers/api';
 import { ScoreDialog } from '@/features/biomarkers/components/score-dialog/score-dialog';
 import { biomarkerStatusCount } from '@/features/biomarkers/utils/biomarkers-status-count';
@@ -85,7 +88,9 @@ export const BiomarkersSummaryCard = ({
 
   const orders = data?.orders.filter(
     (o) =>
-      o.status === OrderStatus.completed && o.name === SUPERPOWER_BLOOD_PANEL,
+      o.status === OrderStatus.completed &&
+      (o.name === SUPERPOWER_BLOOD_PANEL ||
+        o.name === SUPERPOWER_ADVANCED_BLOOD_PANEL),
   );
 
   // we have this filter: orderBy: [{ createdAt: 'desc' }] on backend for orders

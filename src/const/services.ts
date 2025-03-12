@@ -3,6 +3,7 @@ export const GRAIL_GALLERI_MULTI_CANCER_TEST =
 export const GUT_MICROBIOME_ANALYSIS = 'Gut Microbiome Analysis';
 export const TOTAL_TOXIN_TEST = 'Total Toxins';
 export const SUPERPOWER_BLOOD_PANEL = 'Superpower Blood Panel';
+export const SUPERPOWER_ADVANCED_BLOOD_PANEL = 'Advanced Blood Panel';
 export const ADVISORY_CALL = '1-1 Advisory Call';
 export const ENVIRONMENTAL_TOXINS = 'Environmental Toxins';
 export const PFAS_CHEMICALS = 'PFAS Chemicals';
