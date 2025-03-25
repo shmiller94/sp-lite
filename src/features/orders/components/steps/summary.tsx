@@ -47,6 +47,9 @@ export function OrderSummary(): ReactNode {
     serviceId: service.id,
     method: collectionMethod,
     items,
+    queryConfig: {
+      refetchOnMount: 'always',
+    },
   });
 
   const defaultPaymentMethod = paymentMethodsQuery.data?.paymentMethods.find(
