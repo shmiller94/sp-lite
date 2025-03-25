@@ -27,7 +27,10 @@ export const IdentityDialog = () => {
       const { error } = await stripe.verifyIdentity(response.clientSecret);
 
       if (error) {
-        toast.error(error.code);
+        // NOTE: if we do want to show a toast on error, we should implement a formal error code handler for Stripe
+        // otherwise, showing one is unnecessary for now for 'session_cancelled'
+        // https://docs.stripe.com/error-codes
+        // toast.error(error.code);
         return;
       }
 
