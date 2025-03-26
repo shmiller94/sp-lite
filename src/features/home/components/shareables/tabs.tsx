@@ -14,8 +14,8 @@ export const ShareablesTabs = ({
   onTabChange,
 }: ShareablesTabsProps) => {
   return (
-    <div className="p-4">
-      <div className="relative mb-8 flex h-12 w-[calc(100vw-8rem)] gap-0 truncate md:mt-2 md:w-96">
+    <div className="pl-10 md:p-4">
+      <div className="relative mb-8 mt-[78px] flex h-12 w-[calc(100vw-8rem)] gap-0 truncate md:mt-2 md:w-96">
         <motion.div
           className="absolute inset-0 w-1/2 rounded-full bg-white"
           initial={{ x: activeTab === 'superpower-score' ? 0 : '100%' }}

@@ -69,7 +69,7 @@ export const ShareablesModal = ({
       >
         <DialogTitle className="hidden">Shareables</DialogTitle>
         <div className="relative flex size-full flex-col">
-          <div className="absolute left-4 top-4 z-10 md:right-0">
+          <div className="absolute left-4 top-20 z-10 md:right-0 md:top-4">
             <DialogClose>
               <div className="flex size-10 items-center justify-center rounded-full bg-white shadow-md">
                 <X className="size-5" />

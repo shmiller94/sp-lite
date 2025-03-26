@@ -69,31 +69,33 @@ export const DataCard = ({
                 />
               )}
             </div>
-            <div>
-              {hasData ? (
-                <NumberFlow value={score} className="text-6xl text-white" />
-              ) : (
-                <H1 className="text-white">--</H1>
-              )}
-              {hasData ? (
-                <Body2 className="text-white">Your health score</Body2>
-              ) : (
-                <Body2 className="text-white">Awaiting lab results</Body2>
+            <div className="flex w-full items-end justify-between gap-4">
+              <div>
+                {hasData ? (
+                  <NumberFlow value={score} className="text-6xl text-white" />
+                ) : (
+                  <H1 className="text-white">--</H1>
+                )}
+                {hasData ? (
+                  <Body2 className="text-white">Your health score</Body2>
+                ) : (
+                  <Body2 className="text-white">Awaiting lab results</Body2>
+                )}
+              </div>
+              {hasData && (
+                <div className="md:hidden">
+                  <Button
+                    type="button"
+                    variant="white"
+                    size="medium"
+                    onClick={() => onClick?.()}
+                    className="border border-primary/10"
+                  >
+                    More info
+                  </Button>
+                </div>
               )}
             </div>
-            {hasData && (
-              <div className="absolute bottom-4 right-4 md:hidden">
-                <Button
-                  type="button"
-                  variant="white"
-                  size="medium"
-                  onClick={() => onClick?.()}
-                  className="border border-primary/10"
-                >
-                  More info
-                </Button>
-              </div>
-            )}
           </>
         );
       }
@@ -112,36 +114,38 @@ export const DataCard = ({
                 />
               )}
             </div>
-            <div>
-              {hasData ? (
-                <NumberFlow
-                  value={biologicalAge}
-                  className="text-6xl text-white"
-                />
-              ) : (
-                <H1 className="text-white">--</H1>
-              )}
-              {ageDifference ? (
-                <Body2 className="text-white">
-                  {ageDifference} years younger than your chronological age
-                </Body2>
-              ) : (
-                <Body2 className="text-white">Awaiting lab results</Body2>
+            <div className="flex w-full items-end justify-between gap-4">
+              <div>
+                {hasData ? (
+                  <NumberFlow
+                    value={biologicalAge}
+                    className="text-6xl text-white"
+                  />
+                ) : (
+                  <H1 className="text-white">--</H1>
+                )}
+                {ageDifference ? (
+                  <Body2 className="line-clamp-2 text-white">
+                    {ageDifference} years younger than your chronological age
+                  </Body2>
+                ) : (
+                  <Body2 className="text-white">Awaiting lab results</Body2>
+                )}
+              </div>
+              {hasData && (
+                <div className="md:hidden">
+                  <Button
+                    type="button"
+                    variant="white"
+                    size="medium"
+                    onClick={() => onClick?.()}
+                    className="border border-primary/10"
+                  >
+                    More info
+                  </Button>
+                </div>
               )}
             </div>
-            {hasData && (
-              <div className="absolute bottom-4 right-4 md:hidden">
-                <Button
-                  type="button"
-                  variant="white"
-                  size="medium"
-                  onClick={() => onClick?.()}
-                  className="border border-primary/10"
-                >
-                  More info
-                </Button>
-              </div>
-            )}
           </>
         );
       }

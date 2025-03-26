@@ -84,16 +84,7 @@ export const BiologicalAgeShareCard = ({
   forSharing = false,
 }: BiologicalAgeShareCardProps) => {
   const [showAge, setShowAge] = useState(true);
-  const [isDragging, setIsDragging] = useState(false);
   const cardWidth = -180;
-
-  const handleDragEnd = (info: { offset: { x: number } }) => {
-    const threshold = cardWidth * 0.15;
-    if (Math.abs(info.offset.x) > threshold) {
-      setShowAge(info.offset.x > 0);
-    }
-    setIsDragging(false);
-  };
 
   return (
     <div
@@ -102,13 +93,8 @@ export const BiologicalAgeShareCard = ({
     >
       <motion.div
         className="relative size-full"
-        drag={!forSharing ? 'x' : false}
-        dragConstraints={{ left: 0, right: cardWidth }}
-        dragElastic={0.1}
-        onDragStart={() => setIsDragging(true)}
-        onDragEnd={(_, info) => handleDragEnd(info)}
         animate={{
-          x: isDragging ? undefined : showAge ? 0 : cardWidth,
+          x: showAge ? 0 : cardWidth,
         }}
         transition={{
           type: 'spring',
@@ -120,17 +106,13 @@ export const BiologicalAgeShareCard = ({
           className={cn(
             'absolute left-0 top-0',
             showAge
-              ? 'scale-100 z-10 active:cursor-grabbing cursor-grab'
+              ? 'scale-100 z-10'
               : 'scale-95 z-0 blur-[4px] pointer-events-none opacity-30',
           )}
           animate={{
-            scale: isDragging ? undefined : showAge ? 1 : 0.95,
-            opacity: isDragging ? undefined : showAge ? 1 : 0.3,
-            filter: isDragging
-              ? undefined
-              : showAge
-                ? 'blur(0px)'
-                : 'blur(4px)',
+            scale: showAge ? 1 : 0.95,
+            opacity: showAge ? 1 : 0.3,
+            filter: showAge ? 'blur(0px)' : 'blur(4px)',
           }}
           transition={{
             type: 'spring',
@@ -158,16 +140,12 @@ export const BiologicalAgeShareCard = ({
             'absolute left-[180px] top-0',
             showAge
               ? 'scale-95 z-0 blur-[4px] pointer-events-none opacity-30'
-              : 'scale-100 z-10 active:cursor-grabbing cursor-grab',
+              : 'scale-100 z-10',
           )}
           animate={{
-            scale: isDragging ? undefined : showAge ? 0.95 : 1,
-            opacity: isDragging ? undefined : showAge ? 0.3 : 1,
-            filter: isDragging
-              ? undefined
-              : showAge
-                ? 'blur(4px)'
-                : 'blur(0px)',
+            scale: showAge ? 0.95 : 1,
+            opacity: showAge ? 0.3 : 1,
+            filter: showAge ? 'blur(4px)' : 'blur(0px)',
           }}
           transition={{
             type: 'spring',
@@ -207,11 +185,7 @@ export const BiologicalAgeShareCard = ({
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             animate={{
-              opacity: isDragging
-                ? undefined
-                : showAge === isAgeShown
-                  ? 0.5
-                  : 1,
+              opacity: showAge === isAgeShown ? 0.5 : 1,
             }}
             transition={{
               type: 'spring',

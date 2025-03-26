@@ -11,7 +11,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const { data } = useUser();
   const { pathname } = useLocation();
   /*
-   * Completely hides sidebar from UI.
+   * Completely hides navbar from UI.
    *
    * */
   const hideNavBar =
@@ -27,10 +27,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       <NavigationProgress />
       <motion.div
         className={cn(
-          'flex flex-col flex-1 md:pt-24',
+          'flex flex-col flex-1',
           isWhiteBg ? 'bg-white' : 'bg-zinc-50',
           !hideNavBar
-            ? 'mb-[72px] md:mb-0 min-h-[calc(100dvh-72px)] md:min-h-dvh'
+            ? 'mb-[72px] md:mb-0 min-h-[calc(100dvh-72px)] md:min-h-dvh md:pt-24'
             : null,
         )}
       >
