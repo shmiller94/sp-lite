@@ -56,9 +56,11 @@ export const CreateMessageForm = (): JSX.Element => {
             <FormItem>
               <FormControl>
                 <Textarea
-                  className="h-[150px] w-full resize-none rounded-[20px] px-[18px] py-6"
+                  className="min-h-[150px] w-full resize-none rounded-[20px] px-[18px] py-6"
                   placeholder="Ask questions about your health, book appointments, and get answers from expert longevity advisors"
                   {...field}
+                  minRows={8}
+                  maxRows={16}
                 />
               </FormControl>
               <FormMessage />

@@ -1,5 +1,10 @@
 import { ContentLayout } from '@/components/layouts';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  URLTabs,
+} from '@/components/ui/tabs';
 import { H1 } from '@/components/ui/typography';
 import { FinishScheduleList } from '@/features/services/components/finish-schedule-list';
 import { OrdersList } from '@/features/services/components/orders-list';
@@ -10,7 +15,7 @@ export const ServicesRoute = () => {
     <ContentLayout title="Services">
       <H1>Services</H1>
       <section id="orders" className="space-y-6">
-        <Tabs defaultValue="all" className="overflow-auto">
+        <URLTabs className="overflow-auto">
           <TabsList className="flex w-fit items-center justify-start overflow-x-auto">
             <TabsTrigger value="all">All</TabsTrigger>
             <TabsTrigger value="schedule">To be scheduled</TabsTrigger>
@@ -25,7 +30,7 @@ export const ServicesRoute = () => {
           <TabsContent value="orders" className="py-6 md:py-[72px]">
             <OrdersList />
           </TabsContent>
-        </Tabs>
+        </URLTabs>
       </section>
     </ContentLayout>
   );

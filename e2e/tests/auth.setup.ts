@@ -42,9 +42,12 @@ setup('authenticate', async ({ page }) => {
   await page.waitForURL('/');
 
   // log out:
-  await page.getByTestId('logout-btn-desktop').click();
+  await page.getByTestId('user-menu-trigger').focus();
+  await page.keyboard.press('Enter');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('Enter');
   await page.waitForURL('/signin');
-  //
+
   // log in:
   await page.getByPlaceholder('Email').click();
   await page.getByPlaceholder('Email').fill(user.email);

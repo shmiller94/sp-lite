@@ -16,7 +16,7 @@ export const DataIcon: React.FC<SVGProps<SVGSVGElement>> = ({ ...props }) => {
         width="5.25049"
         height="12.7212"
         rx="1.37812"
-        fill="#A1A1AA"
+        fill="currentColor"
       />
       <rect
         x="8.7793"
@@ -24,7 +24,7 @@ export const DataIcon: React.FC<SVGProps<SVGSVGElement>> = ({ ...props }) => {
         width="5.25049"
         height="18.375"
         rx="1.37812"
-        fill="#A1A1AA"
+        fill="currentColor"
       />
       <rect
         x="15.3379"
@@ -32,7 +32,7 @@ export const DataIcon: React.FC<SVGProps<SVGSVGElement>> = ({ ...props }) => {
         width="5.25049"
         height="12.7212"
         rx="1.37812"
-        fill="#A1A1AA"
+        fill="currentColor"
       />
     </svg>
   );

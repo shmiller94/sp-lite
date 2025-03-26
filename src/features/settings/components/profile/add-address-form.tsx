@@ -314,6 +314,7 @@ export const AddAddressForm = ({
                   autoComplete="off"
                   placeholder="Up long driveway. Buzz code is..."
                   variant={theme}
+                  maxRows={4}
                   {...field}
                 />
               </FormControl>

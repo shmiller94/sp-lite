@@ -1,6 +1,7 @@
 import { differenceInYears, parseISO } from 'date-fns';
 import moment from 'moment';
 
+import { HoverableCard } from '@/components/shared/hoverable-card';
 import { Body1, H2 } from '@/components/ui/typography';
 import { useSubscriptions } from '@/features/settings/api';
 import { getMembershipType } from '@/features/settings/utils/get-membership-type';
@@ -36,6 +37,19 @@ export const MembershipCard = (): JSX.Element => {
   // if user has superpowerMembership then we should be able to get membershipType
   const membershipType = getMembershipType(superpowerMembership);
 
+  // Determine background class based on membership type
+  let backgroundClass = '';
+  if (membershipType === 'Baseline Membership') {
+    backgroundClass = 'bg-baseline-membership';
+  } else if (membershipType === 'Advanced Membership') {
+    backgroundClass = 'bg-advanced-membership';
+  }
+
+  // If not active, use baseline and grayscale
+  if (!isActive && !isLoading) {
+    backgroundClass = 'bg-baseline-membership grayscale';
+  }
+
   return (
     <div
       className={cn(
@@ -43,23 +57,22 @@ export const MembershipCard = (): JSX.Element => {
         !isActive && !isLoading && 'opacity-50',
       )}
     >
-      <div
+      <HoverableCard
         className={cn(
-          'text-white flex flex-col justify-between p-5 w-full bg-cover aspect-[5/3.15] rounded-2xl',
-          membershipType === 'Baseline Membership'
-            ? 'bg-baseline-membership'
-            : null,
-          membershipType === 'Advanced Membership'
-            ? 'bg-advanced-membership'
-            : null,
-          !isActive && !isLoading && 'bg-baseline-membership grayscale',
+          'aspect-[5/3.15]',
+          backgroundClass,
           isLoading ? 'animate-pulse bg-muted' : '',
         )}
+        disabled={!isActive && !isLoading}
+        isLoading={isLoading}
       >
-        <H2 className="text-white">
-          {firstName} {lastName}
-        </H2>
-        <div className="flex flex-row justify-between">
+        <div className="relative z-10">
+          <H2 className="text-white">
+            {firstName} {lastName}
+          </H2>
+        </div>
+
+        <div className="relative z-10 flex flex-row justify-between">
           <div className="flex items-end">
             <span className="text-sm xs:text-lg">
               Since {moment(createdAt).format('YYYY')}
@@ -70,7 +83,7 @@ export const MembershipCard = (): JSX.Element => {
             <Body1 className="text-white">Chronological years old</Body1>
           </div>
         </div>
-      </div>
+      </HoverableCard>
     </div>
   );
 };

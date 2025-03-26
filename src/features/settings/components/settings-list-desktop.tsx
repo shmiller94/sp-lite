@@ -1,4 +1,9 @@
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import {
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  URLTabs,
+} from '@/components/ui/tabs';
 import { Billing } from '@/features/settings/components/billing/billing';
 import { Membership } from '@/features/settings/components/membership/membership';
 import { Profile } from '@/features/settings/components/profile/profile';
@@ -19,7 +24,7 @@ export const SettingsListDesktop = () => {
 
   return (
     <>
-      <Tabs defaultValue="profile" className="hidden md:block">
+      <URLTabs paramName="tab" defaultTab="profile" className="hidden md:block">
         <TabsList className="flex h-auto flex-wrap items-center justify-start">
           {settings.map((s, idx) => (
             <TabsTrigger
@@ -36,7 +41,7 @@ export const SettingsListDesktop = () => {
             {s.component}
           </TabsContent>
         ))}
-      </Tabs>
+      </URLTabs>
     </>
   );
 };

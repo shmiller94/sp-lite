@@ -18,7 +18,7 @@ export const ServicesIcon: React.FC<SVGProps<SVGSVGElement>> = ({
         width="8.2949"
         height="8.2958"
         rx="1.39992"
-        fill="#A1A1AA"
+        fill="currentColor"
       />
       <rect
         x="0.0703125"
@@ -26,7 +26,7 @@ export const ServicesIcon: React.FC<SVGProps<SVGSVGElement>> = ({
         width="8.2949"
         height="8.2958"
         rx="1.39992"
-        fill="#A1A1AA"
+        fill="currentColor"
       />
       <rect
         x="10.4453"
@@ -34,7 +34,7 @@ export const ServicesIcon: React.FC<SVGProps<SVGSVGElement>> = ({
         width="8.2949"
         height="8.2958"
         rx="1.39992"
-        fill="#A1A1AA"
+        fill="currentColor"
       />
       <rect
         x="10.4453"
@@ -42,7 +42,7 @@ export const ServicesIcon: React.FC<SVGProps<SVGSVGElement>> = ({
         width="8.2949"
         height="8.2958"
         rx="1.39992"
-        fill="#A1A1AA"
+        fill="currentColor"
       />
     </svg>
   );

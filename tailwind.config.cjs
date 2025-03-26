@@ -33,7 +33,7 @@ module.exports = {
         spine: "url('/onboarding/bg-spine.webp')",
         'female-hands': "url('/onboarding/bg-female-hands.webp')",
         'baseline-membership': "url('/settings/membership/baseline.webp')",
-        "advanced-membership": "url('/settings/membership/advanced.webp')",
+        'advanced-membership': "url('/settings/membership/advanced.webp')",
       },
       colors: {
         border: 'hsl(var(--border))',
@@ -134,8 +134,16 @@ module.exports = {
           '20%,50%': { opacity: '0' },
         },
         'superpower-logo': {
-          '0%, 100%': { fill: '#a1a1aa' },   // zinc-400
-          '50%': { fill: '#52525b' },        // zinc-600
+          '0%, 100%': { fill: '#a1a1aa' }, // zinc-400
+          '50%': { fill: '#52525b' }, // zinc-600
+        },
+        'timeline-flow': {
+          '0%': { backgroundPosition: 'right 0px' },
+          '100%': { backgroundPosition: 'right 10px' },
+        },
+        'spin-slow': {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
         },
       },
       animation: {
@@ -144,7 +152,9 @@ module.exports = {
         'collapsible-down': 'collapsible-down 0.2s ease-out',
         'collapsible-up': 'collapsible-up 0.2s ease-out',
         'caret-blink': 'caret-blink 1.25s ease-out infinite',
-        'superpower-logo': 'superpower-logo 2s ease-out infinite'
+        'superpower-logo': 'superpower-logo 2s ease-out infinite',
+        'timeline-flow': 'timeline-flow 1.5s linear infinite',
+        'spin-slow': 'spin-slow 15s linear infinite',
       },
       screens: {
         xs: '475px',

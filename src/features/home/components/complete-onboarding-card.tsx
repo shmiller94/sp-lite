@@ -1,5 +1,7 @@
+import { motion } from 'framer-motion';
 import { useMemo } from 'react';
 
+import NumberFlow from '@/components/shared/number-flow';
 import { Body1, Body2, H4 } from '@/components/ui/typography';
 import { useTimeline } from '@/features/home/api/get-timeline';
 
@@ -67,7 +69,7 @@ const CompletedItemsProgress = ({ progress }: { progress: number }) => {
             className="stroke-current text-zinc-700"
             strokeWidth="2"
           ></circle>
-          <circle
+          <motion.circle
             cx="18"
             cy="18"
             r="16"
@@ -75,13 +77,17 @@ const CompletedItemsProgress = ({ progress }: { progress: number }) => {
             className="stroke-current text-green-500"
             strokeWidth={progress === 0 ? 0 : 2}
             strokeDasharray="100"
-            strokeDashoffset={100 - progress}
             strokeLinecap="round"
-          ></circle>
+            initial={{ strokeDashoffset: 100 }}
+            animate={{ strokeDashoffset: 100 - progress }}
+            transition={{ duration: 1, ease: 'easeOut' }}
+          ></motion.circle>
         </svg>
 
         <div className="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-          <Body1 className="text-white">{progress}%</Body1>
+          <Body1 className="text-white">
+            <NumberFlow value={progress} />
+          </Body1>
         </div>
       </div>
     </>

@@ -1,5 +1,5 @@
 import { cva, VariantProps } from 'class-variance-authority';
-import { CheckIcon, CircleAlert, PlusIcon } from 'lucide-react';
+import { CircleAlert, CircleCheck, PlusIcon } from 'lucide-react';
 import * as React from 'react';
 import { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -30,16 +30,22 @@ TimelineItem.displayName = 'TimelineItem';
 
 const TimelineConnector = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      'absolute top-[48px] left-[9px] -translate-x-1/2 translate-y-2 h-full w-px bg-[linear-gradient(#d4d4d8_33%,_transparent_0%)] bg-right bg-repeat-y bg-[length:1px_5px]',
-      className,
-    )}
-    {...props}
-  />
+  React.HTMLAttributes<HTMLDivElement> & { length?: string }
+>(({ className, length, ...props }, ref) => (
+  <>
+    <div
+      ref={ref}
+      style={{
+        ...(length ? { height: `calc(${length})` } : {}),
+        ...props.style,
+      }}
+      className={cn(
+        'absolute transition-all duration-500 top-[48px] left-[10px] h-full -translate-x-1/2 translate-y-2 w-px bg-[linear-gradient(#d4d4d8_33%,_transparent_0%)] bg-right bg-repeat-y bg-[length:1px_5px] animate-timeline-flow hidden md:block',
+        className,
+      )}
+      {...props}
+    />
+  </>
 ));
 TimelineConnector.displayName = 'TimelineConnector';
 
@@ -66,7 +72,7 @@ const TimelineHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn('flex items-center gap-4', className)}
+    className={cn('flex items-center md:gap-4', className)}
     {...props}
   />
 ));
@@ -79,7 +85,7 @@ const timelineDotVariants = cva(
       status: {
         default: '[&>*]:hidden',
         current:
-          'border-dashed  border-vermillion-900 [&>*:not(.radix-circle)]:hidden [&>.radix-circle]:bg-vermillion-900 [&>.radix-circle]:fill-current',
+          'animate-spin-slow border-dashed border-vermillion-900 [&>*:not(.radix-circle)]:hidden [&>.radix-circle]:bg-vermillion-900 [&>.radix-circle]:fill-current',
         done: 'size-6 border-none bg-transparent [&>*:not(.radix-check)]:hidden [&>.radix-check]:text-green-500',
         disabled:
           'border-none bg-transparent [&>*:not(.radix-lock)]:hidden [&>.radix-lock]:text-background',
@@ -110,7 +116,7 @@ interface TimelineDotProps
 
 const TimelineDot = React.forwardRef<HTMLDivElement, TimelineDotProps>(
   ({ className, status, customIcon, ...props }, ref) => (
-    <div className={cn('z-[1] py-2 backdrop-blur')}>
+    <div className={cn('z-[1] py-2 backdrop-blur bg-white')}>
       <div
         role="status"
         className={cn(
@@ -121,9 +127,9 @@ const TimelineDot = React.forwardRef<HTMLDivElement, TimelineDotProps>(
         ref={ref}
         {...props}
       >
-        <div className="radix-circle size-2.5 rounded-full" />
-        <CheckIcon className="radix-check size-5" />
-        <LockIcon className="radix-lock size-6" />
+        <div className="radix-circle absolute left-1/2 top-1/2 size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full" />
+        <CircleCheck className="radix-check size-5" />
+        <LockIcon className="radix-lock -ml-0.5 size-6" />
         <CircleAlert className="radix-alert size-5" />
         {customIcon}
       </div>
@@ -176,15 +182,17 @@ const TimelineCard = React.forwardRef<HTMLDivElement, TimelineCardProps>(
         {...props}
         className={cn(timelineCardVariants({ variant }), className)}
       >
-        <div className="flex items-center gap-4">
+        <div className="mr-2 flex items-center gap-4">
           <img
             className="size-12 min-w-12 rounded-lg object-cover"
             src={image}
             alt="service"
           />
           <div>
-            <Body1>{title}</Body1>
-            <Body2 className="line-clamp-1 text-zinc-500">{description}</Body2>
+            <Body1 className="text-sm md:text-base">{title}</Body1>
+            <Body2 className="line-clamp-1 text-xs text-zinc-500 md:text-sm">
+              {description}
+            </Body2>
           </div>
         </div>
         {button}
@@ -222,11 +230,14 @@ const TimelineEmptyCard = React.forwardRef<
               <PlusIcon
                 width={32}
                 height={32}
+                className="w-6 md:w-8"
                 color="#A1A1AA"
                 strokeWidth={2}
               />
             </div>
-            <Body1 className="text-zinc-500">Schedule new service</Body1>
+            <Body1 className="text-sm text-zinc-500 md:text-base">
+              Schedule new service
+            </Body1>
           </div>
         </>
       </div>
@@ -243,7 +254,7 @@ const TimelineLabel = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      'flex flex-col items-start px-9 sm:px-12 text-zinc-500 sm:text-base text-sm',
+      'flex flex-col items-start px-6 sm:px-12 text-zinc-500 sm:text-base text-sm',
       className,
     )}
     {...props}

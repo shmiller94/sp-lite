@@ -18,7 +18,7 @@ export const SignatureBlock: React.FC<SignatureBlockProps> = ({
 
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [showPencil, setShowPencil] = useState(false);
-  const divRef = useRef<any>(null);
+  const divRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove: React.MouseEventHandler<HTMLDivElement> = (e) => {
     if (!divRef.current) return;

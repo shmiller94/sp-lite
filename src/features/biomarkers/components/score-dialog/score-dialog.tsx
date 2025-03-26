@@ -1,5 +1,5 @@
 import { X } from 'lucide-react';
-import { ReactNode } from 'react';
+import { Dispatch, ReactNode, SetStateAction } from 'react';
 import * as React from 'react';
 
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
@@ -13,12 +13,20 @@ import { Body2 } from '@/components/ui/typography';
 import { ScoreContent } from '@/features/biomarkers/components/score-dialog/score-content';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 
-export const ScoreDialog = ({ children }: { children: ReactNode }) => {
+export const ScoreDialog = ({
+  children,
+  open,
+  onOpenChange,
+}: {
+  children: ReactNode;
+  open?: boolean;
+  onOpenChange?: Dispatch<SetStateAction<boolean>>;
+}) => {
   const { width } = useWindowDimensions();
 
   if (width <= 768) {
     return (
-      <Sheet>
+      <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetTrigger asChild>{children}</SheetTrigger>
         <SheetContent className="flex max-h-full flex-col rounded-t-[10px]">
           <div className="flex items-center justify-between px-4 pt-16 md:pb-4">
@@ -39,7 +47,7 @@ export const ScoreDialog = ({ children }: { children: ReactNode }) => {
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
 
       <DialogContent>

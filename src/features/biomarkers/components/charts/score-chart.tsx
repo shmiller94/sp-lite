@@ -1,5 +1,7 @@
-import { Label, Pie, PieChart } from 'recharts';
+import { motion } from 'framer-motion';
+import { Pie, PieChart } from 'recharts';
 
+import NumberFlow from '@/components/shared/number-flow';
 import { ChartConfig, ChartContainer } from '@/components/ui/chart';
 import { STATUS_TO_COLOR } from '@/features/biomarkers/const/status-to-color';
 import { getStatusForScore } from '@/features/biomarkers/utils/get-status-for-score';
@@ -12,6 +14,7 @@ type ScoreChartProps = {
   className?: string;
   richColors?: boolean;
   value: number;
+  animate?: boolean;
 };
 
 export const ScoreChart = ({
@@ -21,6 +24,7 @@ export const ScoreChart = ({
   richColors = false,
   className,
   value,
+  animate = false,
 }: ScoreChartProps) => {
   const status = getStatusForScore(value);
 
@@ -46,50 +50,74 @@ export const ScoreChart = ({
     },
   ];
 
+  const textVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: 'easeOut',
+        delay: 0.3,
+      },
+    },
+  };
+
+  const chartVariants = {
+    hidden: { opacity: 0, scale: 0.9 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        duration: 0.6,
+        ease: 'easeOut',
+      },
+    },
+  };
+
   return (
-    <ChartContainer
-      config={chartConfig}
-      className={cn('w-full max-w-[250px] max-h-[250px]', className)}
+    <div
+      className={cn(
+        'relative w-full max-w-[250px] max-h-[250px] mb-7',
+        className,
+      )}
     >
-      {/* This is hack: https://github.com/recharts/recharts/discussions/3846#discussioncomment-7278088 */}
-      <PieChart margin={{ bottom: -60 }}>
-        <Pie
-          startAngle={180}
-          endAngle={0}
-          innerRadius="75%"
-          data={data}
-          dataKey="score"
-          blendStroke
-          cornerRadius={10}
-        >
-          <Label
-            content={({ viewBox }) => {
-              if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
-                return (
-                  <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle">
-                    <tspan
-                      x={viewBox.cx}
-                      y={(viewBox.cy || 0) - 8}
-                      className="text-6xl"
-                      style={{ fill: labelColor }}
-                    >
-                      {value}
-                    </tspan>
-                    <tspan
-                      x={viewBox.cx}
-                      y={(viewBox.cy || 0) + 16}
-                      className="text-sm"
-                      style={{ fill: labelColor }}
-                    >
-                      out of 100
-                    </tspan>
-                  </text>
-                );
-              }
-            }}
-          />
-        </Pie>
-      </PieChart>
-    </ChartContainer>
+      <motion.div
+        initial={animate ? 'hidden' : 'visible'}
+        animate="visible"
+        variants={chartVariants}
+        className="size-full"
+      >
+        <ChartContainer config={chartConfig} className="size-full">
+          {/* This is hack: https://github.com/recharts/recharts/discussions/3846#discussioncomment-7278088 */}
+          <PieChart margin={{ bottom: -60 }}>
+            <Pie
+              startAngle={180}
+              endAngle={0}
+              innerRadius="75%"
+              data={data}
+              dataKey="score"
+              blendStroke
+              cornerRadius={10}
+            />
+          </PieChart>
+        </ChartContainer>
+      </motion.div>
+
+      {/* Separate text overlay that can be animated independently */}
+      <motion.div
+        className="absolute inset-0 top-10 flex flex-col items-center justify-center"
+        initial={animate ? 'hidden' : 'visible'}
+        animate="visible"
+        variants={textVariants}
+      >
+        <span className="text-6xl leading-none" style={{ color: labelColor }}>
+          <NumberFlow value={value} />
+        </span>
+        <span className="-mt-4 text-sm" style={{ color: labelColor }}>
+          out of 100
+        </span>
+      </motion.div>
+    </div>
   );
 };

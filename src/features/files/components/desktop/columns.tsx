@@ -37,7 +37,7 @@ export const columns: ColumnDef<File>[] = [
       if (row.original.contentType === 'application/pdf') {
         return (
           <ViewPdfDialog file={row.original}>
-            <div className="flex cursor-pointer items-center md:max-w-[280px] lg:max-w-[400px]">
+            <div className="flex w-auto cursor-pointer items-center place-self-start md:max-w-[280px] lg:max-w-[400px]">
               <FileName file={row.original} />
             </div>
           </ViewPdfDialog>

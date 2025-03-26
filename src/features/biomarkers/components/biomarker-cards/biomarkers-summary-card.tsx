@@ -1,4 +1,6 @@
 import moment from 'moment';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
@@ -86,6 +88,18 @@ export const BiomarkersSummaryCard = ({
 }) => {
   const getOrdersQuery = useOrders();
   const getBiomarkersQuery = useBiomarkers();
+  const [searchParams] = useSearchParams();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get('modal') === 'superpower-score') {
+      setIsDialogOpen(true);
+
+      // we clean up the search params to avoid opening the dialog again on reload
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   const orders = getOrdersQuery.data?.orders.filter(
     (o) =>
@@ -120,7 +134,7 @@ export const BiomarkersSummaryCard = ({
       </div>
       <div className="flex w-full items-end justify-between">
         <BiomarkersList />
-        <ScoreDialog>
+        <ScoreDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <Button
             className={cn('border border-zinc-700 bg-zinc-800 px-4 py-3')}
             disabled={!healthScore}

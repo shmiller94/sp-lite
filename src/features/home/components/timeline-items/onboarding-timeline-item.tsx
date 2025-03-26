@@ -54,6 +54,7 @@ export const OnboardingTimelineItem = ({
       {shouldRenderNextConnector ? <TimelineConnector /> : null}
       <TimelineHeader>
         <TimelineDot
+          className="hidden md:block"
           status={timelineItem.status.toLowerCase() as TimelineDotVariant}
         />
         <TimelineCard
