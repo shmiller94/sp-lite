@@ -1,6 +1,5 @@
 import { DotIcon } from 'lucide-react';
 import moment from 'moment';
-import React from 'react';
 import 'moment-timezone';
 
 import { Skeleton } from '@/components/ui/skeleton';
@@ -39,23 +38,25 @@ export function SchedulerTimes(): JSX.Element {
       ) : null}
       <div
         className={cn(
-          'p-2 rounded-2xl space-y-2 max-h-[270px] overflow-y-scroll',
+          'rounded-2xl space-y-2 overflow-hidden p-1',
           startRange || loading ? 'border border-zinc-200' : '',
         )}
       >
-        {loading &&
-          Array(5)
-            .fill(0)
-            .map((_, i) => <Skeleton className="h-14 w-full" key={i} />)}
-        {!loading &&
-          timeSlots.map((slot: Slot) => {
-            return <SchedulerTimeSlot key={slot.start} timeSlot={slot} />;
-          })}
-        {!loading && !timeSlots.length ? (
-          <div className="flex items-center justify-center py-10">
-            <Body1 className="text-zinc-500">No times found.</Body1>
-          </div>
-        ) : null}
+        <div className="h-[240px] overflow-y-auto p-2 scrollbar scrollbar-thumb-zinc-300 [overflow:overlay] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar]:w-2">
+          {loading &&
+            Array(5)
+              .fill(0)
+              .map((_, i) => <Skeleton className="mb-1 h-14 w-full" key={i} />)}
+          {!loading &&
+            timeSlots.map((slot: Slot) => {
+              return <SchedulerTimeSlot key={slot.start} timeSlot={slot} />;
+            })}
+          {!loading && !timeSlots.length ? (
+            <div className="flex items-center justify-center py-10">
+              <Body1 className="text-zinc-500">No times found.</Body1>
+            </div>
+          ) : null}
+        </div>
       </div>
     </>
   );
