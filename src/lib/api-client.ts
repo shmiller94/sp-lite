@@ -31,23 +31,25 @@ api.interceptors.response.use(
     if (error.response.status !== 401) {
       if (error.response.data) {
         const apiError = error.response.data;
+        console.log('apiError', apiError);
 
-        /**
-         * If we have issue inside then API error is of type OperationOutcome
-         */
-        if (apiError.issue) {
-          for (const e of apiError.issue) {
-            toast.error(e.details.text);
-          }
-        } else {
-          /**
-           * Regular JS error that has message field inside
-           */
-          toast.error(apiError.message ?? 'An unknown error occurred.');
-        }
-      } else {
-        toast.error('An unknown error occurred.');
+        // /**
+        //  * If we have issue inside then API error is of type OperationOutcome
+        //  */
+        // if (apiError.issue) {
+        //   for (const e of apiError.issue) {
+        //     toast.error(e.details.text);
+        //   }
+        // } else {
+        //   /**
+        //    * Regular JS error that has message field inside
+        //    */
+        //   toast.error(apiError.message ?? 'An unknown error occurred.');
+        // }
       }
+      // we show generic error message here to avoid leaking confusing / sensitive error details to end-user
+      // errors should be handled correctly on server side
+      toast('An unknown error occurred. Please try again later.');
     }
 
     if (
