@@ -309,7 +309,7 @@ export const HoverableCard = ({
 
       <div
         ref={holographicPatternRef}
-        className="pointer-events-none absolute inset-0 size-full"
+        className="pointer-events-none absolute inset-0 size-full rounded-2xl"
         style={{
           opacity: '0.05',
           transition: 'opacity 0.3s ease-out, transform 0.2s ease-out',
@@ -318,7 +318,7 @@ export const HoverableCard = ({
 
       <div
         ref={shimmerRef}
-        className="pointer-events-none absolute inset-0 size-full"
+        className="pointer-events-none absolute inset-0 size-full rounded-2xl"
         style={{
           opacity: '0',
           transition:
@@ -328,7 +328,7 @@ export const HoverableCard = ({
       />
 
       <div
-        className="pointer-events-none relative z-10 flex h-full flex-col justify-between"
+        className="pointer-events-none relative z-10 flex h-full flex-col justify-between rounded-2xl"
         style={{ transform: 'translateZ(20px)' }}
       >
         {children}

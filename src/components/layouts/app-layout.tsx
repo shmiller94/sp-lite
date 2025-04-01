@@ -17,20 +17,19 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const hideNavBar =
     !data || pathname.includes('onboarding') || pathname.includes('plans');
 
-  const whiteBgPaths = ['services', 'members', 'upcoming'];
+  const whiteBgPaths = ['services'];
   const isWhiteBg =
     whiteBgPaths.some((path) => pathname.includes(path)) || pathname === '/';
 
   return (
-    <main>
+    <main className={isWhiteBg ? 'bg-white' : 'bg-zinc-50'}>
       {!hideNavBar && <Navbar />}
       <NavigationProgress />
       <motion.div
         className={cn(
           'flex flex-col flex-1',
-          isWhiteBg ? 'bg-white' : 'bg-zinc-50',
           !hideNavBar
-            ? 'mb-[72px] md:mb-0 min-h-[calc(100dvh-72px)] md:min-h-dvh md:pt-24'
+            ? 'mb-[72px] md:mb-0 min-h-[calc(100dvh-72px)] md:min-h-[calc(100dvh-68px)]'
             : null,
         )}
       >

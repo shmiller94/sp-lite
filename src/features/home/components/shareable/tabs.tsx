@@ -2,11 +2,11 @@ import { motion } from 'framer-motion';
 
 import { cn } from '@/lib/utils';
 
-export type TabType = 'superpower-score' | 'biological-age';
+export type SharablesTabType = 'superpower-score' | 'biological-age';
 
 interface ShareablesTabsProps {
-  activeTab: TabType;
-  onTabChange: (tab: TabType) => void;
+  activeTab: SharablesTabType;
+  onTabChange: (tab: SharablesTabType) => void;
 }
 
 export const ShareablesTabs = ({
@@ -14,8 +14,8 @@ export const ShareablesTabs = ({
   onTabChange,
 }: ShareablesTabsProps) => {
   return (
-    <div className="pl-10 md:p-4">
-      <div className="relative mb-8 mt-[78px] flex h-12 w-[calc(100vw-8rem)] gap-0 truncate md:mt-2 md:w-96">
+    <div className="md:p-4">
+      <div className="relative mb-8 mt-2 flex h-12 w-[calc(100vw-4rem)] gap-0 truncate md:w-96">
         <motion.div
           className="absolute inset-0 w-1/2 rounded-full bg-white"
           initial={{ x: activeTab === 'superpower-score' ? 0 : '100%' }}

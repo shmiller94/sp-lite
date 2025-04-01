@@ -102,8 +102,7 @@ export const DesktopNavbar = () => {
   const allLinks = useMemo(
     () => [...baseLinks, ...protectedLinks],
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [baseLinks, protectedLinks],
+    [protectedLinks],
   );
 
   useEffect(() => {
@@ -175,7 +174,7 @@ export const DesktopNavbar = () => {
   return (
     <nav
       className={cn(
-        'sticky top-0 z-[49] md:-mb-24 hidden w-full px-4 md:block transition-colors duration-200',
+        'sticky top-0 z-[49] hidden w-full px-4 md:block transition-colors duration-200',
         isReversed
           ? 'bg-gradient-to-b from-black/30 via-black/20 via-50% to-black/0'
           : 'bg-gradient-to-b from-zinc-50 via-zinc-50/75 via-50% to-zinc-50/0',
@@ -257,7 +256,7 @@ export const DesktopNavbar = () => {
                   : 'text-secondary hover:text-black',
               )}
             >
-              <MarketplaceIcon className="w-[18px] mb-1" />
+              <MarketplaceIcon className="mb-1 w-[18px]" />
             </NavLink>
             <NavLink
               to="./invite"
@@ -274,7 +273,7 @@ export const DesktopNavbar = () => {
               <DropdownMenuTrigger
                 asChild
                 data-testid="user-menu-trigger"
-                className="rounded-full group outline outline-1 outline-transparent transition-all duration-150 data-[state=open]:outline-2"
+                className="group rounded-full outline outline-1 outline-transparent transition-all duration-150 data-[state=open]:outline-2"
               >
                 <button
                   className={cn(
@@ -285,7 +284,7 @@ export const DesktopNavbar = () => {
                   )}
                 >
                   More
-                  <ChevronDown className="w-4 h-4 group-data-[state=open]:rotate-180 transition-transform duration-200" />
+                  <ChevronDown className="size-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
                 </button>
                 {/* todo: exchange "More" with avatar as soon as implemented
                 <button className="border-0 bg-transparent p-0 focus:outline-none">

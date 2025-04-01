@@ -112,7 +112,7 @@ export const TimelineList = () => {
               className="mb-2 flex w-full items-center justify-between gap-8 py-2 pr-8 transition-opacity hover:opacity-75 md:mt-6"
             >
               <TimelineLabel>
-                <span className="text-left text-balance">
+                <span className="text-balance text-left">
                   Finish onboarding to get the most out of Superpower
                 </span>
               </TimelineLabel>
@@ -186,7 +186,7 @@ export const TimelineList = () => {
               className="flex w-full items-center justify-between gap-8 pr-8 transition-opacity hover:opacity-75"
             >
               <TimelineLabel className="mb-2 py-2">
-                <span className="text-left text-balance">Next steps</span>
+                <span className="text-balance text-left">Next steps</span>
               </TimelineLabel>
               <ChevronUpIcon
                 className={cn(
@@ -274,7 +274,7 @@ export const TimelineList = () => {
               className="flex w-full items-center justify-between gap-8 pr-8 transition-opacity hover:opacity-75"
             >
               <TimelineLabel className="mb-2 py-2">
-                <span className="text-left text-balance">Done</span>
+                <span className="text-balance text-left">Done</span>
               </TimelineLabel>
               <ChevronUpIcon
                 className={cn(

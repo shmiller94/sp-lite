@@ -11,16 +11,34 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from '@/components/ui/dropdown';
+import { GreetingComponent } from '@/features/home/components/greeting';
 import { TimelineList } from '@/features/home/components/timeline-list';
-import { GreetingComponent } from '@/features/home/greeting';
+import { preloadImage } from '@/utils/preload-image';
+
+export const homeLoader = () => async () => {
+  /**
+   * Preload main image
+   *
+   * If we are not using this, images are loaded dynamically and create weird "flicker" effect
+   * which this loader hopefully should fix
+   *
+   */
+  const preloadedImages = ['/user/backgrounds/default.webp'];
+
+  const imagesPromiseList: Promise<any>[] = [];
+  for (const i of preloadedImages) {
+    imagesPromiseList.push(preloadImage(i));
+  }
+
+  return Promise.all(imagesPromiseList);
+};
 
 export const HomeRoute = () => {
   const [tab, setTab] = useState<'timeline' | 'twin'>('timeline');
 
   return (
-    <ContentLayout title="Home">
-      {/* <AffiliateBanner /> */}
-      <div className="relative mt-[-134px] h-[800px] w-full">
+    <ContentLayout title="Home" className="!pb-0">
+      <div className="relative mt-[-134px] h-[700px] w-full md:h-[800px]">
         <div className="absolute left-1/2 top-0 h-full w-screen -translate-x-1/2 overflow-hidden">
           <GreetingComponent />
           <div className="absolute bottom-0 z-50 h-40 w-full rounded-t-[32px] bg-white" />

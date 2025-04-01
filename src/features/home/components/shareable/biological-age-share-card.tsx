@@ -89,7 +89,7 @@ export const BiologicalAgeShareCard = ({
   return (
     <div
       id="biological-age-share-card"
-      className="relative h-[450px] w-[320px]"
+      className="relative h-[380px] w-64 md:h-[450px] md:w-[320px]"
     >
       <motion.div
         className="relative size-full"
@@ -123,7 +123,7 @@ export const BiologicalAgeShareCard = ({
           <HoverableCard
             className={cn(
               className,
-              'h-[450px] w-[320px] bg-cover bg-[url("/cards/age-card.webp")] outline outline-white/25 -outline-offset-1 relative overflow-hidden',
+              'md:h-[450px] h-[380px] w-64 md:w-[320px] bg-cover bg-[url("/cards/age-card.webp")] outline outline-white/25 -outline-offset-1 relative overflow-hidden',
             )}
             userAvatarImage={userAvatar}
           >
@@ -156,7 +156,7 @@ export const BiologicalAgeShareCard = ({
           <HoverableCard
             className={cn(
               className,
-              'h-[450px] w-[320px] bg-cover bg-[url("/cards/age-card.webp")] outline outline-white/25 -outline-offset-1 relative overflow-hidden',
+              'md:h-[450px] h-[380px] w-64 md:w-[320px] bg-cover bg-[url("/cards/age-card.webp")] outline outline-white/25 -outline-offset-1 relative overflow-hidden',
             )}
             userAvatarImage={userAvatar}
           >
@@ -201,23 +201,5 @@ export const BiologicalAgeShareCard = ({
         ))}
       </div>
     </div>
-  );
-};
-
-export const createBiologicalAgeShareCard = (
-  name: string,
-  biologicalAge: number | null,
-  ageDifference: number | null,
-  userAvatar?: string,
-  forSharing?: boolean,
-) => {
-  return (
-    <BiologicalAgeShareCard
-      name={name}
-      biologicalAge={biologicalAge}
-      ageDifference={ageDifference}
-      userAvatar={userAvatar}
-      forSharing={forSharing}
-    />
   );
 };

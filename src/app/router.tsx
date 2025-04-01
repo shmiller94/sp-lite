@@ -59,6 +59,10 @@ export const createRouter = () =>
             const { HomeRoute } = await import('./routes/app/home');
             return { Component: HomeRoute };
           },
+          loader: async () => {
+            const { homeLoader } = await import('./routes/app/home');
+            return homeLoader()();
+          },
         },
         {
           path: 'services',
