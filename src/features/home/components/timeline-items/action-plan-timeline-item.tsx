@@ -20,7 +20,7 @@ import { TimelineItem as TimelineItemType } from '@/types/api';
  * @param timelineItem - actual timeline item
  *
  */
-export const ActionPlanTimelineItem = ({
+const ActionPlanTimelineItem = ({
   shouldRenderConnector,
   shouldRenderNextConnector,
   timelineItem,
@@ -84,3 +84,5 @@ export const ActionPlanTimelineItem = ({
     </TimelineItem>
   );
 };
+
+export default React.memo(ActionPlanTimelineItem);

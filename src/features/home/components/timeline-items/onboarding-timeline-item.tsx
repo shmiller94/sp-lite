@@ -19,7 +19,7 @@ import { TimelineItem as TimelineItemType } from '@/types/api';
  * @param timelineItem - actual timeline item
  *
  */
-export const OnboardingTimelineItem = ({
+const OnboardingTimelineItem = ({
   shouldRenderConnector,
   shouldRenderNextConnector,
   timelineItem,
@@ -68,3 +68,5 @@ export const OnboardingTimelineItem = ({
     </TimelineItem>
   );
 };
+
+export default React.memo(OnboardingTimelineItem);

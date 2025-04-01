@@ -67,10 +67,12 @@ export const HomeCards = ({
       <Carousel>
         <CarouselMainContainer>
           {DATA_CARDS.map((card, index) => (
-            <SliderMainItem key={index}>{card.content}</SliderMainItem>
+            <SliderMainItem key={index} className="px-6">
+              {card.content}
+            </SliderMainItem>
           ))}
         </CarouselMainContainer>
-        <CarouselThumbsContainer className="justify-center gap-x-1">
+        <CarouselThumbsContainer className="justify-center gap-x-1.5">
           {Array.from({ length: 3 }).map((_, index) => (
             <CarouselIndicator
               key={index}

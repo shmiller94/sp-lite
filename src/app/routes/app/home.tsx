@@ -38,7 +38,7 @@ export const HomeRoute = () => {
 
   return (
     <ContentLayout title="Home" className="!pb-0">
-      <div className="relative mt-[-134px] h-[700px] w-full md:h-[800px]">
+      <div className="relative mt-[-134px] h-[675px] w-full md:h-[700px]">
         <div className="absolute left-1/2 top-0 h-full w-screen -translate-x-1/2 overflow-hidden">
           <GreetingComponent />
           <div className="absolute bottom-0 z-50 h-40 w-full rounded-t-[32px] bg-white" />

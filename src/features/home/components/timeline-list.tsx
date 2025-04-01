@@ -1,5 +1,5 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import React, { useMemo, useState } from 'react';
 
 import { ChevronUpIcon } from '@/components/icons/chevron-up-icon';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -15,6 +15,7 @@ import {
 import { useTimeline } from '@/features/home/api/get-timeline';
 import { useOrders } from '@/features/orders/api';
 import { useServices } from '@/features/services/api';
+import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 import { cn } from '@/lib/utils';
 
 import {
@@ -22,35 +23,6 @@ import {
   OrderTimelineItem,
   OnboardingTimelineItem,
 } from './timeline-items';
-
-const timelineItemVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      duration: 0.2,
-    },
-  },
-};
-
-const accordionContentVariants = {
-  hidden: {
-    height: 0,
-    opacity: 0,
-    transition: {
-      height: { duration: 0.2 },
-      opacity: { duration: 0.1 },
-    },
-  },
-  visible: {
-    height: 'auto',
-    opacity: 1,
-    transition: {
-      height: { duration: 0.2 },
-      opacity: { duration: 0.1 },
-    },
-  },
-};
 
 export const TimelineList = () => {
   /**
@@ -66,6 +38,37 @@ export const TimelineList = () => {
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(true);
   const [isCurrentItemsOpen, setIsCurrentItemsOpen] = useState(true);
   const [isCompletedItemsOpen, setIsCompletedItemsOpen] = useState(true);
+
+  // Check for mobile
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
+
+  const onboardingItems = useMemo(
+    () =>
+      timelineItems?.filter(
+        (ti) => ti.type === 'ONBOARDING_TASK' && ti.status !== 'DONE',
+      ),
+    [timelineItems],
+  );
+
+  const currentItems = useMemo(
+    () =>
+      timelineItems?.filter(
+        (ti) =>
+          ti.type !== 'ONBOARDING_TASK' &&
+          ti.status !== 'DONE' &&
+          ti.status !== 'DISABLED',
+      ),
+    [timelineItems],
+  );
+
+  const completedItems = useMemo(
+    () =>
+      timelineItems?.filter(
+        (ti) => ti.status === 'DONE' || ti.status === 'DISABLED',
+      ),
+    [timelineItems],
+  );
 
   if (
     servicesQuery.isLoading ||
@@ -87,92 +90,63 @@ export const TimelineList = () => {
     return null;
   }
 
-  const onboardingItems = timelineItems.filter(
-    (ti) => ti.type === 'ONBOARDING_TASK' && ti.status !== 'DONE',
-  );
-
-  const currentItems = timelineItems.filter(
-    (ti) =>
-      ti.type !== 'ONBOARDING_TASK' &&
-      ti.status !== 'DONE' &&
-      ti.status !== 'DISABLED',
-  );
-
-  const completedItems = timelineItems.filter(
-    (ti) => ti.status === 'DONE' || ti.status === 'DISABLED',
-  );
-
   return (
-    <div className="w-full">
+    <div className="mt-10 w-full md:mt-auto">
       <Timeline className="w-full">
-        {onboardingItems.length ? (
-          <motion.div variants={timelineItemVariants}>
+        {onboardingItems?.length ? (
+          <div>
             <button
+              disabled={isMobile}
               onClick={() => setIsOnboardingOpen(!isOnboardingOpen)}
-              className="mb-2 flex w-full items-center justify-between gap-8 py-2 pr-8 transition-opacity hover:opacity-75 md:mt-6"
+              className="mb-2 flex w-full items-center justify-center gap-8 py-2 transition-opacity md:justify-between md:pr-8 md:hover:opacity-75"
             >
               <TimelineLabel>
-                <span className="text-balance text-left">
+                <span className="text-balance text-center md:text-left">
                   Finish onboarding to get the most out of Superpower
                 </span>
               </TimelineLabel>
               <ChevronUpIcon
                 className={cn(
-                  'size-4 text-zinc-400 transition-transform duration-200 shrink-0',
-                  isOnboardingOpen && 'rotate-180',
+                  'size-4 text-zinc-400 hidden md:block transition-transform duration-200 shrink-0',
+                  !isOnboardingOpen && 'rotate-180',
                 )}
               />
             </button>
-            <AnimatePresence initial={false}>
-              {isOnboardingOpen && (
-                <motion.div
-                  initial="hidden"
-                  animate="visible"
-                  exit="hidden"
-                  variants={accordionContentVariants}
-                >
-                  {onboardingItems.map((t, i) => {
-                    switch (t.type) {
-                      case 'ONBOARDING_TASK':
-                        return (
-                          <motion.div
+            {isOnboardingOpen && (
+              <div>
+                {onboardingItems.map((t, i) => {
+                  switch (t.type) {
+                    case 'ONBOARDING_TASK':
+                      return (
+                        <div key={t.id}>
+                          <OnboardingTimelineItem
                             key={t.id}
-                            variants={timelineItemVariants}
-                          >
-                            <OnboardingTimelineItem
-                              key={t.id}
-                              timelineItem={t}
-                              shouldRenderConnector={
-                                i !== onboardingItems.length - 1
-                              }
-                              shouldRenderNextConnector={false}
-                            />
-                          </motion.div>
-                        );
-                      default:
-                        return null;
-                    }
-                  })}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
+                            timelineItem={t}
+                            shouldRenderConnector={
+                              i !== onboardingItems.length - 1
+                            }
+                            shouldRenderNextConnector={false}
+                          />
+                        </div>
+                      );
+                    default:
+                      return null;
+                  }
+                })}
+              </div>
+            )}
+          </div>
         ) : null}
 
-        {(currentItems.length > 0 || completedItems.length > 0) && (
+        {currentItems && currentItems.length > 0 && (
           <div
             id="mobile-separator"
-            className={cn(
-              'mx-auto mt-2 transition-all duration-200 w-px rounded-full bg-gradient-to-b from-transparent via-zinc-100 to-vermillion-900 md:hidden',
-              isCurrentItemsOpen && 'h-8',
-              !isCurrentItemsOpen && 'h-0',
-            )}
+            className="mx-auto mt-4 h-8 w-px rounded-full bg-gradient-to-b from-transparent via-zinc-100 to-vermillion-900 transition-all duration-200 md:hidden"
           />
         )}
 
-        {currentItems.length ? (
-          <motion.div
-            variants={timelineItemVariants}
+        {currentItems && currentItems.length ? (
+          <div
             className={cn(
               'transition-all duration-200 mb-6',
               isCurrentItemsOpen && 'my-6',
@@ -182,171 +156,144 @@ export const TimelineList = () => {
             )}
           >
             <button
+              disabled={isMobile}
               onClick={() => setIsCurrentItemsOpen(!isCurrentItemsOpen)}
-              className="flex w-full items-center justify-between gap-8 pr-8 transition-opacity hover:opacity-75"
+              className="flex w-full items-center justify-center gap-8 transition-opacity md:justify-between md:pr-8 md:hover:opacity-75"
             >
               <TimelineLabel className="mb-2 py-2">
-                <span className="text-balance text-left">Next steps</span>
+                <span className="text-balance text-center md:text-left">
+                  Next steps
+                </span>
               </TimelineLabel>
               <ChevronUpIcon
                 className={cn(
-                  'size-4 text-zinc-400 transition-transform duration-200 shrink-0',
-                  isCurrentItemsOpen && 'rotate-180',
+                  'size-4 text-zinc-400 hidden md:block transition-transform duration-200 shrink-0',
+                  !isCurrentItemsOpen && 'rotate-180',
                 )}
               />
             </button>
-            <AnimatePresence initial={false}>
-              {isCurrentItemsOpen && (
-                <motion.div
-                  initial="hidden"
-                  animate="visible"
-                  exit="hidden"
-                  variants={accordionContentVariants}
-                >
-                  <motion.div variants={timelineItemVariants}>
-                    <TimelineItem>
-                      <TimelineConnector />
-                      <TimelineHeader>
-                        <TimelineDot className="hidden md:block" />
-                        <TimelineEmptyCard />
-                      </TimelineHeader>
-                    </TimelineItem>
-                  </motion.div>
-                  {currentItems.map((t, i) => {
-                    switch (t.type) {
-                      case 'ORDER':
-                        return (
-                          <motion.div
+            {isCurrentItemsOpen && (
+              <div>
+                <div>
+                  <TimelineItem>
+                    <TimelineConnector />
+                    <TimelineHeader>
+                      <TimelineDot className="hidden md:block" />
+                      <TimelineEmptyCard />
+                    </TimelineHeader>
+                  </TimelineItem>
+                </div>
+                {currentItems.map((t, i) => {
+                  switch (t.type) {
+                    case 'ORDER':
+                      return (
+                        <div key={t.id}>
+                          <OrderTimelineItem
+                            timelineItem={t}
                             key={t.id}
-                            variants={timelineItemVariants}
-                          >
-                            <OrderTimelineItem
-                              timelineItem={t}
-                              key={t.id}
-                              shouldRenderConnector={
-                                i !== currentItems.length - 1
-                              }
-                              shouldRenderNextConnector={false}
-                            />
-                          </motion.div>
-                        );
-                      case 'PLAN':
-                        return (
-                          <motion.div
+                            shouldRenderConnector={
+                              i !== currentItems.length - 1
+                            }
+                            shouldRenderNextConnector={false}
+                          />
+                        </div>
+                      );
+                    case 'PLAN':
+                      return (
+                        <div key={t.id}>
+                          <ActionPlanTimelineItem
                             key={t.id}
-                            variants={timelineItemVariants}
-                          >
-                            <ActionPlanTimelineItem
-                              key={t.id}
-                              shouldRenderConnector={
-                                i !== currentItems.length - 1
-                              }
-                              shouldRenderNextConnector={false}
-                              timelineItem={t}
-                            />
-                          </motion.div>
-                        );
-                      default:
-                        return null;
-                    }
-                  })}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
+                            shouldRenderConnector={
+                              i !== currentItems.length - 1
+                            }
+                            shouldRenderNextConnector={false}
+                            timelineItem={t}
+                          />
+                        </div>
+                      );
+                    default:
+                      return null;
+                  }
+                })}
+              </div>
+            )}
+          </div>
         ) : null}
 
-        {completedItems.length > 0 && (
+        {completedItems && completedItems.length > 0 && (
           <div
             id="mobile-separator"
-            className={cn(
-              'mx-auto mt-2 transition-all duration-200 w-px rounded-full bg-gradient-to-b from-transparent via-zinc-100 to-vermillion-900 md:hidden',
-              isCompletedItemsOpen && 'h-8',
-              !isCompletedItemsOpen && 'h-0',
-            )}
+            className="mx-auto mb-6 h-8 w-px rounded-full bg-gradient-to-b from-transparent via-zinc-100 to-vermillion-900 transition-all duration-200 md:hidden"
           />
         )}
 
-        {completedItems.length ? (
-          <motion.div variants={timelineItemVariants}>
+        {completedItems && completedItems.length ? (
+          <div>
             <button
+              disabled={isMobile}
               onClick={() => setIsCompletedItemsOpen(!isCompletedItemsOpen)}
-              className="flex w-full items-center justify-between gap-8 pr-8 transition-opacity hover:opacity-75"
+              className="flex w-full items-center justify-center gap-8 transition-opacity md:justify-between md:pr-8 md:hover:opacity-75"
             >
               <TimelineLabel className="mb-2 py-2">
-                <span className="text-balance text-left">Done</span>
+                <span className="text-balance text-center md:text-left">
+                  Done
+                </span>
               </TimelineLabel>
               <ChevronUpIcon
                 className={cn(
-                  'size-4 text-zinc-400 transition-transform duration-200 shrink-0',
-                  isCompletedItemsOpen && 'rotate-180',
+                  'size-4 text-zinc-400 hidden md:block transition-transform duration-200 shrink-0',
+                  !isCompletedItemsOpen && 'rotate-180',
                 )}
               />
             </button>
-            <AnimatePresence initial={false}>
-              {isCompletedItemsOpen && (
-                <motion.div
-                  initial="hidden"
-                  animate="visible"
-                  exit="hidden"
-                  variants={accordionContentVariants}
-                >
-                  {completedItems.map((t, i) => {
-                    switch (t.type) {
-                      case 'ORDER':
-                        return (
-                          <motion.div
+            {isCompletedItemsOpen && (
+              <div>
+                {completedItems.map((t, i) => {
+                  switch (t.type) {
+                    case 'ORDER':
+                      return (
+                        <div key={t.id}>
+                          <OrderTimelineItem
+                            timelineItem={t}
                             key={t.id}
-                            variants={timelineItemVariants}
-                          >
-                            <OrderTimelineItem
-                              timelineItem={t}
-                              key={t.id}
-                              shouldRenderConnector={
-                                i !== completedItems.length - 1
-                              }
-                              shouldRenderNextConnector={false}
-                            />
-                          </motion.div>
-                        );
-                      case 'ONBOARDING_TASK':
-                        return (
-                          <motion.div
+                            shouldRenderConnector={
+                              i !== completedItems.length - 1
+                            }
+                            shouldRenderNextConnector={false}
+                          />
+                        </div>
+                      );
+                    case 'ONBOARDING_TASK':
+                      return (
+                        <motion.div key={t.id}>
+                          <OnboardingTimelineItem
                             key={t.id}
-                            variants={timelineItemVariants}
-                          >
-                            <OnboardingTimelineItem
-                              key={t.id}
-                              timelineItem={t}
-                              shouldRenderConnector={
-                                i !== completedItems.length - 1
-                              }
-                              shouldRenderNextConnector={false}
-                            />
-                          </motion.div>
-                        );
-                      case 'PLAN':
-                        return (
-                          <motion.div
+                            timelineItem={t}
+                            shouldRenderConnector={
+                              i !== completedItems.length - 1
+                            }
+                            shouldRenderNextConnector={false}
+                          />
+                        </motion.div>
+                      );
+                    case 'PLAN':
+                      return (
+                        <motion.div key={t.id}>
+                          <ActionPlanTimelineItem
                             key={t.id}
-                            variants={timelineItemVariants}
-                          >
-                            <ActionPlanTimelineItem
-                              key={t.id}
-                              timelineItem={t}
-                              shouldRenderConnector={
-                                i !== completedItems.length - 1
-                              }
-                              shouldRenderNextConnector={false}
-                            />
-                          </motion.div>
-                        );
-                    }
-                  })}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
+                            timelineItem={t}
+                            shouldRenderConnector={
+                              i !== completedItems.length - 1
+                            }
+                            shouldRenderNextConnector={false}
+                          />
+                        </motion.div>
+                      );
+                  }
+                })}
+              </div>
+            )}
+          </div>
         ) : null}
       </Timeline>
     </div>

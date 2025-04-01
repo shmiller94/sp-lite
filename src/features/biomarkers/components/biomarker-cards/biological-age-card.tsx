@@ -1,5 +1,3 @@
-import { motion } from 'framer-motion';
-
 import { LockIcon } from '@/components/icons';
 import { ArrowTopRight } from '@/components/icons/arrow-top-right-icon';
 import NumberFlow from '@/components/shared/number-flow';
@@ -45,58 +43,51 @@ export const BiologicalAgeCard = ({
         role="presentation"
       >
         <div className="flex h-full flex-col justify-start transition-opacity duration-500">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-            className="flex size-full flex-col"
-          >
-            <div className="flex w-full flex-1 justify-between gap-4">
-              <H4 className="text-white">Biological Age</H4>
+          <div className="flex w-full flex-1 justify-between gap-4">
+            <H4 className="text-white">Biological Age</H4>
+            {biologicalAge ? (
+              <ArrowTopRight className="absolute right-5 top-5 text-white/50 transition-all duration-200 group-hover:right-4 group-hover:top-4 group-hover:text-white/75" />
+            ) : (
+              <LockIcon
+                fill="currentColor"
+                className="absolute right-5 top-5 w-5 text-white/50"
+              />
+            )}
+          </div>
+          <div className="flex w-full items-end justify-between gap-4">
+            <div>
               {biologicalAge ? (
-                <ArrowTopRight className="absolute right-5 top-5 text-white/50 transition-all duration-200 group-hover:right-4 group-hover:top-4 group-hover:text-white/75" />
-              ) : (
-                <LockIcon
-                  fill="currentColor"
-                  className="absolute right-5 top-5 w-5 text-white/50"
+                <NumberFlow
+                  value={Number(biologicalAge)}
+                  className="text-6xl text-white"
                 />
+              ) : (
+                <H1 className="text-white">--</H1>
+              )}
+              {ageDifference ? (
+                <Body2 className="line-clamp-2 text-white">
+                  {Math.abs(ageDifference)} years{' '}
+                  {ageDifference >= 0 ? 'younger' : 'older'} than your
+                  chronological age
+                </Body2>
+              ) : (
+                <Body2 className="text-white">Awaiting lab results</Body2>
               )}
             </div>
-            <div className="flex w-full items-end justify-between gap-4">
-              <div>
-                {biologicalAge ? (
-                  <NumberFlow
-                    value={Number(biologicalAge)}
-                    className="text-6xl text-white"
-                  />
-                ) : (
-                  <H1 className="text-white">--</H1>
-                )}
-                {ageDifference ? (
-                  <Body2 className="line-clamp-2 text-white">
-                    {Math.abs(ageDifference)} years{' '}
-                    {ageDifference >= 0 ? 'younger' : 'older'} than your
-                    chronological age
-                  </Body2>
-                ) : (
-                  <Body2 className="text-white">Awaiting lab results</Body2>
-                )}
+            {biologicalAge && (
+              <div className="md:hidden">
+                <Button
+                  type="button"
+                  variant="white"
+                  size="medium"
+                  onClick={() => onClick?.()}
+                  className="border border-primary/10"
+                >
+                  More info
+                </Button>
               </div>
-              {biologicalAge && (
-                <div className="md:hidden">
-                  <Button
-                    type="button"
-                    variant="white"
-                    size="medium"
-                    onClick={() => onClick?.()}
-                    className="border border-primary/10"
-                  >
-                    More info
-                  </Button>
-                </div>
-              )}
-            </div>
-          </motion.div>
+            )}
+          </div>
         </div>
       </div>
     );

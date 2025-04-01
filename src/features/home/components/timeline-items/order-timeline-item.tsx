@@ -21,7 +21,7 @@ import { TimelineItem as TimelineItemType } from '@/types/api';
  * @param timelineItem - actual timeline item
  *
  */
-export const OrderTimelineItem = ({
+const OrderTimelineItem = ({
   shouldRenderConnector,
   shouldRenderNextConnector,
   timelineItem,
@@ -66,3 +66,5 @@ export const OrderTimelineItem = ({
     </TimelineItem>
   );
 };
+
+export default React.memo(OrderTimelineItem);

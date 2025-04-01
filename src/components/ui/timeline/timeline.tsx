@@ -22,7 +22,10 @@ const TimelineItem = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <li
     ref={ref}
-    className={cn('relative flex flex-col py-0 pt-0 [&>*]:mb-3', className)}
+    className={cn(
+      'relative flex flex-col py-0 pt-0 [&>*]:mb-1 md:[&>*]:mb-3',
+      className,
+    )}
     {...props}
   />
 ));
@@ -189,8 +192,8 @@ const TimelineCard = React.forwardRef<HTMLDivElement, TimelineCardProps>(
             alt="service"
           />
           <div>
-            <Body1 className="text-sm md:text-base">{title}</Body1>
-            <Body2 className="line-clamp-1 text-xs text-zinc-500 md:text-sm">
+            <Body1 className="text-base">{title}</Body1>
+            <Body2 className="line-clamp-1 text-sm text-zinc-500">
               {description}
             </Body2>
           </div>
