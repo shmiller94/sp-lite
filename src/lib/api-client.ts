@@ -52,6 +52,12 @@ api.interceptors.response.use(
       toast('An unknown error occurred. Please try again later.');
     }
 
+    if (originalRequest.url.includes('/oauth2/token')) {
+      clearActiveLogin();
+      window.location.reload();
+      throw error;
+    }
+
     if (
       error.response.status === 401 &&
       error.config &&
@@ -91,9 +97,8 @@ api.interceptors.response.use(
           });
 
           originalRequest.headers.Authorization = `Bearer ${token}`;
+          return api.request(originalRequest);
         }
-
-        return api.request(originalRequest);
       } catch (err) {
         console.log('Not authorized');
 

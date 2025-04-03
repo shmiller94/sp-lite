@@ -96,16 +96,18 @@ export const HomeCards = ({
 
 function SkeletonCard() {
   return (
-    <div className="group flex h-56 w-full animate-pulse flex-col justify-between overflow-hidden rounded-2xl border border-white/10 bg-zinc-400/30 p-4 opacity-50 outline-transparent backdrop-blur-xl transition-all duration-300 hover:border-white/20 hover:bg-zinc-400/40 focus:outline-1 focus:outline-white/20">
-      <div className="flex h-full flex-col justify-start transition-opacity duration-500">
-        <div className="flex h-full flex-col justify-between opacity-20">
-          <div className="flex w-full items-center justify-between gap-4">
-            <Skeleton className="h-8 w-full max-w-32 rounded-lg" />
-            <Skeleton className="size-8 rounded-full" />
-          </div>
-          <div className="flex flex-col gap-2">
-            <Skeleton className="h-8 w-full max-w-32 rounded-lg" />
-            <Skeleton className="h-4 w-full max-w-16 rounded-lg" />
+    <div className="px-6 md:px-0">
+      <div className="group flex h-56 w-full animate-pulse flex-col justify-between overflow-hidden rounded-2xl border border-white/10 bg-zinc-400/30 p-4 opacity-50 outline-transparent backdrop-blur-xl transition-all duration-300 hover:border-white/20 hover:bg-zinc-400/40 focus:outline-1 focus:outline-white/20">
+        <div className="flex h-full flex-col justify-start transition-opacity duration-500">
+          <div className="flex h-full flex-col justify-between opacity-20">
+            <div className="flex w-full items-center justify-between gap-4">
+              <Skeleton className="h-8 w-full max-w-32 rounded-lg" />
+              <Skeleton className="size-8 rounded-full" />
+            </div>
+            <div className="flex flex-col gap-2">
+              <Skeleton className="h-8 w-full max-w-32 rounded-lg" />
+              <Skeleton className="h-4 w-full max-w-16 rounded-lg" />
+            </div>
           </div>
         </div>
       </div>

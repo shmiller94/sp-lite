@@ -4,7 +4,7 @@ import {
   QuestionnaireItem,
 } from '@medplum/fhirtypes';
 
-import { isQuestionEnabled } from '@/features/questionnaires/utils/questionnaire';
+import { isQuestionEnabled } from './questionnaire-enablement';
 
 /**
  * Validates the required items on a specific page (group) in a FHIR Questionnaire.

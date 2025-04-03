@@ -1,9 +1,14 @@
+import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+
 import { OnboardingLayout } from '@/components/layouts/onboarding-layout';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { H1, H3, H4 } from '@/components/ui/typography';
 import { useUpdateTask } from '@/features/tasks/api/update-task';
 import { useStepper } from '@/lib/stepper';
+
+import { Activation } from '../you-are-in/animation';
 
 const MISSION_CONTENT = [
   'Healthcare is broken. From poor food quality, to inescapable environmental toxins, to a modern lifestyle at odds with our biology, it has never been harder to be healthy.',
@@ -24,7 +29,7 @@ export const Mission = () => {
   const updateStep = async () => {
     await updateTaskProgress({
       taskName: 'onboarding',
-      data: { progress: activeStep },
+      data: { progress: activeStep + 1 },
     });
 
     if (!isError) {
@@ -39,7 +44,7 @@ export const Mission = () => {
     >
       <div className="space-y-3">
         <H4 className="w-full text-center text-white opacity-80">
-          It’s time to
+          It&apos;s time to
         </H4>
         <H1 className="text-white">Superpower your life</H1>
       </div>
@@ -59,7 +64,7 @@ export const Mission = () => {
           {isPending ? (
             <Spinner variant="primary" />
           ) : (
-            'I’m ready to commit to my health'
+            "I'm ready to commit to my health"
           )}
         </Button>
       </div>
@@ -67,8 +72,37 @@ export const Mission = () => {
   );
 };
 
-export const MissionStep = () => (
-  <OnboardingLayout title="Mission" className="bg-spine">
-    <Mission />
-  </OnboardingLayout>
-);
+export const MissionStep = () => {
+  const [sequence, setSequence] = useState<number>(0);
+
+  // Scroll to the top of the page when the sequence is 3, needed for mobile
+  useEffect(() => {
+    const scrollToTop = () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    if (sequence === 3) {
+      scrollToTop();
+    }
+
+    return () => {
+      window.removeEventListener('scroll', scrollToTop);
+    };
+  }, [sequence]);
+
+  if (sequence < 3) {
+    return <Activation sequence={sequence} setSequence={setSequence} />;
+  }
+
+  return (
+    <OnboardingLayout title="Mission" className="bg-spine">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1.0] }}
+      >
+        <Mission />
+      </motion.div>
+    </OnboardingLayout>
+  );
+};

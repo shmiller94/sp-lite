@@ -1,6 +1,6 @@
 import { Questionnaire, QuestionnaireResponseItem } from '@medplum/fhirtypes';
 
-import { validateQuestionnairePageErrors } from '@/features/questionnaires/utils/validate-response-page';
+import { validateQuestionnairePageErrors } from '../validate-response-page';
 
 describe('validateQuestionnairePageErrors', () => {
   // Test 1: Page not found in questionnaire.

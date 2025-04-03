@@ -31,7 +31,7 @@ export const updateQuestionnaireResponse = ({
 }: {
   data: UpdateQuestionnaireInput;
   questionnaireName: QuestionnaireName;
-}): Promise<QuestionnaireResponse> => {
+}): Promise<{ questionnaireResponse: QuestionnaireResponse }> => {
   return api.patch(`/questionnaires/${questionnaireName}/response`, data);
 };
 

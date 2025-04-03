@@ -7,7 +7,7 @@ import {
   QuestionnaireStore,
   QuestionnaireStoreApi,
   questionnaireStoreCreator,
-} from '@/features/questionnaires/stores/questionnaire-store-creator';
+} from './questionnaire-store-creator';
 
 export const QuestionnaireStoreContext = createContext<
   QuestionnaireStoreApi | undefined

@@ -137,6 +137,14 @@ module.exports = {
           '0%, 100%': { fill: '#a1a1aa' }, // zinc-400
           '50%': { fill: '#52525b' }, // zinc-600
         },
+        dash: {
+          from: { strokeDasharray: '24', strokeDashoffset: '24' },
+          to: { strokeDasharray: '24', strokeDashoffset: '0' },
+        },
+        'jump-up': {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-4px) rotate(-10deg)' },
+        },
         'timeline-flow': {
           '0%': { backgroundPosition: 'right 0px' },
           '100%': { backgroundPosition: 'right 10px' },
@@ -153,6 +161,9 @@ module.exports = {
         'collapsible-up': 'collapsible-up 0.2s ease-out',
         'caret-blink': 'caret-blink 1.25s ease-out infinite',
         'superpower-logo': 'superpower-logo 2s ease-out infinite',
+        dash: 'dash 0.3s ease-in-out forwards',
+        'jump-up':
+          'jump-up 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.75) forwards',
         'timeline-flow': 'timeline-flow 1.5s linear infinite',
         'spin-slow': 'spin-slow 15s linear infinite',
       },

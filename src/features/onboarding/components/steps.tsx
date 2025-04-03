@@ -1,14 +1,15 @@
 import {
+  BookingStep,
   CommitmentStep,
   ConfiguratorStep,
-  MissionStep,
   PrimaryAddressStep,
+  UpsellStep,
+  UpsellBookingStep,
+  MissionStep,
+  ShareStep,
+  QuestionnaireStep,
 } from '@/features/onboarding/components/step-content';
-import { BookingStep } from '@/features/onboarding/components/step-content/booking';
-import { ShareStep } from '@/features/onboarding/components/step-content/share';
-import { UpsellStep } from '@/features/onboarding/components/step-content/upsell';
-import { UpsellBookingStep } from '@/features/onboarding/components/step-content/upsell-booking';
-import { StepItem } from '@/lib/stepper';
+import { StepItem } from '@/lib/stepper/stepper-store-creator';
 
 export const steps: StepItem[] = [
   {
@@ -18,6 +19,14 @@ export const steps: StepItem[] = [
   {
     id: 'configurator',
     content: <ConfiguratorStep />,
+  },
+  {
+    id: 'intake',
+    content: <QuestionnaireStep type="intake" showIntro={true} />,
+  },
+  {
+    id: 'screening',
+    content: <QuestionnaireStep type="screening" />,
   },
   {
     id: 'booking',

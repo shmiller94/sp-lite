@@ -23,6 +23,17 @@ export const getOnboardingTimelineItem = (timelineItem: TimelineItem) => {
       return {
         image: 'timeline/typeform.png',
         button: (
+          <Link to={`/questionnaire/intake`}>
+            <Button variant="outline" className="bg-white" size="medium">
+              Complete
+            </Button>
+          </Link>
+        ),
+      };
+    case 'Screening':
+      return {
+        image: 'timeline/typeform.png',
+        button: (
           <Link to={`/questionnaire/${INTAKE_QUESTIONNAIRE}`}>
             <Button variant="outline" className="bg-white" size="medium">
               Complete

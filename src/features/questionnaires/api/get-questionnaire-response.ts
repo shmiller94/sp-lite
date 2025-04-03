@@ -10,7 +10,7 @@ export const getQuestionnaireResponse = ({
 }: {
   questionnaireName: QuestionnaireName;
 }): Promise<{
-  questionnaireResponse: QuestionnaireResponse;
+  questionnaireResponse: QuestionnaireResponse | null;
 }> => {
   return api.get(`/questionnaires/${questionnaireName}/response`);
 };

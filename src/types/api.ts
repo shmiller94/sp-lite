@@ -182,7 +182,7 @@ export type OperationOutcome = {
 };
 
 /* QUESTIONNAIRE */
-export type QuestionnaireName = 'onboarding-intake';
+export type QuestionnaireName = 'onboarding-intake' | 'onboarding-screening';
 
 /* TASK */
 export type Task = {

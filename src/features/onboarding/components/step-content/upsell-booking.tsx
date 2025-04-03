@@ -54,7 +54,7 @@ const UpsellBooking = () => {
   const updateStep = async () => {
     await updateTaskProgress({
       taskName: 'onboarding',
-      data: { progress: activeStep },
+      data: { progress: activeStep + 1 },
     });
 
     if (!isError) {
