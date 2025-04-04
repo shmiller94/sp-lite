@@ -7,6 +7,7 @@ import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { Body1, Body2, H3 } from '@/components/ui/typography';
 import { useQuestionnaireResponse } from '@/features/questionnaires/api/get-questionnaire-response';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
+import { useUser } from '@/lib/auth';
 
 const whitelistedPaths = ['/questionnaire', '/onboarding'];
 
@@ -15,6 +16,7 @@ export function QuestionnaireCheckModal() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { width } = useWindowDimensions();
+  const { data: user } = useUser();
 
   const { data: screening } = useQuestionnaireResponse({
     questionnaireName: 'onboarding-screening',
@@ -39,6 +41,11 @@ export function QuestionnaireCheckModal() {
     // show modal only if at least one response exists AND any is incomplete
     setMissing(statuses.length > 0 && statuses.some((s) => s !== 'completed'));
   }, [pathname, screeningStatus, intakeStatus]);
+
+  // disable this for ops
+  if (user?.adminActor) {
+    return;
+  }
 
   const handleClick = () => {
     if (
