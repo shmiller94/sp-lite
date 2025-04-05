@@ -156,9 +156,15 @@ export const QuestionnaireFormItem = ({
             name={name}
             required={item.required}
             defaultValue={defaultValue?.value}
-            onChange={(e) =>
-              onChangeAnswer({ valueDecimal: e.currentTarget.valueAsNumber })
-            }
+            onChange={(e) => {
+              // NOTE: we do that because if you remove text it becomes NaN
+              if (isNaN(e.currentTarget.valueAsNumber)) {
+                return;
+              }
+              onChangeAnswer({
+                valueInteger: e.currentTarget.valueAsNumber,
+              });
+            }}
             onKeyDown={onKeyDown}
           />
         </QuestionnaireErrorWrapper>
@@ -177,9 +183,15 @@ export const QuestionnaireFormItem = ({
             name={name}
             required={item.required}
             defaultValue={defaultValue?.value}
-            onChange={(e) =>
-              onChangeAnswer({ valueInteger: e.currentTarget.valueAsNumber })
-            }
+            onChange={(e) => {
+              // NOTE: we do that because if you remove text it becomes NaN
+              if (isNaN(e.currentTarget.valueAsNumber)) {
+                return;
+              }
+              onChangeAnswer({
+                valueInteger: e.currentTarget.valueAsNumber,
+              });
+            }}
             onKeyDown={onKeyDown}
           />
         </QuestionnaireErrorWrapper>
@@ -239,9 +251,15 @@ export const QuestionnaireFormItem = ({
             autoFocus={!nested}
             required={item.required}
             defaultValue={defaultValue?.value}
-            onChange={(e) =>
-              onChangeAnswer({ valueString: e.currentTarget.value })
-            }
+            onChange={(e) => {
+              // NOTE: we do that because medplum doesnt accept empty strings on backend
+              const newValue = e.currentTarget.value;
+              if (newValue.trim() === '') {
+                return;
+              }
+
+              onChangeAnswer({ valueString: newValue });
+            }}
             onKeyDown={onKeyDown}
           />
         </QuestionnaireErrorWrapper>
