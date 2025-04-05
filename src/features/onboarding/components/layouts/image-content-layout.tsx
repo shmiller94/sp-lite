@@ -22,7 +22,7 @@ export const ImageContentLayout = (props: Props) => {
       <div className="flex h-dvh w-full flex-col bg-white lg:flex-row">
         <div
           className={cn(
-            'min-h-[210px] w-full lg:max-w-[556px] bg-female-face bg-no-repeat bg-cover p-8 flex flex-col gap-8 items-center',
+            'min-h-[210px] w-full lg:max-w-[556px] xl:max-w-[33%] bg-female-face bg-no-repeat bg-cover p-8 flex flex-col gap-8 items-center',
             className,
           )}
         >
@@ -44,7 +44,7 @@ export const ImageContentLayout = (props: Props) => {
           ) : null}
         </div>
 
-        <div className="flex h-full flex-1 flex-col py-6 lg:min-w-[748px] lg:overflow-y-auto lg:py-10">
+        <div className="flex h-full flex-1 flex-col py-6 lg:mx-auto lg:min-w-[748px] lg:max-w-[1200px] lg:overflow-y-auto lg:py-10 xl:max-w-[1400px] 2xl:max-w-[1600px]">
           {children}
         </div>
       </div>
