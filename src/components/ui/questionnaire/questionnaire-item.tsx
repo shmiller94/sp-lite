@@ -192,7 +192,12 @@ export const QuestionnaireFormItem = ({
                 valueInteger: e.currentTarget.valueAsNumber,
               });
             }}
-            onKeyDown={onKeyDown}
+            onKeyDown={(e) => {
+              if (e.key === '.' || e.key === ',') {
+                e.preventDefault();
+              }
+              if (onKeyDown) onKeyDown(e);
+            }}
           />
         </QuestionnaireErrorWrapper>
       );
