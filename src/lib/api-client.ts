@@ -28,28 +28,25 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response.status !== 401) {
-      if (error.response.data) {
-        const apiError = error.response.data;
-        console.log('apiError', apiError);
+    // Check if toast notifications should be hidden for this request
+    const hideToast = originalRequest?.headers?.['x-hide-toast'] === 'true';
 
-        // /**
-        //  * If we have issue inside then API error is of type OperationOutcome
-        //  */
-        // if (apiError.issue) {
-        //   for (const e of apiError.issue) {
-        //     toast.error(e.details.text);
-        //   }
-        // } else {
-        //   /**
-        //    * Regular JS error that has message field inside
-        //    */
-        //   toast.error(apiError.message ?? 'An unknown error occurred.');
-        // }
+    // Handle non-authentication errors
+    if (error.response.status !== 401) {
+      if (!hideToast && error.response.data) {
+        const apiError = error.response.data;
+
+        /**
+         * If we have issue inside then API error is of type OperationOutcome
+         */
+        if (apiError.issue) {
+          for (const issue of apiError.issue) {
+            toast(issue.details.text);
+          }
+        } else {
+          toast('An unknown error occurred. Please try again later.');
+        }
       }
-      // we show generic error message here to avoid leaking confusing / sensitive error details to end-user
-      // errors should be handled correctly on server side
-      toast('An unknown error occurred. Please try again later.');
     }
 
     if (originalRequest.url.includes('/oauth2/token')) {

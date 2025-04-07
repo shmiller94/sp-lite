@@ -8,11 +8,15 @@ import { Coupon } from '@/types/api';
 export const validateCode = ({
   accessCode,
 }: ValidateInput): Promise<{ coupon: Coupon }> => {
-  return api.get(`auth/coupon?code=${accessCode}`);
+  return api.get(`auth/coupon?code=${accessCode}`, {
+    headers: {
+      'x-hide-toast': 'true',
+    },
+  });
 };
 
 export const validateInputSchema = z.object({
-  accessCode: z.string().min(1),
+  accessCode: z.string().min(1, { message: 'Access code is required' }),
 });
 
 export type ValidateInput = z.infer<typeof validateInputSchema>;

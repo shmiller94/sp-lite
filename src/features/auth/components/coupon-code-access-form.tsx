@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useQueryClient } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
@@ -31,12 +32,8 @@ export function CouponCodeAccessForm({
   codeValidated,
 }: CouponCodeAccessFormProps): JSX.Element {
   const [searchParams] = useSearchParams();
-  const [accessCode, setAccessCode] = useState<string | undefined>(undefined);
-
-  const accessCodeQuery = useValidateCode({
-    accessCode: accessCode ?? '',
-    queryConfig: { enabled: !!accessCode },
-  });
+  const [accessCode, setAccessCode] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
   const form = useForm<z.infer<typeof validateInputSchema>>({
     resolver: zodResolver(validateInputSchema),
@@ -44,6 +41,25 @@ export function CouponCodeAccessForm({
       accessCode: accessCode || '',
     },
   });
+
+  const accessCodeQuery = useValidateCode({
+    accessCode: accessCode ?? '',
+    queryConfig: {
+      enabled: !!accessCode,
+    },
+  });
+
+  useEffect(() => {
+    if (accessCodeQuery.isSuccess && accessCode) {
+      codeValidated();
+      updateAccessCode(accessCode);
+    } else if (accessCodeQuery.isError) {
+      form.setError('accessCode', {
+        type: 'manual',
+        message: 'Invalid access code. Please try again.',
+      });
+    }
+  }, [accessCodeQuery.status, accessCode, codeValidated, form]);
 
   useEffect(() => {
     const rewardfulCoupon = (window as any).Rewardful?.coupon?.id;
@@ -59,36 +75,21 @@ export function CouponCodeAccessForm({
      *
      * toUpperCase() for OUR coupon codes needs to happen on the FE so that on the backend
      * we can verify we don't uppercase all coupon codes
+     *
+     * Otherwise use rewardfulCoupon if present
      */
     if (code) {
       setAccessCode(code.toUpperCase().trim());
-      return;
-    }
-
-    /**
-     * Otherwise use rewardfulCoupon if present
-     */
-    if (rewardfulCode) {
+    } else if (rewardfulCode) {
       setAccessCode(rewardfulCode.trim());
-      return;
     }
-  }, []);
-
-  useEffect(() => {
-    /**
-     * This is more of extra check to make sure we have access code
-     */
-    if (!accessCode) {
-      return;
-    }
-
-    if (accessCodeQuery.isSuccess) {
-      codeValidated();
-      updateAccessCode(accessCode);
-    }
-  }, [accessCodeQuery.isSuccess, codeValidated]);
+  }, [searchParams]);
 
   function onFormSubmit(values: ValidateInput) {
+    form.clearErrors();
+    queryClient.resetQueries({
+      queryKey: ['accessCode', values.accessCode.trim()],
+    });
     setAccessCode(values.accessCode.trim());
   }
 
@@ -110,14 +111,24 @@ export function CouponCodeAccessForm({
                   <FormItem>
                     <FormLabel>Access Code</FormLabel>
                     <FormControl>
-                      <Input placeholder="Access Code" {...field} />
+                      <Input
+                        placeholder="Access Code"
+                        {...field}
+                        className={
+                          form.formState.errors.accessCode
+                            ? 'border-pink-700 focus-visible:ring-0'
+                            : ''
+                        }
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
-            <Button>{accessCodeQuery.isLoading ? <Spinner /> : 'Next'}</Button>
+            <Button disabled={accessCodeQuery.isLoading}>
+              {accessCodeQuery.isLoading ? <Spinner /> : 'Next'}
+            </Button>
           </div>
         </form>
       </Form>
