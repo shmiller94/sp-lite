@@ -17,7 +17,7 @@ export const getHealthcareServicePriceLabel = (
   healthcareService: HealthcareService,
 ) => {
   const hasItems = healthcareService.items.length > 0;
-  const isFreeService = healthcareService.price === 0;
+  const isFreeService = healthcareService.price === 0; // could also mean price was failed to load
   const isRequestable = REQUESTABLE_SERVICES.includes(healthcareService.name);
 
   if (hasItems) {
@@ -25,7 +25,7 @@ export const getHealthcareServicePriceLabel = (
   }
 
   if (isFreeService) {
-    return isRequestable ? 'Price on request' : 'Included in subscription';
+    return isRequestable ? 'Price on request' : 'Price unavailable';
   }
 
   return formatMoney(healthcareService.price);
