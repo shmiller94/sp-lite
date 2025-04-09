@@ -15,14 +15,14 @@ import { useStepper } from '@/lib/stepper';
 import { Address } from '@/types/api';
 
 function FullPrimaryAddressForm({
-  googleAddres,
+  googleAddress,
 }: {
-  googleAddres: FormAddressInput;
+  googleAddress: FormAddressInput;
 }) {
   const { data: user } = useUser();
   const { nextStep, activeStep } = useStepper((s) => s);
 
-  const { setIsZipBlocked } = useOnboarding();
+  const { setIsZipBlocked, setZipBlockedReason } = useOnboarding();
   const {
     mutateAsync: updateTaskProgress,
     isPending,
@@ -33,11 +33,11 @@ function FullPrimaryAddressForm({
   const updateProfileMutation = useUpdateProfile();
 
   const defaultValues = {
-    line1: googleAddres.line1,
-    line2: googleAddres.line2,
-    postalCode: googleAddres.postalCode,
-    city: googleAddres.city,
-    state: googleAddres.state,
+    line1: googleAddress.line1,
+    line2: googleAddress.line2,
+    postalCode: googleAddress.postalCode,
+    city: googleAddress.city,
+    state: googleAddress.state,
   };
 
   const onSubmit = async (data: FormAddressInput) => {
@@ -45,12 +45,14 @@ function FullPrimaryAddressForm({
       return;
     }
 
-    const { serviceable } = await getServiceabilityMutation.mutateAsync({
-      data: {
-        zipCode: data.postalCode,
-        collectionMethod: 'IN_LAB',
+    const { serviceable, reason } = await getServiceabilityMutation.mutateAsync(
+      {
+        data: {
+          zipCode: data.postalCode,
+          collectionMethod: 'IN_LAB',
+        },
       },
-    });
+    );
 
     if (serviceable) {
       const line = [data.line1];
@@ -82,6 +84,7 @@ function FullPrimaryAddressForm({
       }
     } else {
       setIsZipBlocked(true);
+      setZipBlockedReason(reason ?? '');
     }
   };
 
@@ -129,7 +132,7 @@ export function PrimaryAddressForm() {
   >();
 
   if (googleAddress) {
-    return <FullPrimaryAddressForm googleAddres={googleAddress} />;
+    return <FullPrimaryAddressForm googleAddress={googleAddress} />;
   }
 
   return (

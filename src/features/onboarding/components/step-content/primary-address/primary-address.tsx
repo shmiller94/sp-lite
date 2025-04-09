@@ -4,14 +4,26 @@ import { ContentComingSoon } from '@/features/onboarding/components/coming-soon'
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import { useUser } from '@/lib/auth';
 
+import { NoProvidersInRange } from '../../no-providers-in-range';
+
 import { PrimaryAddressForm } from './primary-address-form';
 
 export const PrimaryAddress = () => {
-  const { isZipBlocked } = useOnboarding();
+  const { isZipBlocked, zipBlockedReason } = useOnboarding();
   const { data } = useUser();
 
   if (isZipBlocked) {
-    return <ContentComingSoon />;
+    if (zipBlockedReason === 'state-not-serviceable') {
+      return <ContentComingSoon />;
+    } else if (zipBlockedReason === 'no-providers-in-range') {
+      return <NoProvidersInRange />;
+    } else {
+      console.warn(
+        'Zip blocked reason not handled or backend is not returning a reason. Reason:',
+        zipBlockedReason,
+      );
+      return <ContentComingSoon />;
+    }
   }
 
   return (
@@ -33,10 +45,15 @@ export const PrimaryAddress = () => {
 };
 
 export const PrimaryAddressStep = () => {
-  const { isZipBlocked } = useOnboarding();
+  const { isZipBlocked, zipBlockedReason } = useOnboarding();
 
   return (
-    <OnboardingLayout title="Address" showAvailableStates={isZipBlocked}>
+    <OnboardingLayout
+      title="Address"
+      showAvailableStates={
+        isZipBlocked && zipBlockedReason !== 'no-providers-in-range'
+      }
+    >
       <PrimaryAddress />
     </OnboardingLayout>
   );

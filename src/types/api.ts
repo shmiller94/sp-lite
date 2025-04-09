@@ -458,7 +458,8 @@ export type PhlebotomyLocation = {
 
 export type Serviceable = {
   serviceable: boolean;
-  providers: ('getlabs' | 'labcorp')[];
+  providers: ('getlabs' | 'labcorp' | 'bioreference')[];
+  reason?: 'state-not-serviceable' | 'no-providers-in-range';
 };
 
 export type Slot = {
