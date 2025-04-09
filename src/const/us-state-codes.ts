@@ -44,6 +44,7 @@ export const US_STATE_CODES: string[] = [
   'TN', // Tennessee
   'TX', // Texas
   'UT', // Utah
+  'VA', // Virginia
   'VT', // Vermont
   'WA', // Washington
   'WI', // Wisconsin
@@ -91,6 +92,7 @@ export const US_STATES = [
   { value: 'TN', label: 'Tennessee' },
   { value: 'TX', label: 'Texas' },
   { value: 'UT', label: 'Utah' },
+  { value: 'VA', label: 'Virginia' },
   { value: 'VT', label: 'Vermont' },
   { value: 'WA', label: 'Washington' },
   { value: 'WI', label: 'Wisconsin' },
