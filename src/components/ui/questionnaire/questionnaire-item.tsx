@@ -178,6 +178,8 @@ export const QuestionnaireFormItem = ({
             type="number"
             step={1}
             id={name}
+            inputMode="numeric" // mobile devices show numeric keypad
+            pattern="[0-9]*" // reinforces that input should be numeric
             // eslint-disable-next-line jsx-a11y/no-autofocus
             autoFocus={!nested}
             name={name}
