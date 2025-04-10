@@ -54,7 +54,7 @@ export const ScreeningQuestionnaire = ({
   if (isScreenedOut) {
     return (
       <ScreenOut
-        legacy={getOrdersQuery.data.orders.some((o) => o.status !== 'DRAFT')}
+      // legacy={getOrdersQuery.data.orders.some((o) => o.status !== 'DRAFT')}
       />
     );
   }
