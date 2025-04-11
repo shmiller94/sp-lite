@@ -1,3 +1,4 @@
+import { Eye, EyeOff } from 'lucide-react';
 import * as React from 'react';
 
 import { cn } from '@/lib/utils';
@@ -10,6 +11,12 @@ export interface InputProps
 
 const AuthInput = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, icon, type, border = 'top', ...props }, ref) => {
+    const [showPassword, setShowPassword] = React.useState(false);
+
+    const togglePasswordVisibility = () => {
+      setShowPassword(!showPassword);
+    };
+
     return (
       <div
         className={cn(
@@ -19,7 +26,9 @@ const AuthInput = React.forwardRef<HTMLInputElement, InputProps>(
       >
         <div className="">{icon}</div>
         <input
-          type={type}
+          type={
+            type === 'password' ? (showPassword ? 'text' : 'password') : type
+          }
           className={cn(
             'flex w-full caret-vermillion-900 p-0 text-base transition-colors placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none',
             className,
@@ -27,6 +36,19 @@ const AuthInput = React.forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           {...props}
         />
+        {type === 'password' && (
+          <button
+            type="button"
+            onClick={togglePasswordVisibility}
+            className="text-zinc-400 hover:text-zinc-600 focus:outline-none"
+          >
+            {showPassword ? (
+              <EyeOff className="size-4" />
+            ) : (
+              <Eye className="size-4" />
+            )}
+          </button>
+        )}
       </div>
     );
   },
