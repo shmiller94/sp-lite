@@ -54,7 +54,15 @@ run: prereq
 
 ### Build
 
-.PHONY: build/env/local
+.PHONY: build/staging
+build/staging: description = Trigger GitHub Actions staging workflow and watch for completion
+build/staging:
+	@bash $(SHARED_SCRIPT) info "Triggering staging workflow..."
+	@run_id=$$(gh workflow run staging.yml --ref $$(git rev-parse --abbrev-ref HEAD) --json id -q .id); \
+	echo "Workflow started with run ID: $$run_id"; \
+	gh run watch $$run_id && status=$$(gh run view $$run_id --json conclusion -q .conclusion) && say "Staging workflow $$status"
+
+.PHONY: build/env/dev
 build/env/dev: description = Build the .env file
 build/env/dev:
 	doppler secrets download -p superpower-app -c dev --no-file --format=env > .env

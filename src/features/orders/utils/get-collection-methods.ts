@@ -13,11 +13,13 @@ import { ActiveAddress, HealthcareService } from '@/types/api';
  *
  * @param {HealthcareService} service - The healthcare service for which to get the collection methods.
  * @param primaryAddress - Primary address of user
+ * @param isAdmin - Whether the user is an admin
  * @returns {CollectionOptionType[]} An array of available collection methods.
  */
 export const getCollectionMethods = (
   service: HealthcareService,
   primaryAddress?: ActiveAddress,
+  isAdmin = false,
 ): CollectionOptionType[] => {
   const isBloodPanel =
     service.name === SUPERPOWER_BLOOD_PANEL ||
@@ -28,6 +30,12 @@ export const getCollectionMethods = (
   if (primaryAddress?.address) {
     const state = primaryAddress.address.state;
 
+    // If user is admin, allow in-lab options regardless of state
+    if (isAdmin) {
+      return [COLLECTION_METHODS.IN_LAB, INTERPRETED];
+    }
+
+    // For NY and NJ, only allow at-home appointments
     if (state === 'NY' || state === 'NJ') {
       return [
         {

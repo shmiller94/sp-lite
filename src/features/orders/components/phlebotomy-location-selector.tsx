@@ -6,6 +6,7 @@ import { Body1, H3 } from '@/components/ui/typography';
 import { useOrder } from '@/features/orders/stores/order-store';
 import { getCollectionMethods } from '@/features/orders/utils/get-collection-methods';
 import { useUser } from '@/lib/auth';
+import { useAuthorization } from '@/lib/authorization';
 import { cn } from '@/lib/utils';
 import { CollectionMethodType } from '@/types/api';
 import { formatMoney } from '@/utils/format-money';
@@ -19,6 +20,8 @@ export const CreateOrderPhlebotomyLocationSelector = () => {
     updateSlot,
   } = useOrder((s) => s);
   const { data: user } = useUser();
+  const { checkAdminActorAccess } = useAuthorization();
+  const isAdmin = checkAdminActorAccess();
 
   const handleOptionClick = (optionValue: CollectionMethodType) => {
     updateCollectionMethod(optionValue);
@@ -27,8 +30,8 @@ export const CreateOrderPhlebotomyLocationSelector = () => {
   };
 
   const options = useMemo(
-    () => getCollectionMethods(service, user?.primaryAddress),
-    [service, user?.primaryAddress],
+    () => getCollectionMethods(service, user?.primaryAddress, isAdmin),
+    [service, user?.primaryAddress, isAdmin],
   );
 
   return (
@@ -66,7 +69,7 @@ export const CreateOrderPhlebotomyLocationSelector = () => {
                   {option.cancelationText}
                 </Body1>
               </div>
-              <Body1 className="text-sm  text-zinc-500 sm:text-base">
+              <Body1 className="text-sm text-zinc-500 sm:text-base">
                 {option.price === 0
                   ? 'Included'
                   : `+${formatMoney(option.price)}`}
