@@ -39,13 +39,16 @@ export const SparkLineChartGraph = memo((props: any) => {
   const options: Highcharts.Options = useMemo(() => {
     return {
       chart: {
-        backgroundColor: undefined,
+        backgroundColor: 'transparent',
         borderWidth: 0,
-        borderColor: 'white',
+        borderColor: 'transparent',
         height: height,
         width: null,
         margin: [0, 0, 0, 0],
         spacing: [0, 0, 0, 0],
+        style: {
+          overflow: 'hidden',
+        },
         events: {
           load(): void {
             // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -53,19 +56,24 @@ export const SparkLineChartGraph = memo((props: any) => {
             const series = chart.series[0];
             if (series.data.length > 0) {
               const point = series.data.slice(-4)[0];
+              if (!point) return;
 
-              const x = chart.plotLeft + chart.xAxis[0].toPixels(point.x, true),
-                y = chart.plotTop + chart.yAxis[0].toPixels(point.y ?? 0, true);
+              const x = chart.plotLeft + chart.xAxis[0].toPixels(point.x, true);
+              const y =
+                chart.plotTop + chart.yAxis[0].toPixels(point.y ?? 0, true);
 
-              chart.renderer
-                .path(['M', chart.plotLeft, y, 'L', x, y] as any)
-                .attr({
-                  stroke: point.color,
-                  'stroke-width': 2,
-                  'stroke-dasharray': '0 3 0',
-                  zIndex: 10,
-                })
-                .add();
+              // Only render the path if we have valid coordinates
+              if (isFinite(x) && isFinite(y)) {
+                chart.renderer
+                  .path(['M', chart.plotLeft, y, 'L', x, y] as any)
+                  .attr({
+                    stroke: point.color,
+                    'stroke-width': 2,
+                    'stroke-dasharray': '0 3 0',
+                    zIndex: 10,
+                  })
+                  .add();
+              }
             }
           },
         },
@@ -88,6 +96,7 @@ export const SparkLineChartGraph = memo((props: any) => {
         },
         tickPositions: [],
         ordinal: false,
+        lineWidth: 0,
       },
       yAxis: {
         min: min,
@@ -104,6 +113,7 @@ export const SparkLineChartGraph = memo((props: any) => {
         alignTicks: false,
         startOnTick: false,
         endOnTick: false,
+        lineWidth: 0,
       },
       legend: {
         enabled: false,
@@ -159,7 +169,7 @@ export const SparkLineChartGraph = memo((props: any) => {
         },
       ],
     };
-  }, [data, zones, plotBands, min, max]);
+  }, [data, zones, plotBands, min, max, height, markerRadius, markerLineWidth]);
 
   return <HighchartsReact highcharts={Highcharts} options={options} />;
 });
