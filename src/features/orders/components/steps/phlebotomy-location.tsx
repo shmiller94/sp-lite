@@ -112,6 +112,7 @@ function CreateOrderPhlebotomyInLab(): JSX.Element {
         </div>
         <Input
           maxLength={5}
+          inputMode="numeric"
           value={zipCode}
           placeholder="5-digit zip code"
           onChange={(e) => setZipCode(e.target.value)}

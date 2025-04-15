@@ -58,6 +58,9 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
                     <AuthInput
                       border="top"
                       placeholder="Email"
+                      autoCapitalize="none"
+                      autoComplete="email"
+                      autoCorrect="off"
                       icon={<Mail className="size-4 text-zinc-400" />}
                       {...field}
                     />

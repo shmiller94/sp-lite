@@ -26,6 +26,7 @@ const AuthInput = React.forwardRef<HTMLInputElement, InputProps>(
       >
         <div className="">{icon}</div>
         <input
+          autoCapitalize="off"
           type={
             type === 'password' ? (showPassword ? 'text' : 'password') : type
           }

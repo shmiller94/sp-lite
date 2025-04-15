@@ -191,6 +191,7 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
                         {...field}
                         placeholder="********"
                         type="password"
+                        autoCapitalize="off"
                         autoComplete="new-password"
                         autoCorrect="off"
                       />

@@ -69,7 +69,13 @@ export function ResetPasswordForm(): JSX.Element {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="Email" {...field} />
+                  <Input
+                    placeholder="Email"
+                    autoCapitalize="none"
+                    autoComplete="email"
+                    autoCorrect="off"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

@@ -110,6 +110,7 @@ const DatetimeGrid = forwardRef<
               'p-0 inline h-fit shadow-none border-none outline-none select-none content-box focus-visible:bg-zinc-100 rounded-sm w-full text-center focus-visible:ring-0 focus-visible:outline-none min-w-8',
               { 'min-w-12': unit === 'years' },
             )}
+            inputMode="numeric"
             value={values[unit]}
             onChange={(e) => handleChange(unit, e.target.value)}
             placeholder={placeholders[unit]}

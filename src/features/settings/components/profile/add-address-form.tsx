@@ -285,6 +285,7 @@ export const AddAddressForm = ({
                   <Input
                     autoComplete="off"
                     placeholder="ZIP Code"
+                    inputMode="numeric"
                     maxLength={5}
                     variant={theme}
                     {...field}

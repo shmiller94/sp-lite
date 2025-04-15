@@ -151,6 +151,7 @@ export const QuestionnaireFormItem = ({
             type="number"
             step="any"
             id={name}
+            inputMode="decimal" // mobile devices show decimal keypad
             // eslint-disable-next-line jsx-a11y/no-autofocus
             autoFocus={!nested}
             name={name}
