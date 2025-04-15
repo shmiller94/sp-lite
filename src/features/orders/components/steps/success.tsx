@@ -6,6 +6,7 @@ import { DialogClose } from '@/components/ui/dialog';
 import { H2 } from '@/components/ui/typography';
 import {
   GRAIL_GALLERI_MULTI_CANCER_TEST,
+  SUPERPOWER_ADVANCED_BLOOD_PANEL,
   SUPERPOWER_BLOOD_PANEL,
 } from '@/const';
 import { HealthcareServiceFooter } from '@/features/orders/components/healthcare-service-footer';
@@ -33,6 +34,7 @@ export const Success = () => {
     }
     if (
       service.name !== SUPERPOWER_BLOOD_PANEL &&
+      service.name !== SUPERPOWER_ADVANCED_BLOOD_PANEL &&
       service.name !== GRAIL_GALLERI_MULTI_CANCER_TEST
     ) {
       return null;

@@ -10,6 +10,7 @@ import {
 import { Body1, Body3 } from '@/components/ui/typography';
 import {
   GRAIL_GALLERI_MULTI_CANCER_TEST,
+  SUPERPOWER_ADVANCED_BLOOD_PANEL,
   SUPERPOWER_BLOOD_PANEL,
 } from '@/const';
 import { cn } from '@/lib/utils';
@@ -29,7 +30,8 @@ export function AddToCalendar({
   collectionMethod: CollectionMethodType;
   service:
     | typeof SUPERPOWER_BLOOD_PANEL
-    | typeof GRAIL_GALLERI_MULTI_CANCER_TEST;
+    | typeof GRAIL_GALLERI_MULTI_CANCER_TEST
+    | typeof SUPERPOWER_ADVANCED_BLOOD_PANEL;
   className?: string;
 }) {
   const event = getCalendarEvent({ slot, address, collectionMethod, service });

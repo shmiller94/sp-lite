@@ -39,3 +39,6 @@ yarn-error.log*
 mocked-db.json
 
 .idea
+
+# vscode
+.vscode/settings.json

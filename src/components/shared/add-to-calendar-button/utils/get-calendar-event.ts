@@ -3,10 +3,62 @@ import { format } from 'date-fns';
 
 import {
   GRAIL_GALLERI_MULTI_CANCER_TEST,
+  SUPERPOWER_ADVANCED_BLOOD_PANEL,
   SUPERPOWER_BLOOD_PANEL,
 } from '@/const';
 import { Address, CollectionMethodType, Slot } from '@/types/api';
 import { formatAddress } from '@/utils/format';
+
+export const DESCRIPTION_IN_LAB_TEXT = (
+  labLocation: string,
+): string => `Your blood draw is scheduled at ${labLocation}. Your results will be uploaded to your dashboard once complete.
+
+
+What to expect:
+
+🧪 Results take ~10 days to fully process, but most will be visible within just a few days. 
+
+🩸 The blood draw will only take ~10 min! Please remember to arrive at least 5 minutes before your appointment starts.
+
+
+What to do:
+
+🍽️ Fasting is required for 10 hours prior to your appointment. Drink plenty of water and no caffeine.
+
+
+What to have ready:
+
+1. Please take your Photo ID: with you to your lab visit - you will be required to show it.
+
+2. Lab order and QR: Please show the PDFs attached when you arrive at the lab.
+
+
+Just a reminder, your lab order can also be found in your Superpower app, under Settings → Profile → Data Vault.
+
+
+To good health,
+Superpower
+
+P.S. don’t hesitate to text your concierge (+1-415-742-2828) if you have any questions.`;
+
+export const DESCRIPTION_AT_HOME_TEXT = `Your blood draw is scheduled. Your results will be uploaded to your dashboard once complete.
+
+What to expect:
+
+🧪 Results take ~10 days to fully process, but most will be visible within just a few days. 
+
+🩸 The blood draw will only take ~10 min and the nurse will arrive within your confirmed 2-hour window.
+
+
+What to do:
+
+🍽️ Fasting is required for 10 hours prior to your appointment. Drink plenty of water and no caffeine.
+
+
+To good health,
+Superpower
+
+P.S. don’t hesitate to text your concierge (+1-415-742-2828) if you have any questions`;
 
 export const getCalendarEvent = ({
   slot,
@@ -19,8 +71,10 @@ export const getCalendarEvent = ({
   collectionMethod: CollectionMethodType;
   service:
     | typeof SUPERPOWER_BLOOD_PANEL
-    | typeof GRAIL_GALLERI_MULTI_CANCER_TEST;
+    | typeof GRAIL_GALLERI_MULTI_CANCER_TEST
+    | typeof SUPERPOWER_ADVANCED_BLOOD_PANEL;
 }) => {
+  const labLocation = `${address?.line.join(' ')}, ${address?.city}, ${address?.state}, ${address?.postalCode}`;
   const cancerEvent: CalendarEvent = {
     title: 'Superpower - Cancer Test Window',
     start: slot?.start,
@@ -44,7 +98,7 @@ What to do:
 What to have ready:
     
 01 – Please remember to have your test kit with you: Once your phlebotomist arrives, they'll guide you through the test's sample collection.`,
-    location: `${address?.line.join(' ')}, ${address?.city}, ${address?.state}, ${address?.postalCode}`,
+    location: labLocation,
   };
 
   const bloodDrawEvent: CalendarEvent = {
@@ -57,17 +111,9 @@ What to have ready:
     ],
     description:
       collectionMethod === 'AT_HOME'
-        ? `🧪 Results take ~10 days to fully process, but most will be visible within just a few days. 
-
-🩸 The blood draw will only take ~10 min and the nurse will arrive within your confirmed 2-hour window.
-
-What to do:
-
-🍽️ Fasting is required for 10 hours prior to your appointment. Drink plenty of water and no caffeine.`
-        : `🧪 Results take ~10 days to fully process, but most will be visible within just a few days.
-
-🩸 The blood draw will only take ~10 min! Please remember to arrive at least 5 minutes before your appointment starts.`,
-    location: `${address?.line.join(' ')}, ${address?.city}, ${address?.state}, ${address?.postalCode}`,
+        ? DESCRIPTION_AT_HOME_TEXT
+        : DESCRIPTION_IN_LAB_TEXT(labLocation),
+    location: labLocation,
   };
 
   if (service === 'Grail Galleri Multi Cancer Test') {
