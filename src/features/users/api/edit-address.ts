@@ -1,10 +1,13 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 
+import { getServicesQueryOptions } from '@/features/services/api';
 import { api } from '@/lib/api-client';
 import { useUser } from '@/lib/auth';
 import { MutationConfig } from '@/lib/react-query';
 import { User } from '@/types/api';
+
+import { addressInputSchema } from './create-address';
 
 /**
  * Used as main type for all form inputs where we need to add/update address
@@ -35,24 +38,6 @@ export const formAddressInputSchema = z.object({
 export type FormAddressInput = z.infer<typeof formAddressInputSchema>;
 
 /**
- * Should not be used in forms but rather as field in other zod schemas if needed
- */
-export const addressInputSchema = z.object({
-  line: z.array(z.string()),
-  city: z.string().min(1, 'Required'),
-  state: z.string().min(1, 'Required'),
-  postalCode: z.string().min(5, 'Required'),
-});
-
-/**
- * Used as internal type to prepare object for server
- */
-const primaryAddressInputSchema = z.object({
-  address: addressInputSchema,
-  id: z.string().optional(),
-});
-
-/**
  * Used as internal type to prepare object for server
  */
 const activeAddressInputSchema = z.object({
@@ -61,40 +46,51 @@ const activeAddressInputSchema = z.object({
 });
 
 /**
- * Used as internal type to prepare object for server
+ * NOTE: this is bad and we should really just pass id and address values to update
+ * but since its big pain to change it everywhere on server
+ * we stick to previous approach
  */
-const updateProfileInputSchema = z.object({
-  primaryAddress: primaryAddressInputSchema.optional(),
+const editAddressInputSchema = z.object({
+  primaryAddressId: z.string().optional(),
   activeAddress: activeAddressInputSchema.optional(),
 });
 
-export type UpdateProfileInput = z.infer<typeof updateProfileInputSchema>;
+export type EditAddressInput = z.infer<typeof editAddressInputSchema>;
 
-export const updateProfile = ({
+export const editAddress = ({
   data,
 }: {
-  data: UpdateProfileInput;
+  data: EditAddressInput;
 }): Promise<User> => {
-  return api.put(`/users`, data);
+  return api.put(`/users/address`, data);
 };
 
-type UseUpdateProfileOptions = {
-  mutationConfig?: MutationConfig<typeof updateProfile>;
+type UseEditAddressOptions = {
+  mutationConfig?: MutationConfig<typeof editAddress>;
 };
 
-export const useUpdateProfile = ({
+export const useEditAddress = ({
   mutationConfig,
-}: UseUpdateProfileOptions = {}) => {
+}: UseEditAddressOptions = {}) => {
   const { refetch: refetchUser } = useUser();
+  const queryClient = useQueryClient();
 
   const { onSuccess, ...restConfig } = mutationConfig || {};
 
   return useMutation({
     onSuccess: (...args) => {
       refetchUser();
+
+      queryClient.refetchQueries({
+        queryKey: getServicesQueryOptions().queryKey,
+      });
+
+      queryClient.refetchQueries({
+        queryKey: ['service'],
+      });
       onSuccess?.(...args);
     },
     ...restConfig,
-    mutationFn: updateProfile,
+    mutationFn: editAddress,
   });
 };

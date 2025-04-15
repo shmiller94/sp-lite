@@ -177,6 +177,8 @@
     font-feature-settings:
       'rlig' 1,
       'calt' 1;
+    /* based on https://github.com/openops-cloud/openops/pull/352 */
+    pointer-events: auto !important;
   }
 }
 

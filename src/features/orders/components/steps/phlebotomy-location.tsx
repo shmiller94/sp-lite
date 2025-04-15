@@ -1,3 +1,4 @@
+import { CircleAlert } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -11,9 +12,8 @@ import {
 import { HealthcareServiceFooter } from '@/features/orders/components/healthcare-service-footer';
 import { LocationList } from '@/features/orders/components/locations-list';
 import { useOrder } from '@/features/orders/stores/order-store';
-import { AddAddressForm } from '@/features/settings/components/profile/add-address-form';
+import { AddressForm } from '@/features/settings/components/profile/address-form';
 import { CurrentAddressCard } from '@/features/users/components/current-address-card';
-import { useDebounce } from '@/hooks/use-debounce';
 import { useUser } from '@/lib/auth';
 import { useStepper } from '@/lib/stepper';
 import { cn } from '@/lib/utils';
@@ -51,7 +51,7 @@ export const PhlebotomyLocationSelect = () => {
         ) : (
           <div className="space-y-4">
             <H2>We do not have your primary address!</H2>
-            <AddAddressForm />
+            <AddressForm />
           </div>
         )}
       </div>
@@ -79,17 +79,36 @@ function CreateOrderPhlebotomyInLab(): JSX.Element {
   const [zipCode, setZipCode] = useState<string>(
     user?.primaryAddress?.address.postalCode ?? '',
   );
-  const debouncedZipCode = useDebounce(zipCode, 500);
+
   const phlebotomyLocationsMutation = usePhlebotomyLocations({
-    postalCode: debouncedZipCode,
-    queryConfig: { enabled: debouncedZipCode.length === 5 },
+    postalCode: zipCode,
+    queryConfig: { enabled: zipCode.length === 5 },
   });
 
   useEffect(() => {
     if (zipCode.length !== 5) {
       updateLocation(null);
     }
-  }, [zipCode]);
+  }, [zipCode, updateLocation]);
+
+  const handleZipCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, '');
+    setZipCode(value);
+  };
+
+  const isApiError = phlebotomyLocationsMutation.isError;
+  const isValidZipCode = zipCode.length === 5;
+  const isLoadingComplete = !phlebotomyLocationsMutation.isLoading;
+  const hasNoLocations =
+    !phlebotomyLocationsMutation.data?.locations ||
+    phlebotomyLocationsMutation.data.locations.length === 0;
+
+  const hasError =
+    isApiError || (isValidZipCode && isLoadingComplete && hasNoLocations);
+
+  const errorMessage = isApiError
+    ? 'Error loading locations. Please try again.'
+    : 'No locations found. Please enter a new zip code.';
 
   return (
     <div className="space-y-6">
@@ -97,36 +116,55 @@ function CreateOrderPhlebotomyInLab(): JSX.Element {
         <H2>Nearby Labs</H2>
         <Body1 className="text-zinc-500">
           Please enter your zip code and we will find a partner laboratory
-          closest to you. After selecting a laboratory, you will be able to
-          proceed to the next step.
+          closest to you.
         </Body1>
       </div>
       <div className="space-y-2">
         <div className="flex items-center gap-1">
-          <Body2 className="text-zinc-500">My zip code</Body2>
+          <Body2 className={hasError ? 'text-pink-700' : 'text-zinc-700'}>
+            My zip code
+          </Body2>
           {phlebotomyLocationsMutation.isLoading && (
             <span>
               <Spinner size="xs" variant="primary" />
             </span>
           )}
         </div>
-        <Input
-          maxLength={5}
-          inputMode="numeric"
-          value={zipCode}
-          placeholder="5-digit zip code"
-          onChange={(e) => setZipCode(e.target.value)}
-        />
+        <div>
+          <Input
+            value={zipCode}
+            onChange={handleZipCodeChange}
+            inputMode="numeric"
+            pattern="[0-9]*"
+            maxLength={5}
+            placeholder="5-digit zip code"
+            aria-invalid={hasError}
+            variant={hasError ? 'error' : 'default'}
+            aria-describedby={hasError ? 'zip-code-error' : undefined}
+          />
+          {hasError && (
+            <div
+              id="zip-code-error"
+              className="mt-1.5 flex items-center gap-1.5"
+            >
+              <CircleAlert className="size-4 shrink-0 text-pink-700" />
+              <Body2 className="text-pink-700">{errorMessage}</Body2>
+            </div>
+          )}
+        </div>
       </div>
       <LocationList
-        locations={phlebotomyLocationsMutation.data?.locations || []}
+        locations={phlebotomyLocationsMutation.data?.locations}
+        isLoading={phlebotomyLocationsMutation.isLoading}
       />
     </div>
   );
 }
 
 function CreateOrderPhlebotomyAtHome(): JSX.Element {
-  const { updateLocation, collectionMethod } = useOrder((s) => s);
+  const { updateLocation, collectionMethod, isBookingModal } = useOrder(
+    (s) => s,
+  );
   const { data: user } = useUser();
 
   const { data, mutateAsync, isPending } = useGetServiceability();
@@ -167,12 +205,13 @@ function CreateOrderPhlebotomyAtHome(): JSX.Element {
         className={cn(
           !isPending && !isServiceable ? 'border-pink-700 bg-pink-50' : null,
         )}
+        disableEdit={isBookingModal}
       />
 
       {!isServiceable && !isPending ? (
         <Body2 className="text-pink-700">
-          Sorry, we’re unable to service your area right now. please go back and
-          try a different address.
+          Sorry, at-home service is currently not available in your area. Please
+          go back and try a different address or contact support for assistance.
         </Body2>
       ) : null}
     </div>

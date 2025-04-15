@@ -8,7 +8,7 @@ import { useStepper } from '@/lib/stepper';
 
 export const ConfirmAddress = () => {
   const nextStep = useStepper((s) => s.nextStep);
-  const updateLocation = useOrder((s) => s.updateLocation);
+  const { updateLocation, isBookingModal } = useOrder((s) => s);
   const { data: user } = useUser();
 
   const setLocation = () => {
@@ -25,7 +25,7 @@ export const ConfirmAddress = () => {
       <div className="space-y-8 p-6 md:space-y-12 md:p-14">
         <div className="space-y-4">
           <H2 className="text-2xl md:text-3xl">Confirm shipping address</H2>
-          <CurrentAddressCard />
+          <CurrentAddressCard disableEdit={isBookingModal} />
         </div>
       </div>
       <HealthcareServiceFooter

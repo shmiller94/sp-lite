@@ -70,6 +70,7 @@ const Booking = ({ bloodPanel }: { bloodPanel?: HealthcareService }) => {
       healthcareService={bloodPanel}
       excludeSteps={[StepID.INFO, StepID.REFERRAL]}
       onSubmit={updateStep}
+      isBookingModal={false}
     />
   );
 };

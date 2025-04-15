@@ -30,6 +30,7 @@ import {
 } from '@/features/orders/stores/order-store';
 import { StepID } from '@/features/orders/types/step-id';
 import { getStepsFromService } from '@/features/orders/utils/get-steps-for-service';
+import { getServicesQueryOptions } from '@/features/services/api';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 import { StepperStoreProvider, useStepper } from '@/lib/stepper';
 import { HealthcareService } from '@/types/api';
@@ -51,11 +52,13 @@ export const HealthcareServiceDialog = ({
   excludeSteps,
   onSubmit,
   children,
+  isBookingModal = true,
 }: {
   healthcareService: HealthcareService;
   excludeSteps?: StepID[];
   onSubmit?: () => void;
   children?: ReactNode;
+  isBookingModal?: boolean;
 }) => {
   let steps = getStepsFromService(healthcareService);
 
@@ -63,9 +66,17 @@ export const HealthcareServiceDialog = ({
     steps = steps.filter((step) => !excludeSteps.includes(step.id));
   }
 
+  // key here is used to recreate entire store when steps change
+  // this is useful when we change address directly and need component to be unmounted
+  const key = steps.map((s) => s.id).join('-');
+
   return (
-    <StepperStoreProvider steps={steps}>
-      <OrderStoreProvider service={healthcareService} tz={moment.tz.guess()}>
+    <StepperStoreProvider key={key} steps={steps}>
+      <OrderStoreProvider
+        service={healthcareService}
+        tz={moment.tz.guess()}
+        isBookingModal={isBookingModal}
+      >
         <HealthcareServiceDialogConsumer onSubmit={onSubmit}>
           {children}
         </HealthcareServiceDialogConsumer>
@@ -119,6 +130,9 @@ const HealthcareServiceDialogConsumer = ({
       });
       queryClient.invalidateQueries({
         queryKey: getTimelineQueryOptions().queryKey,
+      });
+      queryClient.invalidateQueries({
+        queryKey: getServicesQueryOptions().queryKey,
       });
 
       setTimeout(() => {

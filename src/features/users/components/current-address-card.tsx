@@ -1,30 +1,38 @@
-import { Pencil, X } from 'lucide-react';
-import React, { useState } from 'react';
+import { Pencil } from 'lucide-react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { Body1, Body2 } from '@/components/ui/typography';
+import { Body1, Body2, Body3 } from '@/components/ui/typography';
 import { AddressSelect } from '@/features/users/components/address-select';
 import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 
 interface CurrentAddressCardProps {
   className?: string;
+  disableEdit?: boolean;
 }
 
-export const CurrentAddressCard = ({ className }: CurrentAddressCardProps) => {
+export const CurrentAddressCard = ({
+  className,
+  disableEdit,
+}: CurrentAddressCardProps) => {
   const { data: user } = useUser();
   const [isEditing, setIsEditing] = useState(false);
 
   const address = user?.primaryAddress?.address;
 
-  if (isEditing) {
+  if (isEditing && !disableEdit) {
     return (
       <AddressSelect
         closeBtn={
-          <X
-            className="size-4 cursor-pointer text-zinc-500"
+          <Button
+            variant="ghost"
+            size="icon"
+            className="p-0"
             onClick={() => setIsEditing(false)}
-          />
+          >
+            <Body3 className="flex items-center text-zinc-500">Go back</Body3>
+          </Button>
         }
       />
     );
@@ -33,19 +41,23 @@ export const CurrentAddressCard = ({ className }: CurrentAddressCardProps) => {
   return (
     <div
       className={cn(
-        'w-full space-y-3 rounded-2xl border border-zinc-200 px-8 py-6',
+        'w-full space-y-3 rounded-2xl border border-zinc-200 px-8 py-6 relative',
         className,
       )}
     >
-      <div className="flex items-center justify-between">
+      <div className="flex items-center">
         <Body2 className="text-zinc-400">Current Address</Body2>
-        <Button variant="ghost" size="icon">
-          <Pencil
-            className="size-4 cursor-pointer text-zinc-500"
-            onClick={() => setIsEditing(true)}
-          />
-        </Button>
       </div>
+      {!disableEdit && (
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute right-3 top-0 rounded-full p-3 hover:bg-zinc-200/50"
+          onClick={() => setIsEditing(true)}
+        >
+          <Pencil className="size-4 cursor-pointer text-zinc-500" />
+        </Button>
+      )}
 
       <div>
         <Body1 className="text-zinc-700">

@@ -7,9 +7,9 @@ import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import { useGetServiceability } from '@/features/orders/api';
-import { AddAddressForm } from '@/features/settings/components/profile/add-address-form';
+import { AddressForm } from '@/features/settings/components/profile/address-form';
 import { useUpdateTask } from '@/features/tasks/api/update-task';
-import { FormAddressInput, useUpdateProfile } from '@/features/users/api';
+import { FormAddressInput, useCreateAddress } from '@/features/users/api';
 import { useUser } from '@/lib/auth';
 import { useStepper } from '@/lib/stepper';
 import { Address } from '@/types/api';
@@ -30,7 +30,7 @@ function FullPrimaryAddressForm({
   } = useUpdateTask();
 
   const getServiceabilityMutation = useGetServiceability();
-  const updateProfileMutation = useUpdateProfile();
+  const createAddressMutation = useCreateAddress();
 
   const defaultValues = {
     line1: googleAddress.line1,
@@ -69,8 +69,8 @@ function FullPrimaryAddressForm({
         text: data.text,
       };
 
-      await updateProfileMutation.mutateAsync({
-        data: { activeAddress: { address } },
+      await createAddressMutation.mutateAsync({
+        data: { address },
       });
 
       setIsZipBlocked(false);
@@ -102,7 +102,7 @@ function FullPrimaryAddressForm({
   }
 
   return (
-    <AddAddressForm
+    <AddressForm
       formFooter={
         <div>
           <Button

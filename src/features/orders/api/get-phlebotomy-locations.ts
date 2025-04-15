@@ -9,7 +9,11 @@ export const getPhlebotomyLocations = ({
 }: {
   postalCode: string;
 }): Promise<{ locations: PhlebotomyLocation[] }> => {
-  return api.get(`/phlebotomy/locations?postalCode=${postalCode}`);
+  return api.get(`/phlebotomy/locations?postalCode=${postalCode}`, {
+    headers: {
+      'x-hide-toast': 'true',
+    },
+  });
 };
 
 export const getPhlebotomyLocationsQueryOptions = (postalCode: string) => {

@@ -20,22 +20,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { toast } from '@/components/ui/sonner';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { US_STATE_CODES } from '@/const/us-state-codes';
-import {
-  FormAddressInput,
-  formAddressInputSchema,
-  useUpdateProfile,
-} from '@/features/users/api';
-import { useUser } from '@/lib/auth';
+import { FormAddressInput, formAddressInputSchema } from '@/features/users/api';
+import { useCreateAddress } from '@/features/users/api/create-address';
 import { cn } from '@/lib/utils';
 import { Address } from '@/types/api';
 
 /**
- * Props for the AddAddressForm component.
+ * Props for the AddressForm component.
  */
-interface AddAddressFormProps {
+interface AddressFormProps {
+  /**
+   * Mode of operation - determines button text and some behaviors
+   */
+  mode?: 'add' | 'edit';
+
   /**
    * Callback function invoked upon successful form submission.
    */
@@ -77,29 +79,32 @@ interface AddAddressFormProps {
 }
 
 /**
- * AddAddressForm Component
+ * AddressForm Component
  *
  * A form component for adding or updating a user's address information.
  *
- * @param {AddAddressFormProps} props - The props for the component.
- * @param {() => void} [props.onSuccess] - Callback invoked after successful form submission.
- * @param {(data: FormAddressInput) => void} [props.onFormSubmit] - Custom form submission handler.
- * @param {ReactNode} [props.formFooter] - Custom footer content for the form.
- * @param {'glass' | 'default'} [props.theme='default'] - Styling theme of the form.
- * @param {FormAddressInput} [props.defaultValues] - Pre-filled values for the form fields.
- *
- * @returns {ReactNode} The rendered AddAddressForm component.
+ * @returns {ReactNode} The rendered AddressForm component.
  */
-export const AddAddressForm = ({
+export const AddressForm = ({
+  mode = 'add',
   onSuccess,
   onFormSubmit,
   formFooter,
   theme = 'default',
   defaultValues,
   hideCancelButton,
-}: AddAddressFormProps): ReactNode => {
-  const { data: user } = useUser();
-  const { mutateAsync, isPending, isSuccess } = useUpdateProfile();
+}: AddressFormProps): ReactNode => {
+  const createAddressMutation = useCreateAddress({
+    mutationConfig: {
+      onSuccess: () => {
+        toast.success('Address added successfully');
+      },
+      onError: (error) => {
+        toast.error(`Failed to add address. Please try again.`);
+        console.error(`Failed to add address:`, error);
+      },
+    },
+  });
 
   const form = useForm<FormAddressInput>({
     resolver: zodResolver(formAddressInputSchema),
@@ -128,18 +133,21 @@ export const AddAddressForm = ({
       text: data.text,
     };
 
-    await mutateAsync({
-      data: user?.primaryAddress
-        ? { activeAddress: { address } }
-        : { primaryAddress: { address } },
+    await createAddressMutation.mutateAsync({
+      data: {
+        address,
+      },
     });
   }
 
   useEffect(() => {
-    if (isSuccess) {
+    if (createAddressMutation.isSuccess) {
       onSuccess && onSuccess();
     }
-  }, [isSuccess]);
+  }, [createAddressMutation.isSuccess]);
+
+  // Determine button text based on mode
+  const buttonText = mode === 'add' ? 'Add address' : 'Save changes';
 
   return (
     <Form {...form}>
@@ -331,16 +339,16 @@ export const AddAddressForm = ({
           <div className="flex w-full flex-col gap-4 pt-6 md:flex-row md:justify-end">
             {!hideCancelButton ? (
               <DialogClose asChild>
-                {!isSuccess ? (
+                {!createAddressMutation.isSuccess ? (
                   <Button type="button" variant="outline">
                     Cancel
                   </Button>
                 ) : null}
               </DialogClose>
             ) : null}
-            {!isSuccess ? (
+            {!createAddressMutation.isSuccess ? (
               <Button type="submit" className="w-auto">
-                {isPending ? <Spinner /> : 'Add address'}
+                {createAddressMutation.isPending ? <Spinner /> : buttonText}
               </Button>
             ) : null}
           </div>

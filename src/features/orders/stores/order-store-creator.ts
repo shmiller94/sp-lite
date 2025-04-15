@@ -13,6 +13,7 @@ import {
 export interface OrderStoreProps {
   service: HealthcareService;
   tz: string;
+  isBookingModal?: boolean;
 }
 
 /**
@@ -52,7 +53,7 @@ const initialState = {
   slot: null,
   createdOrderId: null,
   informedConsent: null,
-  // collectionMethod: null,
+  isBookingModal: false,
 };
 
 export const orderStoreCreator = (initProps: OrderStoreProps) => {
@@ -61,6 +62,7 @@ export const orderStoreCreator = (initProps: OrderStoreProps) => {
       (set) => ({
         ...initProps,
         ...initialState,
+        isBookingModal: initProps.isBookingModal ?? false,
 
         updateItems: (item: ServiceItem) =>
           set((state) => {

@@ -1,2 +1,4 @@
 export * from './get-users';
-export * from './update-profile';
+export * from './create-address';
+export * from './edit-address';
+export * from './delete-address';

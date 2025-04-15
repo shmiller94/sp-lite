@@ -16,6 +16,8 @@ const inputVariants = cva(
           'border-input bg-white px-6 py-4 caret-vermillion-900 placeholder:text-muted-foreground focus-visible:bg-zinc-50 focus-visible:ring-2 focus-visible:ring-ring',
         glass:
           'border-white/20 bg-white/5 p-4 text-white caret-white placeholder:text-white placeholder:opacity-50 focus:border-white',
+        error:
+          'border-pink-700 bg-pink-50 px-6 py-4 caret-vermillion-900 placeholder:text-muted-foreground focus-visible:bg-pink-50 focus-visible:ring-2 focus-visible:ring-pink-700',
       },
     },
     defaultVariants: {
