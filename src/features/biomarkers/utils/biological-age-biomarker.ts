@@ -1,4 +1,4 @@
-import { calculateDNAmAge } from '@/features/biomarkers/utils/calculate-dnam-age';
+import { mostRecent } from '@/features/biomarkers/utils/most-recent-biomarker';
 import { Biomarker } from '@/types/api';
 import { yearsSinceDate } from '@/utils/format';
 
@@ -6,7 +6,9 @@ export const biologicalAgeBiomarker = (
   biomarkers: Biomarker[],
   dateOfBirth: string,
 ): Biomarker => {
-  const age = calculateDNAmAge(biomarkers, dateOfBirth);
+  const age =
+    mostRecent(biomarkers.find((b) => b.name == 'Biological Age')?.value ?? [])
+      ?.quantity.value ?? null;
   const ageInYears = yearsSinceDate(dateOfBirth, false);
 
   return {
@@ -27,7 +29,7 @@ The following nine biomarkers are used to calculate PhenoAge: albumin, creatinin
 
 Biological age has become a popular term in the last few years, as more people become attuned to the concept of longevity and the understanding that we have a certain degree of control over it. 
 
-However, it is important to recognize that biological age is not a discrete predictor of morbidity or mortality events. Meaning, it can’t tell you exactly how long you will live or whether or not you will develop a disease. 
+However, it is important to recognize that biological age is not a discrete predictor of morbidity or mortality events. Meaning, it can't tell you exactly how long you will live or whether or not you will develop a disease. 
 
 Rather, think of it as a directional measurement of how your body may be aging internally, that is relative to you––i.e., the changes in your biological age over time reflect a general trend (of aging better or worse, or holding steady) and can alert you to lifestyle changes you may want to make to support healthy aging.`,
     importance: '',

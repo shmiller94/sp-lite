@@ -4,7 +4,7 @@ import NumberFlow from '@/components/shared/number-flow';
 import { Button } from '@/components/ui/button';
 import { Body2, H1, H4 } from '@/components/ui/typography';
 import { useBiomarkers } from '@/features/biomarkers/api';
-import { calculateDNAmAge } from '@/features/biomarkers/utils/calculate-dnam-age';
+import { mostRecent } from '@/features/biomarkers/utils/most-recent-biomarker';
 import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 import { yearsSinceDate } from '@/utils/format';
@@ -22,10 +22,11 @@ export const BiologicalAgeCard = ({
   if (!biomarkersQuery.data) return <></>;
   if (!user) return <></>;
 
-  const biologicalAge = calculateDNAmAge(
-    biomarkersQuery.data.biomarkers,
-    user.dateOfBirth,
+  const biologicalAgeMarker = biomarkersQuery.data?.biomarkers.find(
+    (b) => b.name == 'Biological Age',
   );
+  const biologicalAge =
+    mostRecent(biologicalAgeMarker?.value ?? [])?.quantity.value ?? null;
 
   const ageDifference = biologicalAge
     ? Math.round((yearsSinceDate(user.dateOfBirth) - biologicalAge) * 10) / 10.0
@@ -58,7 +59,7 @@ export const BiologicalAgeCard = ({
             <div>
               {biologicalAge ? (
                 <NumberFlow
-                  value={Number(biologicalAge)}
+                  value={biologicalAge}
                   className="text-6xl text-white"
                 />
               ) : (

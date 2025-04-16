@@ -5,7 +5,6 @@ import { useBiomarkers } from '@/features/biomarkers/api';
 import { BiomarkersList } from '@/features/biomarkers/components/biomarker-cards';
 import { ScoreChart } from '@/features/biomarkers/components/charts/score-chart';
 import { ScoreDialog } from '@/features/biomarkers/components/score-dialog/score-dialog';
-import { calculateDNAmAge } from '@/features/biomarkers/utils/calculate-dnam-age';
 import { mostRecent } from '@/features/biomarkers/utils/most-recent-biomarker';
 import {
   PlanSection,
@@ -52,10 +51,7 @@ export function PlanHealthScore() {
   }
 
   // we should use memo it
-  const biologicalAge = calculateDNAmAge(
-    biomarkersData.biomarkers,
-    user.dateOfBirth,
-  );
+  const biologicalAge = 0;
 
   // we should use memo it
   const ageDifference = biologicalAge

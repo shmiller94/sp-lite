@@ -8,7 +8,6 @@ import { Dialog, DialogClose, DialogContent } from '@/components/ui/dialog';
 import { Sheet, SheetClose, SheetContent } from '@/components/ui/sheet';
 import { Body1 } from '@/components/ui/typography';
 import { useBiomarkers } from '@/features/biomarkers/api';
-import { calculateDNAmAge } from '@/features/biomarkers/utils/calculate-dnam-age';
 import { mostRecent } from '@/features/biomarkers/utils/most-recent-biomarker';
 import { BiologicalAgeShareCard } from '@/features/home/components/shareable/biological-age-share-card';
 import { ScoreShareCard } from '@/features/home/components/shareable/score-share-card';
@@ -45,10 +44,11 @@ export const ShareableModal = ({
       ?.value ?? [],
   );
 
-  const biologicalAge = calculateDNAmAge(
-    getBiomarkersQuery.data?.biomarkers ?? [],
-    user?.dateOfBirth,
+  const biologicalAgeMarker = getBiomarkersQuery.data?.biomarkers.find(
+    (b) => b.name == 'Biological Age',
   );
+  const biologicalAge =
+    mostRecent(biologicalAgeMarker?.value ?? [])?.quantity.value ?? null;
 
   const ageDifference =
     biologicalAge && user?.dateOfBirth

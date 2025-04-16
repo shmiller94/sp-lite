@@ -14,13 +14,10 @@ import { BiomarkerDialogHeader } from '@/features/biomarkers/components/biomarke
 import { BiomarkerDialogMetadata } from '@/features/biomarkers/components/biomarker-dialog/biomarker-dialog-metadata';
 import { BiomarkerTimeSeriesChart } from '@/features/biomarkers/components/charts/biomarker-time-series-chart';
 import { ReportBlock } from '@/features/biomarkers/components/score-dialog/record-block';
-import { calculateDNAmAge } from '@/features/biomarkers/utils/calculate-dnam-age';
 import { mostRecent } from '@/features/biomarkers/utils/most-recent-biomarker';
-import { useUser } from '@/lib/auth';
 
 export const ScoreContent = () => {
   const { data, isError } = useAffiliateLinks();
-  const { data: user } = useUser();
 
   const getBiomarkersQuery = useBiomarkers();
   if (getBiomarkersQuery.isLoading) {
@@ -44,12 +41,11 @@ export const ScoreContent = () => {
   }
 
   const latestScore = mostRecent(healthScore.value);
-
-  const dateOfBirth = user?.dateOfBirth;
+  const biologicalAgeMarker = getBiomarkersQuery.data?.biomarkers.find(
+    (b) => b.name == 'Biological Age',
+  );
   const biologicalAge =
-    dateOfBirth && getBiomarkersQuery.data
-      ? calculateDNAmAge(getBiomarkersQuery.data.biomarkers, dateOfBirth)
-      : null;
+    mostRecent(biologicalAgeMarker?.value ?? [])?.quantity.value ?? null;
 
   const affiliateLink =
     !isError && data?.links?.length
