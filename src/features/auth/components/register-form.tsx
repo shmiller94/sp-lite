@@ -43,7 +43,6 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
       phone: '',
       gender: undefined,
       password: '',
-      confirmPassword: '',
     },
     shouldUnregister: true,
   });
@@ -203,35 +202,6 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
                         autoComplete="new-password"
                         autoCorrect="off"
                         aria-label="Password"
-                        icon={<Lock className="size-4 text-zinc-400" />}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="space-y-1">
-              <FormField
-                control={form.control}
-                name="confirmPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel htmlFor="confirmPassword">
-                      Confirm Password
-                    </FormLabel>
-                    <FormControl>
-                      <AuthInput
-                        variant="individual"
-                        border="bottom"
-                        id="confirmPassword"
-                        placeholder="********"
-                        type="password"
-                        autoCapitalize="off"
-                        autoComplete="new-password"
-                        autoCorrect="off"
-                        aria-label="Confirm Password"
                         icon={<Lock className="size-4 text-zinc-400" />}
                         {...field}
                       />

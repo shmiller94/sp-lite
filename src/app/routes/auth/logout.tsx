@@ -18,7 +18,7 @@ export const LogoutRoute = () => {
     clearActiveLogin();
     // needed to remove all previous user queries and refetch for the new one
     queryClient.removeQueries();
-  }, [logout, navigate, queryClient]);
+  }, []);
 
   return null;
 };
