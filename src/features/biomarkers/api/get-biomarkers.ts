@@ -11,10 +11,9 @@ export const getBiomarkers = async ({
   dateOfBirth?: string;
   gender?: string;
 }): Promise<{ biomarkers: Biomarker[] }> => {
-  const response: { biomarkers: Biomarker[] } = await api.get('/biomarkers', {
+  return await api.get('/biomarkers', {
     params: { dateOfBirth },
   });
-  return response;
 };
 
 export const getBiomarkersQueryOptions = (dateOfBirth?: string) => {

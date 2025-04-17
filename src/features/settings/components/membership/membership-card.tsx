@@ -1,9 +1,9 @@
-import { differenceInYears, parseISO } from 'date-fns';
 import moment from 'moment';
 
 import { HoverableCard } from '@/components/shared/hoverable-card';
-import { Body1, H2 } from '@/components/ui/typography';
+import { H2 } from '@/components/ui/typography';
 import { useSubscriptions } from '@/features/settings/api';
+import { BiologicalAgeInfo } from '@/features/settings/components/membership/bio-age-info';
 import { getMembershipType } from '@/features/settings/utils/get-membership-type';
 import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
@@ -20,11 +20,7 @@ export const MembershipCard = (): JSX.Element => {
     return <div className="md:p-16">No profile information found.</div>;
   }
 
-  const { dateOfBirth, firstName, lastName, createdAt } = user;
-
-  const birthDate = parseISO(dateOfBirth);
-  const today = new Date();
-  const age = differenceInYears(today, birthDate);
+  const { firstName, lastName, createdAt } = user;
 
   // if user has ACTIVE subscription
   // if user has CANCELED subscription AND current_date < end_date
@@ -78,10 +74,7 @@ export const MembershipCard = (): JSX.Element => {
               Since {moment(createdAt).format('YYYY')}
             </span>
           </div>
-          <div className="flex flex-col items-end">
-            <H2 className="text-white">{age}</H2>
-            <Body1 className="text-white">Chronological years old</Body1>
-          </div>
+          <BiologicalAgeInfo />
         </div>
       </HoverableCard>
     </div>
