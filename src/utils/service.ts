@@ -5,6 +5,7 @@ import {
 import { AnimatedTimelineType } from '@/components/ui/animated-timeline';
 import {
   AGREEMENT_COPIES,
+  CONTINUOUS_GLUCOSE_MONITOR,
   ENVIRONMENTAL_TOXINS,
   GRAIL_GALLERI_MULTI_CANCER_TEST,
   GUT_MICROBIOME_ANALYSIS,
@@ -539,8 +540,10 @@ export const getInformedConsentForService = (service: string): JSX.Element => {
       return LEGAL_DESCLAIMERS.toxins;
     case GUT_MICROBIOME_ANALYSIS:
       return LEGAL_DESCLAIMERS.gut;
+    case CONTINUOUS_GLUCOSE_MONITOR:
+      return LEGAL_DESCLAIMERS.glucose;
     default:
-      return LEGAL_DESCLAIMERS.toxins;
+      return LEGAL_DESCLAIMERS.generic;
   }
 };
 

@@ -1,4 +1,56 @@
 export const LEGAL_DESCLAIMERS = {
+  generic: (
+    <>
+      Before proceeding, we want to ensure you understand the purpose, potential
+      benefits, and limitations of this service or test. This offering is
+      intended to provide information that may support your health and wellness
+      decisions but should not be considered a substitute for medical advice,
+      diagnosis, or treatment from a qualified healthcare provider. The results
+      from this test or service are not guaranteed to be fully accurate and may
+      include both false positive and false negative findings. In some cases,
+      additional follow-up testing, clinical evaluation, or medical imaging may
+      be necessary to confirm or clarify the results. This service is not
+      intended to diagnose, prevent, or treat any disease or condition on its
+      own. Test results should always be reviewed and interpreted in the context
+      of your full medical history, current symptoms, and in consultation with
+      your healthcare provider. If you have any specific health concerns or
+      symptoms, please contact your healthcare provider before making medical or
+      lifestyle decisions based on these results. It’s also important to be
+      aware that learning certain health-related information can cause emotional
+      or psychological impacts. By proceeding, you acknowledge that you
+      understand the purpose and limitations of this test or service, and that
+      you agree to discuss your results with a qualified healthcare provider for
+      further guidance.
+    </>
+  ),
+  glucose: (
+    <>
+      Before you start using a Continuous Glucose Monitor (CGM), we want to make
+      sure you understand how it works, along with the possible risks and
+      benefits. A CGM is a small device that tracks your blood sugar levels all
+      day and night. It uses a tiny sensor placed under your skin, which is
+      inserted with a needle about the same size as an insulin syringe. Once the
+      sensor is in, the needle is removed and the sensor stays in place for up
+      to 10 days, sending your blood sugar readings to an app or receiver. You
+      might feel a quick pinch when it’s inserted, and it’s normal to have a
+      little tenderness, redness, swelling, or light bleeding where the sensor
+      goes. Sometimes, people experience mild allergic reactions, similar to a
+      reaction from medical tape or jewelry, and in rare cases the skin could
+      blister or the area might become infected — if that happens, stop using
+      the device and contact your healthcare provider. On very rare occasions,
+      the sensor or needle could break under the skin, and if that happens your
+      provider will guide you on what to do. The CGM has been FDA-approved for
+      diabetes since 2018, and serious health problems are not expected. If
+      you’re pregnant or think you might be, or if you’ve had an eating disorder
+      or obsessive thoughts about food and health, check in with your healthcare
+      provider before using the device to make sure it’s right for you. Keep in
+      mind that using a CGM doesn’t guarantee better glucose control — some
+      people see improvement, some don’t, and some may notice their levels get
+      worse — so it’s important to use it along with regular medical advice. By
+      signing below or clicking “I Agree,” you’re confirming you understand the
+      information shared about the CGM and are okay moving forward with it.
+    </>
+  ),
   grail: (
     <>
       The Galleri test is a new test that looks for potential signs of cancer in
