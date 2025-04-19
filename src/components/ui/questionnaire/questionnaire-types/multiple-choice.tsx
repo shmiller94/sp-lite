@@ -11,11 +11,38 @@ import { cn } from '@/lib/utils';
 import { QuestionnaireErrorWrapper } from '../questionnaire-error-wrapper';
 import { useQuestionnaireStore } from '../stores/questionnaire-store';
 
+const OPTION_EXCLUSIVE_EXTENSION =
+  'http://hl7.org/fhir/StructureDefinition/questionnaire-optionExclusive';
+
 interface MultipleChoiceProps {
   item: QuestionnaireItem;
   response: QuestionnaireResponseItem;
   isError: boolean;
   onChange: (newResponseItem: QuestionnaireResponseItem) => void;
+}
+
+function hasOptionExclusiveExtension(option: any): boolean {
+  return option.extension?.some(
+    (ext: any) =>
+      ext.url === OPTION_EXCLUSIVE_EXTENSION && ext.valueBoolean === true,
+  );
+}
+
+function isExclusiveOptionSelected(
+  response: QuestionnaireResponseItem,
+  options: any[],
+): boolean {
+  return (
+    response.answer?.some((answer) => {
+      const answerValue = getItemValue(answer);
+      const matchingOption = options.find(
+        (opt) =>
+          opt.valueString === answerValue.value ||
+          opt.valueCoding?.display === answerValue.value,
+      );
+      return matchingOption && hasOptionExclusiveExtension(matchingOption);
+    }) ?? false
+  );
 }
 
 export function MultipleChoice({
@@ -51,6 +78,44 @@ export function MultipleChoice({
     }
   };
 
+  const handleOptionSelect = (optionValue: string, checked: boolean) => {
+    const currentAnswers = response.answer || [];
+    const selectedOption = options.find(
+      (opt) =>
+        opt.valueString === optionValue ||
+        opt.valueCoding?.display === optionValue,
+    );
+    const isExclusive =
+      selectedOption && hasOptionExclusiveExtension(selectedOption);
+    const hasExclusiveSelected = isExclusiveOptionSelected(response, options);
+
+    let newAnswers;
+    if (checked) {
+      if (isExclusive) {
+        // If selecting an exclusive option, clear all other selections
+        newAnswers = [{ valueString: optionValue }];
+      } else if (hasExclusiveSelected) {
+        // If an exclusive option is selected, don't allow other selections
+        return;
+      } else {
+        // Normal selection
+        newAnswers = [...currentAnswers, { valueString: optionValue }];
+      }
+    } else {
+      // Deselecting an option
+      newAnswers = currentAnswers.filter((answer) => {
+        const answerValue = getItemValue(answer);
+        return !deepEquals(answerValue.value, optionValue);
+      });
+    }
+
+    onChange({ ...response, answer: newAnswers });
+
+    if (newAnswers.length === 1 && !item.repeats) {
+      autoAdvance();
+    }
+  };
+
   return (
     <QuestionnaireErrorWrapper
       isError={isError}
@@ -61,6 +126,17 @@ export function MultipleChoice({
           {options.map((option, idx) => {
             const optionValue =
               option.valueString || option.valueCoding?.display || '';
+            const isSelected = response.answer?.some((answer) => {
+              const answerValue = getItemValue(answer);
+              return deepEquals(answerValue.value, optionValue);
+            });
+            const isExclusive = hasOptionExclusiveExtension(option);
+            const hasExclusiveSelected = isExclusiveOptionSelected(
+              response,
+              options,
+            );
+            const isDisabled = !isExclusive && hasExclusiveSelected;
+
             return (
               <div
                 role="button"
@@ -69,42 +145,28 @@ export function MultipleChoice({
                 key={idx}
                 className={cn(
                   'relative flex w-full cursor-pointer group items-center justify-between space-x-2 rounded-xl bg-white transition-all outline-none ring-0 focus-visible:ring-2 focus-visible:ring-secondary',
-                  response.answer?.some((answer) => {
-                    const answerValue = getItemValue(answer);
-                    return deepEquals(answerValue.value, optionValue);
-                  })
+                  isSelected
                     ? 'bg-black text-white hover:bg-zinc-800'
-                    : 'hover:bg-zinc-50',
+                    : isDisabled
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'hover:bg-zinc-50',
                 )}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
                     e.stopPropagation();
-
-                    const currentAnswers = response.answer || [];
-                    const alreadySelected = currentAnswers.some((answer) => {
-                      const answerValue = getItemValue(answer);
-                      return deepEquals(answerValue.value, optionValue);
-                    });
-
-                    const newAnswers = alreadySelected
-                      ? currentAnswers.filter((answer) => {
-                          const answerValue = getItemValue(answer);
-                          return !deepEquals(answerValue.value, optionValue);
-                        })
-                      : [...currentAnswers, { valueString: optionValue }];
-
-                    onChange({ ...response, answer: newAnswers });
-
-                    if (newAnswers.length === 1 && !item.repeats) {
-                      autoAdvance();
+                    if (!isDisabled) {
+                      handleOptionSelect(optionValue, !isSelected);
                     }
                   }
                 }}
               >
                 <Label
                   htmlFor={`${item.linkId}-${idx}`}
-                  className="flex-1 cursor-pointer p-5 pr-16 text-base"
+                  className={cn(
+                    'flex-1 cursor-pointer p-5 pr-16 text-base',
+                    isDisabled && 'cursor-not-allowed',
+                  )}
                 >
                   {optionValue}
                 </Label>
@@ -112,23 +174,11 @@ export function MultipleChoice({
                   tabIndex={-1}
                   className="absolute right-6 top-1/2 -translate-y-1/2 text-white transition-all"
                   id={`${item.linkId}-${idx}`}
-                  checked={response.answer?.some((answer) => {
-                    const answerValue = getItemValue(answer);
-                    return deepEquals(answerValue.value, optionValue);
-                  })}
-                  onCheckedChange={(checked) => {
-                    const currentAnswers = response.answer || [];
-                    const newAnswers = checked
-                      ? [...currentAnswers, { valueString: optionValue }]
-                      : currentAnswers.filter((answer) => {
-                          const answerValue = getItemValue(answer);
-                          return !deepEquals(answerValue.value, optionValue);
-                        });
-                    onChange({ ...response, answer: newAnswers });
-
-                    // Only auto-advance if this is a single answer (checkbox used as radio)
-                    if (checked && !item.repeats) {
-                      autoAdvance();
+                  checked={isSelected}
+                  disabled={isDisabled}
+                  onCheckedChange={(checked: boolean) => {
+                    if (!isDisabled) {
+                      handleOptionSelect(optionValue, checked);
                     }
                   }}
                 />
