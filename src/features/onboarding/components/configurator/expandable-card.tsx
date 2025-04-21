@@ -3,6 +3,7 @@ import { X } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { TransactionSpinner } from '@/components/ui/spinner/transaction-spinner';
 import { TextShimmer } from '@/components/ui/text-shimmer';
 import { Body1, Body2, H3, H4 } from '@/components/ui/typography';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
@@ -187,12 +188,7 @@ const ExpandableCard = () => {
                 }}
               >
                 {processing ? (
-                  <TextShimmer
-                    className="line-clamp-1 text-base [--base-color:white] [--base-gradient-color:#a1a1aa]"
-                    duration={1}
-                  >
-                    Confirming…
-                  </TextShimmer>
+                  <TransactionSpinner className="flex justify-center" />
                 ) : (
                   'Checkout'
                 )}

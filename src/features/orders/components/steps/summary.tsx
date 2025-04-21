@@ -7,7 +7,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/components/ui/sonner';
-import { Spinner } from '@/components/ui/spinner';
+import { TransactionSpinner } from '@/components/ui/spinner/transaction-spinner';
 import { Body1, Body2, H2 } from '@/components/ui/typography';
 import {
   CreateOrderInput,
@@ -193,7 +193,11 @@ export function OrderSummary(): ReactNode {
                 isMutationLoading || price === undefined || isQueryLoading
               }
             >
-              {isMutationLoading ? <Spinner /> : 'Confirm'}
+              {isMutationLoading ? (
+                <TransactionSpinner className="flex justify-center" />
+              ) : (
+                'Confirm'
+              )}
             </Button>
           }
         />
