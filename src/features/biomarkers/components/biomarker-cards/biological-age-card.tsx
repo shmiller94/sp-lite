@@ -29,7 +29,8 @@ export const BiologicalAgeCard = ({
     mostRecent(biologicalAgeMarker?.value ?? [])?.quantity.value ?? null;
 
   const ageDifference = biologicalAge
-    ? Math.round((yearsSinceDate(user.dateOfBirth) - biologicalAge) * 10) / 10.0
+    ? Math.round((yearsSinceDate(user.dateOfBirth) - biologicalAge) * 100) /
+      100.0
     : null;
 
   if (variant === 'home') {

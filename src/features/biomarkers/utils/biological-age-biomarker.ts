@@ -9,7 +9,7 @@ export const biologicalAgeBiomarker = (
   const age =
     mostRecent(biomarkers.find((b) => b.name == 'Biological Age')?.value ?? [])
       ?.quantity.value ?? null;
-  const ageInYears = yearsSinceDate(dateOfBirth, false);
+  const ageInYears = yearsSinceDate(dateOfBirth);
 
   return {
     id: 'biological-age',

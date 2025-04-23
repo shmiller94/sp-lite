@@ -552,11 +552,9 @@ export function isValidStringEntry(str: string): boolean {
  * @param date the date to calculate time from
  * @returns a number of years since the input date
  */
-export function yearsSinceDate(date: string, asInt = true): number {
+export function yearsSinceDate(date: string): number {
   const now = Date.now();
   const diff = now - new Date(date).getTime();
   const millisecondsPerYear = 1000 * 60 * 60 * 24 * 365.25;
-  return asInt
-    ? Math.floor(diff / millisecondsPerYear)
-    : diff / millisecondsPerYear;
+  return diff / millisecondsPerYear;
 }
