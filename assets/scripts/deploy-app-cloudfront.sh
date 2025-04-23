@@ -156,6 +156,14 @@ aws s3 cp dist/ "s3://${APP_BUCKET}/" \
   --exclude "*" \
   --include "*.pdf"
 
+# Rive animations (binary .riv files)
+aws s3 cp dist/ "s3://${APP_BUCKET}/" \
+  --recursive \
+  --content-type "application/octet-stream" \
+  --cache-control "public, max-age=31536000" \
+  --exclude "*" \
+  --include "*.riv"
+
 
 # aws s3 cp dist/service-worker.js "s3://${APP_BUCKET}/" \
 #   --content-type "application/javascript" \
