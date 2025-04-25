@@ -18,9 +18,13 @@ type UseGetMultipassUrlOptions = {
   queryConfig?: QueryConfig<typeof getMultipassUrlQueryOptions>;
 };
 
-export const useGetMultipassUrl = ({
-  queryConfig,
-}: UseGetMultipassUrlOptions = {}) => {
+export const useGetMultipassUrl = (
+  { queryConfig }: UseGetMultipassUrlOptions = {
+    queryConfig: {
+      refetchOnWindowFocus: true,
+    },
+  },
+) => {
   return useQuery({
     ...getMultipassUrlQueryOptions(),
     ...queryConfig,

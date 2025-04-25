@@ -1,6 +1,6 @@
 import { ChevronDown, Ellipsis, LogOut, LucideIcon } from 'lucide-react';
-import React, { FC, SVGProps, useMemo, useState } from 'react';
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import React, { FC, SVGProps, useEffect, useMemo, useState } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 
 import {
   DataIcon,
@@ -40,18 +40,13 @@ const baseLinks: Link[] = [
   { icon: ServicesIcon, name: 'Services', to: './services' },
 ];
 
-// Helper to handle clicks:
-// If the URL is external, open a new tab; if not, scroll to top.
-const handleLinkClick = (url: string) => {
-  if (url.includes('https')) {
-    window.location.href = url;
-  } else {
-    // For internal navigation, scroll to top after navigation.
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-};
-
 export const Navbar = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [pathname]);
+
   return (
     <>
       <DesktopNavbar />
@@ -62,7 +57,6 @@ export const Navbar = () => {
 
 export const DesktopNavbar = () => {
   const { checkAccess } = useAuthorization();
-  const navigate = useNavigate();
   const { pathname } = useLocation();
   const { data } = useGetMultipassUrl();
 
@@ -118,7 +112,6 @@ export const DesktopNavbar = () => {
         <div className="flex flex-1">
           <NavLink
             to="/"
-            onClick={() => handleLinkClick('/')}
             className={({ isActive }) =>
               cn(
                 'self-start transition-colors duration-150',
@@ -141,7 +134,6 @@ export const DesktopNavbar = () => {
               <NavLink
                 key={idx}
                 to={link.to}
-                onClick={() => handleLinkClick(link.to)}
                 className={({ isActive }) =>
                   cn(
                     'group relative z-10 truncate px-4 py-1.5 transition-all duration-150 active:scale-[98%]',
@@ -158,8 +150,10 @@ export const DesktopNavbar = () => {
         </div>
         <div className="h-10 flex-1">
           <div className="flex items-center justify-end gap-4">
-            <button
-              onClick={() => handleLinkClick(data?.url ?? MARKETPLACE_URL)}
+            <NavLink
+              to={data?.url ?? MARKETPLACE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className={cn(
                 'group relative z-10 px-4 py-1.5 transition-all duration-150',
                 isHomePage
@@ -170,10 +164,9 @@ export const DesktopNavbar = () => {
               )}
             >
               <MarketplaceIcon className="mb-1 w-[18px]" />
-            </button>
+            </NavLink>
             <NavLink
               to="./invite"
-              onClick={() => handleLinkClick('./invite')}
               className={({ isActive }) =>
                 cn(
                   'group relative z-10 truncate px-4 py-1.5 transition-all duration-150',
@@ -214,23 +207,23 @@ export const DesktopNavbar = () => {
                 align="end"
                 sideOffset={5}
               >
-                {dropdownItems.map((item) => (
-                  <DropdownMenuItem
-                    key={item.name}
-                    onClick={() => {
-                      if (item.to.includes('https')) {
-                        handleLinkClick(item.to);
-                      } else {
-                        handleLinkClick(item.to);
-                        navigate(item.to);
-                      }
-                    }}
-                    data-testid={item.testid}
-                    className="flex items-center gap-2"
+                {dropdownItems.map((link, i) => (
+                  <NavLink
+                    key={i}
+                    to={link.to}
+                    data-testid={link.testid}
+                    className={({ isActive }) =>
+                      cn(
+                        'flex cursor-pointer items-center gap-3 transition duration-200 ease-in-out rounded-[18px]',
+                        isActive && 'bg-accent',
+                      )
+                    }
                   >
-                    <item.icon width={14} height={14} />
-                    <p className="text-sm font-medium">{item.name}</p>
-                  </DropdownMenuItem>
+                    <DropdownMenuItem className="w-full gap-3 rounded-[18px] p-4">
+                      <link.icon width={14} height={14} />
+                      <p className="text-sm">{link.name}</p>
+                    </DropdownMenuItem>
+                  </NavLink>
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
@@ -275,6 +268,8 @@ export const MobileNavbar = () => {
     ...protectedLinks,
   ];
 
+  const marketplaceUrl = data?.url ?? MARKETPLACE_URL;
+
   return (
     <>
       <div
@@ -286,13 +281,6 @@ export const MobileNavbar = () => {
           <NavLink
             key={idx}
             to={link.to}
-            target={link.to.includes('https') ? '_blank' : undefined}
-            rel={link.to.includes('https') ? 'noopener noreferrer' : undefined}
-            onClick={() =>
-              link.name === 'Marketplace'
-                ? handleLinkClick(data?.url ?? MARKETPLACE_URL)
-                : handleLinkClick(link.to)
-            }
             className={({ isActive }) =>
               cn(
                 'flex transition-colors rounded-xl flex-col md:flex-row items-center gap-2 p-2 min-w-[62px] md:min-w-0 md:p-4 cursor-pointer hover:bg-zinc-100',
@@ -337,7 +325,7 @@ export const MobileNavbar = () => {
               {additionalMobileLinks.map((link, i) => (
                 <NavLink
                   key={i}
-                  to={link.to}
+                  to={link.name === 'Marketplace' ? marketplaceUrl : link.to}
                   target={link.to.includes('https') ? '_blank' : undefined}
                   rel={
                     link.to.includes('https')
@@ -345,7 +333,6 @@ export const MobileNavbar = () => {
                       : undefined
                   }
                   onClick={() => {
-                    handleLinkClick(link.to);
                     setOpen(false);
                   }}
                   className={({ isActive }) =>
@@ -362,7 +349,6 @@ export const MobileNavbar = () => {
               <NavLink
                 to="/logout"
                 onClick={() => {
-                  handleLinkClick('/logout');
                   setOpen(false);
                 }}
                 className="flex cursor-pointer items-center gap-3 rounded-[18px] p-4 transition duration-200 ease-in-out hover:bg-[#252525]"
