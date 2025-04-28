@@ -45,7 +45,7 @@ const CancelDialog = ({
     return (
       <Sheet>
         <SheetTrigger asChild>{children}</SheetTrigger>
-        <SheetContent className="flex max-h-full flex-col rounded-t-[10px]">
+        <SheetContent className="flex max-h-full flex-col rounded-t-[10px] p-0">
           <CancelMembership subscription={membership} />
         </SheetContent>
       </Sheet>
@@ -55,7 +55,7 @@ const CancelDialog = ({
   return (
     <Dialog onOpenChange={resetSteps}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent>
+      <DialogContent className="mx-auto w-fit max-w-max p-0">
         <CancelMembership subscription={membership} />
       </DialogContent>
     </Dialog>
