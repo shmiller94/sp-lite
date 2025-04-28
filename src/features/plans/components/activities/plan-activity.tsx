@@ -1,9 +1,9 @@
 import {
   CarePlanActivity,
-  Coding,
   CarePlanActivityDetail,
+  Coding,
 } from '@medplum/fhirtypes';
-import { HelpCircle, ExternalLink, Image } from 'lucide-react';
+import { ExternalLink, HelpCircle, Image } from 'lucide-react';
 import { ReactNode } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -14,12 +14,13 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { Body1, H4 } from '@/components/ui/typography';
+import { ADVISORY_CALL } from '@/const';
 import { HealthcareServiceDialog } from '@/features/orders/components/healthcare-service-dialog';
 import { SafeMarkdown } from '@/features/plans/components/plan-markdown';
 import { useServices } from '@/features/services/api';
 import { useProducts } from '@/features/shop/api';
 import { cn } from '@/lib/utils';
-import { Product, HealthcareService } from '@/types/api';
+import { HealthcareService, Product } from '@/types/api';
 
 interface PlanActivityProps {
   activity: CarePlanActivity;
@@ -191,6 +192,10 @@ function renderServiceActivity(
     service.name || serviceCoding?.display || 'Unnamed Service';
   const serviceDesc =
     detail?.description || service.description || 'Book your appointment';
+  const isAdvisory = serviceName === ADVISORY_CALL;
+  const serviceMsg = isAdvisory
+    ? 'Not currently available.'
+    : 'Available for booking';
 
   return (
     <div className="mt-8 space-y-2">
@@ -201,16 +206,16 @@ function renderServiceActivity(
         name={serviceName}
         description={
           <div className="flex items-center gap-2 text-zinc-500">
-            <Body1 className="italic text-zinc-500">
-              Available for booking
-            </Body1>
+            <Body1 className="italic text-zinc-500">{serviceMsg}</Body1>
           </div>
         }
         className={className}
         actionBtn={
-          <HealthcareServiceDialog healthcareService={service}>
-            <Button size="medium">Book</Button>
-          </HealthcareServiceDialog>
+          isAdvisory ? null : (
+            <HealthcareServiceDialog healthcareService={service}>
+              <Button size="medium">Book</Button>
+            </HealthcareServiceDialog>
+          )
         }
       />
     </div>

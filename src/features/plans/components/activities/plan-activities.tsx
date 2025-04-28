@@ -9,9 +9,9 @@ import { useProducts } from '@/features/shop/api';
 import { useCarePlan } from '../../context/care-plan-context';
 import {
   PlanSection,
+  PlanSectionContent,
   PlanSectionHeader,
   PlanSectionTitle,
-  PlanSectionContent,
 } from '../plan-section';
 
 import { PlanActivity } from './plan-activity';
