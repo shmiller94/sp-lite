@@ -44,6 +44,15 @@ export const ProtocolCard = ({ onClick }: { onClick?: () => void }) => {
     '',
   );
 
+  let statusLabel = 'Awaiting lab results';
+
+  if (latestAvailablePlan) {
+    statusLabel =
+      isMobile || !startDate
+        ? 'Access your latest plan'
+        : `Access your latest plan from ${startDateFormatted}`;
+  }
+
   return (
     <div
       className={cn(
@@ -84,11 +93,7 @@ export const ProtocolCard = ({ onClick }: { onClick?: () => void }) => {
             ) : null}
           </div>
           <div className="flex w-full items-end justify-between gap-4">
-            <Body2 className="text-white">
-              {latestAvailablePlan && !isMobile
-                ? `Access your latest plan ${startDate ? `from ${startDateFormatted}` : ''}`
-                : 'Awaiting lab results'}
-            </Body2>
+            <Body2 className="text-white">{statusLabel}</Body2>
             {latestAvailablePlan ? (
               <div className="md:hidden">
                 <Button
