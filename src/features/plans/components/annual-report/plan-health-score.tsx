@@ -50,12 +50,26 @@ export function PlanHealthScore() {
     return null;
   }
 
-  // we should use memo it
-  const biologicalAge = 0;
+  const biologicalAge = biomarkersData.biomarkers.find(
+    (b) => b.name == 'Biological Age',
+  );
 
-  // we should use memo it
-  const ageDifference = biologicalAge
-    ? Math.round((yearsSinceDate(user.dateOfBirth) - biologicalAge) * 10) / 10.0
+  if (!biologicalAge) {
+    console.warn('Biological age not found.');
+    return null;
+  }
+
+  const latestBiologicalAge = mostRecent(biologicalAge.value)?.quantity.value;
+
+  if (!latestBiologicalAge) {
+    console.warn('Latest biological age not found.');
+    return null;
+  }
+
+  const ageDifference = latestBiologicalAge
+    ? Math.round(
+        (yearsSinceDate(user.dateOfBirth) - latestBiologicalAge) * 10,
+      ) / 10.0
     : 0;
 
   return (
@@ -93,7 +107,7 @@ export function PlanHealthScore() {
             />
             <div>
               <Body1 className="text-zinc-500">
-                Biological Age: {biologicalAge?.toFixed(0)}
+                Biological Age: {latestBiologicalAge?.toFixed(0)}
               </Body1>
               <Body1 className="text-zinc-500 opacity-50">
                 {Math.abs(ageDifference).toFixed(0)} years{' '}
