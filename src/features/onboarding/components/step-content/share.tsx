@@ -6,6 +6,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { Body1, Body2, H1 } from '@/components/ui/typography';
 import { useAffiliateLinks } from '@/features/affiliate/api';
 import { useUpdateTask } from '@/features/tasks/api/update-task';
+import { trackEvent } from '@/utils/analytics';
 
 export const Share = () => {
   const { data, isLoading } = useAffiliateLinks();
@@ -53,6 +54,11 @@ export const Share = () => {
         </div>
         <Button
           onClick={async () => {
+            // Track onboarding completion event with UTM context
+            trackEvent('Onboarding Completed', {
+              referralLinksAvailable: links.length > 0,
+            });
+
             await updateTaskProgress({
               taskName: 'onboarding',
               data: { status: 'completed' },

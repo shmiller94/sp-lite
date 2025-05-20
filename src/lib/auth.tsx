@@ -16,8 +16,8 @@ import {
   TokenResponse,
   User,
 } from '@/types/api';
-import { getCampaignData } from '@/utils/campaign-tracking';
 import { parseJWTPayload } from '@/utils/jwt';
+import { getUtmData } from '@/utils/utm-middleware';
 
 import { api } from './api-client';
 
@@ -131,12 +131,8 @@ const registerWithEmailAndPassword = (
         ),
       ),
     },
-    campaignData: getCampaignData(),
+    campaignData: getUtmData(),
   };
-  console.log(
-    'Sending registration data with campaign data:',
-    registerData.campaignData,
-  );
   return api.post('/auth/newuser', registerData);
 };
 

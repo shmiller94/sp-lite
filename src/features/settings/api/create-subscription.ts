@@ -5,7 +5,7 @@ import { getOrdersQueryOptions } from '@/features/orders/api';
 import { api } from '@/lib/api-client';
 import { MutationConfig } from '@/lib/react-query';
 import { Subscription } from '@/types/api';
-import { getCampaignData } from '@/utils/campaign-tracking';
+import { getUtmData } from '@/utils/utm-middleware';
 
 export const createSubscriptionInputSchema = z.object({
   code: z.string().optional(),
@@ -23,9 +23,9 @@ export const createSubscription = ({
 }: {
   data: CreateSubscriptionInput;
 }): Promise<Subscription> => {
-  // Get campaign data if not provided
+  // Get UTM data from cookie if not provided
   if (!data.campaignData) {
-    data.campaignData = getCampaignData() || undefined;
+    data.campaignData = getUtmData() || undefined;
   }
   return api.post(`/billing/subscription`, data);
 };

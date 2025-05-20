@@ -3,6 +3,7 @@ import { getAccessCode } from '@/utils/access-code';
 
 export const trackSubscription = (price: number | undefined) => {
   try {
+    // We'll handle this server-side, keeping only GTM for now
     const win = window as RewardfulWindow;
     const accessCode = getAccessCode();
 

@@ -23,7 +23,7 @@ import { useUpdateTask } from '@/features/tasks/api/update-task';
 import { useUser } from '@/lib/auth';
 import { useStepper } from '@/lib/stepper';
 import { cn } from '@/lib/utils';
-import { getCampaignData } from '@/utils/campaign-tracking';
+import { getUtmData } from '@/utils/utm-middleware';
 
 import { trackSubscription } from '../../utils/gtm';
 
@@ -116,8 +116,8 @@ export const SectionBilling = () => {
           code: localStorage.getItem('superpower-code') ?? undefined,
           referralId: (window as any)?.Rewardful?.referral,
           membershipType,
-          // Add campaign data
-          campaignData: getCampaignData() ?? undefined,
+          // Use cookie-based UTM data instead of sessionStorage
+          campaignData: getUtmData() ?? undefined,
         },
       });
 

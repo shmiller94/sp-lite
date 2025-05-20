@@ -5,6 +5,7 @@ import { scan } from 'react-scan';
 
 import { env } from '@/config/env';
 import { captureCampaignParameters } from '@/utils/campaign-tracking';
+import { addUtmMiddleware } from '@/utils/utm-middleware';
 
 import { App } from './app';
 import { enableMocking } from './testing/mocks';
@@ -72,6 +73,13 @@ const options = {
 
 // Initialize campaign tracking immediately since this is a client-side app
 captureCampaignParameters();
+
+// Initialize UTM middleware for Segment to attach UTM data to all events
+try {
+  addUtmMiddleware();
+} catch (error) {
+  // Silently ignore UTM middleware errors
+}
 
 enableMocking().then(() => {
   createRoot(root).render(

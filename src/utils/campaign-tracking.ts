@@ -26,14 +26,38 @@ export function extractCampaignParameters(): CampaignData {
     campaignData.utm_content = params.get('utm_content') ?? undefined;
 
   // Extract platform-specific click IDs
-  if (params.has('fbclid'))
-    campaignData.fbclid = params.get('fbclid') ?? undefined;
-  if (params.has('ttclid'))
-    campaignData.ttclid = params.get('ttclid') ?? undefined;
+  // Google Ads
   if (params.has('gclid'))
     campaignData.gclid = params.get('gclid') ?? undefined;
+  if (params.has('gbraid'))
+    campaignData.gbraid = params.get('gbraid') ?? undefined;
+  if (params.has('wbraid'))
+    campaignData.wbraid = params.get('wbraid') ?? undefined;
+
+  // Meta/Facebook
+  if (params.has('fbclid'))
+    campaignData.fbclid = params.get('fbclid') ?? undefined;
+
+  // Microsoft/Bing
+  if (params.has('msclkid'))
+    campaignData.msclkid = params.get('msclkid') ?? undefined;
+
+  // TikTok
+  if (params.has('ttclid'))
+    campaignData.ttclid = params.get('ttclid') ?? undefined;
+  if (params.has('tt_conv_id'))
+    campaignData.tt_conv_id = params.get('tt_conv_id') ?? undefined;
+
+  // LinkedIn
   if (params.has('li_fat_id'))
     campaignData.li_fat_id = params.get('li_fat_id') ?? undefined;
+
+  // Optional routing parameter
+  if (params.has('via')) campaignData.via = params.get('via') ?? undefined;
+
+  // Check for Rewardful code
+  if (params.has('rewardfulCode'))
+    campaignData.rewardfulCode = params.get('rewardfulCode') ?? undefined;
 
   return campaignData;
 }
