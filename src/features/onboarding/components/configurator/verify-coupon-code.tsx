@@ -9,13 +9,13 @@ import { useAvailableSubscriptions } from '@/features/settings/api';
 import { useDebounce } from '@/hooks/use-debounce';
 import { getAccessCode, updateAccessCode } from '@/utils/access-code';
 export const VerifyCouponCode = () => {
-  const rewardfulCoupon = (window as any).Rewardful?.coupon?.id;
-  const [code, setCode] = useState(getAccessCode() ?? '');
+  // Start with empty code to allow users to enter their own
+  const [code, setCode] = useState('');
   const { processing } = useOnboarding();
   const isInitialMount = useRef(true);
 
   const debouncedCode = useDebounce(
-    rewardfulCoupon ? code.trim() : code.toUpperCase().trim(),
+    code ? code.toUpperCase().trim() : '',
     1000,
   );
 
@@ -24,7 +24,7 @@ export const VerifyCouponCode = () => {
   const validateCodeQuery = useValidateCode({
     accessCode: debouncedCode,
     queryConfig: {
-      enabled: debouncedCode !== getAccessCode() && !!debouncedCode,
+      enabled: !!debouncedCode && debouncedCode !== getAccessCode(),
     },
   });
 
@@ -52,11 +52,7 @@ export const VerifyCouponCode = () => {
     isInitialMount.current = false;
   }, [validateCodeQuery.data]);
 
-  // we don't want user to edit rewardful coupon code
-  if (rewardfulCoupon) {
-    return null;
-  }
-
+  // Always show the coupon field, allowing users to override Rewardful coupon
   return (
     <section id="subscriptions" className="w-full space-y-6">
       <div className="space-y-2">
@@ -79,7 +75,7 @@ export const VerifyCouponCode = () => {
           onChange={(e) => setCode(e.target.value)}
           aria-invalid={validateCodeQuery.isError}
         />
-        {validateCodeQuery.isError && (
+        {validateCodeQuery.isError && debouncedCode && (
           <Body2 className="text-pink-700">Invalid access code</Body2>
         )}
       </div>

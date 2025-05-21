@@ -25,6 +25,7 @@ spec:
       containers:
         - name: superpower-app
           image: __AWS_ECR_URL__/superpower-app:__VERSION__
+          imagePullPolicy: Always
           ports:
             - containerPort: 3000
 

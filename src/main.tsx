@@ -4,6 +4,7 @@ import './index.css';
 import { scan } from 'react-scan';
 
 import { env } from '@/config/env';
+import { updateAccessCode } from '@/utils/access-code';
 import { captureCampaignParameters } from '@/utils/campaign-tracking';
 import { addUtmMiddleware } from '@/utils/utm-middleware';
 
@@ -73,6 +74,16 @@ const options = {
 
 // Initialize campaign tracking immediately since this is a client-side app
 captureCampaignParameters();
+
+// Save Rewardful coupon to localStorage if present
+try {
+  const rewardfulCoupon = (window as any)?.Rewardful?.coupon?.id;
+  if (rewardfulCoupon) {
+    updateAccessCode(rewardfulCoupon);
+  }
+} catch (error) {
+  console.error('Error saving Rewardful coupon to localStorage:', error);
+}
 
 // Initialize UTM middleware for Segment to attach UTM data to all events
 try {
