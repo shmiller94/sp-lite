@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/sonner';
@@ -56,15 +56,14 @@ export const VerifyCouponCode = () => {
   return (
     <section id="subscriptions" className="w-full space-y-6">
       <div className="space-y-2">
-        <H3 className="text-[#1E1E1E]">Discount code</H3>
+        <H3 className="text-[#1E1E1E]">Access code</H3>
         <Body2 className="text-zinc-500">
-          Please verify that your access code is correct, as it will be used to
-          apply any applicable discounts during checkout.
+          If you were invited by someone, use their code to apply any rewards.
         </Body2>
       </div>
       <div>
         <Input
-          placeholder="Enter your coupon code"
+          placeholder="Enter your access code"
           className={`w-full ${
             validateCodeQuery.isError
               ? 'border-pink-700 focus-visible:ring-0'

@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 import { SuperpowerLogo } from '@/components/icons/superpower-logo';
 import { TestimonialCarousel } from '@/components/shared/testimonials/components/testimonial-carousel';
@@ -86,7 +86,7 @@ const MEMBERSHIP_FAQ = [
   {
     display: 'Do you replace my primary care doctor?',
     description:
-      'No. Your annual membership to Superpower’s testing and health concierge is designed to complement your primary care doctor, not replace them. We do not offer typical sick care, but rather, our care team are there to answer questions related to prevention, performance, and longevity. We try to step in where the healthcare system is falling short. We provide best-in-class early diagnostics assessments and guidance from our longevity advisors.',
+      'We do not offer typical sick care, but rather, our care team are is there to answer questions related to prevention, performance, and longevity.',
   },
   {
     display: 'Where do I go for my lab visit?',
@@ -116,7 +116,7 @@ const MEMBERSHIP_FAQ = [
 export const RegisterLayout = ({ children }: { children: ReactNode }) => {
   return (
     <div className="mx-auto grid min-h-dvh w-full gap-16 p-4 py-8 md:p-8 lg:grid-cols-2 lg:justify-items-center">
-      <div className="flex flex-1 flex-col justify-between gap-8 md:px-8 lg:gap-4">
+      <div className="flex w-full flex-1 flex-col justify-between gap-8 md:px-8 lg:max-w-2xl lg:gap-4">
         <SuperpowerLogo />
         {children}
         <div className="lg:hidden">
@@ -175,7 +175,7 @@ export const RegisterLayout = ({ children }: { children: ReactNode }) => {
         >
           {MEMBERSHIP_FAQ.map((item, i) => (
             <AccordionItem value={item.display} key={i}>
-              <AccordionTrigger className="py-3 text-sm text-zinc-900 hover:text-zinc-500">
+              <AccordionTrigger className="py-3 text-left text-sm text-zinc-900 hover:text-zinc-500">
                 {item.display}
               </AccordionTrigger>
               <AccordionContent className="text-zinc-500">

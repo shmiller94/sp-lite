@@ -154,7 +154,7 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
         reason={reason}
         onClick={() => setReason(undefined)}
       />
-      <div className="space-y-4">
+      <div className="space-y-1.5">
         {step === 2 ? (
           <Button variant="ghost" size="icon" onClick={() => setStep(1)}>
             <ChevronLeft size={14} className="text-zinc-500" />

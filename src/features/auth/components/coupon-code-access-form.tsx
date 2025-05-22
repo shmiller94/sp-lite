@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
 import { z } from 'zod';
@@ -8,15 +8,15 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  FormControl,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
-import { H1, H4 } from '@/components/ui/typography';
+import { Body1, H3 } from '@/components/ui/typography';
 import {
   useValidateCode,
   ValidateInput,
@@ -94,10 +94,12 @@ export function CouponCodeAccessForm({
   }
 
   return (
-    <div className="w-full max-w-[400px] space-y-8">
-      <div className="space-y-3 text-center">
-        <H1 className="text-zinc-900">Welcome to Superpower</H1>
-        <H4 className="text-zinc-500">Your new era of personal health</H4>
+    <div className="w-full space-y-8">
+      <div className="space-y-1.5">
+        <H3 className="text-zinc-900">Welcome to Superpower</H3>
+        <Body1 className="text-zinc-400">
+          Please enter an access code to continue.
+        </Body1>
       </div>
 
       <Form {...form}>
