@@ -1,5 +1,23 @@
 import { FormAddressInput, GoogleAddressComponent } from '@/types/address';
 
+export const getCity = (
+  address_components: GoogleAddressComponent[],
+): string => {
+  // In order of priority
+  const types = [
+    'locality',
+    'sublocality',
+    'neighborhood',
+    'administrative_area_level_2',
+  ];
+  for (const t of types) {
+    const comp = address_components.find((c) => c.types.includes(t));
+    if (comp) return comp.long_name;
+  }
+  console.error('No city found in address components', address_components);
+  return '';
+};
+
 export const addressFromGoogleComponents = (
   address_components: GoogleAddressComponent[],
 ): FormAddressInput => {
@@ -12,9 +30,7 @@ export const addressFromGoogleComponents = (
   const route = address_components.find((a) =>
     a.types.includes('route'),
   )?.long_name;
-  const city =
-    address_components.find((a) => a.types.includes('locality'))?.long_name ??
-    '';
+  const city = getCity(address_components);
   const state =
     address_components.find((a) =>
       a.types.includes('administrative_area_level_1'),
