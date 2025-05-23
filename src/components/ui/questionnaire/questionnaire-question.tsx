@@ -103,34 +103,162 @@ export const QuestionnaireQuestion = ({
     }
   };
 
-  if (!checkForQuestionEnabled(item)) {
+  const renderDisabledQuestion = () => (
+    <div className="space-y-6">
+      <H2 className="italic">{item.text}</H2>
+      <Alert>
+        <SmileIcon className="size-4" />
+        <AlertTitle>Heads up!</AlertTitle>
+        <AlertDescription>
+          You do not have to fill this section, move forward
+        </AlertDescription>
+      </Alert>
+      <div className="flex flex-col gap-2">
+        {showBackButton && (
+          <Button
+            type="button"
+            className="w-full bg-white"
+            variant="outline"
+            onClick={prevStep}
+          >
+            Back
+          </Button>
+        )}
+        <Button type="button" className="w-full" onClick={handleNextStep}>
+          Next
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderGroupQuestion = () => {
+    const shouldUseTwoColumns =
+      item.item &&
+      item.item.length &&
+      item.item.length > 1 &&
+      item.item.every((i) => {
+        const type = i.type;
+        return (
+          type === QuestionnaireItemType.integer ||
+          type === QuestionnaireItemType.string ||
+          type === QuestionnaireItemType.decimal
+        );
+      });
+
     return (
       <div className="space-y-6">
-        <H2 className="italic">{item.text}</H2>
-        <Alert>
-          <SmileIcon className="size-4" />
-          <AlertTitle>Heads up!</AlertTitle>
-          <AlertDescription>
-            You do not have to fill this section, move forward
-          </AlertDescription>
-        </Alert>
-        <div className="flex flex-col gap-2">
-          {showBackButton && (
-            <Button
-              type="button"
-              className="w-full bg-white"
-              variant="outline"
-              onClick={prevStep}
-            >
-              Back
-            </Button>
+        <div className="mb-10">
+          <Body1 className={cn('text-2xl', description ? 'mb-3' : 'mb-5')}>
+            {item.text}
+          </Body1>
+          {description && (
+            <Body2 className="text-secondary">{description}</Body2>
           )}
-          <Button type="button" className="w-full" onClick={handleNextStep}>
-            Next
-          </Button>
+        </div>
+        <div
+          className={cn(
+            'grid grid-cols-1 gap-4',
+            shouldUseTwoColumns ? 'md:grid-cols-2' : '',
+          )}
+        >
+          {item.item?.map((nestedItem) => (
+            <QuestionnaireFormRepeatableItem
+              nested
+              key={nestedItem.linkId}
+              item={nestedItem}
+              response={
+                response.item?.find((i) => i.linkId === nestedItem.linkId) || {
+                  linkId: nestedItem.linkId,
+                }
+              }
+              onChange={(newItems) => {
+                if (!response.item) {
+                  response.item = [];
+                }
+
+                const existingItemIndex = response.item.findIndex(
+                  (i) => i.linkId === nestedItem.linkId,
+                );
+
+                if (existingItemIndex >= 0) {
+                  response.item[existingItemIndex] = newItems[0];
+                } else {
+                  response.item.push(newItems[0]);
+                }
+
+                onChange([response]);
+              }}
+              onKeyDown={handleKeyDown}
+            />
+          ))}
         </div>
       </div>
     );
+  };
+
+  const renderDisplayQuestion = () => (
+    <div className="space-y-4">
+      <Body1 className="text-2xl">{item.prefix}</Body1>
+      <Body1 className="mb-8 text-sm text-zinc-500">{item.text}</Body1>
+      {description && (
+        <Body2 className="mb-10 text-secondary">{description}</Body2>
+      )}
+    </div>
+  );
+
+  const renderNavigationButtons = () => (
+    <div className="mt-12 flex flex-col gap-2 md:mt-0">
+      {showBackButton && (
+        <button
+          tabIndex={-1}
+          type="button"
+          className="absolute -left-12 top-1 hidden text-zinc-400 transition-all hover:text-zinc-500 md:block"
+          onClick={prevStep}
+        >
+          <ArrowLeftIcon />
+        </button>
+      )}
+      {isLastQuestion ? (
+        <Button type="submit" className="ml-auto w-full md:w-[108px]">
+          Submit
+        </Button>
+      ) : (
+        <div
+          className={cn(
+            'ml-auto flex w-full flex-col-reverse gap-4 md:w-auto md:flex-row',
+            item.type === QuestionnaireItemType.display && 'md:w-full',
+          )}
+        >
+          {!item.required &&
+            item.type !== QuestionnaireItemType.group &&
+            item.type !== QuestionnaireItemType.display && (
+              <Button
+                type="button"
+                variant="outline"
+                className="ml-auto w-full bg-white hover:bg-white/75 md:w-[108px]"
+                onClick={handleNextStep}
+              >
+                Skip
+              </Button>
+            )}
+          <Button
+            type="button"
+            className={cn(
+              'ml-auto w-full md:w-[108px]',
+              item.type === QuestionnaireItemType.display && 'md:w-full',
+            )}
+            onClick={handleNextStep}
+            disabled={isResponseEmpty(item, response, checkForQuestionEnabled)}
+          >
+            Next
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+
+  if (!checkForQuestionEnabled(item)) {
+    return renderDisabledQuestion();
   }
 
   return (
@@ -151,70 +279,9 @@ export const QuestionnaireQuestion = ({
       <SuperpowerLogo className="size-32 h-12 md:hidden" />
       <div className="flex h-full flex-1 flex-col justify-between gap-6 md:translate-y-0 md:justify-start">
         {item.type === QuestionnaireItemType.group ? (
-          <div className="space-y-6">
-            <div className="mb-10">
-              <Body1 className={cn('text-2xl', description ? 'mb-3' : 'mb-5')}>
-                {item.text}
-              </Body1>
-              {description && (
-                <Body2 className="text-secondary">{description}</Body2>
-              )}
-            </div>
-            <div
-              className={cn(
-                'grid grid-cols-1 gap-4',
-                // only map to 2 columns if "default" input field
-                (item.item?.every(
-                  (i) => i.type === QuestionnaireItemType.integer,
-                ) ||
-                  item.item?.every(
-                    (i) => i.type === QuestionnaireItemType.string,
-                  )) &&
-                  item.item?.length > 1
-                  ? 'md:grid-cols-2'
-                  : '',
-              )}
-            >
-              {item.item?.map((nestedItem) => (
-                <QuestionnaireFormRepeatableItem
-                  nested
-                  key={nestedItem.linkId}
-                  item={nestedItem}
-                  response={
-                    response.item?.find(
-                      (i) => i.linkId === nestedItem.linkId,
-                    ) || { linkId: nestedItem.linkId }
-                  }
-                  onChange={(newItems) => {
-                    if (!response.item) {
-                      response.item = [];
-                    }
-
-                    const existingItemIndex = response.item.findIndex(
-                      (i) => i.linkId === nestedItem.linkId,
-                    );
-
-                    if (existingItemIndex >= 0) {
-                      response.item[existingItemIndex] = newItems[0];
-                    } else {
-                      response.item.push(newItems[0]);
-                    }
-
-                    onChange([response]);
-                  }}
-                  onKeyDown={handleKeyDown}
-                />
-              ))}
-            </div>
-          </div>
+          renderGroupQuestion()
         ) : item.type === QuestionnaireItemType.display ? (
-          <div className="space-y-4">
-            <Body1 className="text-2xl">{item.prefix}</Body1>
-            <Body1 className="mb-8 text-sm text-zinc-500">{item.text}</Body1>
-            {description && (
-              <Body2 className="mb-10 text-secondary">{description}</Body2>
-            )}
-          </div>
+          renderDisplayQuestion()
         ) : (
           <QuestionnaireFormRepeatableItem
             key={item.linkId}
@@ -225,60 +292,7 @@ export const QuestionnaireQuestion = ({
             onKeyDown={handleKeyDown}
           />
         )}
-        <div className="mt-12 flex flex-col gap-2 md:mt-0">
-          {showBackButton && (
-            <button
-              tabIndex={-1}
-              type="button"
-              className="absolute -left-12 top-1 hidden text-zinc-400 transition-all hover:text-zinc-500 md:block"
-              onClick={prevStep}
-            >
-              <ArrowLeftIcon />
-            </button>
-          )}
-          {isLastQuestion ? (
-            <Button type="submit" className="ml-auto w-full md:w-[108px]">
-              Submit
-            </Button>
-          ) : (
-            <div
-              className={cn(
-                'ml-auto flex w-full flex-col-reverse gap-4 md:w-auto md:flex-row',
-                item.type === QuestionnaireItemType.display && 'md:w-full',
-              )}
-            >
-              {!item.required &&
-                item.type !== QuestionnaireItemType.group &&
-                item.type !== QuestionnaireItemType.display && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="ml-auto w-full bg-white hover:bg-white/75 md:w-[108px]"
-                    onClick={handleNextStep}
-                  >
-                    Skip
-                  </Button>
-                )}
-              <Button
-                type="button"
-                className={cn(
-                  'ml-auto w-full md:w-[108px]',
-                  item.type === QuestionnaireItemType.display && 'md:w-full',
-                )}
-                onClick={() => {
-                  handleNextStep();
-                }}
-                disabled={isResponseEmpty(
-                  item,
-                  response,
-                  checkForQuestionEnabled,
-                )}
-              >
-                Next
-              </Button>
-            </div>
-          )}
-        </div>
+        {renderNavigationButtons()}
       </div>
     </div>
   );
