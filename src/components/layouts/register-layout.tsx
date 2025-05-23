@@ -86,7 +86,7 @@ const MEMBERSHIP_FAQ = [
   {
     display: 'Do you replace my primary care doctor?',
     description:
-      'We do not offer typical sick care, but rather, our care team are is there to answer questions related to prevention, performance, and longevity.',
+      'We do not offer typical sick care, but rather, our care team is there to answer questions related to prevention, performance, and longevity.',
   },
   {
     display: 'Where do I go for my lab visit?',
