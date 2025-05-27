@@ -35,12 +35,12 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
   });
 
   return (
-    <div className="flex size-full max-w-3xl flex-1 flex-col justify-between gap-6 md:gap-16 rounded-t-3xl bg-white p-8 md:rounded-3xl md:p-16">
+    <div className="flex size-full max-w-3xl flex-1 flex-col justify-between gap-6 rounded-t-3xl bg-white p-8 md:gap-16 md:rounded-3xl md:p-16">
       <SuperpowerLogo />
       <div>
         <div className="mb-8">
           <H1 className="text-zinc-900">Welcome back</H1>
-          <div className="flex flex-col gap-0.5 sm:flex-row sm:items-center">
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-center">
             <Body2 className="text-zinc-500">Don’t have an account?</Body2>
             <Link
               to="/register"
@@ -110,7 +110,7 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
               >
                 Join waitlist
               </Link> */}
-              <div className="flex flex-col gap-0.5 sm:flex-row sm:items-center">
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-center">
                 <Body2 className="text-zinc-500">
                   Forgot your login details?
                 </Body2>
@@ -118,7 +118,7 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
                   to="/resetpassword"
                   className="cursor-pointer text-sm text-vermillion-900"
                 >
-                  Reset
+                  Reset password
                 </Link>
               </div>
             </div>
