@@ -33,7 +33,7 @@ What to have ready:
 2. Lab order and QR: Please show the PDFs attached when you arrive at the lab.
 
 
-Just a reminder, your lab order can also be found in your Superpower app, under Settings → Profile → Data Vault.
+Just a reminder, your lab order can also be found in your Superpower app, under Data → Health Records. https://app.superpower.com/vault
 
 
 To good health,
