@@ -21,6 +21,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import { TransactionSpinner } from '@/components/ui/spinner/transaction-spinner';
+import { GRAIL_GALLERI_MULTI_CANCER_TEST } from '@/const';
 import {
   resyncDataAfterCancelOrder,
   useCancelOrder,
@@ -97,7 +99,13 @@ export const HealthcareServiceRescheduleDialog = ({
             Dialog for booking healthcare services and managing the scheduling
             process
           </SheetDescription>
-          <div className="flex-1 overflow-auto py-12">
+          <div
+            className={
+              mode === 'booking'
+                ? 'flex-1 overflow-auto'
+                : 'flex-1 overflow-auto py-12'
+            }
+          >
             {mode === 'default' ? (
               <HealthcareServiceRescheduleDetails
                 resultsPending={isPastAppointment}
@@ -152,8 +160,13 @@ export const HealthcareServiceRescheduleDialog = ({
                 <Button
                   className="w-full md:w-auto"
                   onClick={() => handleConfirm(mode)}
+                  disabled={cancelOrderMutation.isPending}
                 >
-                  Confirm cancellation
+                  {cancelOrderMutation.isPending ? (
+                    <TransactionSpinner size="sm" />
+                  ) : (
+                    'Confirm cancellation'
+                  )}
                 </Button>
               </>
             ) : null}
@@ -170,8 +183,13 @@ export const HealthcareServiceRescheduleDialog = ({
                 <Button
                   className="w-full md:w-auto"
                   onClick={() => handleConfirm(mode)}
+                  disabled={cancelOrderMutation.isPending}
                 >
-                  Confirm reschedule
+                  {cancelOrderMutation.isPending ? (
+                    <TransactionSpinner size="sm" />
+                  ) : (
+                    'Confirm reschedule'
+                  )}
                 </Button>
               </>
             ) : null}
@@ -185,7 +203,7 @@ export const HealthcareServiceRescheduleDialog = ({
     <Dialog onOpenChange={handleClose}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="flex max-h-[90vh] flex-col px-0.5">
-        <DialogHeader className="bg-white/90 px-10 pb-4 pt-6 backdrop-blur-sm">
+        <DialogHeader className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm">
           <div className="flex items-center gap-2">
             <DialogTitle className="text-zinc-500">{getTitle()}</DialogTitle>
           </div>
@@ -193,11 +211,14 @@ export const HealthcareServiceRescheduleDialog = ({
             Dialog for seeing appointment details as well as canceling and
             rescheduling
           </DialogDescription>
-          <DialogClose onClick={() => setMode('default')}>
+          <DialogClose
+            className="size-6 cursor-pointer p-1"
+            onClick={() => setMode('default')}
+          >
             <X className="size-6 cursor-pointer p-1" />
           </DialogClose>
         </DialogHeader>
-        <div className="flex-1 overflow-y-auto scrollbar scrollbar-thumb-zinc-300 [overflow:overlay] [&::-webkit-scrollbar-button:end:increment]:block [&::-webkit-scrollbar-button:end:increment]:h-[13vh] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar]:w-2">
+        <div className="flex-1 overflow-y-auto scrollbar scrollbar-thumb-zinc-300 [overflow:overlay] [&::-webkit-scrollbar-button:end:increment]:h-[13vh] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar]:w-2">
           {mode === 'default' ? (
             <HealthcareServiceRescheduleDetails
               resultsPending={isPastAppointment}
@@ -231,12 +252,14 @@ export const HealthcareServiceRescheduleDialog = ({
               >
                 Cancel appointment
               </Button>
-              <Button
-                className="w-full md:w-auto"
-                onClick={() => setMode('reschedule')}
-              >
-                Reschedule
-              </Button>
+              {healthcareService.name !== GRAIL_GALLERI_MULTI_CANCER_TEST ? (
+                <Button
+                  className="w-full md:w-auto"
+                  onClick={() => setMode('reschedule')}
+                >
+                  Reschedule
+                </Button>
+              ) : null}
             </>
           ) : null}
 
@@ -252,8 +275,13 @@ export const HealthcareServiceRescheduleDialog = ({
               <Button
                 className="w-full md:w-auto"
                 onClick={() => handleConfirm(mode)}
+                disabled={cancelOrderMutation.isPending}
               >
-                Confirm cancellation
+                {cancelOrderMutation.isPending ? (
+                  <TransactionSpinner size="sm" />
+                ) : (
+                  'Confirm cancellation'
+                )}
               </Button>
             </>
           ) : null}
@@ -270,8 +298,13 @@ export const HealthcareServiceRescheduleDialog = ({
               <Button
                 className="w-full md:w-auto"
                 onClick={() => handleConfirm(mode)}
+                disabled={cancelOrderMutation.isPending}
               >
-                Confirm reschedule
+                {cancelOrderMutation.isPending ? (
+                  <TransactionSpinner size="sm" />
+                ) : (
+                  'Confirm reschedule'
+                )}
               </Button>
             </>
           ) : null}

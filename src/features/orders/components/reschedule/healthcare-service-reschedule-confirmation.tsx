@@ -18,7 +18,7 @@ export const HealthcareServiceRescheduleConfirmation = ({
       />
       <div className="max-w-[220px] space-y-4 md:max-w-none">
         <H2 className="text-zinc-900">
-          Are you sure you want to {mode} your Superpower Blood Panel?
+          Are you sure you want to {mode} your {healthcareService.name}?
         </H2>
       </div>
       <Body1 className="text-zinc-500">

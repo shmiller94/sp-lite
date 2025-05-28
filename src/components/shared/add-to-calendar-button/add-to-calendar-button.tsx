@@ -37,7 +37,7 @@ export function AddToCalendar({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button size="small" variant="outline" className="gap-2">
+        <Button variant="outline" className="gap-2 py-4 px-5 text-base">
           <Body1 className="text-zinc-900">Add to calendar</Body1>
           <ChevronDown size={18} color="#A1A1AA" />
         </Button>

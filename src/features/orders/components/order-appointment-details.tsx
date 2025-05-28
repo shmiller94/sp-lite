@@ -14,7 +14,9 @@ import {
 import { useFiles } from '@/features/files/api';
 import { useDownloadFile } from '@/features/files/api/download-file';
 import { downloadBlob } from '@/features/files/utils/download-blob';
-import { Location, CollectionMethodType, Slot } from '@/types/api';
+import { openInMaps } from '@/features/orders/utils/open-in-maps';
+import { Location, CollectionMethodType, Slot, Address } from '@/types/api';
+import { isIOS } from '@/utils/browser-detection';
 
 interface OrderAppointmentDetailsProps {
   slot?: Slot;
@@ -74,11 +76,6 @@ export function OrderAppointmentDetails({
     return null;
   }
 
-  // generate maps URL
-  const mapsUrl = location?.address
-    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location.address.line.join(' ') + ', ' + location.address.city + ', ' + location.address.state + ' ' + location.address.postalCode)}`
-    : '#';
-
   const renderAddToCalendar = () => {
     if (!slot || !serviceName || !collectionMethod || !location?.address)
       return null;
@@ -137,14 +134,22 @@ export function OrderAppointmentDetails({
             </div>
             {location?.address && (
               <div className="mt-2">
-                <a
-                  href={mapsUrl}
+                <button
+                  type="button"
                   className="flex items-center gap-1 text-sm font-medium text-vermillion-900"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const mapType = isIOS() ? 'apple' : 'google';
+                    const phlebotomyLocation = {
+                      name: location.name || 'Location',
+                      distance: 0,
+                      address: location.address as Address,
+                    };
+                    openInMaps(phlebotomyLocation, mapType);
+                  }}
                 >
                   Open in maps <ArrowUpRight className="size-4" />
-                </a>
+                </button>
               </div>
             )}
           </div>

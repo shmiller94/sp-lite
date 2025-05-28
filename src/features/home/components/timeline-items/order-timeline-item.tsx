@@ -61,7 +61,7 @@ const OrderTimelineItem = ({
             order={order}
           >
             <Button className="bg-white" size="medium" variant="outline">
-              More Details
+              More details
             </Button>
           </HealthcareServiceRescheduleDialog>
         );
