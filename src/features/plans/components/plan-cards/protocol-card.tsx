@@ -1,6 +1,7 @@
 import { CarePlan } from '@medplum/fhirtypes';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
+import removeMarkdown from 'remove-markdown';
 
 import { LockIcon } from '@/components/icons';
 import { ArrowTopRight } from '@/components/icons/arrow-top-right-icon';
@@ -39,11 +40,9 @@ export const ProtocolCard = ({ onClick }: { onClick?: () => void }) => {
     : undefined;
 
   const description = latestAvailablePlan?.description;
-  const descriptionWithoutPhilosophy = description?.replace(
-    ANNUAL_PLAN_PHILOSOPHY_MARKDOWN,
-    '',
-  );
-
+  const descriptionWithoutPhilosophy = description
+    ? removeMarkdown(description.replace(ANNUAL_PLAN_PHILOSOPHY_MARKDOWN, ''))
+    : '';
   let statusLabel = 'Awaiting lab results';
 
   if (latestAvailablePlan) {
