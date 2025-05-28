@@ -556,6 +556,7 @@ export type TimelineItem = Entity<{
   description?: string;
   status: TimelineItemStatus;
   id: string;
+  timestamp: Date;
 }>;
 
 /* BRIDGE INSURANCE */

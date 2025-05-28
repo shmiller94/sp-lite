@@ -43,6 +43,10 @@ export const TimelineList = () => {
   const { width } = useWindowDimensions();
   const isMobile = width < 768;
 
+  /**
+   * TODO: grouping of timeline items (and subfiltering of each group) should be done in backend
+   */
+
   const onboardingItems = useMemo(
     () =>
       timelineItems?.filter(
@@ -53,12 +57,22 @@ export const TimelineList = () => {
 
   const currentItems = useMemo(
     () =>
-      timelineItems?.filter(
-        (ti) =>
-          ti.type !== 'ONBOARDING_TASK' &&
-          ti.status !== 'DONE' &&
-          ti.status !== 'DISABLED',
-      ),
+      timelineItems
+        ?.filter(
+          (ti) =>
+            ti.type !== 'ONBOARDING_TASK' &&
+            ti.status !== 'DONE' &&
+            ti.status !== 'DISABLED',
+        )
+        //we want latest appointments first, and for unbooked items to be priortized to be scheduled ahead of time
+        // this is a hack until we enable timeline grouping on backend
+        .sort((a, b) => {
+          if (a.timestamp && b.timestamp) {
+            return b.timestamp.getTime() - a.timestamp.getTime();
+          }
+          return 0;
+        })
+        .reverse(),
     [timelineItems],
   );
 
