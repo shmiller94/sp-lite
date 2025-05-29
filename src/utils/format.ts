@@ -62,3 +62,49 @@ export function isSameFormAddressInput(
 export function capitalize(word: string): string {
   return word.charAt(0).toUpperCase() + word.substring(1);
 }
+
+/**
+ * Converts a string to title case, capitalizing each word except for common
+ * prepositions, articles, and conjunctions (unless they are the first word).
+ * @param text The text to convert to title case
+ * @returns The title-cased text
+ */
+export function toTitleCase(text: string): string {
+  const uncapitalizedWords = new Set([
+    'a',
+    'an',
+    'and',
+    'as',
+    'at',
+    'but',
+    'by',
+    'for',
+    'if',
+    'in',
+    'nor',
+    'of',
+    'on',
+    'or',
+    'so',
+    'the',
+    'to',
+    'up',
+    'yet',
+  ]);
+
+  return text
+    .toLowerCase()
+    .split(' ')
+    .map((word, index) => {
+      // Always capitalize the first word
+      if (index === 0) {
+        return capitalize(word);
+      }
+      // Skip capitalizing small words unless they're the first word
+      if (uncapitalizedWords.has(word)) {
+        return word;
+      }
+      return capitalize(word);
+    })
+    .join(' ');
+}

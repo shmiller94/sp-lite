@@ -11,7 +11,7 @@ import { getNormalizedText } from '@/features/orders/utils/get-normallized-text'
 import { cn } from '@/lib/utils';
 import { PhlebotomyLocation } from '@/types/api';
 import { isIOS } from '@/utils/browser-detection';
-import { formatAddress } from '@/utils/format';
+import { formatAddress, toTitleCase } from '@/utils/format';
 
 import { openInMaps } from '../utils/open-in-maps';
 
@@ -94,6 +94,8 @@ const LocationListOption = ({
     .join(', ');
   const city = getNormalizedText(option.address.city);
   const distanceText = formatDistanceText(option.distance);
+
+  const locationName = `${toTitleCase(option.name)}, ${streetAddress}`;
   const locationDetails = `${city}, ${option.address.state}, ${option.address.postalCode} · ${distanceText}`;
 
   const handleOpenMaps = (e: React.MouseEvent) => {
@@ -116,7 +118,7 @@ const LocationListOption = ({
         id={`item-${index}`}
       />
       <div className="flex grow flex-col items-start gap-1">
-        <Body1 className="text-zinc-600">{streetAddress}</Body1>
+        <Body1 className="text-zinc-600">{locationName}</Body1>
         <Body3 className="text-zinc-400">{locationDetails}</Body3>
       </div>
       <Button
