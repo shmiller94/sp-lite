@@ -1,6 +1,7 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import moment from 'moment';
 import 'moment-timezone';
+import { useRef, useEffect } from 'react';
 
 import { Spinner } from '@/components/ui/spinner';
 import { TextShimmer } from '@/components/ui/text-shimmer';
@@ -21,7 +22,29 @@ export function SchedulerHeading(): JSX.Element {
     onSlotUpdate,
     showCreateBtn,
     loading,
+    slots,
   } = useScheduler((s) => s);
+
+  // Store the initial startRange when the component first loads as we do not want to show dates before this
+  const initialStartRangeRef = useRef<moment.Moment | null>(null);
+  useEffect(() => {
+    if (!initialStartRangeRef.current && slots && slots.length > 0) {
+      // Find the earliest slot date
+      const earliestSlot = slots.reduce(
+        (min, slot) =>
+          moment(slot.start).isBefore(min) ? moment(slot.start) : min,
+        moment(slots[0].start),
+      );
+      initialStartRangeRef.current = earliestSlot.clone();
+    }
+  }, [slots]);
+
+  // Calculate the previous range end if the user clicks the left chevron to know when to disable it
+  const prevRangeEnd = startRange
+    ? startRange.clone().subtract(1, 'days')
+    : null;
+
+  const initialStartRange = initialStartRangeRef.current;
 
   const handleClick = async (numDays: number) => {
     if (!startRange) return;
@@ -60,10 +83,13 @@ export function SchedulerHeading(): JSX.Element {
       <div className="flex items-center">
         <div className="flex flex-row items-center">
           {loading ? <Spinner variant="primary" size="xs" /> : null}
-
           <RangeSelectButton
             icon={<ChevronLeft className="size-4" />}
-            disabled={loading}
+            disabled={
+              loading ||
+              !prevRangeEnd ||
+              prevRangeEnd.isBefore(initialStartRange, 'day')
+            }
             onClick={() => {
               numDays && handleClick(-numDays);
             }}

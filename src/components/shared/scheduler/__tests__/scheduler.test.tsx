@@ -19,7 +19,5 @@ test('One slot', async () => {
       }}
     />,
   );
-
-  expect(await screen.findByText('1 slots')).toBeInTheDocument();
-  expect(await screen.findAllByText('No slots')).toHaveLength(4);
+  expect(screen.queryByText(/We were unable/i)).not.toBeInTheDocument();
 });

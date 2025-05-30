@@ -2,8 +2,10 @@ import { Moment } from 'moment';
 import { useEffect } from 'react';
 import 'moment-timezone';
 
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Body1 } from '@/components/ui/typography';
+import { useStepper } from '@/lib/stepper';
 
 import { useScheduler } from '../stores/scheduler';
 import { dayArray, isDisabledDaySlot } from '../utils';
@@ -29,13 +31,26 @@ export function SchedulerDays(): JSX.Element {
       }
     }
   }, [slots]);
+  const { prevStep } = useStepper((s) => s);
 
   const renderDays = numDays && startRange && slots.length > 0 && !loading;
 
   if (slots.length === 0 && !loading) {
     return (
-      <div className="mb-8 flex items-center justify-center sm:h-[200px]">
-        <Body1 className="text-center text-zinc-500">No slots found.</Body1>
+      <div className="mb-8 flex flex-col items-center justify-center sm:h-[200px]">
+        <Body1 className="text-center text-zinc-500">
+          We were unable to find available slots within the next months.
+          <br />
+          Please pick a different location.
+        </Body1>
+
+        <Button
+          variant="outline"
+          className="mt-4 w-full md:w-auto"
+          onClick={prevStep}
+        >
+          Pick new location
+        </Button>
       </div>
     );
   }
