@@ -25,7 +25,7 @@ export const ConciergeRoute = () => {
       content: '',
       createdAt: message.createdAt,
       experimental_attachments:
-        (message.attachments as Array<Attachment>) ?? [],
+        (message.experimental_attachments as Array<Attachment>) ?? [],
     }));
   }
 

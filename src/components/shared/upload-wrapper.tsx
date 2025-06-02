@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Upload } from 'lucide-react';
-import React, { ReactNode, useRef, useState } from 'react';
+import { ReactNode, useRef, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 
 import { Card } from '@/components/ui/card';
@@ -16,7 +16,7 @@ const MAX_FILE_SIZE = ONE_MB * MAX_MB; // 5000MB
 function nameLengthValidator(file: File) {
   const truncated = ~~(file.size / ONE_MB);
 
-  if (file.name.length > MAX_FILE_SIZE) {
+  if (file.name && file.name.length > MAX_FILE_SIZE) {
     return {
       code: 'name-too-large',
       message: `Please upload files less than 100mb. Found ${truncated} mb.`,
@@ -82,7 +82,36 @@ export const FileUpload = ({
 
   if (children) {
     return (
-      <div className="w-full" {...getRootProps()}>
+      <div className="relative w-full" {...getRootProps()}>
+        {isDragActive && (
+          <svg
+            className="absolute inset-0 size-full text-vermillion-900 animate-in fade-in"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeDasharray="6"
+            preserveAspectRatio="xMidYMid meet"
+          >
+            <rect
+              width="calc(100% - 2px)"
+              height="calc(100% - 2px)"
+              x="1"
+              y="1"
+              rx="20"
+              stroke="currentColor"
+              strokeWidth="2"
+              fill="none"
+              strokeLinecap="round"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                values="12;0"
+                dur="0.5s"
+                repeatCount="indefinite"
+              />
+            </rect>
+          </svg>
+        )}
         {/*needed in safari*/}
         <input {...getInputProps()} className="hidden" />
         {children}
@@ -132,7 +161,7 @@ export const FileUpload = ({
                   damping: 20,
                 }}
                 className={cn(
-                  'relative group-hover/file:shadow-2xl z-40 bg-white flex items-center justify-center h-32 mt-4 w-full max-w-[8rem] mx-auto rounded-md',
+                  'relative z-40 mx-auto mt-4 flex h-32 w-full max-w-[8rem] items-center justify-center rounded-md bg-white group-hover/file:shadow-2xl',
                   'shadow-[0px_10px_50px_rgba(0,0,0,0.1)]',
                 )}
               >

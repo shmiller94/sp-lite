@@ -1,6 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowUpIcon, Clock, XIcon } from 'lucide-react';
-import type React from 'react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -78,7 +77,7 @@ export const CreateMessageForm = (): JSX.Element => {
 
                       <div className="flex w-full flex-row justify-end pb-4">
                         <Button
-                          className="h-fit rounded-full border p-1.5 dark:border-zinc-600"
+                          className="h-fit rounded-full p-1.5"
                           type="submit"
                           disabled={form.watch('text').length === 0}
                         >
@@ -171,7 +170,7 @@ const SuccessDialog = ({
               navigate('/concierge?type=ai');
             }}
           >
-            Message AI Health Advocate
+            Message Superpower AI
           </Button>
           <Button
             variant="ghost"

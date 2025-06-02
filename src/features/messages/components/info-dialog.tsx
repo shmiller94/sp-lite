@@ -35,7 +35,7 @@ export const InfoDialog = () => {
 
   return (
     <Dialog open={_open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="max-w-[90%] sm:max-w-lg">
         <DialogClose asChild>
           <Button
             variant="ghost"
@@ -46,9 +46,7 @@ export const InfoDialog = () => {
         </DialogClose>
         <div className="flex flex-col gap-2 p-8">
           <AnimatedIcon state="idle" size={64} className="mx-auto mb-4" />
-          <H3 className="text-balance text-center">
-            Welcome to Superpower&apos;s AI Health Advocate
-          </H3>
+          <H3 className="text-balance text-center">Welcome to Superpower AI</H3>
           <Body1 className="mb-11 text-center text-secondary">
             This AI health advisor is newly experimental and you have early
             access, please give us feedback on any responses so that we can
@@ -59,7 +57,7 @@ export const InfoDialog = () => {
             className="w-full rounded-full"
             onClick={() => setOpen(false)}
           >
-            Message AI Health Advocate
+            Message Superpower AI
           </Button>
         </div>
       </DialogContent>

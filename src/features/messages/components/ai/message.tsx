@@ -3,6 +3,7 @@ import { UIMessage } from 'ai';
 import cx from 'classnames';
 import equal from 'fast-deep-equal';
 import { AnimatePresence, motion } from 'framer-motion';
+import { InfoIcon } from 'lucide-react';
 import { memo, useState } from 'react';
 
 import { AIIcon } from '@/components/icons/ai-icon';
@@ -29,26 +30,33 @@ const PurePreviewMessage = ({
     if (message.role !== 'assistant') return;
 
     return isLoading ? (
-      <AnimatedIcon state="thinking" />
+      <AnimatedIcon state="thinking" className="mt-1" />
     ) : (
-      <AIIcon fill="#A1A1AA" />
+      <AIIcon fill="#A1A1AA" className="mt-1" />
     );
   };
+
+  const isEmptyMessage =
+    !message.parts?.length ||
+    (message.parts.length === 1 && message.parts[0].type === 'step-start');
 
   return (
     <AnimatePresence>
       <motion.div
         className="group/message mx-auto w-full max-w-3xl px-4"
-        initial={{ y: 5, opacity: 0 }}
+        initial={{ y: 5, opacity: 1 }}
         animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.3, ease: 'easeOut' }}
+        layout="position"
+        layoutId={message.id}
         data-role={message.role}
       >
         <div
           className={cn(
-            'flex w-full gap-4 group-data-[role=user]/message:ml-auto group-data-[role=user]/message:max-w-2xl',
+            'flex w-full gap-4 transition-all duration-100 ease-in-out group-data-[role=user]/message:ml-auto group-data-[role=user]/message:max-w-2xl',
             {
               'w-full': mode === 'edit',
-              'group-data-[role=user]/message:w-fit': mode !== 'edit',
+              'group-data-[role=user]/message:w-full': mode !== 'edit',
             },
           )}
         >
@@ -57,7 +65,7 @@ const PurePreviewMessage = ({
           <div className="flex w-full flex-col gap-2">
             {message.experimental_attachments &&
               message.experimental_attachments?.length > 0 && (
-                <div className="flex flex-row justify-end gap-2">
+                <div className="flex shrink-0 flex-row items-center gap-2 overflow-x-scroll px-4 pt-2 duration-500 animate-in fade-in scrollbar scrollbar-track-transparent scrollbar-thumb-zinc-300 [mask-image:linear-gradient(to_right,transparent,black_2%,black_98%,transparent)] hover:scrollbar-thumb-zinc-400">
                   {message.experimental_attachments.map((attachment) => (
                     <PreviewAttachment
                       key={attachment.url}
@@ -74,7 +82,12 @@ const PurePreviewMessage = ({
               if (type === 'text') {
                 if (mode === 'view') {
                   return (
-                    <div key={key} className="flex flex-row items-center gap-2">
+                    <div
+                      key={key}
+                      className={cn('flex flex-row items-center gap-2', {
+                        'animate-ai-streaming': isLoading,
+                      })}
+                    >
                       <div
                         data-testid="message-content"
                         className={cn('flex flex-col gap-4', {
@@ -82,7 +95,19 @@ const PurePreviewMessage = ({
                             message.role === 'user',
                         })}
                       >
-                        <Markdown>{part.text}</Markdown>
+                        <div
+                          style={{
+                            animationDelay: isLoading
+                              ? `${index * 0.25}s`
+                              : '0s',
+                          }}
+                          className={cn(
+                            'flex flex-col gap-4 [&_*:nth-child(1)]:mt-0',
+                            isLoading && '[&>*]:animate-ai-streaming',
+                          )}
+                        >
+                          <Markdown>{part.text}</Markdown>
+                        </div>
                       </div>
                     </div>
                   );
@@ -90,12 +115,21 @@ const PurePreviewMessage = ({
               }
             })}
 
-            <MessageActions
-              key={`action-${message.id}`}
-              chatId={chatId}
-              message={message}
-              isLoading={isLoading}
-            />
+            {
+              // In some cases the API is overloaded and returns an empty message.
+              isEmptyMessage && !isLoading && message.role === 'assistant' && (
+                <OverloadedMessage />
+              )
+            }
+
+            {!isEmptyMessage && (
+              <MessageActions
+                key={`action-${message.id}`}
+                chatId={chatId}
+                message={message}
+                isLoading={isLoading}
+              />
+            )}
           </div>
         </div>
       </motion.div>
@@ -135,6 +169,23 @@ export const ThinkingMessage = () => {
         <div className="flex flex-col gap-4 text-muted-foreground">
           Thinking...
         </div>
+      </div>
+    </div>
+  );
+};
+
+const OverloadedMessage = () => {
+  return (
+    <div className="mt-1 flex flex-row items-center gap-2">
+      <div
+        data-testid="message-content"
+        className="flex items-center gap-4 rounded-xl border border-destructive/10 bg-destructive/10 p-4"
+      >
+        <InfoIcon className="size-5 text-destructive" />
+        <p className="text-balance text-destructive">
+          I am sorry, but I am currently overloaded. Please try again in a
+          moment.
+        </p>
       </div>
     </div>
   );

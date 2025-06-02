@@ -34,7 +34,7 @@ module.exports = {
         'female-hands': "url('/onboarding/bg-female-hands.webp')",
         'baseline-membership': "url('/settings/membership/baseline.webp')",
         'advanced-membership': "url('/settings/membership/advanced.webp')",
-        'home': "url('/home/default.webp')",
+        home: "url('/home/default.webp')",
       },
       colors: {
         border: 'hsl(var(--border))',
@@ -158,6 +158,10 @@ module.exports = {
           '0%, 100%': { transform: 'translateY(0px)' },
           '50%': { transform: 'translateY(-2px)' },
         },
+        'ai-streaming': {
+          '0%': { opacity: '0', color: '#FC5F2B', filter: 'blur(2px)' },
+          '100%': { opacity: '1', filter: 'blur(0px)' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -174,6 +178,7 @@ module.exports = {
         dot1: 'dot-wave 1.3s infinite',
         dot2: 'dot-wave 1.3s infinite 0.2s',
         dot3: 'dot-wave 1.3s infinite 0.4s',
+        'ai-streaming': 'ai-streaming 0.5s ease-out',
       },
       screens: {
         xs: '475px',

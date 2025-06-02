@@ -33,7 +33,7 @@ const AICard = () => {
         </div>
       </div>
       <div>
-        <Body1>Ask your AI Health Advocate</Body1>
+        <Body1>Ask your Superpower AI</Body1>
         <Body2 className="text-zinc-400">
           Simple questions, advice and analysis
         </Body2>

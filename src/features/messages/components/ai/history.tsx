@@ -6,8 +6,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
-  DropdownMenuItem,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown';
 import { Input } from '@/components/ui/input';
@@ -60,8 +60,8 @@ const ChatItem = ({ chat, isActive }: { chat: Chat; isActive: boolean }) => {
     >
       <span
         className={cn(
-          'line-clamp-1 text-sm',
-          isActive ? 'text-black' : 'text-zinc-400 hover:text-zinc-900',
+          'line-clamp-1 text-sm transition-all duration-150 ease-in-out',
+          isActive ? 'text-black' : 'text-zinc-400 group-hover:text-zinc-900',
         )}
       >
         {chat.title}
@@ -180,13 +180,13 @@ export function ChatHistoryContainer({ className }: { className?: string }) {
           <div
             className={cn(
               'relative transition-all duration-500 ease-in-out',
-              isSidebarOpen ? 'w-full md:max-w-[259px]' : 'max-w-0',
+              isSidebarOpen ? 'w-full lg:max-w-[259px]' : 'max-w-0',
             )}
           >
             {type !== 'concierge' && (
               <div
                 className={cn(
-                  'absolute transition-all duration-500 top-1 hidden items-center gap-2 lg:flex',
+                  'absolute top-1 hidden items-center gap-2 transition-all duration-500 lg:flex',
                   isSidebarOpen ? 'right-0' : '-right-14',
                 )}
               >
@@ -232,8 +232,8 @@ export function ChatHistoryContainer({ className }: { className?: string }) {
                 'flex w-full flex-col overflow-hidden transition-all duration-500 ease-in-out',
                 className,
                 !isSidebarOpen
-                  ? 'md:max-w-0 opacity-0'
-                  : 'opacity-100 md:max-w-[259px]',
+                  ? 'opacity-0 md:max-w-0'
+                  : 'opacity-100 lg:max-w-[259px]',
               )}
             >
               <div className="mb-4 flex items-center gap-2">
@@ -273,7 +273,7 @@ export function ChatHistoryContainer({ className }: { className?: string }) {
               <div className="relative">
                 <div className="pointer-events-none absolute top-0 z-10 h-6 w-full bg-gradient-to-t from-transparent to-zinc-50" />
                 <div className="pointer-events-none absolute bottom-0 z-10 h-6 w-full bg-gradient-to-b from-transparent to-zinc-50" />
-                <div className="flex max-h-[calc(100vh-16rem)] flex-col gap-4 overflow-y-scroll px-px py-6">
+                <div className="scrollbar-w-1.5 flex max-h-[calc(100vh-16rem)] flex-col gap-4 overflow-y-scroll px-px py-6 scrollbar scrollbar-track-transparent scrollbar-thumb-zinc-300 hover:scrollbar-thumb-zinc-400">
                   {groupedChats.today.length > 0 && (
                     <div>
                       <Body3 className="px-3 pb-1 text-zinc-700">Today</Body3>

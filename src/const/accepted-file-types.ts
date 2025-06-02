@@ -1,9 +1,7 @@
-import { FileContentType } from '@/types/api';
-
-export const acceptedFileTypes: { [key in FileContentType]: string[] } = {
-  'application/pdf': [],
-  'text/csv': [],
-  'image/jpeg': [],
-  'image/png': [],
-  'video/mp4': [],
+export const acceptedFileTypes: { [key in 'application/pdf']: string[] } = {
+  'application/pdf': ['.pdf'],
+  // 'text/csv': [],
+  // 'image/jpeg': [],
+  // 'image/png': [],
+  // 'video/mp4': [],
 };

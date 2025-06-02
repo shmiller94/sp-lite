@@ -1,6 +1,6 @@
 import { useChat } from '@ai-sdk/react';
 import type { Attachment, Message } from 'ai';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { toast } from '@/components/ui/sonner';
 import { env } from '@/config/env';
@@ -112,10 +112,10 @@ export function Chat({
         </form>
 
         <p className="max-w-[560px] pb-2 text-[10px] text-zinc-400">
-          Your Superpower AI Health Advocate is not intended to replace medical
-          advice, and solely provided solely to offer suggestions and education.
-          Always seek the advice of a licensed human healthcare provider for any
-          medical questions and call 911 or go to the emergency room if you are
+          Your Superpower AI is not intended to replace medical advice, and
+          solely provided solely to offer suggestions and education. Always seek
+          the advice of a licensed human healthcare provider for any medical
+          questions and call 911 or go to the emergency room if you are
           experiencing an emergent medical issue.
         </p>
       </div>

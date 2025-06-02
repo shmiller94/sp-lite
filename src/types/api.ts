@@ -656,11 +656,23 @@ export interface Chat {
   visibility: Visibility;
 }
 
+export interface ChatMessagePart {
+  text: string;
+  type: 'text';
+}
+
+export interface ChatMessageAttachment {
+  url: string;
+  name: string;
+  contentType: string;
+}
+
 export interface ChatMessage {
-  id: string; // UniqueEntityId
-  chatId: string; // UniqueEntityId
-  role: string;
-  parts: unknown; // JSON
-  attachments: unknown; // JSON
+  id: string;
+  role: 'user' | 'data' | 'system' | 'assistant';
+  parts: ChatMessagePart[]; // JSON
+  experimental_attachments: ChatMessageAttachment[]; // JSON
+  // Note: content will soon be deprecated in @ai-sdk/react
+  content: string;
   createdAt: Date;
 }
