@@ -48,9 +48,15 @@ help:
 
 .PHONY: run
 run: description = Run the app locally
-run: prereq
+run: prereq util/k8s/context/dev
 	@bash $(SHARED_SCRIPT) info "Running $@ ..."
 	doppler run --project=superpower-app --config=dev -- yarn run dev
+
+.PHONY: run/skaffold 
+run/skaffold: description = Run the app with all dependencies via skaffold
+run/skaffold: prereq build/env/dev util/k8s/context/dev
+	@bash $(SHARED_SCRIPT) info "Running $@ ..."
+	cd deployment/dev && /bin/bash -c "skaffold dev -f skaffold.yaml"
 
 ### Build
 

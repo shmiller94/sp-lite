@@ -7,7 +7,7 @@ metadata:
     doppler.com/project: 'superpower-app'
     doppler.com/config: 'dev_minikube'
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: react-app

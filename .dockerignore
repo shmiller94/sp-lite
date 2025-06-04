@@ -1,0 +1,13 @@
+.git
+.gitattributes
+.github
+.gitignore
+.dockerignore
+*.js.map
+*.cjs.map
+*.mjs.map
+*.tsbuildinfo
+Dockerfile
+docker-compose.yml
+node_modules
+assets/

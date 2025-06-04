@@ -3,7 +3,6 @@ FROM node:20-alpine
 WORKDIR /app
 
 # Copy package.json, yarn.lock, and .env
-# COPY package.json yarn.lock .env ./
 COPY package.json yarn.lock ./
 
 # Use env variables from .env during yarn install
