@@ -6,6 +6,7 @@ import PhoneInput from 'react-phone-number-input/input';
 
 import { AtHomeNoticeSection } from '@/components/shared/at-home-notice-section';
 import { Button } from '@/components/ui/button';
+import { AnimatedCheckbox } from '@/components/ui/checkbox';
 import {
   Form,
   FormControl,
@@ -30,6 +31,7 @@ import { PrimaryAddressForm } from '@/features/auth/components/primary-address-f
 import { useGetServiceability } from '@/features/orders/api';
 import { useAddToWaitlist } from '@/features/users/api/add-to-waitlist';
 import { useGeocode } from '@/features/users/api/geocode';
+import { useUpdateContact } from '@/features/users/api/update-contact';
 import { NotServiceableDialog } from '@/features/users/components/dialogs/not-serviceable-dialog';
 import { SuggestedAddressDialog } from '@/features/users/components/dialogs/suggested-address-dialog';
 import { RegisterInput, registerInputSchema, useRegister } from '@/lib/auth';
@@ -62,6 +64,7 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
     },
   });
   const waitlistMutation = useAddToWaitlist();
+  const updateContactMutation = useUpdateContact();
 
   const form = useForm<RegisterInput>({
     resolver: zodResolver(
@@ -70,6 +73,7 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
             email: true,
             phone: true,
             password: true,
+            textMessageConsent: true,
           })
         : registerInputSchema,
     ),
@@ -117,7 +121,27 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
       return;
     }
 
-    await registerMutation.mutateAsync(data);
+    const user = await registerMutation.mutateAsync(data);
+
+    if (user && data.textMessageConsent) {
+      try {
+        await updateContactMutation.mutateAsync({
+          data: {
+            notificationConsent: {
+              promotional: {
+                sms: true,
+              },
+            },
+          },
+        });
+      } catch (error) {
+        // Contact update is not critical, so we don't block registration
+        console.error(
+          'Contact update failed -- User will not be subscribed to SMS:',
+          error,
+        );
+      }
+    }
   };
 
   // we want enter to handle the next step or submit the form if typing in an input
@@ -272,6 +296,40 @@ const Step1 = ({
                   {...field}
                 />
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="textMessageConsent"
+          render={({ field }) => (
+            <FormItem>
+              <div className="group flex items-start space-x-2 py-2">
+                <div
+                  className={cn(
+                    'flex aspect-square size-5 items-center justify-center rounded-md border transition-all duration-150',
+                    field.value
+                      ? 'border-zinc-900 bg-black'
+                      : 'border-zinc-200 group-hover:border-zinc-300 group-hover:bg-zinc-100',
+                  )}
+                >
+                  <AnimatedCheckbox
+                    id="textMessageConsent"
+                    className="data-[state=checked]:text-white"
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </div>
+                <FormLabel
+                  htmlFor="textMessageConsent"
+                  className="cursor-pointer text-sm leading-5 text-zinc-500"
+                >
+                  I agree to receive text messages from Superpower for updates,
+                  reminders, and health insights. Message and data rates may
+                  apply. Message frequency varies.
+                </FormLabel>
+              </div>
               <FormMessage />
             </FormItem>
           )}

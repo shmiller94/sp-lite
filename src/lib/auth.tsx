@@ -97,6 +97,7 @@ export const registerInputSchema = z.object({
   password: z
     .string()
     .min(8, 'Please enter a password with at least 8 characters.'),
+  textMessageConsent: z.boolean().optional(),
   address: formAddressInputSchema,
 });
 

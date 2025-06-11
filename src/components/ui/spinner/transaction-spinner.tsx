@@ -12,7 +12,7 @@ export const TransactionSpinner = ({
   return (
     <div className={`flex items-center gap-2 ${className}`}>
       <Spinner size={size} variant={variant} />
-      <div className="text-sm flex items-center">
+      <div className="flex items-center text-sm">
         <span>Just a moment</span>
         <span className="inline-flex w-5 justify-center">
           <span className="animate-dot1">.</span>

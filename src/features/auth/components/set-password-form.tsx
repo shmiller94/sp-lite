@@ -43,7 +43,7 @@ export const SetPasswordForm = ({
 
   if (setPasswordMutation.isSuccess) {
     return (
-      <div className="flex size-full max-w-3xl flex-1 flex-col justify-between gap-6 md:gap-16 rounded-t-3xl bg-white p-8 md:rounded-3xl md:p-16">
+      <div className="flex size-full max-w-3xl flex-1 flex-col justify-between gap-6 rounded-t-3xl bg-white p-8 md:gap-16 md:rounded-3xl md:p-16">
         <SuperpowerLogo />
         <div data-testid="success" className="text-center">
           Password set. You can now&nbsp;
