@@ -1,6 +1,8 @@
 import type { Message } from 'ai';
+import equal from 'fast-deep-equal';
 import { CopyIcon } from 'lucide-react';
 import { memo } from 'react';
+import removeMarkdown from 'remove-markdown';
 
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/sonner';
@@ -24,6 +26,27 @@ export function PureMessageActions({
   if (message.toolInvocations && message.toolInvocations.length > 0)
     return null;
 
+  const handleCopy = async () => {
+    const textParts =
+      message.parts
+        ?.filter(
+          (part): part is { type: 'text'; text: string } =>
+            part.type === 'text' && 'text' in part,
+        )
+        .map((part) => part.text.trim()) || [];
+
+    const rawContent = textParts.join(' ');
+
+    const plainTextContent = removeMarkdown(rawContent);
+
+    if (plainTextContent) {
+      await navigator.clipboard.writeText(plainTextContent);
+      toast.success('Copied to clipboard!');
+    } else {
+      toast.error('No content to copy.');
+    }
+  };
+
   return (
     <TooltipProvider delayDuration={0}>
       <div className="mt-2 flex flex-row gap-2">
@@ -32,10 +55,8 @@ export function PureMessageActions({
             <Button
               className="h-fit p-0 text-muted-foreground"
               variant="ghost"
-              onClick={async () => {
-                await navigator.clipboard.writeText(message.content);
-                toast.success('Copied to clipboard!');
-              }}
+              onClick={handleCopy}
+              disabled={isLoading}
             >
               <CopyIcon size={16} />
             </Button>
@@ -50,8 +71,10 @@ export function PureMessageActions({
 export const MessageActions = memo(
   PureMessageActions,
   (prevProps, nextProps) => {
-    if (prevProps.isLoading !== nextProps.isLoading) return false;
-
-    return true;
+    // Re-render if isLoading changes OR if the message content changes.
+    return (
+      prevProps.isLoading === nextProps.isLoading &&
+      equal(prevProps.message, nextProps.message)
+    );
   },
 );
