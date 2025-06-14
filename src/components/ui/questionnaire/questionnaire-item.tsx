@@ -62,6 +62,24 @@ export const QuestionnaireFormItem = ({
       updatedAnswers = newAnswers ?? [];
     }
 
+    // Note: Medplum does not accept empty strings or NaN values, so we remove them
+    updatedAnswers = updatedAnswers.map((answer) => {
+      const cleanedAnswer = { ...answer };
+      if (
+        cleanedAnswer.valueString === '' ||
+        cleanedAnswer.valueString === undefined
+      ) {
+        delete cleanedAnswer.valueString;
+      }
+      if (Number.isNaN(cleanedAnswer.valueInteger)) {
+        delete cleanedAnswer.valueInteger;
+      }
+      if (Number.isNaN(cleanedAnswer.valueDecimal)) {
+        delete cleanedAnswer.valueDecimal;
+      }
+      return cleanedAnswer;
+    });
+
     const updatedResponse = {
       id: response?.id,
       linkId: response?.linkId,
@@ -158,10 +176,6 @@ export const QuestionnaireFormItem = ({
             required={item.required}
             defaultValue={defaultValue?.value}
             onChange={(e) => {
-              // NOTE: we do that because if you remove text it becomes NaN
-              if (isNaN(e.currentTarget.valueAsNumber)) {
-                return;
-              }
               onChangeAnswer({
                 valueDecimal: e.currentTarget.valueAsNumber,
               });
@@ -187,10 +201,6 @@ export const QuestionnaireFormItem = ({
             required={item.required}
             defaultValue={defaultValue?.value}
             onChange={(e) => {
-              // NOTE: we do that because if you remove text it becomes NaN
-              if (isNaN(e.currentTarget.valueAsNumber)) {
-                return;
-              }
               onChangeAnswer({
                 valueInteger: e.currentTarget.valueAsNumber,
               });
@@ -260,12 +270,7 @@ export const QuestionnaireFormItem = ({
             required={item.required}
             defaultValue={defaultValue?.value}
             onChange={(e) => {
-              // NOTE: we do that because medplum doesnt accept empty strings on backend
               const newValue = e.currentTarget.value;
-              if (newValue.trim() === '') {
-                return;
-              }
-
               onChangeAnswer({ valueString: newValue });
             }}
             onKeyDown={onKeyDown}
@@ -281,9 +286,10 @@ export const QuestionnaireFormItem = ({
             name={name}
             required={item.required}
             defaultValue={defaultValue?.value}
-            onChange={(e) =>
-              onChangeAnswer({ valueString: e.currentTarget.value })
-            }
+            onChange={(e) => {
+              const newValue = e.currentTarget.value;
+              onChangeAnswer({ valueString: newValue });
+            }}
           />
         </QuestionnaireErrorWrapper>
       );
