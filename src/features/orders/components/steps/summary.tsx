@@ -162,12 +162,14 @@ export function OrderSummary(): ReactNode {
             {price !== undefined ? (
               <CreateOrderSummaryItem basePrice={price} />
             ) : null}
-            <OrderAppointmentDetails
-              collectionMethod={collectionMethod ?? undefined}
-              slot={slot ?? undefined}
-              timezone={tz ?? moment.tz.guess()}
-              location={location ?? undefined}
-            />
+            {service.phlebotomy ? (
+              <OrderAppointmentDetails
+                collectionMethod={collectionMethod ?? undefined}
+                slot={slot ?? undefined}
+                timezone={tz ?? moment.tz.guess()}
+                location={location ?? undefined}
+              />
+            ) : null}
             {price && price > 0 ? <CurrentPaymentMethodCard /> : null}
           </>
         ) : null}
