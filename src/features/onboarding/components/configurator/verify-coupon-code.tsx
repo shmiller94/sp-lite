@@ -8,7 +8,11 @@ import { useValidateCode } from '@/features/auth/api';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import { useAvailableSubscriptions } from '@/features/settings/api';
 import { useDebounce } from '@/hooks/use-debounce';
-import { getAccessCode, updateAccessCode } from '@/utils/access-code';
+import {
+  getAccessCode,
+  setManualCouponOverride,
+  clearManualCouponOverride,
+} from '@/utils/access-code';
 
 /*
  * TIER 1 - Manual Override (SessionStorage - highest priority):
@@ -19,7 +23,7 @@ import { getAccessCode, updateAccessCode } from '@/utils/access-code';
  *
  * TIER 2 - Active Rewardful (Window Object - medium priority):
  * This is the live Rewardful coupon from their JavaScript that tracks active referral relationships.
- * If there’s no manual override, this takes precedence.
+ * If there's no manual override, this takes precedence.
  * This preserves our affiliate program functionality.
  *
  * TIER 3 - Persistent Backup (LocalStorage - lowest priority):
@@ -58,7 +62,8 @@ const AccessCodeInputSection = () => {
     }
 
     if (validateCodeQuery.data.coupon) {
-      updateAccessCode(debouncedCode);
+      // Use setManualCouponOverride to mark this as a manual entry
+      setManualCouponOverride(debouncedCode);
       setCode(debouncedCode);
 
       availableSubscriptionsQuery.refetch();
@@ -71,6 +76,14 @@ const AccessCodeInputSection = () => {
 
     isInitialMount.current = false;
   }, [validateCodeQuery.data]);
+
+  // Handle clearing the input to remove manual override
+  useEffect(() => {
+    if (!code.trim() && !isInitialMount.current) {
+      clearManualCouponOverride();
+      availableSubscriptionsQuery.refetch();
+    }
+  }, [code, availableSubscriptionsQuery]);
 
   // Always show the coupon field, allowing users to override Rewardful coupon
   return (
