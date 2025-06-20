@@ -28,6 +28,7 @@ import { TransactionSpinner } from '@/components/ui/spinner/transaction-spinner'
 import { Body1, Body2, H3 } from '@/components/ui/typography';
 import { AuthInput } from '@/features/auth/components/auth-input';
 import { PrimaryAddressForm } from '@/features/auth/components/primary-address-form';
+import { trackUserCreated } from '@/features/auth/utils/registration-analytics';
 import { useGetServiceability } from '@/features/orders/api';
 import { useAddToWaitlist } from '@/features/users/api/add-to-waitlist';
 import { useGeocode } from '@/features/users/api/geocode';
@@ -122,6 +123,15 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
     }
 
     const user = await registerMutation.mutateAsync(data);
+
+    // Track user creation in GTM
+    if (user) {
+      trackUserCreated({
+        email: data.email,
+        firstName: data.firstName,
+        lastName: data.lastName,
+      });
+    }
 
     if (user && data.textMessageConsent) {
       try {
