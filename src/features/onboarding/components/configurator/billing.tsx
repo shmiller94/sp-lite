@@ -60,9 +60,44 @@ export const SectionBilling = () => {
     setConsentGiven,
     showAccessCode,
     setShowAccessCode,
+    updateMembershipType: setMembershipType,
   } = useOnboarding();
 
   const availableSubscriptionsQuery = useAvailableSubscriptions();
+
+  // console.info('Available subscriptions:', availableSubscriptionsQuery.data);
+  // console.info('Current membershipType in context:', membershipType);
+
+  // When available subscriptions changes, update membershipType
+  //
+  // NOTE: If we decide to begin offering multiple different membership types
+  // during onboarding, this block/useEffect() will have to be removed! ~DS
+  React.useEffect(() => {
+    if (
+      availableSubscriptionsQuery.data &&
+      availableSubscriptionsQuery.data.length > 0
+    ) {
+      // If there is only one available subscription, or there are no radio or
+      // selectable items, set membershipType to the first available subscription.
+      if (
+        typeof setMembershipType === 'function' &&
+        availableSubscriptionsQuery.data.length === 1
+      ) {
+        setMembershipType(availableSubscriptionsQuery.data[0].type);
+        return;
+      }
+
+      // If current membershipType is not in the available list or selectedSubscription
+      // is undefined, update it.
+      const found = availableSubscriptionsQuery.data.find(
+        (as) => as.type === membershipType,
+      );
+      if (!found && typeof setMembershipType === 'function') {
+        // Default to the first available subscription type
+        setMembershipType(availableSubscriptionsQuery.data[0].type);
+      }
+    }
+  }, [availableSubscriptionsQuery.data, membershipType, setMembershipType]);
 
   const selectedSubscription = availableSubscriptionsQuery.data?.find(
     (as) => as.type === membershipType,

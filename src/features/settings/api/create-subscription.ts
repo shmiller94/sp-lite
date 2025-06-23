@@ -10,7 +10,7 @@ import { getUtmData } from '@/utils/utm-middleware';
 export const createSubscriptionInputSchema = z.object({
   code: z.string().optional(),
   referralId: z.string().optional(),
-  membershipType: z.enum(['advanced', 'baseline']),
+  membershipType: z.enum(['advanced', 'baseline', 'essential']),
   campaignData: z.record(z.string(), z.any()).optional(),
 });
 

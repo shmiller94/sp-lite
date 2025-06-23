@@ -2,7 +2,11 @@ import { Subscription } from '@/types/api';
 
 export const getMembershipType = (
   subscription?: Subscription,
-): 'Baseline Membership' | 'Advanced Membership' | undefined => {
+):
+  | 'Baseline Membership'
+  | 'Advanced Membership'
+  | 'Essential Membership'
+  | undefined => {
   if (!subscription) {
     return undefined;
   }
@@ -16,5 +20,7 @@ export const getMembershipType = (
       return 'Baseline Membership';
     case 'advanced':
       return 'Advanced Membership';
+    case 'essential':
+      return 'Essential Membership';
   }
 };

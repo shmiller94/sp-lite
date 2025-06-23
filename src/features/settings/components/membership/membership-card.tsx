@@ -35,7 +35,10 @@ export const MembershipCard = (): JSX.Element => {
 
   // Determine background class based on membership type
   let backgroundClass = '';
-  if (membershipType === 'Baseline Membership') {
+  if (
+    membershipType === 'Baseline Membership' ||
+    membershipType === 'Essential Membership'
+  ) {
     backgroundClass = 'bg-baseline-membership';
   } else if (membershipType === 'Advanced Membership') {
     backgroundClass = 'bg-advanced-membership';

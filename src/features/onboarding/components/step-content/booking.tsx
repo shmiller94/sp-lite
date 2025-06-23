@@ -94,7 +94,8 @@ export const BookingStep = () => {
   const services = servicesQuery.data?.services;
 
   const bloodPanel = services?.find((s) =>
-    superpowerMembership?.type === 'baseline'
+    superpowerMembership?.type === 'baseline' ||
+    superpowerMembership?.type === 'essential'
       ? s.name === SUPERPOWER_BLOOD_PANEL
       : s.name === ADVANCED_BLOOD_PANEL,
   );

@@ -290,7 +290,7 @@ export type Subscription = {
   payment_intent?: string | null;
 };
 
-export type SubscriptionType = 'baseline' | 'advanced';
+export type SubscriptionType = 'baseline' | 'advanced' | 'essential';
 
 export type AvailableSubscription = {
   coupon?: Coupon;
