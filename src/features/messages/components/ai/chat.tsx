@@ -15,6 +15,10 @@ import { generateUUID } from '@/utils/generate-uiud';
 import { Messages } from './messages';
 import { MultimodalInput } from './multimodal-input';
 
+const publicErrors = [
+  'Too many requests, please try again later.',
+  'This chat has ended. Please start a new chat.',
+];
 export function Chat({
   id,
   initialMessages,
@@ -47,7 +51,7 @@ export function Chat({
       refetch();
     },
     onError: (error) => {
-      if (error.message === 'Too many requests, please try again later.') {
+      if (publicErrors.some((publicError) => publicError === error.message)) {
         toast(error.message);
       } else {
         // refetch to trigger api client if its non requests issue
