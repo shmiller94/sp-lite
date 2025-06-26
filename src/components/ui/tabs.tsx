@@ -131,7 +131,7 @@ const TabsList = React.forwardRef<
 
       <div
         className={cn(
-          'absolute h-0.5 bg-black transition-all duration-150 ease-in-out',
+          'absolute h-0.5 bg-vermillion-900 transition-all duration-150 ease-in-out',
           isInitialLoad ? 'opacity-0' : 'opacity-100',
         )}
         style={{
@@ -142,7 +142,6 @@ const TabsList = React.forwardRef<
           transitionProperty: 'opacity, width, left, top',
         }}
       />
-      <div className="absolute bottom-[-5px] left-1/2 h-px w-screen -translate-x-1/2 bg-zinc-200" />
     </div>
   );
 });
@@ -181,4 +180,4 @@ const TabsContent = React.forwardRef<
 ));
 TabsContent.displayName = TabsPrimitive.Content.displayName;
 
-export { Tabs, TabsContent, TabsList, TabsTrigger, URLTabs };
+export { Tabs, URLTabs, TabsList, TabsTrigger, TabsContent };

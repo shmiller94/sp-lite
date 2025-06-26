@@ -5,7 +5,7 @@ import NumberFlow from '@/components/shared/number-flow';
 import { Body1, Body2, H4 } from '@/components/ui/typography';
 import { useTimeline } from '@/features/home/api/get-timeline';
 
-export const CompleteOnboardingModal = () => {
+export const CompleteOnboardingCard = () => {
   const timelineQuery = useTimeline();
 
   const timeline = timelineQuery.data;

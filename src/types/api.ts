@@ -23,7 +23,6 @@ export type UserRole = 'MEMBER' | 'SUPER_ADMIN';
 
 interface BaseUser {
   id: string;
-  username: string;
   firstName: string;
   lastName: string;
   createdAt: string;
