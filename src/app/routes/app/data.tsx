@@ -1,10 +1,10 @@
 import { Database } from 'lucide-react';
-import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ContentLayout } from '@/components/layouts';
+import { Header } from '@/components/shared/header';
 import { Button } from '@/components/ui/button';
-import { Body1, H1 } from '@/components/ui/typography';
+import { Body1 } from '@/components/ui/typography';
 import { BiomarkersDataTable } from '@/features/biomarkers/components/biomarkers-data-table/biomarker-data-table';
 import { DataCards } from '@/features/biomarkers/components/data-cards';
 
@@ -13,17 +13,20 @@ export const DataRoute = () => {
 
   return (
     <ContentLayout title="Data">
-      <div className="flex items-center justify-between">
-        <H1>Data</H1>
-        <Button
-          variant="outline"
-          className="gap-2.5 bg-white px-4 py-[18px]"
-          onClick={() => navigate('/vault')}
-        >
-          <Database className="size-[14px] text-zinc-400" />
-          <Body1 className="text-zinc-500">Health Records</Body1>
-        </Button>
-      </div>
+      <Header
+        title="Data"
+        className="-mt-1.5" // update title pushed a bit down due to centered flexbox, push up 1.5rem to align with other pages heights
+        callToAction={
+          <Button
+            variant="outline"
+            className="gap-2.5 bg-white"
+            onClick={() => navigate('/vault')}
+          >
+            <Database className="size-[14px] text-zinc-400" />
+            <Body1 className="text-zinc-500">Health Records</Body1>
+          </Button>
+        }
+      />
       <DataCards />
       <section id="data">
         <BiomarkersDataTable />

@@ -2,7 +2,8 @@ import { ChevronLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import { ContentLayout } from '@/components/layouts';
-import { Body1, H1 } from '@/components/ui/typography';
+import { Header } from '@/components/shared/header';
+import { Body1 } from '@/components/ui/typography';
 import { FilesHub } from '@/features/files/components/files-hub';
 
 export const FilesRoute = () => {
@@ -27,13 +28,10 @@ export const FilesRoute = () => {
         <ChevronLeft width={16} height={16} color="black" />
       </div>
 
-      <div className="space-y-2">
-        <H1>Health Records</H1>
-        <Body1 className="text-zinc-500">
-          Manage and import previous healthcare records into your Superpower
-          dashboard
-        </Body1>
-      </div>
+      <Header
+        title="Health Records"
+        description="Manage and import previous healthcare records into your Superpower dashboard"
+      />
       <FilesHub />
     </ContentLayout>
   );

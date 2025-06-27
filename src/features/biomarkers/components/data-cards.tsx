@@ -37,7 +37,7 @@ export const DataCards = () => {
     return (
       <section
         id="summary"
-        className="flex flex-col gap-5 pt-6 xl:flex-row xl:pb-16"
+        className="flex flex-col gap-5 pt-3 xl:flex-row xl:pb-16"
       >
         {Array(3)
           .fill(0)
@@ -68,7 +68,7 @@ export const DataCards = () => {
   return (
     <section
       id="summary"
-      className="flex flex-col gap-5 pt-6 xl:flex-row xl:pb-16"
+      className="flex flex-col gap-5 pt-3 xl:flex-row xl:pb-16"
     >
       {DATA_CARDS.map((card, index) => (
         <Fragment key={index}>{card.content}</Fragment>

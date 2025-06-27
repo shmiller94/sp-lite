@@ -1,11 +1,11 @@
 import { ContentLayout } from '@/components/layouts';
+import { Header } from '@/components/shared/header';
 import {
   TabsContent,
   TabsList,
   TabsTrigger,
   URLTabs,
 } from '@/components/ui/tabs';
-import { H2 } from '@/components/ui/typography';
 import { FinishScheduleList } from '@/features/services/components/finish-schedule-list';
 import { OrdersList } from '@/features/services/components/orders-list';
 import { ServicesList } from '@/features/services/components/services-list';
@@ -13,7 +13,7 @@ import { ServicesList } from '@/features/services/components/services-list';
 export const ServicesRoute = () => {
   return (
     <ContentLayout title="Services">
-      <H2>Services</H2>
+      <Header title="Services" />
       <section id="orders" className="space-y-6">
         <URLTabs>
           <TabsList className="flex w-fit items-center justify-start overflow-x-auto">

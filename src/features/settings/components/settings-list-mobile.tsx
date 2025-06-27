@@ -1,6 +1,7 @@
 import { ChevronLeft } from 'lucide-react';
 import { Fragment, useState } from 'react';
 
+import { Header } from '@/components/shared/header';
 import { Billing } from '@/features/settings/components/billing/billing';
 import { Membership } from '@/features/settings/components/membership/membership';
 import { Profile } from '@/features/settings/components/profile/profile';
@@ -22,7 +23,7 @@ export const SettingsListMobile = () => {
     <div className="flex-1 bg-zinc-50 md:hidden">
       <div className="p-6">
         {!current ? (
-          <h1 className="pb-8 pt-16 text-[32px]">Settings</h1>
+          <Header title="Settings" className="pb-8 pt-16" />
         ) : (
           <div className="space-y-6 py-6">
             <div
@@ -33,14 +34,10 @@ export const SettingsListMobile = () => {
               <ChevronLeft width={16} height={16} color="black" />
             </div>
 
-            <div className="space-y-3">
-              <h1 className="text-[32px] leading-none md:text-[64px]">
-                {capitalize(menuItem?.value as string)}
-              </h1>
-              <p className="text-sm text-zinc-400 md:text-xl">
-                {menuItem?.description}
-              </p>
-            </div>
+            <Header
+              title={capitalize(menuItem?.value as string)}
+              description={menuItem?.description}
+            />
           </div>
         )}
         {current === 'profile' && <Profile />}
