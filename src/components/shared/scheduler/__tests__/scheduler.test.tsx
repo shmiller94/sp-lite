@@ -7,7 +7,18 @@ import { Scheduler } from '../scheduler';
 test('One slot', async () => {
   await renderApp(
     <Scheduler
-      serviceId="1"
+      service={{
+        id: 'custom-blood-panel-labcorp',
+        name: 'Custom Blood Panel',
+        description:
+          'Build your own blood panel and choose from dozens of laboratory tests covering hundreds of biomarkers.',
+        price: 0,
+        method: 'at_home_phlebotomy',
+        active: false,
+        image: '/services/custom_blood_panel.png',
+        phlebotomy: true,
+        items: [],
+      }}
       collectionMethod="AT_HOME"
       address={{
         id: '1',

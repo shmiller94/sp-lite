@@ -2,14 +2,19 @@ import moment, { Moment } from 'moment';
 import { createStore } from 'zustand';
 
 import { api } from '@/lib/api-client';
-import { Address, CollectionMethodType, Slot } from '@/types/api';
+import {
+  Address,
+  CollectionMethodType,
+  HealthcareService,
+  Slot,
+} from '@/types/api';
 
 const URL = '/phlebotomy/availability';
 
 export interface SchedulerProps {
   collectionMethod: CollectionMethodType;
   address: Address;
-  serviceId: string;
+  service: HealthcareService;
   onSlotUpdate?: (slot: Slot | null, tz: string) => void;
   numDays?: number;
   showCreateBtn?: boolean;
@@ -37,7 +42,7 @@ export const schedulerStoreCreator = (initProps: SchedulerProps) => {
     showCreateBtn: initProps.showCreateBtn,
     collectionMethod: initProps.collectionMethod,
     address: initProps.address,
-    serviceId: initProps.serviceId,
+    service: initProps.service,
   };
 
   return createStore<SchedulerStore>()((set, get) => ({
@@ -49,14 +54,14 @@ export const schedulerStoreCreator = (initProps: SchedulerProps) => {
       const state = get();
       const collectionMethod = state.collectionMethod;
       const address = state.address;
-      const serviceId = state.serviceId;
+      const service = state.service;
       const startRange = state.startRange;
       set({ loading: true });
       const response: { slots: Slot[]; timezone: string | undefined } =
         await api.post(URL, {
           collectionMethod,
           address,
-          serviceId,
+          serviceId: service.id,
           start: startRange ? startRange.toDate() : new Date(),
         });
 

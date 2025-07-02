@@ -70,7 +70,7 @@ export const PhlebotomyScheduler = () => {
           <Scheduler
             collectionMethod={collectionMethod}
             address={addressToUse as Address}
-            serviceId={service.id}
+            service={service}
             onSlotUpdate={onSlotUpdate}
             displayCancellationNote={
               isAdvisoryCall ? false : collectionMethod !== 'IN_LAB'

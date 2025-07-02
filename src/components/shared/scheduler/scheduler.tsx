@@ -3,7 +3,12 @@ import React, { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Body1 } from '@/components/ui/typography';
 import { cn } from '@/lib/utils';
-import { Address, CollectionMethodType, Slot } from '@/types/api';
+import {
+  Address,
+  CollectionMethodType,
+  HealthcareService,
+  Slot,
+} from '@/types/api';
 
 import { SchedulerDays, SchedulerHeading, SchedulerTimes } from './components';
 import { SchedulerStoreProvider, useScheduler } from './stores/scheduler';
@@ -11,7 +16,7 @@ import { SchedulerStoreProvider, useScheduler } from './stores/scheduler';
 interface Props {
   collectionMethod: CollectionMethodType;
   address: Address;
-  serviceId: string;
+  service: HealthcareService;
   onSlotUpdate?: (slot: Slot | null, tz: string) => void;
   numDays?: number;
   className?: string;
@@ -31,7 +36,7 @@ export function Scheduler(props: Props) {
     className,
     collectionMethod,
     address,
-    serviceId,
+    service,
     numDays,
     displayCancellationNote = false,
     showCreateBtn = true,
@@ -41,7 +46,7 @@ export function Scheduler(props: Props) {
   return (
     <SchedulerStoreProvider
       address={address}
-      serviceId={serviceId}
+      service={service}
       collectionMethod={collectionMethod}
       numDays={numDays}
       showCreateBtn={showCreateBtn}

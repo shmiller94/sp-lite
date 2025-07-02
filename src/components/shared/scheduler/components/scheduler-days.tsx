@@ -5,13 +5,13 @@ import 'moment-timezone';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Body1 } from '@/components/ui/typography';
+import { ADVISORY_CALL } from '@/const';
 import { useStepper } from '@/lib/stepper';
 
 import { useScheduler } from '../stores/scheduler';
 import { dayArray, isDisabledDaySlot } from '../utils';
 
 import { SchedulerDaySlot } from './scheduler-day-slot';
-
 export function SchedulerDays(): JSX.Element {
   const {
     selectedDay,
@@ -20,6 +20,7 @@ export function SchedulerDays(): JSX.Element {
     startRange,
     numDays,
     loading,
+    service,
   } = useScheduler((s) => s);
 
   useEffect(() => {
@@ -39,18 +40,22 @@ export function SchedulerDays(): JSX.Element {
     return (
       <div className="mb-8 flex flex-col items-center justify-center sm:h-[200px]">
         <Body1 className="text-center text-zinc-500">
-          We were unable to find available slots within the next months.
+          We were unable to find available slots within the next few months.
           <br />
-          Please pick a different location.
+          {service.name === ADVISORY_CALL
+            ? 'Please check back again later.'
+            : 'Please pick a different location.'}
         </Body1>
 
-        <Button
-          variant="outline"
-          className="mt-4 w-full md:w-auto"
-          onClick={prevStep}
-        >
-          Pick new location
-        </Button>
+        {service.name === ADVISORY_CALL ? null : (
+          <Button
+            variant="outline"
+            className="mt-4 w-full md:w-auto"
+            onClick={prevStep}
+          >
+            Pick new location
+          </Button>
+        )}
       </div>
     );
   }
