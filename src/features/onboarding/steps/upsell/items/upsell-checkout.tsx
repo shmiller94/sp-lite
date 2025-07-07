@@ -42,9 +42,10 @@ const AnimatedCheckmark = ({ isOpen }: { isOpen: boolean }) => {
         strokeLinecap="round"
         strokeLinejoin="round"
         style={{
-          strokeDasharray: '20',
-          strokeDashoffset: isOpen ? '0' : '-20',
-          transition: 'stroke-dashoffset 0.2s ease-out',
+          strokeDasharray: '20 20',
+          strokeDashoffset: isOpen ? '0' : '20',
+          transition: 'stroke-dashoffset 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          willChange: 'stroke-dashoffset',
         }}
       />
     </svg>
