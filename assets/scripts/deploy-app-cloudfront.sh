@@ -164,6 +164,10 @@ aws s3 cp dist/ "s3://${APP_BUCKET}/" \
   --exclude "*" \
   --include "*.riv"
 
+aws s3 cp dist/.well-known/apple-app-site-association "s3://${APP_BUCKET}/.well-known/apple-app-site-association" \
+  --content-type "application/json" \
+  --cache-control "public, max-age=31536000"
+
 
 # aws s3 cp dist/service-worker.js "s3://${APP_BUCKET}/" \
 #   --content-type "application/javascript" \
