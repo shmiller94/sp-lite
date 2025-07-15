@@ -152,7 +152,7 @@ function PureMultimodalInput({
       });
 
       return {
-        url: superpowerFile.presignedUrl,
+        url: `/files/${superpowerFile.id}`,
         name: superpowerFile.name,
         contentType: superpowerFile.contentType,
       };
