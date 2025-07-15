@@ -13,7 +13,8 @@ const isValueEmpty = (answer: QuestionnaireResponseItemAnswer) => {
       v === null ||
       v === undefined ||
       (typeof v === 'number' && isNaN(v)) ||
-      v.length === 0,
+      v.length === 0 ||
+      (typeof v === 'string' && v.trim().length === 0),
   );
 };
 

@@ -67,7 +67,9 @@ export const QuestionnaireFormItem = ({
       const cleanedAnswer = { ...answer };
       if (
         cleanedAnswer.valueString === '' ||
-        cleanedAnswer.valueString === undefined
+        cleanedAnswer.valueString === undefined ||
+        (typeof cleanedAnswer.valueString === 'string' &&
+          cleanedAnswer.valueString.trim() === '')
       ) {
         delete cleanedAnswer.valueString;
       }
