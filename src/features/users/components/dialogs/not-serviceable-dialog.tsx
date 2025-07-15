@@ -36,8 +36,10 @@ export const NotServiceableDialog = ({
             : 'No nearby providers at your address'}
         </H3>
         <Body1 className="text-center text-secondary">
-          You’ve been added to our waitlist — we’ll let you know as soon as
-          we’re live near you. We’re expanding rapidly, so it won’t be long.
+          We&apos;re not live in your area just yet — but we&apos;ll let you
+          know the moment we launch near you.
+          <br />
+          We&apos;re expanding rapidly, so it won&apos;t be long.
         </Body1>
       </div>
       <Button

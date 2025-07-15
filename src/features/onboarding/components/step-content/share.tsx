@@ -19,17 +19,17 @@ export const Share = () => {
       <div className="flex flex-col space-y-12">
         <div className="space-y-6">
           <H1 className="text-white">
-            Join with <br />
-            friends and family
+            Share the gift of <br />
+            better health
           </H1>
           <div className="space-y-3">
             <Body1 className="text-white">
-              As a thank you for committing to your health and joining the
-              Superpower beta, we’re letting you invite people to skip our
-              150,000 person waitlist.
+              Invite friends and family to join Superpower to get access to
+              advanced testing, a personalized health plan, and insights that
+              put their health on autopilot.
             </Body1>
             <Body1 className="text-white">
-              Start the journey to superpower your health together.{' '}
+              Share your link. Superpower together.{' '}
             </Body1>
           </div>
           <div className="space-y-2">
