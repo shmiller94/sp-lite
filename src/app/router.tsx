@@ -4,13 +4,14 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { ConciergeRoute } from '@/app/routes/app/concierge';
 import { DataRoute } from '@/app/routes/app/data';
 import { HomeRoute } from '@/app/routes/app/home';
-import { MarketplaceRoute } from '@/app/routes/app/marketplace';
 import { ServicesRoute } from '@/app/routes/app/services';
 import { SettingsRoute } from '@/app/routes/app/settings';
+import { SupplementsMarketplaceRoute } from '@/app/routes/app/supplements-marketplace';
 import { MainErrorFallback } from '@/components/errors/main';
 import { ConciergeLayout } from '@/features/messages/layouts/concierge-layout';
 import { ProtectedRoute } from '@/lib/auth';
 
+import { PrescriptionsMarketplaceRoute } from './routes/app/prescriptions-marketplace';
 import { AppRoot } from './routes/app/root';
 import { NotFoundRoute } from './routes/not-found';
 
@@ -105,8 +106,12 @@ export const createRouter = () =>
           element: <SettingsRoute />,
         },
         {
-          path: 'marketplace',
-          element: <MarketplaceRoute />,
+          path: 'prescriptions',
+          element: <PrescriptionsMarketplaceRoute />,
+        },
+        {
+          path: 'supplements',
+          element: <SupplementsMarketplaceRoute />,
         },
         {
           path: 'onboarding',

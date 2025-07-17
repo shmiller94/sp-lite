@@ -1,4 +1,11 @@
-import { ChevronDown, Ellipsis, LogOut, LucideIcon } from 'lucide-react';
+import {
+  ChevronDown,
+  Ellipsis,
+  LogOut,
+  LucideIcon,
+  ShoppingBag,
+  Pill,
+} from 'lucide-react';
 import React, { FC, SVGProps, useEffect, useMemo, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 
@@ -38,6 +45,35 @@ const baseLinks: Link[] = [
   { icon: ServicesIcon, name: 'Services', to: './services' },
 ];
 
+const profileDropdownItems = [
+  {
+    name: 'Settings',
+    to: './settings',
+    icon: SettingsIcon,
+  },
+  {
+    name: 'Log out',
+    to: '/logout',
+    icon: LogOut,
+    testid: 'logout-btn-desktop',
+  },
+];
+
+const marketplaceDropdownItems = [
+  {
+    name: 'Supplements',
+    to: '/supplements',
+    icon: ShoppingBag,
+    testid: 'supplements-icon-desktop',
+  },
+  {
+    name: 'Prescriptions',
+    to: '/prescriptions',
+    icon: Pill,
+    testid: 'prescriptions-icon-desktop',
+  },
+];
+
 export const Navbar = () => {
   const { pathname } = useLocation();
 
@@ -70,23 +106,6 @@ export const DesktopNavbar = () => {
       icon: LockIcon,
     },
   ].filter(Boolean) as Link[];
-
-  const dropdownItems = useMemo(
-    () => [
-      {
-        name: 'Settings',
-        to: './settings',
-        icon: SettingsIcon,
-      },
-      {
-        name: 'Log out',
-        to: '/logout',
-        icon: LogOut,
-        testid: 'logout-btn-desktop',
-      },
-    ],
-    [],
-  );
 
   const allLinks = useMemo(
     () => [...baseLinks, ...protectedLinks],
@@ -150,20 +169,6 @@ export const DesktopNavbar = () => {
         <div className="h-10 flex-1">
           <div className="flex items-center justify-end gap-4">
             <NavLink
-              to="/marketplace"
-              state={{ from: pathname }}
-              className={cn(
-                'group relative z-10 px-4 py-1.5 transition-all duration-150',
-                isHomePage
-                  ? isBlurred
-                    ? 'text-secondary hover:text-black'
-                    : 'text-white'
-                  : 'text-secondary hover:text-black',
-              )}
-            >
-              <MarketplaceIcon className="mb-1 w-[18px]" />
-            </NavLink>
-            <NavLink
               to="./invite"
               className={({ isActive }) =>
                 cn(
@@ -194,6 +199,50 @@ export const DesktopNavbar = () => {
                         : 'text-white'
                       : 'text-secondary hover:text-black',
                   )}
+                  data-testid="marketplaces-btn"
+                >
+                  <MarketplaceIcon className="mb-1 w-[18px]" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                className="rounded-2xl"
+                align="end"
+                sideOffset={5}
+              >
+                {marketplaceDropdownItems.map((link, i) => (
+                  <NavLink
+                    key={i}
+                    to={link.to}
+                    data-testid={link.testid}
+                    className={({ isActive }) =>
+                      cn(
+                        'flex cursor-pointer items-center gap-3 transition duration-200 ease-in-out rounded-[18px]',
+                        isActive && 'bg-accent',
+                      )
+                    }
+                  >
+                    <DropdownMenuItem className="w-full gap-3 rounded-[18px] p-4">
+                      <link.icon width={14} height={14} />
+                      <p className="text-sm">{link.name}</p>
+                    </DropdownMenuItem>
+                  </NavLink>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                asChild
+                className="group rounded-full outline outline-1 outline-transparent transition-all duration-150 data-[state=open]:outline-2"
+              >
+                <button
+                  className={cn(
+                    'border-0 bg-transparent px-4 focus:outline-none flex items-center gap-1.5',
+                    isHomePage
+                      ? isBlurred
+                        ? 'text-secondary hover:text-black'
+                        : 'text-white'
+                      : 'text-secondary hover:text-black',
+                  )}
                   data-testid="navbar-more-btn"
                 >
                   More
@@ -205,7 +254,7 @@ export const DesktopNavbar = () => {
                 align="end"
                 sideOffset={5}
               >
-                {dropdownItems.map((link, i) => (
+                {profileDropdownItems.map((link, i) => (
                   <NavLink
                     key={i}
                     to={link.to}

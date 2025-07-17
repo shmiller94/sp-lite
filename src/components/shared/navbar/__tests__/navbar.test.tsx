@@ -16,4 +16,19 @@ test('Check if logout btn is present', async () => {
   await userEvent.click(await screen.findByTestId('navbar-more-btn'));
 
   expect(await screen.findByText('Log out')).toBeInTheDocument();
+
+  // let userEvent click() see body as interactive temporarily
+  document.body.style.pointerEvents = 'auto';
+
+  await userEvent.click(document.body);
+
+  await userEvent.click(await screen.findByTestId('marketplaces-btn'));
+
+  expect(
+    await screen.findByTestId('supplements-icon-desktop'),
+  ).toBeInTheDocument();
+
+  expect(
+    await screen.findByTestId('prescriptions-icon-desktop'),
+  ).toBeInTheDocument();
 });
