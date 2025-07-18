@@ -40,6 +40,9 @@ const createEnv = () => {
       .transform((s) => s === 'true')
       .optional()
       .default('true'),
+    POSTHOG_HOST: z.string().optional(),
+    POSTHOG_KEY: z.string().optional(),
+    POSTHOG_DEBUG: z.string().optional(),
   });
 
   const envVars = Object.entries(import.meta.env).reduce<

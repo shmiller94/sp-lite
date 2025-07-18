@@ -38,6 +38,7 @@ import {
 import { useGetServiceability } from '@/features/orders/api';
 import { useKlaviyoSubscribe } from '@/features/users/api';
 import { NotServiceableDialog } from '@/features/users/components/dialogs/not-serviceable-dialog';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { RegisterInput, registerInputSchema, useRegister } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 import { NotServiceableReason } from '@/types/api';
@@ -63,6 +64,7 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
   const registerMutation = useRegister({ onSuccess });
   const getServiceabilityMutation = useGetServiceability();
   const klaviyoSubscribeMutation = useKlaviyoSubscribe();
+  const { track, identify } = useAnalytics();
 
   const form = useForm<RegisterInput>({
     shouldUnregister: false,
@@ -87,6 +89,21 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
     });
 
     if (response.serviceable === false) {
+      track('register_not_serviceable', {
+        postal_code: data.address.postalCode,
+        state: data.address.state,
+        reason: response.reason,
+        $set: {
+          email: data.email,
+          first_name: data.firstName,
+          last_name: data.lastName,
+          phone: data.phone,
+          city: data.address.city,
+          postal_code: data.address.postalCode,
+          state: data.address.state,
+        },
+      });
+
       await klaviyoSubscribeMutation.mutateAsync({
         data: {
           type: 'waitlist',
@@ -109,6 +126,20 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
         firstName: data.firstName,
         lastName: data.lastName,
       });
+
+      identify(user.id, {
+        $set: {
+          email: data.email,
+          first_name: data.firstName,
+          last_name: data.lastName,
+          phone: data.phone,
+          city: data.address.city,
+          state: data.address.state,
+          postal_code: data.address.postalCode,
+        },
+      });
+
+      track('user_registered');
     }
   };
 
@@ -165,6 +196,7 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
 
 const Step1 = ({ onNext }: { onNext: () => void }) => {
   const form = useFormContext<RegisterInput>();
+  const { track } = useAnalytics();
 
   const klaviyoSubscribeMutation = useKlaviyoSubscribe();
 
@@ -178,6 +210,13 @@ const Step1 = ({ onNext }: { onNext: () => void }) => {
 
       // Track Lead event with email and UTM data
       trackLead({ email });
+
+      // Track registration started
+      track('registration_started', {
+        $set: {
+          email,
+        },
+      });
 
       await klaviyoSubscribeMutation.mutateAsync({
         data: {

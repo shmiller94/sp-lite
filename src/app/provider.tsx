@@ -9,6 +9,7 @@ import { MainErrorFallback } from '@/components/errors/main';
 import { SuperpowerLoadingLogo } from '@/components/icons/superpower-logo';
 import { Toaster } from '@/components/ui/sonner';
 import { useUser } from '@/lib/auth';
+import { PHProvider } from '@/lib/posthog';
 import { queryConfig } from '@/lib/react-query';
 import { StripeProvider } from '@/lib/stripe';
 
@@ -62,13 +63,15 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     <ErrorBoundary FallbackComponent={MainErrorFallback}>
       <HelmetProvider>
         <QueryClientProvider client={queryClient}>
-          <StripeProvider>
-            {import.meta.env.DEV && (
-              <ReactQueryDevtools buttonPosition="top-right" />
-            )}
-            <Toaster />
-            <AuthLoader>{children}</AuthLoader>
-          </StripeProvider>
+          <PHProvider>
+            <StripeProvider>
+              {import.meta.env.DEV && (
+                <ReactQueryDevtools buttonPosition="top-right" />
+              )}
+              <Toaster />
+              <AuthLoader>{children}</AuthLoader>
+            </StripeProvider>
+          </PHProvider>
         </QueryClientProvider>
       </HelmetProvider>
     </ErrorBoundary>

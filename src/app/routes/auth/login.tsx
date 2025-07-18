@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { ImageWithWithBlockLayout } from '@/components/layouts/image-with-block-layout';
 import { LoginForm } from '@/features/auth/components/login-form';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { useUser } from '@/lib/auth';
 
 const RESTRICTED_REDIRECT_ROUTES = ['/users'];
@@ -13,6 +14,7 @@ export const LoginRoute = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get('redirectTo');
+  const { track, identify } = useAnalytics();
 
   // when we sign in from users (as admin) we don't want to be redirected to the same page
   const shouldRedirect =
@@ -29,10 +31,19 @@ export const LoginRoute = () => {
   return (
     <ImageWithWithBlockLayout title="Log in">
       <LoginForm
-        onSuccess={() => {
+        onSuccess={(user) => {
           navigate(`${shouldRedirect ? `${redirectTo}` : '/'}`, {
             replace: true,
           });
+          identify(user.id, {
+            $set: {
+              email: user.email,
+              first_name: user.firstName,
+              last_name: user.lastName,
+              phone: user.phone,
+            },
+          });
+          track('logged_in');
         }}
       />
     </ImageWithWithBlockLayout>

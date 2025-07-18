@@ -19,6 +19,7 @@ import {
   useCreateSubscription,
 } from '@/features/settings/api';
 import { useUpdateTask } from '@/features/tasks/api/update-task';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { useUser } from '@/lib/auth';
 import { useStepper } from '@/lib/stepper';
 import { cn } from '@/lib/utils';
@@ -49,6 +50,7 @@ export const BillingSection = () => {
   const createSubscriptionMutation = useCreateSubscription();
   const { activeStep, nextStep } = useStepper((s) => s);
   const { mutateAsync: updateTaskProgress } = useUpdateTask();
+  const { track } = useAnalytics();
 
   const {
     membership,
@@ -120,6 +122,11 @@ export const BillingSection = () => {
       if (subscription) {
         // Track but don't await or let errors bubble up
         try {
+          track('subscription_created', {
+            access_code: getAccessCode(),
+            referral_id: (window as any)?.Rewardful?.referral,
+            membership_type: membership.type,
+          });
           trackSubscription(membership?.total);
         } catch (e) {
           console.error('Failed to track subscription:', e);
