@@ -110,7 +110,7 @@ export const createRouter = () =>
           element: <PrescriptionsMarketplaceRoute />,
         },
         {
-          path: 'supplements',
+          path: 'marketplace',
           element: <SupplementsMarketplaceRoute />,
         },
         {

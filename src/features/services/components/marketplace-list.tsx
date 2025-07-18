@@ -7,7 +7,7 @@ import { Body2 } from '@/components/ui/typography/body2/body2';
 const marketplaceList = [
   {
     name: 'Supplements',
-    to: '/supplements',
+    to: '/marketplace',
     testid: 'supplements-link',
     image: '/marketplaces/supplements-marketplace.png',
     alt: 'supplements marketplace',

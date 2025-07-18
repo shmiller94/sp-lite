@@ -62,7 +62,7 @@ const profileDropdownItems = [
 const marketplaceDropdownItems = [
   {
     name: 'Supplements',
-    to: '/supplements',
+    to: '/marketplace',
     icon: ShoppingBag,
     testid: 'supplements-icon-desktop',
   },
@@ -309,7 +309,7 @@ export const MobileNavbar = () => {
     {
       icon: ShoppingBag,
       name: 'Supplements',
-      to: '/supplements',
+      to: '/marketplace',
     },
     {
       icon: SettingsIcon,
