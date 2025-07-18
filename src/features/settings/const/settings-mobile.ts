@@ -12,7 +12,7 @@ export const SETTINGS_MOBILE = [
   {
     icon: CreditCard,
     value: 'billing',
-    description: 'Import and manage previous health care records',
+    description: 'Manage your payment information and details.',
     disabled: false,
   },
   {
