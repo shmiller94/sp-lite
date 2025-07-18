@@ -1,4 +1,4 @@
-import { STATUS_TO_COLOR } from '@/features/biomarkers/const/status-to-color';
+import { STATUS_TO_COLOR } from '@/const/status-to-color';
 import { BiomarkerStatus } from '@/types/api';
 import { capitalize } from '@/utils/format';
 
@@ -12,7 +12,8 @@ export const BiomarkerStatusBadge = (props: StatusBadgeProps) => {
 
   let displayStatus = capitalize(status.toLowerCase());
 
-  const color = STATUS_TO_COLOR[status.toLowerCase()];
+  const color =
+    STATUS_TO_COLOR[status.toLowerCase() as keyof typeof STATUS_TO_COLOR];
 
   if (status.toLowerCase() === 'unknown') {
     displayStatus = 'n/a';

@@ -1,0 +1,14 @@
+export const STATUS_TO_COLOR = {
+  optimal: 'rgba(17, 193, 130, 1)',
+  optimal_light: 'rgba(207, 243, 230, 1)',
+  normal: 'rgb(227, 216, 17)',
+  normal_light: 'rgba(253, 253, 231, 1)',
+  high: 'rgba(255, 104, 222, 1)',
+  high_light: 'rgba(255, 225, 248, 1)',
+  low: 'rgba(255, 104, 222, 1)',
+  low_light: 'rgba(255, 225, 248, 1)',
+  pending: 'rgba(161, 161, 170, 1)',
+  pending_light: 'rgba(244, 244, 245, 1)',
+  'out of range': 'rgba(255, 104, 222, 1)',
+  'out of range_light': 'rgba(255, 225, 248, 1)',
+};

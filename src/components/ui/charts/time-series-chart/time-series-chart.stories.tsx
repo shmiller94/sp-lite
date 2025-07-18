@@ -1,8 +1,8 @@
 import { Meta } from '@storybook/react';
-import React from 'react';
 
-import { TimeSeriesChart } from '@/components/ui/time-series-chart/time-series-chart';
 import { Biomarker } from '@/types/api';
+
+import { TimeSeriesChart } from './time-series-chart';
 
 export default {
   title: 'superpower/time-series-chart',
@@ -234,7 +234,348 @@ const biomarker: Biomarker = {
 export const TimeSeriesChartComponent = (): JSX.Element => {
   return (
     <>
-      <TimeSeriesChart biomarker={biomarker} />
+      <TimeSeriesChart biomarker={biomarker} height={512} />
+    </>
+  );
+};
+
+const singleValueBiomarker: Biomarker = {
+  id: '960121e2-1ffe-4a3c-a865-acf4fdbc1e41',
+  name: 'Hemoglobin A1c',
+  description:
+    'Hemoglobin A1c (HbA1c) is a blood test that measures your average blood sugar levels over the past 2-3 months. It shows how well your diabetes is being controlled.',
+  importance:
+    'HbA1c is important for monitoring diabetes management and assessing the risk of diabetes-related complications. It provides a longer-term view of blood sugar control compared to daily glucose measurements.',
+  category: 'Metabolic Health',
+  unit: '%',
+  status: 'OPTIMAL',
+  favorite: false,
+  value: [
+    {
+      id: '1',
+      quantity: {
+        value: 5.2,
+        comparator: 'EQUALS',
+        unit: '%',
+      },
+      timestamp: '2024-04-26T15:45:00.000Z',
+      status: 'OPTIMAL',
+      component: [],
+    },
+  ],
+  metadata: {
+    content: [
+      {
+        title: 'Why is an optimal level important?',
+        text: 'Optimal HbA1c levels indicate good blood sugar control, which reduces the risk of diabetes complications such as heart disease, kidney damage, and nerve damage.',
+        status: 'OPTIMAL',
+      },
+    ],
+    source: [
+      {
+        text: 'Understanding A1C Test',
+        url: 'https://www.diabetes.org/a1c',
+      },
+    ],
+  },
+  range: [
+    {
+      status: 'OPTIMAL',
+      low: {
+        value: 4.0,
+      },
+      high: {
+        value: 5.6,
+      },
+    },
+  ],
+};
+
+export const SingleValueTimeSeriesChart = (): JSX.Element => {
+  return (
+    <>
+      <TimeSeriesChart biomarker={singleValueBiomarker} height={512} />
+    </>
+  );
+};
+
+const extremeBoundaryBiomarker: Biomarker = {
+  id: '960121e2-1ffe-4a3c-a865-acf4fdbc1e42',
+  name: 'Cholesterol Total',
+  description:
+    'Total cholesterol is a measure of all the cholesterol in your blood, including both good (HDL) and bad (LDL) cholesterol. It is an important indicator of cardiovascular health.',
+  importance:
+    'Total cholesterol levels help assess your risk of heart disease and stroke. Maintaining optimal levels through diet and lifestyle is crucial for cardiovascular health.',
+  category: 'Cardiovascular Health',
+  unit: 'mg/dL',
+  status: 'HIGH',
+  favorite: false,
+  value: [
+    {
+      id: '1',
+      quantity: {
+        value: 200,
+        comparator: 'EQUALS',
+        unit: 'mg/dL',
+      },
+      timestamp: '2024-04-26T15:45:00.000Z',
+      status: 'OPTIMAL',
+      component: [],
+    },
+    {
+      id: '2',
+      quantity: {
+        value: 240,
+        comparator: 'EQUALS',
+        unit: 'mg/dL',
+      },
+      timestamp: '2024-03-15T14:30:00.000Z',
+      status: 'HIGH',
+      component: [],
+    },
+    {
+      id: '3',
+      quantity: {
+        value: 150,
+        comparator: 'EQUALS',
+        unit: 'mg/dL',
+      },
+      timestamp: '2024-02-10T10:00:00.000Z',
+      status: 'LOW',
+      component: [],
+    },
+    {
+      id: '4',
+      quantity: {
+        value: 199,
+        comparator: 'EQUALS',
+        unit: 'mg/dL',
+      },
+      timestamp: '2024-01-20T09:15:00.000Z',
+      status: 'LOW',
+      component: [],
+    },
+    {
+      id: '5',
+      quantity: {
+        value: 240,
+        comparator: 'EQUALS',
+        unit: 'mg/dL',
+      },
+      timestamp: '2023-12-15T16:45:00.000Z',
+      status: 'HIGH',
+      component: [],
+    },
+    {
+      id: '6',
+      quantity: {
+        value: 200,
+        comparator: 'EQUALS',
+        unit: 'mg/dL',
+      },
+      timestamp: '2023-11-10T11:30:00.000Z',
+      status: 'OPTIMAL',
+      component: [],
+    },
+    {
+      id: '7',
+      quantity: {
+        value: 150,
+        comparator: 'EQUALS',
+        unit: 'mg/dL',
+      },
+      timestamp: '2023-10-05T08:00:00.000Z',
+      status: 'LOW',
+      component: [],
+    },
+    {
+      id: '8',
+      quantity: {
+        value: 199,
+        comparator: 'EQUALS',
+        unit: 'mg/dL',
+      },
+      timestamp: '2023-09-01T12:00:00.000Z',
+      status: 'LOW',
+      component: [],
+    },
+  ],
+  metadata: {
+    content: [
+      {
+        title: 'Why is an optimal level important?',
+        text: 'Optimal cholesterol levels reduce the risk of heart disease, stroke, and other cardiovascular complications. Maintaining levels within the optimal range supports overall heart health.',
+        status: 'OPTIMAL',
+      },
+      {
+        title: 'What does my high level mean?',
+        text: 'High cholesterol levels increase the risk of plaque buildup in arteries, which can lead to heart disease and stroke. Lifestyle changes and medication may be needed.',
+        status: 'HIGH',
+      },
+      {
+        title: 'What does my low level mean?',
+        text: 'Very low cholesterol levels can sometimes indicate malnutrition, liver disease, or other health issues, though this is less common than high cholesterol.',
+        status: 'LOW',
+      },
+    ],
+    source: [
+      {
+        text: 'Understanding Cholesterol Numbers',
+        url: 'https://www.heart.org/en/health-topics/cholesterol',
+      },
+    ],
+  },
+  range: [
+    {
+      status: 'LOW',
+      low: {
+        value: 0,
+      },
+      high: {
+        value: 149,
+      },
+    },
+    {
+      status: 'NORMAL',
+      low: {
+        value: 150,
+      },
+      high: {
+        value: 199,
+      },
+    },
+    {
+      status: 'OPTIMAL',
+      low: {
+        value: 200,
+      },
+      high: {
+        value: 239,
+      },
+    },
+    {
+      status: 'HIGH',
+      low: {
+        value: 240,
+      },
+      high: {
+        value: 500,
+      },
+    },
+  ],
+};
+
+export const ExtremeBoundaryTimeSeriesChart = (): JSX.Element => {
+  return (
+    <>
+      <TimeSeriesChart biomarker={extremeBoundaryBiomarker} height={512} />
+    </>
+  );
+};
+
+const extremeDateClusteringBiomarker: Biomarker = {
+  id: '960121e2-1ffe-4a3c-a865-acf4fdbc1e43',
+  name: 'Blood Glucose',
+  description:
+    'Blood glucose levels measured throughout the day. Multiple readings on the same date can occur during glucose monitoring protocols.',
+  importance:
+    'Frequent glucose monitoring helps track blood sugar patterns and responses to meals, exercise, and medications.',
+  category: 'Metabolic Health',
+  unit: 'mg/dL',
+  status: 'OPTIMAL',
+  favorite: false,
+  value: [
+    {
+      id: '1',
+      quantity: {
+        value: 95,
+        comparator: 'EQUALS',
+        unit: 'mg/dL',
+      },
+      timestamp: '2024-04-26T08:00:00.000Z',
+      status: 'OPTIMAL',
+      component: [],
+    },
+    {
+      id: '2',
+      quantity: {
+        value: 120,
+        comparator: 'EQUALS',
+        unit: 'mg/dL',
+      },
+      timestamp: '2024-04-26T12:30:00.000Z',
+      status: 'OPTIMAL',
+      component: [],
+    },
+    {
+      id: '3',
+      quantity: {
+        value: 105,
+        comparator: 'EQUALS',
+        unit: 'mg/dL',
+      },
+      timestamp: '2024-04-26T18:45:00.000Z',
+      status: 'OPTIMAL',
+      component: [],
+    },
+    {
+      id: '4',
+      quantity: {
+        value: 88,
+        comparator: 'EQUALS',
+        unit: 'mg/dL',
+      },
+      timestamp: '2024-10-26T09:15:00.000Z',
+      status: 'OPTIMAL',
+      component: [],
+    },
+    {
+      id: '5',
+      quantity: {
+        value: 115,
+        comparator: 'EQUALS',
+        unit: 'mg/dL',
+      },
+      timestamp: '2024-10-26T15:30:00.000Z',
+      status: 'OPTIMAL',
+      component: [],
+    },
+  ],
+  metadata: {
+    content: [
+      {
+        title: 'Why is an optimal level important?',
+        text: 'Optimal blood glucose levels indicate good metabolic health and reduce the risk of diabetes complications.',
+        status: 'OPTIMAL',
+      },
+    ],
+    source: [
+      {
+        text: 'Blood Glucose Monitoring',
+        url: 'https://www.diabetes.org/healthy-living/medication-treatments/blood-glucose-testing-and-control',
+      },
+    ],
+  },
+  range: [
+    {
+      status: 'OPTIMAL',
+      low: {
+        value: 70,
+      },
+      high: {
+        value: 140,
+      },
+    },
+  ],
+};
+
+export const ExtremeDateClusteringTimeSeriesChart = (): JSX.Element => {
+  return (
+    <>
+      <TimeSeriesChart
+        biomarker={extremeDateClusteringBiomarker}
+        height={512}
+      />
     </>
   );
 };

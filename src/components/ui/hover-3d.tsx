@@ -138,7 +138,10 @@ export const Hover3D = ({
   return (
     <div
       ref={cardRef}
-      className={cn('relative touch-none', disabled && 'pointer-events-none')}
+      className={cn(
+        'relative touch-manipulation',
+        disabled && 'pointer-events-none',
+      )}
       // Hack to prevent the default behavior of the card when disabled
       onMouseEnter={disabled ? undefined : handleStart}
       onMouseMove={disabled ? undefined : handleMouseMove}

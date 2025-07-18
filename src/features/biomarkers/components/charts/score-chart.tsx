@@ -3,7 +3,7 @@ import { Pie, PieChart } from 'recharts';
 
 import NumberFlow from '@/components/shared/number-flow';
 import { ChartConfig, ChartContainer } from '@/components/ui/chart';
-import { STATUS_TO_COLOR } from '@/features/biomarkers/const/status-to-color';
+import { STATUS_TO_COLOR } from '@/const/status-to-color';
 import { getStatusForScore } from '@/features/biomarkers/utils/get-status-for-score';
 import { cn } from '@/lib/utils';
 
@@ -38,13 +38,17 @@ export const ScoreChart = ({
     {
       score: value,
       fill: richColors
-        ? STATUS_TO_COLOR[status.toLocaleLowerCase()]
+        ? STATUS_TO_COLOR[
+            status.toLocaleLowerCase() as keyof typeof STATUS_TO_COLOR
+          ]
         : gaugePrimaryColor,
     },
     {
       score: 100 - value,
       fill: richColors
-        ? STATUS_TO_COLOR[status.toLocaleLowerCase()]
+        ? STATUS_TO_COLOR[
+            status.toLocaleLowerCase() as keyof typeof STATUS_TO_COLOR
+          ]
         : gaugeSecondaryColor,
       opacity: 0.3,
     },

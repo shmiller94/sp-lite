@@ -1,4 +1,4 @@
-import { TimeSeriesChart } from '@/components/ui/time-series-chart';
+import { TimeSeriesChart } from '@/components/ui/charts/time-series-chart/time-series-chart';
 import { Biomarker } from '@/types/api';
 
 export interface BiomarkerTimeSeriesChartProps {

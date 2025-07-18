@@ -1,14 +1,14 @@
-import 'moment-timezone';
 import { ColumnDef } from '@tanstack/react-table';
 import { ChevronDown, Circle } from 'lucide-react';
+import 'moment-timezone';
 
 import { Button } from '@/components/ui/button';
 import { Body1 } from '@/components/ui/typography';
+import { STATUS_TO_COLOR } from '@/const/status-to-color';
 import { BiomarkerSparklineChart } from '@/features/biomarkers/components/charts/biomarker-sparkline-chart';
 import { BiomarkerRange } from '@/features/biomarkers/components/range';
 import { BiomarkerStatusBadge } from '@/features/biomarkers/components/status-badge';
 import { BiomarkerValueUnit } from '@/features/biomarkers/components/value-unit';
-import { STATUS_TO_COLOR } from '@/features/biomarkers/const/status-to-color';
 import { mostRecent } from '@/features/biomarkers/utils/most-recent-biomarker';
 import { cn } from '@/lib/utils';
 import { Biomarker } from '@/types/api';
@@ -44,7 +44,11 @@ export const getCols = (): ColumnDef<Biomarker>[] => [
           <div className="flex items-center gap-2.5">
             <Circle
               className="block size-2 min-w-2 md:hidden"
-              style={{ fill: STATUS_TO_COLOR[status.toLowerCase()] }}
+              style={{
+                fill: STATUS_TO_COLOR[
+                  status.toLowerCase() as keyof typeof STATUS_TO_COLOR
+                ],
+              }}
               strokeWidth={0}
             />
             <Body1 className="line-clamp-1">{name}</Body1>

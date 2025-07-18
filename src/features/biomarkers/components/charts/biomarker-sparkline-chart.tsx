@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { SparkLineChart } from '@/components/ui/sparkline-chart';
+import { SparklineChart } from '@/components/ui/charts/sparkline-chart/sparkline-chart';
 import { cn } from '@/lib/utils';
 import { Biomarker } from '@/types/api';
 
@@ -15,24 +13,12 @@ export interface BiomarkerSparklineChartProps {
 export function BiomarkerSparklineChart({
   biomarker,
   className,
-  height,
-  markerRadius,
-  markerLineWidth,
 }: BiomarkerSparklineChartProps): JSX.Element {
   return (
     <div
       className={cn(biomarker.value.length > 0 ? '' : 'opacity-30', className)}
     >
-      <SparkLineChart
-        data={biomarker.value}
-        unit={biomarker.unit}
-        ranges={biomarker.range}
-        status={biomarker.status}
-        className={className}
-        height={height}
-        markerRadius={markerRadius}
-        markerLineWidth={markerLineWidth}
-      />
+      <SparklineChart biomarker={biomarker} maxValuesToShow={4} />
     </div>
   );
 }

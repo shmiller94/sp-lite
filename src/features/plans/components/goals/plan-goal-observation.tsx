@@ -2,12 +2,12 @@ import { Circle } from 'lucide-react';
 
 import { Skeleton } from '@/components/ui/skeleton';
 import { Body2 } from '@/components/ui/typography';
+import { STATUS_TO_COLOR } from '@/const/status-to-color';
 import { useBiomarker } from '@/features/biomarkers/api/get-biomarker';
 import { BiomarkerTableDialogRow } from '@/features/biomarkers/components/biomarkers-data-table/biomarker-table-dialog-row';
 import { BiomarkerSparklineChart } from '@/features/biomarkers/components/charts/biomarker-sparkline-chart';
 import { BiomarkerRange } from '@/features/biomarkers/components/range';
 import { BiomarkerValueUnit } from '@/features/biomarkers/components/value-unit';
-import { STATUS_TO_COLOR } from '@/features/biomarkers/const/status-to-color';
 import { mostRecent } from '@/features/biomarkers/utils/most-recent-biomarker';
 import { cn } from '@/lib/utils';
 
@@ -33,7 +33,7 @@ export function PlanGoalObservation({ id, className }: PlanObservationProps) {
     <BiomarkerTableDialogRow biomarker={biomarker}>
       <div
         className={cn(
-          'flex h-[60px] grow items-center justify-between rounded-xl bg-zinc-50 py-2.5 pl-5 pr-3 hover:cursor-pointer',
+          'flex h-[64px] grow items-center justify-between rounded-xl bg-zinc-50 py-2.5 pl-5 pr-3 hover:cursor-pointer',
           className,
         )}
       >
@@ -43,7 +43,9 @@ export function PlanGoalObservation({ id, className }: PlanObservationProps) {
               <Circle
                 className="size-2 min-w-2 md:hidden"
                 style={{
-                  fill: STATUS_TO_COLOR[status.toLowerCase()],
+                  fill: STATUS_TO_COLOR[
+                    status.toLowerCase() as keyof typeof STATUS_TO_COLOR
+                  ],
                 }}
                 strokeWidth={0}
               />
@@ -64,7 +66,7 @@ export function PlanGoalObservation({ id, className }: PlanObservationProps) {
           />
           <BiomarkerSparklineChart
             biomarker={biomarker}
-            className="h-[44px] sm:ml-0"
+            className="h-full sm:ml-0"
             height={44}
             markerRadius={8}
             markerLineWidth={1}
