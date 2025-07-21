@@ -270,7 +270,11 @@ export const SparklineChart = ({
           hoveredPointIndex={displayedPoint?.index ?? null}
         />
       </div>
-      <RangeStack range={rangeStack.range} values={rangeStack.values} />
+      <RangeStack
+        range={rangeStack.range}
+        values={rangeStack.values}
+        dimensions={rangeStack.dimensions}
+      />
 
       {displayedPoint &&
         createPortal(

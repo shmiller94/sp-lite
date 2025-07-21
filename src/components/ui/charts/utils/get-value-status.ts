@@ -5,7 +5,17 @@ import { ChartDimensions } from '../types/chart';
 export const getValueStatus = (
   dimensions: ChartDimensions,
   val: number,
+  interpretedStatusAtVal?: {
+    status: keyof typeof STATUS_TO_COLOR;
+    value: number;
+  },
 ): keyof typeof STATUS_TO_COLOR => {
+  // show values based on interpretation
+  if (interpretedStatusAtVal && val === interpretedStatusAtVal.value) {
+    return interpretedStatusAtVal.status;
+  }
+
+  // otherwise check the ranges and interpret
   const hasNormalRange =
     dimensions.normalLow !== dimensions.optimalLow ||
     dimensions.normalHigh !== dimensions.optimalHigh;

@@ -1,4 +1,3 @@
-import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import moment from 'moment';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -14,6 +13,7 @@ import { ChartTooltip } from '../chart-tooltip';
 import { RangeStack } from '../range-stack';
 
 import { CHART_CONFIG } from './config';
+import { Pagination } from './pagination';
 import { useTimeSeriesChart } from './use-time-series-chart';
 
 export const TimeSeriesChart = ({
@@ -24,7 +24,7 @@ export const TimeSeriesChart = ({
   height?: number;
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [containerWidth, setContainerWidth] = useState(600);
+  const [containerWidth, setContainerWidth] = useState(755);
   const isMobile = useIsMobile();
 
   const svgHeight = height ?? CHART_CONFIG.SVG_HEIGHT;
@@ -185,22 +185,32 @@ export const TimeSeriesChart = ({
     [handleInteraction],
   );
 
-  const handleTouchEnd = useCallback((e: React.TouchEvent<SVGSVGElement>) => {
-    e.preventDefault();
-    if (debounceTimerRef.current) {
-      window.cancelAnimationFrame(debounceTimerRef.current);
-      debounceTimerRef.current = undefined;
-    }
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent<SVGSVGElement>) => {
+      e.preventDefault();
+      if (debounceTimerRef.current) {
+        window.cancelAnimationFrame(debounceTimerRef.current);
+        debounceTimerRef.current = undefined;
+      }
 
-    hideTimeoutRef.current = window.setTimeout(() => {
-      lastPointRef.current = null;
-      setDisplayedPoint(null);
-    }, 100);
+      // do not auto-hide tooltip on mobile for next-test points (which have buttons)
+      const isNextTestPoint =
+        displayedPoint &&
+        data.dataPoints[displayedPoint.pointIndex]?.status === 'next-test';
 
-    setTimeout(() => {
-      isTouchDevice.current = false;
-    }, 300);
-  }, []);
+      if (!isMobile || !isNextTestPoint) {
+        hideTimeoutRef.current = window.setTimeout(() => {
+          lastPointRef.current = null;
+          setDisplayedPoint(null);
+        }, 100);
+      }
+
+      setTimeout(() => {
+        isTouchDevice.current = false;
+      }, 300);
+    },
+    [displayedPoint, data.dataPoints, isMobile],
+  );
 
   const handleMouseLeave = useCallback(() => {
     if (!isTouchDevice.current) {
@@ -425,38 +435,20 @@ export const TimeSeriesChart = ({
           ))}
 
           {meta.showPagination && (
-            <>
-              <foreignObject x={8} y={svgHeight - 32} width={24} height={24}>
-                <Button
-                  size="small"
-                  variant="ghost"
-                  className="size-6 rounded-lg bg-zinc-100 p-0 hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-50"
-                  onClick={handlePreviousPage}
-                  disabled={currentPage === meta.totalPages - 1}
-                  aria-label="Previous page"
-                >
-                  <ChevronLeftIcon strokeWidth={2} className="size-4" />
-                </Button>
-              </foreignObject>
-
-              <foreignObject
-                x={svgWidth - 32}
-                y={svgHeight - 32}
-                width={24}
-                height={24}
-              >
-                <Button
-                  size="small"
-                  variant="ghost"
-                  className="size-6 rounded-lg bg-zinc-100 p-0 hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-50"
-                  onClick={handleNextPage}
-                  disabled={currentPage === 0}
-                  aria-label="Next page"
-                >
-                  <ChevronRightIcon strokeWidth={2} className="size-4" />
-                </Button>
-              </foreignObject>
-            </>
+            <foreignObject
+              x={8}
+              y={svgHeight - 32}
+              width={svgWidth - 8}
+              height={32}
+            >
+              <Pagination
+                currentPage={currentPage}
+                totalPages={meta.totalPages}
+                onPreviousPage={handlePreviousPage}
+                onNextPage={handleNextPage}
+                className="pointer-events-auto relative z-10"
+              />
+            </foreignObject>
           )}
         </svg>
       </div>

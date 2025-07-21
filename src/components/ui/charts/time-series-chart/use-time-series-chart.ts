@@ -1,6 +1,9 @@
+import { useMemo } from 'react';
+
 import { STATUS_TO_COLOR } from '@/const/status-to-color';
 import type { Biomarker, Comparator, Range } from '@/types/api';
 
+import { getNewestValue } from '../utils/get-newest-value';
 import { getValueStatus } from '../utils/get-value-status';
 
 import { CHART_CONFIG } from './config';
@@ -282,6 +285,11 @@ export const useTimeSeriesChart = ({
   currentPage?: number;
   itemsPerPage?: number;
 }) => {
+  const newestValueInfo = useMemo(
+    () => getNewestValue(biomarker.value),
+    [biomarker.value],
+  );
+
   if (!biomarker.value?.length) {
     return {
       meta: {
@@ -402,12 +410,11 @@ export const useTimeSeriesChart = ({
       } else {
         const yPercent = convertValueToY(dimensions, point.quantity.value);
         y = CHART_CONFIG.TOP_PADDING + (yPercent / 100) * chartHeight;
-        status = getValueStatus(dimensions, point.quantity.value) as
-          | 'optimal'
-          | 'normal'
-          | 'high'
-          | 'low'
-          | 'out of range';
+        status = getValueStatus(
+          dimensions,
+          point.quantity.value,
+          newestValueInfo,
+        ) as 'optimal' | 'normal' | 'high' | 'low' | 'out of range';
       }
 
       return {

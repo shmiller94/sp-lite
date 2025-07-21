@@ -16,6 +16,6 @@ export const CHART_CONFIG = {
   CIRCLE_RADIUS: 4,
   STROKE_WIDTH: 2,
   RANGE_EXTENSION_FACTOR: 0.1,
-  ITEMS_PER_PAGE_MOBILE: 4,
+  ITEMS_PER_PAGE_MOBILE: 3,
   ITEMS_PER_PAGE_DESKTOP: 15,
 } as const satisfies TimeSeriesChartConfig;

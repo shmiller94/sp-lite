@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from 'react';
 
+import { getNewestValue } from '@/components/ui/charts/utils/get-newest-value';
 import { getValueStatus } from '@/components/ui/charts/utils/get-value-status';
 import { STATUS_TO_COLOR } from '@/const/status-to-color';
 import type { Biomarker } from '@/types/api';
@@ -74,6 +75,8 @@ export const useSparklineChart = ({
 }) => {
   const { range, value } = biomarker;
 
+  const newestValueInfo = useMemo(() => getNewestValue(value), [value]);
+
   const sortedValues = useMemo(
     () =>
       [...value]
@@ -89,10 +92,12 @@ export const useSparklineChart = ({
     () =>
       calculateChartDimensions(
         range,
-        value.map((v) => v.quantity.value).filter((v) => Number.isFinite(v)),
+        sortedValues
+          .map((v) => v.quantity.value)
+          .filter((v) => Number.isFinite(v)),
         CHART_CONFIG.RANGE_EXTENSION_FACTOR,
       ),
-    [range, value],
+    [range, sortedValues],
   );
 
   const valueToY = useCallback(
@@ -123,10 +128,19 @@ export const useSparklineChart = ({
           value: v.quantity.value,
           timestamp: v.timestamp,
           index,
-          status: getValueStatus(dimensions, v.quantity.value),
+          status: getValueStatus(dimensions, v.quantity.value, newestValueInfo),
         };
       }),
-    [sortedValues, svgWidth, PADDING, xStep, valueToY, SVG_HEIGHT, dimensions],
+    [
+      sortedValues,
+      svgWidth,
+      PADDING,
+      xStep,
+      valueToY,
+      SVG_HEIGHT,
+      dimensions,
+      newestValueInfo,
+    ],
   );
 
   const chartData = useMemo(() => {
@@ -138,6 +152,7 @@ export const useSparklineChart = ({
     const lastValueStatus = getValueStatus(
       dimensions,
       lastValue.quantity.value,
+      newestValueInfo,
     );
     const rangeBounds = getRangeBackgroundBounds(
       dimensions,
@@ -175,6 +190,7 @@ export const useSparklineChart = ({
                 getValueStatus(
                   dimensions,
                   firstValue.quantity.value,
+                  newestValueInfo,
                 ) as keyof typeof STATUS_TO_COLOR
               ],
             strokeWidth: STROKE_WIDTH,
@@ -193,6 +209,7 @@ export const useSparklineChart = ({
                 getValueStatus(
                   dimensions,
                   firstValue.quantity.value,
+                  newestValueInfo,
                 ) as keyof typeof STATUS_TO_COLOR
               ],
             strokeWidth: STROKE_WIDTH,
@@ -289,7 +306,11 @@ export const useSparklineChart = ({
             // Continue with next iteration
           } else {
             const segmentValue = (segment.value + nextSegment.value) / 2;
-            const segmentStatus = getValueStatus(dimensions, segmentValue);
+            const segmentStatus = getValueStatus(
+              dimensions,
+              segmentValue,
+              newestValueInfo,
+            );
 
             lines.push({
               key: `line-${v.timestamp}-${index}-${i}`,
@@ -333,6 +354,7 @@ export const useSparklineChart = ({
     CIRCLE_RADIUS,
     STROKE_WIDTH,
     xStep,
+    newestValueInfo,
   ]);
 
   const meta = {
@@ -352,7 +374,8 @@ export const useSparklineChart = ({
 
   const rangeStack = {
     range: biomarker.range,
-    values: biomarker.value.map((v) => v.quantity.value),
+    values: sortedValues.map((v) => v.quantity.value),
+    dimensions,
   };
 
   return {
