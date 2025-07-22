@@ -3,7 +3,7 @@ import { Circle } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Body2 } from '@/components/ui/typography';
 import { STATUS_TO_COLOR } from '@/const/status-to-color';
-import { useBiomarker } from '@/features/biomarkers/api/get-biomarker';
+import { useBiomarkers } from '@/features/biomarkers/api';
 import { BiomarkerTableDialogRow } from '@/features/biomarkers/components/biomarkers-data-table/biomarker-table-dialog-row';
 import { BiomarkerSparklineChart } from '@/features/biomarkers/components/charts/biomarker-sparkline-chart';
 import { BiomarkerRange } from '@/features/biomarkers/components/range';
@@ -17,15 +17,20 @@ export type PlanObservationProps = {
 };
 
 export function PlanGoalObservation({ id, className }: PlanObservationProps) {
-  const getBiomarkerQuery = useBiomarker({ id });
+  const { data, isLoading } = useBiomarkers();
 
-  if (getBiomarkerQuery.isLoading) {
+  if (isLoading) {
     return <Skeleton className="h-[82px] w-full rounded-[20px]" />;
   }
 
-  if (!getBiomarkerQuery.data) return null;
+  if (!data) return null;
 
-  const biomarker = getBiomarkerQuery.data.biomarker;
+  const biomarker = data.biomarkers.find((b) =>
+    b.value.some((v) => v.id.toString() === id.toString()),
+  );
+
+  if (!biomarker) return null;
+
   const result = mostRecent(biomarker.value);
   const { status, name } = biomarker;
 
