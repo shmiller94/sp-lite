@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown';
 import { Greeting } from '@/features/home/components/greeting';
+import { ConsentModal } from '@/features/home/components/modals/consent-modal';
 import { TimelineList } from '@/features/home/components/timeline-list';
 
 export const HomeRoute = () => {
@@ -20,6 +21,7 @@ export const HomeRoute = () => {
 
   return (
     <ContentLayout title="Home" className="!pb-0">
+      <ConsentModal />
       <div className="relative mt-[-134px] h-[675px] w-full md:h-[700px]">
         <div className="absolute left-1/2 top-0 h-full w-screen -translate-x-1/2 overflow-hidden">
           <Greeting />

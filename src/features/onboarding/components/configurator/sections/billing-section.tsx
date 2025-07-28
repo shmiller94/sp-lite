@@ -13,6 +13,7 @@ import { AnimatedCheckbox } from '@/components/ui/checkbox';
 import { toast } from '@/components/ui/sonner';
 import { TransactionSpinner } from '@/components/ui/spinner/transaction-spinner';
 import { Body2, H3 } from '@/components/ui/typography';
+import { ConsentModal } from '@/features/home/components/modals/consent-modal';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import {
   useAddPaymentMethod,
@@ -46,6 +47,7 @@ export const BillingSection = () => {
   const stripe = useStripe();
   const { data: user } = useUser();
   const [error, setError] = useState<StripeError | undefined>(undefined);
+  const [showConsentModal, setShowConsentModal] = useState(false);
   const addPaymentMethodMutation = useAddPaymentMethod();
   const createSubscriptionMutation = useCreateSubscription();
   const { activeStep, nextStep } = useStepper((s) => s);
@@ -84,6 +86,25 @@ export const BillingSection = () => {
       return;
     }
 
+    // Show consent modal instead of proceeding with payment
+    setShowConsentModal(true);
+  };
+
+  const handleConsentModalClose = (open: boolean) => {
+    setShowConsentModal(open);
+
+    // If the modal was closed and consent was given, proceed with payment
+    if (!open && consentGiven) {
+      processPayment();
+    }
+  };
+
+  const processPayment = async () => {
+    if (!user || !membership || !stripe || !elements) return;
+
+    const cardNumber = elements.getElement(CardNumberElement);
+    if (!cardNumber) return;
+
     setProcessing(true);
 
     try {
@@ -96,7 +117,6 @@ export const BillingSection = () => {
         setError(error);
         setProcessing(false);
         toast.error(error.message);
-
         return;
       }
 
@@ -235,6 +255,12 @@ export const BillingSection = () => {
           Agreement.
         </Body2>
       </div>
+
+      <ConsentModal
+        open={showConsentModal}
+        onOpenChange={handleConsentModalClose}
+        initialStep="informed_consent"
+      />
     </div>
   );
 };
