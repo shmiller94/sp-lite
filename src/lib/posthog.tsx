@@ -13,6 +13,10 @@ const phClient = env.POSTHOG_KEY
       defaults: '2025-05-24',
       debug: env.POSTHOG_DEBUG === 'true',
       person_profiles: 'always',
+      session_recording: {
+        maskTextSelector: '*',
+        maskAllInputs: true,
+      },
     })
   : null;
 
