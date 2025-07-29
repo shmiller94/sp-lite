@@ -13,6 +13,7 @@ import { AnimatedCheckbox } from '@/components/ui/checkbox';
 import { toast } from '@/components/ui/sonner';
 import { TransactionSpinner } from '@/components/ui/spinner/transaction-spinner';
 import { Body2, H3 } from '@/components/ui/typography';
+import { useGetConsent } from '@/features/consent/api';
 import { ConsentModal } from '@/features/home/components/modals/consent-modal';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import {
@@ -54,14 +55,18 @@ export const BillingSection = () => {
   const { mutateAsync: updateTaskProgress } = useUpdateTask();
   const { track } = useAnalytics();
 
+  const consentQuery = useGetConsent({
+    userId: user?.id || '',
+  });
+
   const {
     membership,
-    consentGiven,
     setProcessing,
     processing,
-    setConsentGiven,
     showAccessCode,
     setShowAccessCode,
+    consentGiven,
+    setConsentGiven,
   } = useOnboarding();
 
   const handleSubmit = async (event: FormEvent) => {
@@ -86,17 +91,14 @@ export const BillingSection = () => {
       return;
     }
 
-    // Show consent modal instead of proceeding with payment
-    setShowConsentModal(true);
-  };
-
-  const handleConsentModalClose = (open: boolean) => {
-    setShowConsentModal(open);
-
-    // If the modal was closed and consent was given, proceed with payment
-    if (!open && consentGiven) {
-      processPayment();
+    // Check if consent modal is open - if not, show it
+    if (!showConsentModal) {
+      setShowConsentModal(true);
+      return;
     }
+
+    // If consent modal was just closed and we're here, process payment
+    await processPayment();
   };
 
   const processPayment = async () => {
@@ -168,6 +170,18 @@ export const BillingSection = () => {
     }
   };
 
+  const handleConsentModalClose = (open: boolean) => {
+    setShowConsentModal(open);
+
+    if (!open) {
+      // Submit the form to trigger payment processing
+      const form = document.getElementById('billingForm') as HTMLFormElement;
+      if (form) {
+        form.requestSubmit();
+      }
+    }
+  };
+
   return (
     <div className="space-y-8">
       <div className="space-y-2">
@@ -205,7 +219,7 @@ export const BillingSection = () => {
           <AnimatedCheckbox
             id="terms"
             className="data-[state=checked]:text-white"
-            disabled={processing}
+            disabled={processing || consentQuery.isLoading}
             checked={consentGiven}
             onCheckedChange={(checked: boolean) => setConsentGiven(checked)}
           />
@@ -216,7 +230,9 @@ export const BillingSection = () => {
       <div className="space-y-2">
         <Button
           className="w-full rounded-xl border border-zinc-500 bg-black px-6 py-4"
-          disabled={processing || !consentGiven || !membership}
+          disabled={
+            processing || !consentGiven || !membership || consentQuery.isLoading
+          }
           type="submit"
           form="billingForm"
           onClick={async (e) => {
@@ -259,7 +275,7 @@ export const BillingSection = () => {
       <ConsentModal
         open={showConsentModal}
         onOpenChange={handleConsentModalClose}
-        initialStep="informed_consent"
+        initialStep="informed-consent"
       />
     </div>
   );

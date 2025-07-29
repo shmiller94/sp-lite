@@ -1,6 +1,6 @@
 // ConsentModal.tsx
 import { AnimatePresence } from 'framer-motion';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
@@ -11,15 +11,13 @@ import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 import { useUser } from '@/lib/auth';
 import { StepItem, StepperStoreProvider, useStepper } from '@/lib/stepper';
 
-const CONSENT_MODAL_STORAGE_KEY = 'consent-modal-open';
-
 const steps: StepItem[] = [
   {
     id: 'consent_notice',
     content: <ConsentNoticeStep />,
   },
   {
-    id: 'informed_consent',
+    id: 'informed-consent',
     content: <InformedConsentStep />,
   },
 ];
@@ -27,7 +25,7 @@ const steps: StepItem[] = [
 interface ConsentModalProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  initialStep?: 'consent_notice' | 'informed_consent';
+  initialStep?: 'consent_notice' | 'informed-consent';
 }
 
 export const ConsentModal = ({
@@ -38,7 +36,6 @@ export const ConsentModal = ({
   const [internalIsOpen, setInternalIsOpen] = useState(false);
   const { data: user } = useUser();
   const { width } = useWindowDimensions();
-  const resetStepsRef = useRef<(() => void) | null>(null);
   const isMobile = width <= 768;
 
   const consentQuery = useGetConsent({
@@ -48,27 +45,23 @@ export const ConsentModal = ({
   const isOpen = open !== undefined ? open : internalIsOpen;
   const setIsOpen = onOpenChange || setInternalIsOpen;
 
-  // Handle modal opening logic - prioritize URL parameters over localStorage
+  // Handle modal opening logic - check URL parameters and server state
   useEffect(() => {
     if (open === undefined && user && !consentQuery.isLoading) {
       const hasConsent = consentQuery.data?.exists;
 
-      // Check URL parameters first (higher priority)
+      // Check URL parameters first
       const urlParams = new URLSearchParams(window.location.search);
       const showConsentFromUrl = urlParams.get('consent') === 'true';
 
       if (showConsentFromUrl && !hasConsent) {
         setInternalIsOpen(true);
-        localStorage.setItem(CONSENT_MODAL_STORAGE_KEY, 'true');
         window.history.replaceState(null, '', window.location.pathname);
-        return; // Exit early since URL parameter takes precedence
+        return;
       }
 
-      // If no URL parameter, check localStorage
-      const shouldShowModalFromStorage =
-        localStorage.getItem(CONSENT_MODAL_STORAGE_KEY) === 'true';
-
-      if (shouldShowModalFromStorage && !hasConsent) {
+      // If no consent exists, show modal (for page refreshes and direct access)
+      if (!hasConsent) {
         setInternalIsOpen(true);
       }
     }
@@ -80,30 +73,14 @@ export const ConsentModal = ({
   const initialStepIndex = steps.findIndex((s) => s.id === stepId);
 
   const Step = () => {
-    const { steps, activeStep, resetSteps } = useStepper((s) => s);
+    const { steps, activeStep } = useStepper((s) => s);
     const currentStep = steps[activeStep];
-
-    // Store resetSteps in ref for access outside the component
-    resetStepsRef.current = resetSteps;
 
     return currentStep?.content ?? null;
   };
 
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
-
-    if (!open) {
-      // Clear localStorage when modal is properly closed
-      localStorage.removeItem(CONSENT_MODAL_STORAGE_KEY);
-
-      // Reset stepper when modal closes
-      if (resetStepsRef.current) {
-        resetStepsRef.current();
-      }
-    } else {
-      // Store in localStorage when modal is opened
-      localStorage.setItem(CONSENT_MODAL_STORAGE_KEY, 'true');
-    }
   };
 
   if (isMobile) {
@@ -112,6 +89,7 @@ export const ConsentModal = ({
         <SheetContent
           className="overflow-hidden rounded-2xl px-5 pt-20 max-md:pb-24"
           onPointerDownOutside={(e) => e.preventDefault()}
+          data-testid="consent-modal"
         >
           <AnimatePresence>
             <StepperStoreProvider steps={steps} initialStep={initialStepIndex}>
@@ -128,6 +106,7 @@ export const ConsentModal = ({
       <DialogContent
         className="overflow-hidden px-16 pt-20"
         onPointerDownOutside={(e) => e.preventDefault()}
+        data-testid="consent-modal"
       >
         <AnimatePresence>
           <StepperStoreProvider steps={steps} initialStep={initialStepIndex}>

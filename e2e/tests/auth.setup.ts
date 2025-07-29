@@ -105,8 +105,14 @@ setup('authenticate', async ({ page }) => {
   await page.getByRole('button', { name: /register/i }).click();
   await page.waitForURL('/');
 
-  // the modal for avatar upload opens up, close it.
-  // await page.getByTestId('keep-default-avatar-btn').click();
+  // Close consent modal if it's open
+  try {
+    await page.getByTestId('consent-modal').waitFor({ timeout: 2000 });
+    // If modal is open, close it by clicking outside or pressing escape
+    await page.keyboard.press('Escape');
+  } catch {
+    // Modal not open, continue
+  }
 
   // log out:
   // disable tanstack query for test

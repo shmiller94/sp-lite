@@ -3,6 +3,7 @@ import { DialogClose } from '@/components/ui/dialog';
 import { SheetClose } from '@/components/ui/sheet';
 import { toast } from '@/components/ui/sonner';
 import { useCreateConsent } from '@/features/consent/api';
+import { StepID } from '@/features/orders/types/step-id';
 import { useUser } from '@/lib/auth';
 import { useStepper } from '@/lib/stepper';
 import { cn } from '@/lib/utils';
@@ -33,7 +34,7 @@ export const ConsentModalFooter = ({
   });
 
   const currentStepId = steps[activeStep]?.id;
-  const isInformedConsentStep = currentStepId === 'informed_consent';
+  const isInformedConsentStep = currentStepId === StepID.INFORMED_CONSENT;
 
   const handleButtonClick = async () => {
     if (isInformedConsentStep) {
