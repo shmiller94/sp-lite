@@ -1,4 +1,4 @@
-# Bulletproof React 🛡️ ⚛️
+# Superpower React 🛡️ ⚛️
 
 ## What makes a React application "bulletproof"?
 
