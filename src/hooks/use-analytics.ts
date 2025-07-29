@@ -11,6 +11,12 @@ export type PersonProperties = {
   state?: string;
   country?: string;
   stripe_id?: string;
+  gender?: string;
+  /**
+   * The user's birthday in ISO format (YYYY-MM-DD).
+   */
+  birthday?: string;
+  birthday_year?: number;
 };
 
 export type TrackProperties = Properties & {

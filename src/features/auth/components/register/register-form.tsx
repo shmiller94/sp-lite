@@ -93,15 +93,6 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
         postal_code: data.address.postalCode,
         state: data.address.state,
         reason: response.reason,
-        $set: {
-          email: data.email,
-          first_name: data.firstName,
-          last_name: data.lastName,
-          phone: data.phone,
-          city: data.address.city,
-          postal_code: data.address.postalCode,
-          state: data.address.state,
-        },
       });
 
       await klaviyoSubscribeMutation.mutateAsync({
@@ -136,6 +127,9 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
           city: data.address.city,
           state: data.address.state,
           postal_code: data.address.postalCode,
+          gender: data.gender,
+          birthday: data.dateOfBirth.toISOString(),
+          birthday_year: data.dateOfBirth.getFullYear(),
         },
       });
 
