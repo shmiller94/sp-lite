@@ -14,7 +14,6 @@ import { toast } from '@/components/ui/sonner';
 import { TransactionSpinner } from '@/components/ui/spinner/transaction-spinner';
 import { Body2, H3 } from '@/components/ui/typography';
 import { useGetConsent } from '@/features/consent/api';
-import { ConsentModal } from '@/features/home/components/modals/consent-modal';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import {
   useAddPaymentMethod,
@@ -48,7 +47,6 @@ export const BillingSection = () => {
   const stripe = useStripe();
   const { data: user } = useUser();
   const [error, setError] = useState<StripeError | undefined>(undefined);
-  const [showConsentModal, setShowConsentModal] = useState(false);
   const addPaymentMethodMutation = useAddPaymentMethod();
   const createSubscriptionMutation = useCreateSubscription();
   const { activeStep, nextStep } = useStepper((s) => s);
@@ -88,12 +86,6 @@ export const BillingSection = () => {
     const cardNumber = elements.getElement(CardNumberElement);
 
     if (!cardNumber) {
-      return;
-    }
-
-    // Check if consent modal is open - if not, show it
-    if (!showConsentModal) {
-      setShowConsentModal(true);
       return;
     }
 
@@ -167,18 +159,6 @@ export const BillingSection = () => {
       console.error(e);
     } finally {
       setProcessing(false);
-    }
-  };
-
-  const handleConsentModalClose = (open: boolean) => {
-    setShowConsentModal(open);
-
-    if (!open) {
-      // Submit the form to trigger payment processing
-      const form = document.getElementById('billingForm') as HTMLFormElement;
-      if (form) {
-        form.requestSubmit();
-      }
     }
   };
 
@@ -271,12 +251,6 @@ export const BillingSection = () => {
           Agreement.
         </Body2>
       </div>
-
-      <ConsentModal
-        open={showConsentModal}
-        onOpenChange={handleConsentModalClose}
-        initialStep="informed-consent"
-      />
     </div>
   );
 };
