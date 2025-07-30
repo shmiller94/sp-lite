@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 
 import { Head } from '../seo';
 
-const contentLayoutVariants = cva('grow space-y-6 md:space-y-12', {
+const contentLayoutVariants = cva('grow space-y-6 md:space-y-8', {
   variants: {
     variant: {
       default: 'px-6 py-16 sm:p-16',

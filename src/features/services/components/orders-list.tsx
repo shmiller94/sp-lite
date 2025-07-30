@@ -101,7 +101,7 @@ export const OrdersList = React.memo((): JSX.Element => {
   return (
     <>
       <Collapsible open={collapsibleOpen} onOpenChange={setCollapsibleOpen}>
-        <div className="grid gap-5 p-2 lg:grid-cols-2">
+        <div className="grid gap-5 lg:grid-cols-2">
           {visibleOrders.map((order) => (
             <OrderCard
               key={order.id}
@@ -112,7 +112,7 @@ export const OrdersList = React.memo((): JSX.Element => {
         </div>
 
         <CollapsibleContent>
-          <div className="mt-5 grid gap-5 p-2 md:grid-cols-2">
+          <div className="mt-5 grid gap-5 md:grid-cols-2">
             {restOrders.map((order) => (
               <OrderCard
                 key={order.id}
