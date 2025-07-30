@@ -38,7 +38,8 @@ function PureSuggestedActions({ setInput }: SuggestedActionsProps) {
         >
           <Button
             variant="ghost"
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault();
               setInput(suggestedAction.action);
             }}
             className="group h-auto w-full flex-1 flex-col items-start justify-start gap-1 rounded-full border px-4 py-2 text-left text-sm transition-all duration-150 hover:bg-zinc-100"
