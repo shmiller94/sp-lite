@@ -30,7 +30,7 @@ REQUIRED_VARS=(
 check_vars "${REQUIRED_VARS[@]}"
 
 info "Fetching Doppler secrets..."
-doppler secrets download -p superpower-app -c prd_v2 --no-file --format=env > .env
+doppler secrets download -p superpower-app -c stg_emr --no-file --format=env > .env
 
 # Debugging github workflows
 debug "BUILD_ENV: ${BUILD_ENV}"

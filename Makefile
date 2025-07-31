@@ -102,6 +102,14 @@ build/docker/app/stg-emr: util/login-aws-ecr
 	VERSION=$(VERSION) \
 	bash ./assets/scripts/build-docker-app-emr.sh stg
 
+.PHONY: build/docker/app/prd-v2
+build/docker/app/prd-v2: description = Build and push app/frontend docker image for prd-v2 (production v2)
+build/docker/app/prd-v2: util/login-aws-ecr
+	@bash $(SHARED_SCRIPT) info "Running $@ ..."
+	AWS_ECR_URL=$(AWS_ECR_URL) \
+	VERSION=$(VERSION) \
+	bash ./assets/scripts/build-docker-app-v2.sh stg
+
 .PHONY: build/docker/app/feature
 build/docker/app/feature: description = Build and push app docker image for feature
 build/docker/app/feature: FEATURE_NAME ?= $(shell git branch --show-current | sed 's/[^a-zA-Z0-9]/-/g' | tr '[:upper:]' '[:lower:]' | cut -c -44)
@@ -133,6 +141,17 @@ deploy/app/stg-emr: prereq
 	DOPPLER_CONFIG=stg_emr \
 	DEPLOY_ENV=STG-EMR \
 	DEPLOY_CONFIG=deployment/deploy.app-emr.yaml \
+	KSP_SERVICE=app \
+	python3 $(DEPLOY_SCRIPT) -r superpower-app -t deploy/hidden
+
+.PHONY: deploy/app/prd-v2
+deploy/app/prd-v2: description = Deploy app to prd-v2 (production v2)
+deploy/app/prd-v2: prereq
+	K8S_CLUSTER=production-cluster \
+	DOPPLER_PROJECT=superpower-app \
+	DOPPLER_CONFIG=prd_v2 \
+	DEPLOY_ENV=PRD-V2 \
+	DEPLOY_CONFIG=deployment/deploy.app-prd-v2yaml \
 	KSP_SERVICE=app \
 	python3 $(DEPLOY_SCRIPT) -r superpower-app -t deploy/hidden
 
