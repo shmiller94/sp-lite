@@ -45,6 +45,10 @@ spec:
               value: '{{ .VITE_APP_KLAVIYO_LIST_ID }}'
             - name: VITE_APP_KLAVIYO_PUBLIC_API_KEY
               value: '{{ .VITE_APP_KLAVIYO_PUBLIC_API_KEY }}'
+            - name: VITE_APP_KLAVIYO_WAITLIST_LIST_ID
+              value: '{{ .VITE_APP_KLAVIYO_WAITLIST_LIST_ID }}'
+            - name: VITE_APP_KLAVIYO_LEADS_LIST_ID
+              value: '{{ .VITE_APP_KLAVIYO_LEADS_LIST_ID }}'
 
 ---
 apiVersion: v1
