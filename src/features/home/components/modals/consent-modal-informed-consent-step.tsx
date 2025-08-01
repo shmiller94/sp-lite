@@ -15,7 +15,7 @@ export const InformedConsentStep = () => {
         <H2 className="text-center">Informed Consent</H2>
       </DialogTitle>
       <div>
-        <ScrollArea className="h-80 rounded-2xl border border-zinc-200 px-8 pt-8">
+        <ScrollArea className="h-60 rounded-2xl border border-zinc-200 px-8 pt-8 [@media(min-height:844px)]:h-96">
           <div className="space-y-4 pl-2">
             <Body2 className="text-left font-semibold text-zinc-400">
               What is Telemedicine?
@@ -261,15 +261,19 @@ export const InformedConsentStep = () => {
 
         <div className="mt-8 flex items-center gap-3">
           <Checkbox
+            id="consent-checkbox"
             checked={isConsentChecked}
             onCheckedChange={(checked) =>
               setIsConsentChecked(checked as boolean)
             }
           />
-          <Body1 className="text-zinc-400">
-            By clicking &ldquo;I agree&rdquo;, you acknowledge that you have
-            read, understand and consent to the Informed Medical Consent policy.
-          </Body1>
+          <label htmlFor="consent-checkbox" className="cursor-pointer">
+            <Body1 className="text-zinc-400">
+              By clicking &ldquo;I agree&rdquo;, you acknowledge that you have
+              read, understand and consent to the Informed Medical Consent
+              policy.
+            </Body1>
+          </label>
         </div>
       </div>
 

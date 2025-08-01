@@ -90,7 +90,7 @@ export const ConsentModal = ({
     return (
       <Sheet open={isOpen} onOpenChange={handleOpenChange}>
         <SheetContent
-          className="overflow-hidden rounded-2xl px-5 pt-20 max-md:pb-24"
+          className="overflow-hidden rounded-2xl px-5 pt-10 max-md:pb-24 md:pt-20"
           onPointerDownOutside={(e) => e.preventDefault()}
           data-testid="consent-modal"
         >
