@@ -1,8 +1,10 @@
 import { motion } from 'framer-motion';
+import { useMemo } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Body1, H3 } from '@/components/ui/typography';
+import { getGenderBasedValue } from '@/features/onboarding/utils/get-gender-based-value';
 import { useUser } from '@/lib/auth';
 
 const ProgressCircle = ({ progress }: { progress: number }) => {
@@ -74,11 +76,24 @@ export const UpsellItemCover = ({
     circularProgress: number;
     source: string;
     foregroundImage: string;
+    femaleForegroundImage?: string;
     backgroundImage: string;
   };
   goToNext: () => void;
 }) => {
   const { data: user, isLoading } = useUser();
+
+  const statisticTitle = useMemo(() => {
+    return getGenderBasedValue(user?.gender, cover.title, {
+      female: cover.femaleTitle,
+    });
+  }, [cover.title, cover.femaleTitle, user?.gender]);
+
+  const coverImage = useMemo(() => {
+    return getGenderBasedValue(user?.gender, cover.foregroundImage, {
+      female: cover.femaleForegroundImage,
+    });
+  }, [cover.foregroundImage, cover.femaleForegroundImage, user?.gender]);
 
   return (
     <>
@@ -86,9 +101,7 @@ export const UpsellItemCover = ({
         {cover.femaleTitle && isLoading ? (
           <Skeleton className="h-12 w-full rounded-xl" />
         ) : (
-          <H3 className="text-white md:text-primary">
-            {user?.gender === 'female' ? cover.femaleTitle : cover.title}
-          </H3>
+          <H3 className="text-white md:text-primary">{statisticTitle}</H3>
         )}
         <Body1 className="mb-4 text-white md:text-zinc-500">
           {cover.description}
@@ -105,11 +118,13 @@ export const UpsellItemCover = ({
       >
         <div className="pointer-events-none absolute bottom-0 z-30 h-96 w-full bg-gradient-to-b from-transparent to-[#8F7E6E]/40" />
         <div className="absolute inset-0 top-auto z-20 mx-auto size-full max-h-[80%]">
-          <img
-            className="size-full object-cover object-top duration-1000 animate-in fade-in lg:object-contain lg:object-bottom"
-            src={cover.foregroundImage}
-            alt={`${cover.title} person standing in front of a circle`}
-          />
+          {!isLoading && (
+            <img
+              className="size-full object-cover object-top duration-1000 animate-in fade-in lg:object-contain lg:object-bottom"
+              src={coverImage}
+              alt={`${cover.title} person standing in front of a circle`}
+            />
+          )}
         </div>
         <ProgressCircle progress={cover.circularProgress} />
         <div className="absolute bottom-4 left-1/2 z-50 w-full -translate-x-1/2 space-y-4 px-4">

@@ -13,6 +13,7 @@ type UpsellCover = {
   circularProgress: number;
   source: string;
   foregroundImage: string;
+  femaleForegroundImage?: string; // for conditional foreground images in the cover
   backgroundImage: string;
 };
 
@@ -75,6 +76,8 @@ export const UPSELL_SERVICES = [
       source: 'JAMA, 2018 (Genome Sequencing Screening Study)',
       foregroundImage:
         '/onboarding/upsell/grail-galleri-multi-cancer-test-foreground.webp',
+      femaleForegroundImage:
+        '/onboarding/upsell/grail-galleri-multi-cancer-test-foreground-female.webp',
       backgroundImage:
         '/onboarding/upsell/grail-galleri-multi-cancer-test-background.webp',
     },
