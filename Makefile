@@ -251,6 +251,7 @@ test/e2e: util/install
 	    cp .env .env.bak; \
 	fi && \
 	cp .env.example-e2e .env && \
+        rm -f mocked-db.json && \
 	yarn playwright install --with-deps && \
 	yarn test-e2e'
 

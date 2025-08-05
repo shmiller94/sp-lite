@@ -1,4 +1,4 @@
-import { GoogleAddressComponent } from '../src/types/address';
+import { GoogleAddressComponent } from '@/types/address';
 
 export const mockAddressComponents: GoogleAddressComponent[] = [
   { long_name: '1600', short_name: '1600', types: ['street_number'] },

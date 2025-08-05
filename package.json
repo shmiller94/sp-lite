@@ -3,12 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": "20.19.4"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build --base=/",
     "preview": "vite preview",
     "test": "vitest",
-    "test-e2e": "pm2 start \"yarn run-mock-server\" --name server && yarn playwright test",
+    "test-e2e": "npx pm2 start \"yarn run-mock-server\" --name server && yarn playwright test",
     "prepare": "husky",
     "lint": "eslint src --ignore-path .gitignore",
     "check-types": "tsc --project tsconfig.json --pretty --noEmit",
