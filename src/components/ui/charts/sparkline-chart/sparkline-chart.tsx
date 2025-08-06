@@ -295,7 +295,7 @@ export const SparklineChart = ({
               />
               <div className="text-xs">
                 <div className="font-semibold">
-                  {displayedPoint.value.toFixed(2)} {biomarker.unit}
+                  {displayedPoint.value.toFixed(1)} {biomarker.unit}
                 </div>
                 <div className="text-muted-foreground">
                   {(() => {

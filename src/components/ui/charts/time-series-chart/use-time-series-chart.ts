@@ -175,28 +175,26 @@ const determineTimeScale = (
   timestamps: string[],
 ): TimeScale => {
   const { days, months, years } = span;
-  const maxLabels = Math.floor(availableWidth / 50);
+  const maxLabels = Math.floor(availableWidth / 80); // Space for "MMM YYYY" format
 
   const currentYear = new Date().getFullYear();
   const dataYears = timestamps.map((ts) => new Date(ts).getFullYear());
   const hasNonCurrentYearData = dataYears.some((year) => year !== currentYear);
 
-  if (years > 2) {
-    const yearInterval = Math.ceil(years / maxLabels);
-    return {
-      type: 'years',
-      interval: yearInterval,
-      format: (date: Date) => date.getFullYear().toString(),
-    };
-  }
-
-  if (months > 6) {
+  if (months > 1) {
     const monthInterval = Math.max(1, Math.ceil(months / maxLabels));
     return {
       type: 'months',
       interval: monthInterval,
-      format: (date: Date) =>
-        date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+      format: (date: Date) => {
+        if (years > 1 || hasNonCurrentYearData) {
+          return date.toLocaleDateString('en-US', {
+            month: 'short',
+            year: 'numeric',
+          });
+        }
+        return date.toLocaleDateString('en-US', { month: 'short' });
+      },
     };
   }
 
@@ -385,6 +383,13 @@ export const useTimeSeriesChart = ({
       let x: number;
       if (allValuesWithNextTest.length === 1) {
         x = CHART_CONFIG.LEFT_PADDING + chartWidth / 2;
+      } else if (pageValues.length === 1 && shouldShowNextTest) {
+        const isNextTest = point.id === 'next-test';
+        if (isNextTest) {
+          x = CHART_CONFIG.LEFT_PADDING + chartWidth * 0.85;
+        } else {
+          x = CHART_CONFIG.LEFT_PADDING + chartWidth * 0.25;
+        }
       } else {
         x =
           CHART_CONFIG.LEFT_PADDING +
@@ -617,6 +622,41 @@ export const useTimeSeriesChart = ({
 
   const createOptimizedLabels = (points: DataPoint[]): XAxisLabel[] => {
     if (points.length === 0) return [];
+
+    // move single datapoint to the center
+    const actualDataPoints = points.filter((p) => p.status !== 'next-test');
+    const nextTestPoints = points.filter((p) => p.status === 'next-test');
+    if (actualDataPoints.length === 1 && nextTestPoints.length === 1) {
+      const actualPointX = Math.max(
+        edgePadding,
+        Math.min(svgWidth - edgePadding, actualDataPoints[0].x),
+      );
+      const nextTestX = Math.max(
+        edgePadding,
+        Math.min(svgWidth - edgePadding, nextTestPoints[0].x),
+      );
+
+      const minSpacing = 80;
+      const labels: XAxisLabel[] = [
+        {
+          label: timeScale.format(new Date(actualDataPoints[0].timestamp)),
+          x: actualPointX,
+          y: svgHeight - 16,
+          key: 'x-label-actual',
+        },
+      ];
+
+      if (Math.abs(nextTestX - actualPointX) >= minSpacing) {
+        labels.push({
+          label: timeScale.format(new Date(nextTestPoints[0].timestamp)),
+          x: nextTestX,
+          y: svgHeight - 16,
+          key: 'x-label-next-test',
+        });
+      }
+
+      return labels;
+    }
 
     if (points.length === 1) {
       return [
