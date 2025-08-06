@@ -130,7 +130,7 @@ export function PlanActivities() {
                 {group.titleSubtext && (
                   <Body1 className="text-zinc-500">{group.titleSubtext}</Body1>
                 )}
-                <div className="space-y-1">
+                <div className="space-y-6">
                   {group.activities.map((activity, index) => (
                     <div key={`activity-${group.title}-${index}`}>
                       {group.renderActivity(activity, index)}
