@@ -23,13 +23,10 @@ export const FilesHub = () => {
                     Integrate your healthcare data into the Superpower ecosystem
                   </h3>
                   <p className="mt-2 text-sm text-zinc-600 lg:text-base">
-                    Upload your health records as PDF files—like lab results,
-                    blood panels, gut tests, and more. We&apos;ll process them
-                    and add them to your Superpower profile. Currently, blood
-                    panels are fully supported, and we&apos;ll process other
-                    documents as we expand our capabilities. We&apos;ll notify
-                    you once your files have been incorporated into your health
-                    records and action plans.
+                    Upload your health record PDFs like lab results, gut tests
+                    and blood panels. We&apos;ll process them and add them to
+                    your profile—starting with full support for blood panels.
+                    More document types coming soon.
                   </p>
                 </div>
                 <div className="flex flex-row items-center space-x-6">
