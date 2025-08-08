@@ -109,20 +109,27 @@ export const ServiceActivity = ({
     );
   }, [ordersData?.orders, service.id]);
 
+  const shouldShowEarlyAccess = useMemo(() => {
+    return !service.active;
+  }, [service.active]);
+
   const serviceMessage = useMemo(() => {
     if (isAdvisory) return 'Not currently available.';
     if (isServiceScheduled) return 'Service scheduled';
+    if (shouldShowEarlyAccess) return 'Request Early Access';
     return 'Available for booking';
-  }, [isAdvisory, isServiceScheduled]);
+  }, [isAdvisory, isServiceScheduled, shouldShowEarlyAccess]);
 
   const actionButton = useMemo(() => {
     if (isAdvisory || isServiceScheduled) return null;
     return (
       <HealthcareServiceDialog healthcareService={service}>
-        <Button size="medium">Book</Button>
+        <Button size="medium">
+          {shouldShowEarlyAccess ? 'Request' : 'Book'}
+        </Button>
       </HealthcareServiceDialog>
     );
-  }, [isAdvisory, isServiceScheduled, service]);
+  }, [isAdvisory, isServiceScheduled, service, shouldShowEarlyAccess]);
 
   return (
     <div className="mt-8 space-y-2">
