@@ -27,16 +27,41 @@ export type SpinnerProps = {
 };
 
 export const Spinner = ({ size = 'sm', variant = 'light' }: SpinnerProps) => {
+  const strokeWidth = 3;
+  const radius = sizes[size] / 2 - strokeWidth;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDasharray = `${circumference * 0.25} ${circumference * 0.75}`;
+
   return (
     <>
-      <l-ring-2
-        size={sizes[size]}
-        stroke="3"
-        stroke-length="0.25"
-        bg-opacity="0.1"
-        speed="0.8"
-        color={variants[variant]}
-      ></l-ring-2>
+      <svg width={sizes[size]} height={sizes[size]} className="relative">
+        {/* Background circle - full circle with low opacity */}
+        <circle
+          cx={sizes[size] / 2}
+          cy={sizes[size] / 2}
+          r={radius}
+          fill="none"
+          stroke={variants[variant]}
+          strokeWidth={strokeWidth}
+          opacity={0.1}
+        />
+        {/* Spinning arc with rounded caps */}
+        <circle
+          cx={sizes[size] / 2}
+          cy={sizes[size] / 2}
+          r={radius}
+          fill="none"
+          stroke={variants[variant]}
+          strokeWidth={strokeWidth}
+          strokeDasharray={strokeDasharray}
+          strokeLinecap="round"
+          strokeDashoffset={circumference * 0.75}
+          className="origin-center transform-gpu animate-spin-safe will-change-transform"
+          style={{
+            transformOrigin: `${sizes[size] / 2}px ${sizes[size] / 2}px`,
+          }}
+        />
+      </svg>
 
       <span className="sr-only">Loading</span>
     </>

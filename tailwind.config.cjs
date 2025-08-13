@@ -154,6 +154,10 @@ module.exports = {
           '0%': { transform: 'rotate(0deg)' },
           '100%': { transform: 'rotate(360deg)' },
         },
+        'spin-safe': {
+          '0%': { transform: 'translateZ(0) rotate(0deg)' },
+          '100%': { transform: 'translateZ(0) rotate(360deg)' },
+        },
         'dot-wave': {
           '0%, 100%': { transform: 'translateY(0px)' },
           '50%': { transform: 'translateY(-2px)' },
@@ -175,6 +179,7 @@ module.exports = {
           'jump-up 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.75) forwards',
         'timeline-flow': 'timeline-flow 1.5s linear infinite',
         'spin-slow': 'spin-slow 15s linear infinite',
+        'spin-safe': 'spin-safe 0.8s linear infinite',
         dot1: 'dot-wave 1.3s infinite',
         dot2: 'dot-wave 1.3s infinite 0.2s',
         dot3: 'dot-wave 1.3s infinite 0.4s',
