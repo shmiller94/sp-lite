@@ -1,15 +1,16 @@
 import { format } from 'date-fns';
 import { Reorder } from 'framer-motion';
-import { ChevronRight, Upload } from 'lucide-react';
+import { MoreHorizontal, Upload } from 'lucide-react';
 import React, { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { FileName } from '@/features/files/components/file-name';
 import { FileUploadBanner } from '@/features/files/components/file-upload-banner';
 import { FilesSearch } from '@/features/files/components/files-search';
-import { ViewPdfDialog } from '@/features/files/components/view-pdf-dialog';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 import { File } from '@/types/api';
+
+import { MenuDropdown } from './menu-dropdown';
 
 interface MobileFilesProps {
   files: File[];
@@ -61,32 +62,6 @@ export function MobileFiles({ files }: MobileFilesProps): JSX.Element {
             className="space-y-1"
           >
             {newFiles.map((file) => {
-              if (file.contentType === 'application/pdf') {
-                return (
-                  <ViewPdfDialog file={file} key={file.id}>
-                    <Reorder.Item
-                      drag={false}
-                      value={file.id}
-                      className="flex cursor-pointer items-center rounded-2xl bg-white px-5 py-6"
-                      key={file.id}
-                    >
-                      <FileName file={file} />
-                      <div className="ml-auto flex items-center gap-1.5">
-                        <h3 className="whitespace-nowrap text-[#71717A]">
-                          {format(
-                            file.uploadedAt,
-                            width > 768 ? 'PP' : 'LLL, dd',
-                          )}
-                        </h3>
-                        <div>
-                          <ChevronRight className="size-4" color="#A1A1AA" />
-                        </div>
-                      </div>
-                    </Reorder.Item>
-                  </ViewPdfDialog>
-                );
-              }
-
               return (
                 <Reorder.Item
                   drag={false}
@@ -100,6 +75,12 @@ export function MobileFiles({ files }: MobileFilesProps): JSX.Element {
                       {format(file.uploadedAt, width > 768 ? 'PP' : 'LLL, dd')}
                     </h3>
                     <div className="size-4" />
+                    <MenuDropdown file={file}>
+                      <Button variant="ghost" size="icon">
+                        <MoreHorizontal className="size-4 text-zinc-500 data-[state=open]:bg-muted" />
+                        <span className="sr-only">Open menu</span>
+                      </Button>
+                    </MenuDropdown>
                   </div>
                 </Reorder.Item>
               );
