@@ -78,8 +78,7 @@ export const SetPasswordForm = ({
   }
 
   return (
-    <div className="flex size-full max-w-3xl flex-1 flex-col justify-between gap-16 rounded-t-3xl bg-white p-8 md:rounded-3xl md:p-16">
-      <SuperpowerLogo />
+    <div className="flex size-full max-w-3xl flex-1 flex-col justify-center gap-16 rounded-t-3xl bg-white p-8 md:rounded-3xl md:p-16">
       <div>
         <div className="mb-8">
           <H1 className="text-zinc-900">Set password</H1>
