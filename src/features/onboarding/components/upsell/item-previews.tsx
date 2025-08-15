@@ -2,13 +2,15 @@ import { useMemo } from 'react';
 
 import { Body1, Body2 } from '@/components/ui/typography';
 import { useUpsellOrders } from '@/features/onboarding/hooks/use-upsell-orders';
+import { getImageForUpsellService } from '@/features/onboarding/utils/get-image-for-upsell-service';
 import { useServices } from '@/features/services/api';
 import { cn } from '@/lib/utils';
 import { HealthcareService } from '@/types/api';
-
-import { getImageForUpsellService } from '../../utils/get-image-for-upsell-service';
+import { getServiceImage } from '@/utils/service';
 
 import { ItemPreview } from './item-preview';
+
+type ServiceWithImage = HealthcareService & { image?: string };
 
 export const ItemPreviews = ({
   selectedServices,
@@ -19,7 +21,7 @@ export const ItemPreviews = ({
   const { data: upsellOrders } = useUpsellOrders();
 
   const selectedOrders = useMemo(() => {
-    const items = [] as HealthcareService[];
+    const items: ServiceWithImage[] = [];
 
     upsellOrders.map((order) => {
       if (allServices) {
@@ -38,7 +40,7 @@ export const ItemPreviews = ({
 
   const items =
     selectedServices && selectedServices.length > 0
-      ? selectedServices
+      ? selectedServices.map((s) => ({ ...s, image: getServiceImage(s.name) }))
       : selectedOrders;
 
   return (

@@ -21,5 +21,22 @@ export const MYCOTOXINS_TEST = 'Mycotoxins';
 export const ENVIRONMENTAL_TOXIN_TEST = 'Environmental Toxin';
 export const HEAVY_METALS_TEST = 'Heavy Metals';
 export const ADVANCED_BLOOD_PANEL = 'Advanced Blood Panel';
+export const IV_DRIP = 'IV Drip';
 
 export const READY_NUM_HOURS_BEFORE_ADVISORY = 2;
+
+export enum ServiceTypeEnum {
+  Baseline = 'v2-baseline',
+  Advanced = 'v2-advanced',
+}
+export type ServiceType = ServiceTypeEnum;
+
+export enum ServiceLabTypeEnum {
+  Labcorp = 'labcorp',
+  Quest = 'quest',
+  Bioref = 'bioref',
+}
+export type ServiceLabType = ServiceLabTypeEnum;
+
+export const UPGRADE_PRICE_NYNJ = 16000;
+export const UPGRADE_PRICE = 15000;

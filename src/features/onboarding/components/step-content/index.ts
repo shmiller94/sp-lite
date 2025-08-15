@@ -6,3 +6,4 @@ export * from './share';
 export * from './upsell';
 export * from './upsell-booking';
 export * from './questionnaire';
+export * from './advanced-upgrade';

@@ -1,10 +1,10 @@
 import {
   ADVANCED_BLOOD_PANEL,
+  COLLECTION_METHODS,
+  type CollectionOptionType,
   CUSTOM_BLOOD_PANEL,
   SUPERPOWER_BLOOD_PANEL,
 } from '@/const';
-import { COLLECTION_METHODS } from '@/features/orders/const/collection-methods';
-import { CollectionOptionType } from '@/features/orders/types/collection-method';
 import { HealthcareService } from '@/types/api';
 
 /**

@@ -1,12 +1,15 @@
 import {
+  ADVANCED_BLOOD_PANEL,
+  CUSTOM_BLOOD_PANEL,
   GRAIL_GALLERI_MULTI_CANCER_TEST,
   GUT_MICROBIOME_ANALYSIS,
+  SUPERPOWER_BLOOD_PANEL,
   TOTAL_TOXIN_TEST,
 } from '@/const/services';
 import { ServiceDetails } from '@/types/service';
 
 export const SERVICE_DETAILS: Record<string, ServiceDetails> = {
-  'Superpower Blood Panel': {
+  [SUPERPOWER_BLOOD_PANEL]: {
     faqs: [
       {
         question: "What's tested?",
@@ -30,7 +33,7 @@ export const SERVICE_DETAILS: Record<string, ServiceDetails> = {
     ],
   },
 
-  'Advanced Blood Panel': {
+  [ADVANCED_BLOOD_PANEL]: {
     faqs: [
       {
         question: "What's tested?",
@@ -54,7 +57,7 @@ export const SERVICE_DETAILS: Record<string, ServiceDetails> = {
     ],
   },
 
-  'Custom Blood Panel': {
+  [CUSTOM_BLOOD_PANEL]: {
     faqs: [
       {
         question: 'Why is this test important?',

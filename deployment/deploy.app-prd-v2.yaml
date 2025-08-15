@@ -33,8 +33,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: superpower-app
-  namespace: superpower
+  name: superpower-app-v2
+  namespace: superpower-v2
   annotations:
     external-dns.alpha.kubernetes.io/hostname: app-v2.superpower.com
     service.beta.kubernetes.io/aws-load-balancer-ssl-cert: 'arn:aws:acm:us-east-1:554179259394:certificate/2a1c1603-c154-41f0-a2be-d739f6f81234'

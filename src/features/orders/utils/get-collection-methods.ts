@@ -2,9 +2,9 @@ import {
   CUSTOM_BLOOD_PANEL,
   SUPERPOWER_BLOOD_PANEL,
   ADVANCED_BLOOD_PANEL,
+  COLLECTION_METHODS,
+  type CollectionOptionType,
 } from '@/const';
-import { COLLECTION_METHODS } from '@/features/orders/const/collection-methods';
-import { CollectionOptionType } from '@/features/orders/types/collection-method';
 import { getInterpretedAtHomeMethod } from '@/features/orders/utils/get-interpreted-method';
 import { Address, HealthcareService } from '@/types/api';
 
@@ -43,6 +43,19 @@ export const getCollectionMethods = (
           disabled: true,
           description:
             'We currently support at-home appointments only in New York (NY) and New Jersey (NJ).',
+        },
+        INTERPRETED,
+      ];
+    }
+
+    // For NY and NJ, only allow at-home appointments
+    if (state === 'AZ') {
+      return [
+        {
+          ...COLLECTION_METHODS.IN_LAB,
+          disabled: true,
+          description:
+            'We currently support at-home appointments only in Arizona (AZ).',
         },
         INTERPRETED,
       ];

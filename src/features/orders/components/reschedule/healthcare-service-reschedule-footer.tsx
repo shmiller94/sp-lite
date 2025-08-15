@@ -26,7 +26,7 @@ export const HealthcareServiceRescheduleFooter = ({
   setMode: Dispatch<SetStateAction<RescheduleDialogMode>>;
   setSkipStepIds: Dispatch<SetStateAction<StepID[]>>;
   order: Order;
-  healthcareService: HealthcareService;
+  healthcareService?: HealthcareService;
   onClose?: () => void;
 }) => {
   const queryClient = useQueryClient();
@@ -34,6 +34,8 @@ export const HealthcareServiceRescheduleFooter = ({
     shouldResyncImmediately: false,
   });
   const isPastAppointment = new Date(order.startTimestamp) < new Date();
+  const canReschedule =
+    healthcareService?.name !== GRAIL_GALLERI_MULTI_CANCER_TEST;
 
   const { checkAdminActorAccess } = useAuthorization();
   const isAdminActor = checkAdminActorAccess();
@@ -71,7 +73,13 @@ export const HealthcareServiceRescheduleFooter = ({
           >
             Cancel appointment
           </Button>
-          {healthcareService.name !== GRAIL_GALLERI_MULTI_CANCER_TEST ? (
+          {/*If healthcare service was not found it likely means that*/}
+          {/*we depricated it and do not show anymore*/}
+          {/*this was done during 199 (superpower v2) migration*/}
+          {/*to normalize all data and this behaviour is expected*/}
+          {/*before changing this code please double check with*/}
+          {/*Nikita or Dan <3*/}
+          {healthcareService && canReschedule ? (
             <Button
               className="w-full md:w-auto"
               onClick={() => setMode('reschedule')}

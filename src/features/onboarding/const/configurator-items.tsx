@@ -1,15 +1,11 @@
 import { AtHomeNoticeSection } from '@/components/shared/at-home-notice-section';
 
 import {
-  SubscriptionsSection,
   VerifyCouponCodeSection,
   BillingSection,
 } from '../components/configurator';
 
 export const CONFIGURATOR_ITEMS = [
-  {
-    component: <SubscriptionsSection />,
-  },
   {
     component: <AtHomeNoticeSection />,
   },

@@ -1,3 +1,4 @@
+import { ServiceLabTypeEnum } from '@/const';
 import { PhlebotomyLocation } from '@/types/api';
 import { formatAddress } from '@/utils/format';
 
@@ -6,9 +7,7 @@ export const openInMaps = (
   mapType: 'google' | 'apple',
 ): void => {
   const address = formatAddress(location.address);
-  const provider = location.name.toLowerCase().includes('labcorp')
-    ? 'Labcorp'
-    : 'BioReference Patient Service Center';
+  const provider = getProviderName(location.name);
 
   const encodedQuery = encodeURIComponent(`${provider} ${address}`);
 
@@ -18,4 +17,12 @@ export const openInMaps = (
   };
 
   window.open(urls[mapType], '_blank');
+};
+
+const getProviderName = (name: string) => {
+  if (name.toLowerCase().includes(ServiceLabTypeEnum.Labcorp)) return 'Labcorp';
+  if (name.toLowerCase().includes(ServiceLabTypeEnum.Bioref))
+    return 'BioReference Patient Service Center';
+  if (name.toLowerCase().includes(ServiceLabTypeEnum.Quest))
+    return 'Quest Diagnostic';
 };

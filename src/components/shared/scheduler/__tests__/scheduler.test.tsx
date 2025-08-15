@@ -15,7 +15,6 @@ test('One slot', async () => {
         price: 0,
         method: 'at_home_phlebotomy',
         active: false,
-        image: '/services/custom_blood_panel.png',
         phlebotomy: true,
         items: [],
       }}

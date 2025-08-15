@@ -1,5 +1,5 @@
 import { ChevronDown } from 'lucide-react';
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -9,65 +9,30 @@ import {
 } from '@/components/ui/collapsible';
 import { Spinner } from '@/components/ui/spinner';
 import { Body1 } from '@/components/ui/typography';
-import { useOrders } from '@/features/orders/api';
 import { HealthcareServiceRescheduleDialog } from '@/features/orders/components/reschedule/healthcare-service-reschedule-dialog';
 import { OrderCard } from '@/features/services/components/order-card';
 import { cn } from '@/lib/utils';
-import { HealthcareService, Order, OrderStatus } from '@/types/api';
+import { HealthcareService, Order } from '@/types/api';
 
-const DEFAULT_VISIBLE = 12;
+import { useFilteredOrders } from '../hooks/use-filtered-orders';
 
 export const OrdersList = React.memo((): JSX.Element => {
-  const { data, isLoading } = useOrders();
   const [collapsibleOpen, setCollapsibleOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [rescheduleDialog, setRescheduleDialog] = useState<{
     order: Order;
-    service: HealthcareService;
+    service?: HealthcareService;
   } | null>(null);
 
-  const { visibleOrders, restOrders, totalFiltered } = useMemo(() => {
-    if (!data?.orders) {
-      return { visibleOrders: [], restOrders: [], totalFiltered: 0 };
-    }
+  const {
+    isLoading,
+    visibleOrders,
+    totalFiltered,
+    restOrders,
+    defaultVisible,
+  } = useFilteredOrders();
 
-    const filteredOrders = data.orders.filter(
-      (order) => order.status.toUpperCase() !== OrderStatus.draft,
-    );
-
-    // Sort orders by status priority first, then by startTimestamp
-    const sortedOrders = filteredOrders.sort((a, b) => {
-      // First sort by status priority: upcoming > pending > completed > cancelled
-      const statusPriority: Record<OrderStatus, number> = {
-        [OrderStatus.upcoming]: 1,
-        [OrderStatus.pending]: 2,
-        [OrderStatus.completed]: 3,
-        [OrderStatus.cancelled]: 4,
-        [OrderStatus.revoked]: 5,
-        [OrderStatus.draft]: 999, // This won't be used since we filter out drafts
-      };
-
-      const priorityA = statusPriority[a.status];
-      const priorityB = statusPriority[b.status];
-
-      if (priorityA !== priorityB) {
-        return priorityA - priorityB;
-      }
-
-      // If status is the same, sort by startTimestamp (ascending - soonest first)
-      const timestampA = new Date(a.startTimestamp).getTime();
-      const timestampB = new Date(b.startTimestamp).getTime();
-
-      return timestampA - timestampB;
-    });
-
-    const visibleOrders = sortedOrders.slice(0, DEFAULT_VISIBLE);
-    const restOrders = sortedOrders.slice(DEFAULT_VISIBLE);
-
-    return { visibleOrders, restOrders, totalFiltered: filteredOrders.length };
-  }, [data?.orders]);
-
-  const handleReschedule = (order: Order, service: HealthcareService) => {
+  const handleReschedule = (order: Order, service?: HealthcareService) => {
     setRescheduleDialog({ order, service });
     setDialogOpen(true);
   };
@@ -91,10 +56,6 @@ export const OrdersList = React.memo((): JSX.Element => {
       </div>
     );
   }
-
-  if (!data) return <></>;
-
-  if (data.orders.length === 0) return <OrdersListEmpty />;
 
   if (totalFiltered === 0) return <OrdersListEmpty />;
 
@@ -123,7 +84,7 @@ export const OrdersList = React.memo((): JSX.Element => {
           </div>
         </CollapsibleContent>
 
-        {totalFiltered > DEFAULT_VISIBLE && (
+        {totalFiltered > defaultVisible && (
           <CollapsibleTrigger asChild>
             <Button
               variant="ghost"
@@ -133,7 +94,7 @@ export const OrdersList = React.memo((): JSX.Element => {
               <Body1>
                 {collapsibleOpen
                   ? 'Collapse'
-                  : `${totalFiltered - DEFAULT_VISIBLE} more bookings`}
+                  : `${totalFiltered - defaultVisible} more bookings`}
               </Body1>
               <ChevronDown
                 className={cn(
@@ -144,7 +105,7 @@ export const OrdersList = React.memo((): JSX.Element => {
               <span className="sr-only">
                 {collapsibleOpen
                   ? 'Collapse'
-                  : `${totalFiltered - DEFAULT_VISIBLE} more bookings`}
+                  : `${totalFiltered - defaultVisible} more bookings`}
               </span>
             </Button>
           </CollapsibleTrigger>

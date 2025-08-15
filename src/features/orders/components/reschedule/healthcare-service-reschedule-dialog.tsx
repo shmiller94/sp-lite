@@ -20,8 +20,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import { Body1 } from '@/components/ui/typography';
 import { resyncDataAfterCancelOrder } from '@/features/orders/api/cancel-order';
-import { HealthcareServiceRescheduleFooter } from '@/features/orders/components/reschedule/healthcare-service-reschedule-footer';
 import { RescheduleDialogMode } from '@/features/orders/types/reschedule-dialog-mode';
 import { StepID } from '@/features/orders/types/step-id';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
@@ -31,6 +31,7 @@ import { HealthcareServiceDialog } from '../healthcare-service-dialog';
 
 import { HealthcareServiceRescheduleConfirmation } from './healthcare-service-reschedule-confirmation';
 import { HealthcareServiceRescheduleDetails } from './healthcare-service-reschedule-details';
+import { HealthcareServiceRescheduleFooter } from './healthcare-service-reschedule-footer';
 
 export const HealthcareServiceRescheduleDialog = ({
   order,
@@ -41,7 +42,7 @@ export const HealthcareServiceRescheduleDialog = ({
   onSubmit,
 }: {
   order: Order;
-  healthcareService: HealthcareService;
+  healthcareService?: HealthcareService;
   children: ReactNode;
   onOpenChange?: (open: boolean) => void;
   open?: boolean;
@@ -77,13 +78,16 @@ export const HealthcareServiceRescheduleDialog = ({
       case 'cancel':
       case 'reschedule':
         return (
-          <HealthcareServiceRescheduleConfirmation
-            healthcareService={healthcareService}
-            order={order}
-            mode={mode}
-          />
+          <HealthcareServiceRescheduleConfirmation order={order} mode={mode} />
         );
-      case 'booking':
+      case 'booking': {
+        // this should never hit
+        // but just in case => let user know
+        if (!healthcareService)
+          return (
+            <Body1>Unknown error happened, please report to concierge.</Body1>
+          );
+
         return (
           <HealthcareServiceDialog
             healthcareService={healthcareService}
@@ -91,6 +95,7 @@ export const HealthcareServiceRescheduleDialog = ({
             onSubmit={onSubmit}
           />
         );
+      }
       default:
         return null;
     }

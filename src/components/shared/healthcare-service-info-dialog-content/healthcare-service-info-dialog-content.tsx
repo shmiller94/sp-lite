@@ -21,7 +21,10 @@ import {
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 import { HealthcareService } from '@/types/api';
 import { getHealthcareServicePriceLabel } from '@/utils/format-money';
-import { getSampleReportLinkForService } from '@/utils/service';
+import {
+  getSampleReportLinkForService,
+  getServiceImage,
+} from '@/utils/service';
 
 /**
  * This version of dialog should not trigger Order flow.
@@ -128,7 +131,7 @@ export function HealthcareServiceInfoDetails({
       <div className="flex flex-col justify-between gap-12 px-6 py-12 md:flex-row md:px-14 md:pb-16">
         <div className="flex max-w-[278px] flex-col justify-center gap-4">
           <img
-            src={healthcareService.image}
+            src={getServiceImage(healthcareService.name)}
             className="block size-[70px] rounded-2xl border border-zinc-200 bg-white  object-cover md:hidden"
             alt={healthcareService.name}
           />
@@ -174,7 +177,7 @@ export function HealthcareServiceInfoDetails({
         </div>
 
         <img
-          src={healthcareService.image}
+          src={getServiceImage(healthcareService.name)}
           className="hidden h-[362px] w-full rounded-2xl border border-zinc-200  bg-white object-cover md:block md:size-[362px]"
           alt={healthcareService.name}
         />

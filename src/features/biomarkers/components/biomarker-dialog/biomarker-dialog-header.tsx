@@ -62,7 +62,8 @@ interface BiomarkerValueProps {
 function BiomarkerValue({ result, unit }: BiomarkerValueProps): JSX.Element {
   const value =
     result?.quantity.value === undefined ? 'n/a' : result?.quantity.value;
-  const biomarkerUnit = result?.quantity.unit || unit || '';
+  // Favor OD unit as the Observation unit is not formatted correctly for Quest
+  const biomarkerUnit = unit || result?.quantity.unit || '';
 
   return (
     <span className="flex flex-row space-x-1 text-black opacity-40">

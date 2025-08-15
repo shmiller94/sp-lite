@@ -2,7 +2,11 @@ import { useEffect, useRef } from 'react';
 
 import { Spinner } from '@/components/ui/spinner';
 import { Body1 } from '@/components/ui/typography';
-import { ADVANCED_BLOOD_PANEL, SUPERPOWER_BLOOD_PANEL } from '@/const';
+import {
+  ADVANCED_BLOOD_PANEL,
+  ServiceTypeEnum,
+  SUPERPOWER_BLOOD_PANEL,
+} from '@/const';
 import { ImageContentLayout } from '@/features/onboarding/components/layouts';
 import { useOrders } from '@/features/orders/api';
 import { HealthcareServiceDialog } from '@/features/orders/components/healthcare-service-dialog';
@@ -85,17 +89,18 @@ const Loader = () => {
 
 export const BookingStep = () => {
   const servicesQuery = useServices();
+  const ordersQuery = useOrders();
   const subscriptionsQuery = useSubscriptions();
 
-  const superpowerMembership = subscriptionsQuery.data?.subscriptions.find(
-    (subscription) => subscription.name === 'membership',
+  const draftOrder = ordersQuery.data?.orders.find(
+    (o) =>
+      o.serviceId.startsWith(ServiceTypeEnum.Baseline) ||
+      o.serviceId.startsWith(ServiceTypeEnum.Advanced),
   );
-
   const services = servicesQuery.data?.services;
 
   const bloodPanel = services?.find((s) =>
-    superpowerMembership?.type === 'baseline' ||
-    superpowerMembership?.type === 'essential'
+    draftOrder?.serviceId.startsWith(ServiceTypeEnum.Baseline)
       ? s.name === SUPERPOWER_BLOOD_PANEL
       : s.name === ADVANCED_BLOOD_PANEL,
   );
@@ -104,12 +109,12 @@ export const BookingStep = () => {
     <ImageContentLayout title="Booking" currentService={bloodPanel}>
       {servicesQuery.isLoading || subscriptionsQuery.isLoading ? (
         <Loader />
-      ) : superpowerMembership?.type ? (
+      ) : bloodPanel ? (
         <Booking bloodPanel={bloodPanel} />
       ) : (
         <div className="p-6 md:p-14">
           <Body1 className="text-pink-700">
-            Failed to pull membership. Please contact support so we can help
+            Failed to pull your credit. Please contact support so we can help
             you!
           </Body1>
         </div>

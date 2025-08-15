@@ -1,4 +1,13 @@
-import { CollectionOptionType } from '@/features/orders/types/collection-method';
+import { CollectionMethodType } from '@/types/api';
+
+export type CollectionOptionType = {
+  name: string;
+  value: CollectionMethodType;
+  description: string;
+  cancelationText?: string;
+  price: number;
+  disabled: boolean;
+};
 
 export const COLLECTION_METHODS: Record<
   'AT_HOME' | 'IN_LAB',
@@ -20,4 +29,4 @@ export const COLLECTION_METHODS: Record<
     price: 9900,
     disabled: false,
   },
-};
+} as const;

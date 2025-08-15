@@ -24,7 +24,9 @@ export const CreateOrderPhlebotomyLocationSelector = () => {
   const isAdmin = checkAdminActorAccess();
 
   const handleOptionClick = (optionValue: CollectionMethodType) => {
-    updateCollectionMethod(optionValue);
+    updateCollectionMethod(
+      collectionMethod === optionValue ? null : optionValue,
+    );
     updateLocation(null);
     updateSlot(null);
   };

@@ -27,6 +27,7 @@ import { useAnalytics } from '@/hooks/use-analytics';
 import { useStepper } from '@/lib/stepper';
 import { OrderStatus } from '@/types/api';
 import { formatMoney } from '@/utils/format-money';
+import { getServiceImage } from '@/utils/service';
 
 // track core blood test purchases for CVR & upsell calculation
 const CORE_BLOOD_TESTS = [SUPERPOWER_BLOOD_PANEL, ADVANCED_BLOOD_PANEL];
@@ -264,7 +265,7 @@ function CreateOrderSummaryItem({
     <div className="flex flex-col items-start justify-between sm:flex-row sm:items-center">
       <div className="flex w-full flex-col gap-4 rounded-2xl border border-zinc-200 p-6 md:flex-row md:items-center md:border-none md:p-0">
         <img
-          src={service.image}
+          src={getServiceImage(service.name)}
           alt={service.name}
           className="size-12 rounded-xl border border-zinc-200 object-cover object-center"
         />

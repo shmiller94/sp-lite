@@ -1,0 +1,269 @@
+import { ArrowRight, ChevronDown } from 'lucide-react';
+
+import { SuperpowerLogo } from '@/components/icons/superpower-logo';
+import { PaymentDetails } from '@/components/shared/payment-details';
+import { StyledMarkdown } from '@/components/shared/styled-markdown';
+import { Button } from '@/components/ui/button';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import { Separator } from '@/components/ui/separator';
+import { TransactionSpinner } from '@/components/ui/spinner/transaction-spinner';
+import { Body1, Body2, H2, H3, H4 } from '@/components/ui/typography';
+import { UPGRADE_PRICE, UPGRADE_PRICE_NYNJ } from '@/const';
+import BiomarkersFaqDialog from '@/features/onboarding/components/biomarkers-dialog';
+import { ConfiguratorLayout } from '@/features/onboarding/components/layouts';
+import { useUpgradeOrder } from '@/features/orders/api/upgrade-order';
+import { useUpdateTask } from '@/features/tasks/api/update-task';
+import { CurrentPaymentMethodCard } from '@/features/users/components/current-payment-method-card';
+import { useUser } from '@/lib/auth';
+import { useStepper } from '@/lib/stepper';
+import { cn } from '@/lib/utils';
+import { formatMoney } from '@/utils/format-money';
+
+const UPGRADE_INFO = [
+  {
+    title: 'Who is this Ideal for?',
+    preview:
+      'Ideal for those navigating symptoms, family planning, performance goals, or higher risk due to age or family history.',
+    markdown: `
+- Men 35+ who need to be getting screened for prostate cancer.
+- Women 30+ navigating fertility concerns, irregular cycles, or perimenopause.
+- People with symptoms like fatigue, brain fog, weight gain, low libido, or poor mood.
+- High performers and health optimizers who need real data to personalize their training, recovery, and longevity strategies.
+- Anyone with family history of heart disease or diabetes.`,
+  },
+  {
+    title: 'What’s included in the advanced panel?',
+    preview:
+      'Biomarkers including prolactin, IGF-1, Lp(a), fasting insulin, B12, and folate for deeper insights into hormones, heart health, and nutrient status.',
+    markdown: `
+- Identify nutrient gaps with B12, folate, magnesium & ferritin for better energy, mood & stress support.
+- Uncover cardiovascular risk with Lp(a), homocysteine & advanced lipoprotein testing.
+- Spot insulin resistance early with fasting insulin & eAG - before A1c rises.
+- Screen critical hormones including PSA (men), prolactin & progesterone (women), plus FSH/LH & IGF‑1 for insight into energy, libido & hormonal balance.`,
+  },
+] as const;
+
+const AdvancedUpgrade = () => {
+  const { nextStep, activeStep } = useStepper((s) => s);
+  const {
+    mutateAsync: updateTaskProgress,
+    isError,
+    isPending: isTaskUpdating,
+  } = useUpdateTask();
+  const upgradeOrderMutation = useUpgradeOrder();
+
+  const updateStep = async () => {
+    await updateTaskProgress({
+      taskName: 'onboarding',
+      data: { progress: activeStep + 1 },
+    });
+
+    if (!isError) {
+      nextStep();
+    }
+  };
+
+  const upgradeOrder = async () => {
+    await upgradeOrderMutation.mutateAsync({
+      data: { upgradeType: 'advanced' },
+    });
+
+    await updateStep();
+  };
+
+  return (
+    <>
+      <div className="w-full space-y-8 px-4 md:px-8">
+        <SuperpowerLogo />
+        <div className="space-y-2">
+          <H2>Want to get more out of your membership?</H2>
+          <Body1 className="text-zinc-500">
+            The Advanced Panel is a one-time upgrade that adds 30+ biomarkers on
+            top of your baseline panel, providing deep insights across hormone
+            balance, insulin resistance, nutrient status, and cardiovascular
+            risk.
+          </Body1>
+
+          <CardInfo className="lg:hidden" />
+          <BiomarkersFaqDialog
+            onUpgradeOrder={upgradeOrder}
+            isLoading={upgradeOrderMutation.isPending || isTaskUpdating}
+          >
+            <Button
+              variant="ghost"
+              className="gap-1 px-0 py-2 text-sm text-zinc-500"
+            >
+              View all tested 130+ biomarkers
+              <ArrowRight size={16} />
+            </Button>
+          </BiomarkersFaqDialog>
+        </div>
+        {UPGRADE_INFO.map(({ title, preview, markdown }) => (
+          <div key={title} className="space-y-2">
+            <H4 className="m-0 text-zinc-900">{title}</H4>
+            <Collapsible className="space-y-2 ">
+              <Body1 className="text-zinc-500">{preview}</Body1>
+              <CollapsibleTrigger asChild>
+                <Button variant="ghost" className="group gap-3 p-0">
+                  Read more
+                  <ChevronDown className="size-5 text-zinc-500 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                  <span className="sr-only">Toggle</span>
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <StyledMarkdown className="space-y-4 text-zinc-500">
+                  {markdown}
+                </StyledMarkdown>
+              </CollapsibleContent>
+            </Collapsible>
+          </div>
+        ))}
+        <div className="space-y-4">
+          <PaymentDetails />
+          <CurrentPaymentMethodCard className="!bg-white" />
+        </div>
+        <div className="flex flex-col gap-2">
+          <Button
+            disabled={isTaskUpdating || upgradeOrderMutation.isPending}
+            onClick={upgradeOrder}
+          >
+            {upgradeOrderMutation.isPending || isTaskUpdating ? (
+              <TransactionSpinner className="flex justify-center" />
+            ) : (
+              'Purchase'
+            )}
+          </Button>
+          <Button
+            variant="outline"
+            className="bg-white"
+            onClick={updateStep}
+            disabled={isTaskUpdating || upgradeOrderMutation.isPending}
+          >
+            No thanks
+          </Button>
+        </div>
+        <div className="flex gap-6 text-xs text-zinc-400">
+          <a
+            href="https://www.superpower.com/privacy"
+            target="_blank"
+            rel="noreferrer"
+            className="transition-colors duration-150 hover:text-zinc-500"
+          >
+            Privacy Policy
+          </a>
+          <a
+            href="https://www.superpower.com/terms"
+            target="_blank"
+            rel="noreferrer"
+            className="transition-colors duration-150 hover:text-zinc-500"
+          >
+            Terms of services
+          </a>
+        </div>
+      </div>
+      <div className="hidden w-full flex-col gap-4 rounded-3xl border border-zinc-200 bg-white p-10 lg:sticky lg:top-8 lg:flex lg:h-[calc(100svh-4rem)] lg:max-h-[calc(100svh-4rem)] lg:overflow-auto">
+        <Body1 className="text-zinc-500">One-time upgrade</Body1>
+        <CardInfo />
+        <TotalInfo />
+      </div>
+    </>
+  );
+};
+
+const CardInfo = ({ className }: { className?: string }) => {
+  const { data: user } = useUser();
+
+  const price =
+    user?.primaryAddress?.state === 'NY' || user?.primaryAddress?.state === 'NJ'
+      ? UPGRADE_PRICE_NYNJ
+      : UPGRADE_PRICE;
+
+  return (
+    <div
+      className={cn(
+        'space-y-2 lg:space-y-4 rounded-[20px] border p-4 shadow-sm bg-white',
+        className,
+      )}
+    >
+      <img
+        src="/services/advanced-panel-v2.png"
+        alt="advanced"
+        className="pointer-events-none mx-auto h-[180px] w-full object-contain pt-4"
+      />
+      <div className="hidden lg:block">
+        <H4>Advanced Panel</H4>
+        <Body2 className="text-zinc-500">
+          30+ biomarkers for deep insights across health optimization,
+          prevention, and complex symptoms
+        </Body2>
+      </div>
+      <div className="flex flex-col items-center justify-center gap-2 lg:hidden">
+        <div className="flex items-center gap-2">
+          <Body1 className="text-zinc-500">Advanced Panel</Body1>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="3"
+            height="4"
+            viewBox="0 0 3 4"
+            fill="none"
+          >
+            <circle cx="1.5" cy="2" r="1.5" fill="#71717A" />
+          </svg>
+          <Body1 className="text-zinc-500">One time Upgrade</Body1>
+        </div>
+        <H3>{formatMoney(price)}</H3>
+        <Collapsible className="w-full space-y-2">
+          <div className="flex items-center justify-center">
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" className="group gap-3 p-0">
+                View details
+                <ChevronDown className="size-5 text-zinc-500 transition-transform duration-300 group-data-[state=open]:rotate-180" />
+                <span className="sr-only">Toggle</span>
+              </Button>
+            </CollapsibleTrigger>
+          </div>
+          <CollapsibleContent className="space-y-2">
+            <Body1 className="text-zinc-500">
+              130+ biomarkers for deep insights across health optimization,
+              prevention, and complex symptoms
+            </Body1>
+            <TotalInfo />
+          </CollapsibleContent>
+        </Collapsible>
+      </div>
+    </div>
+  );
+};
+
+const TotalInfo = () => {
+  const { data: user } = useUser();
+
+  const price =
+    user?.primaryAddress?.state === 'NY' || user?.primaryAddress?.state === 'NJ'
+      ? UPGRADE_PRICE_NYNJ
+      : UPGRADE_PRICE;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <Body1 className="text-zinc-500">Subtotal</Body1>
+        <Body1>{formatMoney(price)}</Body1>
+      </div>
+      <Separator />
+      <div className="flex items-center justify-between">
+        <Body1 className="text-zinc-500">Total</Body1>
+        <Body1>{formatMoney(price)}</Body1>
+      </div>
+    </div>
+  );
+};
+
+export const AdvancedUpgradeStep = () => (
+  <ConfiguratorLayout title="Upgrade" className="bg-zinc-50">
+    <AdvancedUpgrade />
+  </ConfiguratorLayout>
+);

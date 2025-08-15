@@ -16,10 +16,11 @@ import { OrderStatusBadge } from '@/features/services/components/order-status-ba
 import { useAuthorization } from '@/lib/authorization';
 import { cn } from '@/lib/utils';
 import { Order, OrderStatus, HealthcareService } from '@/types/api';
+import { getServiceImage } from '@/utils/service';
 
 interface OrderCardProps {
   order: Order;
-  onReschedule?: (order: Order, service: HealthcareService) => void;
+  onReschedule?: (order: Order, service?: HealthcareService) => void;
 }
 
 export const OrderCard = React.memo(
@@ -40,10 +41,9 @@ export const OrderCard = React.memo(
       );
     }
 
-    if (!service) return null;
-
     const isCancelled = order.status.toUpperCase() === OrderStatus.cancelled;
     const isCompleted = order.status.toUpperCase() === OrderStatus.completed;
+    const isUpcoming = order.status.toUpperCase() === OrderStatus.upcoming;
 
     const stateStyles = (() => {
       if (isCancelled) {
@@ -52,6 +52,7 @@ export const OrderCard = React.memo(
       if (isCompleted) {
         return 'opacity-75';
       }
+
       return 'hover:bg-zinc-200 hover:scale-[1.02] hover:shadow-md cursor-pointer';
     })();
 
@@ -61,15 +62,12 @@ export const OrderCard = React.memo(
       CUSTOM_BLOOD_PANEL,
       ADVANCED_BLOOD_PANEL,
       GRAIL_GALLERI_MULTI_CANCER_TEST,
-    ].includes(service.name);
+    ].includes(order.serviceName);
 
     const isAdminActor = checkAdminActorAccess();
 
     const canReschedule =
-      isModifiableService &&
-      !isCancelled &&
-      !isCompleted &&
-      order.status.toUpperCase() === OrderStatus.upcoming;
+      isModifiableService && !isCancelled && !isCompleted && isUpcoming;
 
     const handleCardClick = () => {
       if (canReschedule && onReschedule) {
@@ -95,14 +93,16 @@ export const OrderCard = React.memo(
         onClick={handleCardClick}
       >
         <div className="flex justify-between md:justify-start">
-          <OrderCardFeatureImage imagePath={service.image} />
+          <OrderCardFeatureImage
+            imagePath={getServiceImage(order.serviceName)}
+          />
           <div className="block md:hidden">
             <OrderCardBadge order={order} actions={actions} />
           </div>
         </div>
         <div className="flex w-full flex-col">
           <div className="flex justify-between">
-            <Body1 className="line-clamp-1">{service.name}</Body1>
+            <Body1 className="line-clamp-1">{order.serviceName}</Body1>
             <div className="hidden md:block">
               <OrderCardBadge order={order} actions={actions} />
             </div>

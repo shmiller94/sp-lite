@@ -7,13 +7,13 @@ import { StripeError } from '@stripe/stripe-js';
 import { FormEvent, useState } from 'react';
 
 import { ConsentInfo } from '@/components/shared/consent-info';
+import { PaymentDetails } from '@/components/shared/payment-details';
 import { StripeCardForm } from '@/components/shared/stripe-card-form';
 import { Button } from '@/components/ui/button';
 import { AnimatedCheckbox } from '@/components/ui/checkbox';
 import { toast } from '@/components/ui/sonner';
 import { TransactionSpinner } from '@/components/ui/spinner/transaction-spinner';
-import { Body2, H3 } from '@/components/ui/typography';
-import { useGetConsent } from '@/features/consent/api';
+import { Body2 } from '@/components/ui/typography';
 import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
 import {
   useAddPaymentMethod,
@@ -28,20 +28,6 @@ import { getAccessCode } from '@/utils/access-code';
 import { trackSubscription } from '@/utils/gtm';
 import { getUtmData } from '@/utils/utm-middleware';
 
-import {
-  VisaIcon,
-  AmericanExpressIcon,
-  MasterCardIcon,
-  HSAFSAIcon,
-} from '../credit-card-icons';
-
-const AVAILABLE_PAYMENT_METHODS = [
-  { icon: <AmericanExpressIcon /> },
-  { icon: <VisaIcon /> },
-  { icon: <MasterCardIcon /> },
-  { icon: <HSAFSAIcon /> },
-];
-
 export const BillingSection = () => {
   const elements = useElements();
   const stripe = useStripe();
@@ -52,10 +38,6 @@ export const BillingSection = () => {
   const { activeStep, nextStep } = useStepper((s) => s);
   const { mutateAsync: updateTaskProgress } = useUpdateTask();
   const { track } = useAnalytics();
-
-  const consentQuery = useGetConsent({
-    userId: user?.id || '',
-  });
 
   const {
     membership,
@@ -73,10 +55,6 @@ export const BillingSection = () => {
     event.preventDefault();
 
     if (!user) return;
-    if (!membership) {
-      toast('Select membership first!');
-      return;
-    }
 
     if (!stripe || !elements) {
       // Stripe.js hasn't yet loaded.
@@ -88,16 +66,6 @@ export const BillingSection = () => {
     if (!cardNumber) {
       return;
     }
-
-    // If consent modal was just closed and we're here, process payment
-    await processPayment();
-  };
-
-  const processPayment = async () => {
-    if (!user || !membership || !stripe || !elements) return;
-
-    const cardNumber = elements.getElement(CardNumberElement);
-    if (!cardNumber) return;
 
     setProcessing(true);
 
@@ -127,7 +95,6 @@ export const BillingSection = () => {
         data: {
           code: getAccessCode() ?? undefined,
           referralId: (window as any)?.Rewardful?.referral,
-          membershipType: membership.type,
           // Use cookie-based UTM data instead of sessionStorage
           campaignData: getUtmData() ?? undefined,
         },
@@ -139,10 +106,9 @@ export const BillingSection = () => {
           track('subscription_created', {
             access_code: getAccessCode(),
             referral_id: (window as any)?.Rewardful?.referral,
-            membership_type: membership.type,
-            value: membership.total,
             // Fixed currency for now, can be dynamic later
             currency: 'USD',
+            value: membership?.total,
           });
           trackSubscription(membership?.total);
         } catch (e) {
@@ -164,20 +130,8 @@ export const BillingSection = () => {
 
   return (
     <div className="space-y-8">
-      <div className="space-y-2">
-        <div className="mb-6 flex flex-col gap-2 md:mb-0 md:flex-row md:items-center md:gap-4">
-          <H3 className="text-zinc-900">Payment details</H3>
-          <div className="flex gap-2">
-            {AVAILABLE_PAYMENT_METHODS.map((pm, i) => (
-              <div
-                key={i}
-                className="flex h-6 w-10 items-center justify-center rounded-[4px] border border-zinc-200 p-0.5"
-              >
-                {pm.icon}
-              </div>
-            ))}
-          </div>
-        </div>
+      <div className="space-y-4">
+        <PaymentDetails />
         <StripeCardForm
           processing={processing}
           onSubmit={handleSubmit}
@@ -185,6 +139,17 @@ export const BillingSection = () => {
           setError={setError}
           id="billingForm"
         />
+        {!showAccessCode ? (
+          <Button
+            variant="link"
+            size="small"
+            className="p-0 text-base text-zinc-500"
+            onClick={() => setShowAccessCode(true)}
+            disabled={processing}
+          >
+            Have an access code?
+          </Button>
+        ) : null}
       </div>
 
       <div className="group flex items-start space-x-2">
@@ -199,9 +164,9 @@ export const BillingSection = () => {
           <AnimatedCheckbox
             id="terms"
             className="data-[state=checked]:text-white"
-            disabled={processing || consentQuery.isLoading}
             checked={consentGiven}
             onCheckedChange={(checked: boolean) => setConsentGiven(checked)}
+            disabled={processing}
           />
         </div>
 
@@ -210,9 +175,7 @@ export const BillingSection = () => {
       <div className="space-y-2">
         <Button
           className="w-full rounded-xl border border-zinc-500 bg-black px-6 py-4"
-          disabled={
-            processing || !consentGiven || !membership || consentQuery.isLoading
-          }
+          disabled={processing || !consentGiven}
           type="submit"
           form="billingForm"
           onClick={async (e) => {
@@ -225,18 +188,6 @@ export const BillingSection = () => {
             'Purchase'
           )}
         </Button>
-
-        {!showAccessCode ? (
-          <Button
-            variant="link"
-            size="small"
-            className="mr-auto px-0 text-zinc-500"
-            onClick={() => setShowAccessCode(true)}
-            disabled={processing}
-          >
-            I have an access code
-          </Button>
-        ) : null}
 
         <Body2 className="text-zinc-400">
           By purchasing this subscription, you agree that your membership will

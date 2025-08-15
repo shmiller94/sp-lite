@@ -6,7 +6,6 @@ import { MutationConfig } from '@/lib/react-query';
 
 export const createConsentInputSchema = z.object({
   agreedAt: z.string().min(1, 'Required'),
-  userId: z.string().min(1, 'Required'),
   metadata: z.record(z.any()).optional(),
 });
 

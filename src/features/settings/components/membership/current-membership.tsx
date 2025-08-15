@@ -2,13 +2,11 @@ import { format } from 'date-fns';
 import { ChevronDown } from 'lucide-react';
 import React from 'react';
 
-import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { H4 } from '@/components/ui/typography';
 import { useSubscriptions } from '@/features/settings/api';
 import { CancelMembershipDialog } from '@/features/settings/components/membership/cancel-membership-dialog';
-import { getMembershipType } from '@/features/settings/utils/get-membership-type';
 import { cn } from '@/lib/utils';
 
 export const CurrentMembership = (): JSX.Element => {
@@ -17,16 +15,11 @@ export const CurrentMembership = (): JSX.Element => {
     (subscription) => subscription.name === 'membership',
   );
 
-  const membershipType = getMembershipType(superpowerMembership);
-
   return (
     <div className="rounded-2xl lg:flex lg:flex-row lg:items-center lg:justify-between lg:bg-white lg:p-4">
       <div className="hidden space-y-1 lg:block">
         <H4 className="text-zinc-400">Current Membership</H4>
         {isLoading ? <Skeleton className="h-[22px] w-[148px]" /> : null}
-        {membershipType ? (
-          <Badge variant="vermillion">{membershipType}</Badge>
-        ) : null}
       </div>
 
       {isLoading ? (

@@ -17,9 +17,9 @@ export const UpsellSequence = () => {
   const [currentPosition, setCurrentPosition] = useState(0);
   const [showMainCover, setShowMainCover] = useState(true);
 
-  const { data: serices, isLoading: isServicesLoading } = useServices();
+  const { data: services, isLoading: isServicesLoading } = useServices();
 
-  let upsellServices = getUpsellServices(serices?.services ?? []);
+  let upsellServices = getUpsellServices(services?.services ?? []);
 
   const { data: orders, isLoading: isOrdersLoading } = useOrders();
 

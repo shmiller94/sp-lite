@@ -7,10 +7,10 @@ import PhoneInput from 'react-phone-number-input/input';
 import { ImageWithWithBlockLayout } from '@/components/layouts';
 import { BlockWithFaqLayout } from '@/components/layouts/block-with-faq-layout';
 import { AtHomeNoticeSection } from '@/components/shared/at-home-notice-section';
+import { LabeledCheckbox } from '@/components/shared/labeled-checkbox';
 import { TestimonialCarousel } from '@/components/shared/testimonials/components/testimonial-carousel';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { AnimatedCheckbox } from '@/components/ui/checkbox';
 import {
   Form,
   FormControl,
@@ -211,8 +211,8 @@ const Step1 = ({ onNext }: { onNext: () => void }) => {
       <div className="space-y-3">
         <H1 className="text-3xl md:text-5xl">Member signup</H1>
         <Body1 className="whitespace-pre-line text-zinc-500">
-          {`It all starts with 100+ lab tests.
-          All for $499 per year with no hidden fees.`}
+          {`It all starts with 100+ lab tests. 
+          All for $199 per year with no hidden fees.`}
         </Body1>
       </div>
       <div className="space-y-4">
@@ -428,31 +428,14 @@ const Step2 = ({
         name="textMessageConsent"
         render={({ field }) => (
           <FormItem>
-            <div className="group flex items-start space-x-2 py-2">
-              <div
-                className={cn(
-                  'flex aspect-square size-5 items-center justify-center rounded-md border transition-all duration-150',
-                  field.value
-                    ? 'border-zinc-900 bg-black'
-                    : 'border-zinc-200 group-hover:border-zinc-300 group-hover:bg-zinc-100',
-                )}
-              >
-                <AnimatedCheckbox
-                  id="textMessageConsent"
-                  className="data-[state=checked]:text-white"
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </div>
-              <FormLabel
-                htmlFor="textMessageConsent"
-                className="cursor-pointer text-sm leading-5 text-zinc-500"
-              >
-                I agree to receive text messages from Superpower for updates,
+            <LabeledCheckbox
+              id="textMessageConsent"
+              checked={field.value}
+              onCheckedChange={field.onChange}
+              label="I agree to receive text messages from Superpower for updates,
                 reminders, and health insights. Message and data rates may
-                apply. Message frequency varies.
-              </FormLabel>
-            </div>
+                apply. Message frequency varies."
+            />
             <FormMessage />
           </FormItem>
         )}

@@ -3,6 +3,7 @@ import * as React from 'react';
 import { SuperpowerLogo } from '@/components/icons/superpower-logo';
 import { Progress } from '@/components/ui/progress';
 import { Body2 } from '@/components/ui/typography';
+import { CardInfo } from '@/features/onboarding/components/configurator/baseline-summary';
 import { CONFIGURATOR_ITEMS } from '@/features/onboarding/const/configurator-items';
 
 const ConfiguratorSections = () => {
@@ -19,6 +20,9 @@ const ConfiguratorSections = () => {
           <Progress value={100} className="h-[3px] w-20" />
         </div>
       </div>
+
+      <CardInfo className="lg:hidden" />
+
       <div className="flex flex-1 flex-col justify-center space-y-6">
         {visibleItems.map((item, index) => {
           return (

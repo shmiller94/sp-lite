@@ -3,10 +3,10 @@ import { HealthcareService } from '@/types/api';
 
 export const formatMoney = (
   amount: number,
-  decimalPlaces: number = 0,
+  decimalPlaces: number = 2,
 ): string => {
   return (
-    '$' +
+    'US $' +
     (amount / 100)
       .toFixed(decimalPlaces)
       .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')

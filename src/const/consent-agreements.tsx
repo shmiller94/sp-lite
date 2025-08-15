@@ -143,6 +143,49 @@ export const LEGAL_DESCLAIMERS = {
       &nbsp; before finalizing your purchase.
     </>
   ),
+  common: (
+    <>
+      Before proceeding, we want to ensure you understand the purpose, potential
+      benefits, and limitations of this service. What is Telemedicine:
+      Telemedicine is the delivery of healthcare services, including
+      examination, consultation, diagnosis, and treatment, through electronic
+      communication technologies when you (the patient) are located in a
+      different location than your healthcare provider. Benefits of Using
+      Telemedicine: The benefits include access to medical care from anywhere
+      with internet, avoiding exposure in waiting rooms, saving travel time, and
+      easier access to specialty care. Possible Risks of Using Telemedicine: -
+      Delays in care may happen due to equipment or internet issues. You can
+      reschedule if needed. For help, email concierge@superpower.com. - Privacy
+      breaches may occur if security fails. - Incomplete medical history may
+      result in incorrect treatment or outcomes. - Telemedicine is not for
+      emergencies. If you have a medical emergency, call 911 immediately. - Care
+      is at the sole discretion of the provider, with no guarantee of diagnosis,
+      treatment, or prescriptions. Your Rights and Acknowledgements: - Providing
+      false or incomplete information can result in harm or incorrect treatment.
+      - No hidden fees are associated with this service. - Your health
+      information may be shared according to applicable laws and policies. -
+      Your visit information won’t be shared with researchers without your
+      written consent. - Your information may be shared with out-of-state
+      providers. - Your privacy rights remain the same as in-person visits. -
+      Results are not guaranteed. Your condition may stay the same or worsen. -
+      Other care methods are available—you may choose them anytime. - Your info
+      becomes part of your medical record. You can request access via
+      concierge@superpower.com. - Your provider may be a non-physician; you may
+      request a physician. - Technical failures are possible, and Superpower is
+      not liable for them. - You must provide your current physical location to
+      ensure proper licensing. - Medical records may be shared with your primary
+      care provider. - For California residents: You acknowledge the Open
+      Payments Database notice (https://openpaymentsdata.cms.gov). - Telehealth
+      is evolving and may include services not mentioned here. Validity: This
+      consent is valid for one year from your first Telemedicine visit. To
+      withdraw consent, email concierge@superpower.com before further treatment.
+      Complaints: To file a complaint against a physician, contact your state’s
+      medical board: https://www.fsmb.org/contact-a-state-medical-board/
+      Acceptance: By accepting, you confirm that you have read and understood
+      the information above and agree to receive care via telehealth through
+      Superpower.
+    </>
+  ),
 };
 
 export const AGREEMENT_COPIES = {

@@ -108,7 +108,7 @@ build/docker/app/prd-v2: util/login-aws-ecr
 	@bash $(SHARED_SCRIPT) info "Running $@ ..."
 	AWS_ECR_URL=$(AWS_ECR_URL) \
 	VERSION=$(VERSION) \
-	bash ./assets/scripts/build-docker-app-v2.sh stg
+	bash ./assets/scripts/build-docker-app-prd-v2.sh stg
 
 .PHONY: build/docker/app/feature
 build/docker/app/feature: description = Build and push app docker image for feature
@@ -151,7 +151,7 @@ deploy/app/prd-v2: prereq
 	DOPPLER_PROJECT=superpower-app \
 	DOPPLER_CONFIG=prd_v2 \
 	DEPLOY_ENV=PRD-V2 \
-	DEPLOY_CONFIG=deployment/deploy.app-prd-v2yaml \
+	DEPLOY_CONFIG=deployment/deploy.app-prd-v2.yaml \
 	KSP_SERVICE=app \
 	python3 $(DEPLOY_SCRIPT) -r superpower-app -t deploy/hidden
 

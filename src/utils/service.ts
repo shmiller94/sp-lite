@@ -1,12 +1,28 @@
 import { AnimatedTimelineType } from '@/components/ui/animated-timeline';
 import {
+  ADVISORY_CALL,
   AGREEMENT_COPIES,
   CONTINUOUS_GLUCOSE_MONITOR,
+  CUSTOM_BLOOD_PANEL,
+  DEXA_SCAN,
+  ENVIRONMENTAL_TOXIN_TEST,
   ENVIRONMENTAL_TOXINS,
+  FOOD_ENVIRENMENTAL_ALLERGY,
+  FULL_BODY_MRI,
+  FULL_GENETIC_SEQUENCING,
   GRAIL_GALLERI_MULTI_CANCER_TEST,
   GUT_MICROBIOME_ANALYSIS,
+  HEART_CALCIUM_SCAN,
+  HEAVY_METALS_TEST,
+  INTESTINAL_PERMEABILITY_PANEL,
+  IV_DRIP,
   LEGAL_DESCLAIMERS,
+  MYCOTOXINS_TEST,
+  PFAS_CHEMICALS,
+  SUPERPOWER_ADVANCED_BLOOD_PANEL,
+  SUPERPOWER_BLOOD_PANEL,
   TOTAL_TOXIN_TEST,
+  VO2_MAX_TEST,
 } from '@/const';
 import { SERVICE_DETAILS } from '@/const/service-details';
 import { CollectionMethodType, HealthcareService } from '@/types/api';
@@ -130,5 +146,101 @@ export const getDefaultAgreementCopyForService = (
       return AGREEMENT_COPIES.gut;
     default:
       return AGREEMENT_COPIES.regular;
+  }
+};
+
+const serviceImages: Record<string, string> = {
+  SuperpowerBloodPanel: '/services/superpower_blood_panel.png',
+  AdvancedBloodPanel: '/services/advanced_blood_panel.png',
+  OneOnOneAdvisory: '/services/1-1_advisory_call.png',
+  ComprehensiveGeneticsPanel: '/services/comprehensive_genetics_panel.png',
+  ContinuousGlucoseMonitor: '/services/continuous_glucose_monitor.png',
+  CustomBloodPanel: '/services/custom_blood_panel.png',
+  DexaScan: '/services/dexa_scan.png',
+  EnvironmentToxin: '/services/environmental_toxin.png',
+  EnvironmentToxins: '/services/environmental_toxins.png',
+  FoodAndEnvAllergyTesting:
+    '/services/food_and_environmental_allergy_testing.png',
+  FullBodyMri: '/services/full_body_mri.png',
+  FullGeneticSequencing: '/services/full_genetic_sequencing.png',
+  GrailGalleriMultiCancer: '/services/grail_galleri_multi_cancer_test.png',
+  GutMicrobiome: '/services/gut_microbiome_analysis.png',
+  HeartCalcScan: '/services/heart_calcium_scan.png',
+  HeavyMetals: '/services/heavy_metals.png',
+  IntestinalPermeability: '/services/intestinal_permeability_panel.png',
+  IVDrip: '/services/iv_drip.png',
+  MyCotoxins: '/services/mycotoxins.png',
+  PfasChemicals: '/services/pfas_chemicals.png',
+  TotalToxins: '/services/total_toxins.png',
+  Vo2Max: '/services/vo2_max_test.png',
+};
+
+export const getServiceImage = (name: string): string => {
+  switch (name) {
+    case SUPERPOWER_BLOOD_PANEL:
+      return serviceImages.SuperpowerBloodPanel;
+
+    case SUPERPOWER_ADVANCED_BLOOD_PANEL:
+      return serviceImages.AdvancedBloodPanel;
+
+    case ADVISORY_CALL:
+      return serviceImages.OneOnOneAdvisory;
+
+    case CONTINUOUS_GLUCOSE_MONITOR:
+      return serviceImages.ContinuousGlucoseMonitor;
+
+    case CUSTOM_BLOOD_PANEL:
+      return serviceImages.CustomBloodPanel;
+
+    case GRAIL_GALLERI_MULTI_CANCER_TEST:
+      return serviceImages.GrailGalleriMultiCancer;
+
+    case GUT_MICROBIOME_ANALYSIS:
+      return serviceImages.GutMicrobiome;
+
+    case TOTAL_TOXIN_TEST:
+      return serviceImages.TotalToxins;
+
+    case ENVIRONMENTAL_TOXIN_TEST:
+      return serviceImages.EnvironmentToxin;
+
+    case ENVIRONMENTAL_TOXINS:
+      return serviceImages.EnvironmentToxins;
+
+    case FOOD_ENVIRENMENTAL_ALLERGY:
+      return serviceImages.FoodAndEnvAllergyTesting;
+
+    case FULL_GENETIC_SEQUENCING:
+      return serviceImages.FullGeneticSequencing;
+
+    case FULL_BODY_MRI:
+      return serviceImages.FullBodyMri;
+
+    case HEART_CALCIUM_SCAN:
+      return serviceImages.HeartCalcScan;
+
+    case DEXA_SCAN:
+      return serviceImages.DexaScan;
+
+    case VO2_MAX_TEST:
+      return serviceImages.Vo2Max;
+
+    case INTESTINAL_PERMEABILITY_PANEL:
+      return serviceImages.IntestinalPermeability;
+
+    case PFAS_CHEMICALS:
+      return serviceImages.PfasChemicals;
+
+    case MYCOTOXINS_TEST:
+      return serviceImages.MyCotoxins;
+
+    case HEAVY_METALS_TEST:
+      return serviceImages.HeavyMetals;
+
+    case IV_DRIP:
+      return serviceImages.IVDrip;
+
+    default:
+      return serviceImages.SuperpowerBloodPanel;
   }
 };

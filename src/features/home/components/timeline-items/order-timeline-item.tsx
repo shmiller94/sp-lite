@@ -14,6 +14,7 @@ import { HealthcareServiceDialog } from '@/features/orders/components/healthcare
 import { HealthcareServiceRescheduleDialog } from '@/features/orders/components/reschedule';
 import { useServices } from '@/features/services/api';
 import { TimelineItem as TimelineItemType } from '@/types/api';
+import { getServiceImage } from '@/utils/service';
 
 /**
  * Wrapping component for TimelineItem to have specific to group logic
@@ -42,11 +43,21 @@ const OrderTimelineItem = ({
     (o) => o.id === timelineItem.id,
   );
 
-  if (!service || !order) return null;
+  if (!order) return null;
 
   const renderTimelineButton = () => {
     switch (timelineItem.status) {
-      case 'ACTION_REQUIRED':
+      case 'ACTION_REQUIRED': {
+        // reason #1: we cannot render booking without full service info
+        // reason #2:
+        // If healthcare service was not found it likely means that
+        // we depricated it and do not show anymore
+        // this was done during 199 (superpower v2) migration
+        // to normalize all data and this behaviour is expected
+        // before changing this code please double check with
+        //   Nikita or Dan <3
+        if (!service) return;
+
         return (
           <HealthcareServiceDialog healthcareService={service}>
             <Button className="bg-white" size="medium" variant="outline">
@@ -54,6 +65,7 @@ const OrderTimelineItem = ({
             </Button>
           </HealthcareServiceDialog>
         );
+      }
       case 'CURRENT':
         return (
           <HealthcareServiceRescheduleDialog
@@ -80,7 +92,7 @@ const OrderTimelineItem = ({
           status={timelineItem.status.toLowerCase() as TimelineDotVariant}
         />
         <TimelineCard
-          image={service.image ?? '/settings/membership/card-2024.png'}
+          image={getServiceImage(order.serviceName)}
           title={timelineItem.name}
           description={timelineItem.description}
           variant={timelineItem.status === 'DISABLED' ? 'disabled' : 'default'}

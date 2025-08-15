@@ -79,8 +79,9 @@ module.exports = {
                 ],
                 from: ['./src/features', './src/app'],
                 // exception here to import useTask to check onboarding state in auth.tsx
-                // exception 3 here to import AddressDialog in app layout
-                except: ['./tasks/api/get-task.ts', './users/components/dialogs/address-dialog.tsx']
+                // exception 2 here to import AddressDialog in app layout
+                // exception 3 here to import ConsentModal in app layout
+                except: ['./tasks/api/get-task.ts', './users/components/dialogs/address-dialog.tsx', './consent/components/consent-dialog']
               },
             ],
           },

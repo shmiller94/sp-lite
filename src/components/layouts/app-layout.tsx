@@ -6,6 +6,7 @@ import { NavigationProgress } from '@/components/ui/navigation-progress';
 import { AddressDialog } from '@/features/users/components/dialogs/address-dialog';
 import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
+import { ConsentDialog } from 'src/features/consent/components/consent-dialog';
 
 import { Navbar } from '../shared/navbar';
 
@@ -32,6 +33,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       {data && data.primaryAddress === undefined ? (
         <AddressDialog mode={'add'} isDialogClosable={false} />
       ) : null}
+      <ConsentDialog />
       <NavigationProgress />
       <motion.div
         className={cn(

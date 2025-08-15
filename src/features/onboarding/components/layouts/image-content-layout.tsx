@@ -5,6 +5,7 @@ import { Head } from '@/components/seo';
 import { Body1, Body2 } from '@/components/ui/typography';
 import { cn } from '@/lib/utils';
 import { HealthcareService } from '@/types/api';
+import { getServiceImage } from '@/utils/service';
 
 type Props = {
   title: string;
@@ -31,7 +32,7 @@ export const ImageContentLayout = (props: Props) => {
             <div className="flex w-full max-w-[384px] gap-4 rounded-[20px] border border-white/20 bg-white/5 p-5">
               <img
                 className="size-12 min-w-12 rounded-xl object-cover"
-                src={currentService.image}
+                src={getServiceImage(currentService.name)}
                 alt={currentService.description}
               />
               <div>

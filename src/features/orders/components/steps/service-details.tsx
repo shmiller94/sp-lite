@@ -1,13 +1,17 @@
 import { ArrowUpRight } from 'lucide-react';
 
 import { Body1, Body2, H2 } from '@/components/ui/typography';
+import { ADVANCED_BLOOD_PANEL, SUPERPOWER_BLOOD_PANEL } from '@/const';
 import { useOrders } from '@/features/orders/api';
 import { HealthcareServiceFooter } from '@/features/orders/components/healthcare-service-footer';
 import { useOrder } from '@/features/orders/stores/order-store';
 import { ServiceFaqs } from '@/features/services/components/service-faqs';
 import { OrderStatus } from '@/types/api';
 import { getHealthcareServicePriceLabel } from '@/utils/format-money';
-import { getSampleReportLinkForService } from '@/utils/service';
+import {
+  getSampleReportLinkForService,
+  getServiceImage,
+} from '@/utils/service';
 
 export const HealthcareServiceDetails = () => {
   const { service } = useOrder((s) => s);
@@ -23,7 +27,7 @@ export const HealthcareServiceDetails = () => {
       <div className="flex flex-col justify-between gap-12 p-6 md:flex-row md:px-14 md:pb-16">
         <div className="flex flex-col justify-center gap-4 md:max-w-[278px]">
           <img
-            src={service.image}
+            src={getServiceImage(service.name)}
             className="block size-[70px] rounded-2xl border border-zinc-200 bg-white  object-cover md:hidden"
             alt={service.name}
           />
@@ -36,8 +40,8 @@ export const HealthcareServiceDetails = () => {
             </Body2>
           </div>
           <Body1 className="text-zinc-500">{service.description}</Body1>
-          {(service.name === 'Superpower Blood Panel' ||
-            service.name === 'Advanced Blood Panel') && (
+          {(service.name === SUPERPOWER_BLOOD_PANEL ||
+            service.name === ADVANCED_BLOOD_PANEL) && (
             <a
               href="https://superpower.com/biomarkers"
               target="_blank"
@@ -62,7 +66,7 @@ export const HealthcareServiceDetails = () => {
         </div>
 
         <img
-          src={service.image}
+          src={getServiceImage(service.name)}
           className="hidden h-[362px] w-full rounded-2xl border border-zinc-200  bg-white object-cover md:block md:size-[362px]"
           alt={service.name}
         />

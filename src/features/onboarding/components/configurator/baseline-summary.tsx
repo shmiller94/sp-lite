@@ -1,0 +1,121 @@
+import { ChevronDown } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import { Separator } from '@/components/ui/separator';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Body1, Body2, H3, H4 } from '@/components/ui/typography';
+import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
+import { cn } from '@/lib/utils';
+import { formatMoney } from '@/utils/format-money';
+
+export const BaselineSummary = () => (
+  <div className="hidden w-full flex-col gap-4 rounded-3xl border border-zinc-200 bg-white p-10 lg:sticky lg:top-8 lg:flex lg:h-[calc(100svh-4rem)] lg:max-h-[calc(100svh-4rem)] lg:overflow-auto">
+    <Body1 className="text-zinc-500">Order summary</Body1>
+    <CardInfo />
+    <TotalInfo />
+  </div>
+);
+
+export const CardInfo = ({ className }: { className?: string }) => {
+  const { membership } = useOnboarding();
+
+  return (
+    <div
+      className={cn(
+        'space-y-2 lg:space-y-4 rounded-[20px] border p-4 shadow-sm bg-white w-full',
+        className,
+      )}
+    >
+      <img
+        src="/services/upgrade/baseline-panel.png"
+        alt="advanced"
+        className="pointer-events-none mx-auto h-[180px] w-full object-contain pt-4"
+      />
+      <div className="hidden lg:block">
+        <H4>Superpower Baseline Membership</H4>
+        <Body2 className="text-zinc-500">
+          100+ lab tests, results tracked over time and a private medical team.
+        </Body2>
+      </div>
+      <div className="flex flex-col items-center justify-center gap-2 lg:hidden">
+        <div className="flex items-center gap-2">
+          <Body1 className="text-zinc-500">
+            Superpower Baseline Membership
+          </Body1>
+        </div>
+        {membership ? (
+          <H3>{formatMoney(membership.total)}</H3>
+        ) : (
+          <Skeleton className="h-8 w-full rounded-md" />
+        )}
+        <Collapsible className="w-full space-y-2">
+          <div className="flex items-center justify-center">
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" className="group gap-3 p-0">
+                View details
+                <ChevronDown className="size-5 text-zinc-500 transition-transform duration-300 group-data-[state=open]:rotate-180" />
+                <span className="sr-only">Toggle</span>
+              </Button>
+            </CollapsibleTrigger>
+          </div>
+          <CollapsibleContent className="space-y-2">
+            <Body1 className="text-zinc-500">
+              100+ lab tests, results tracked over time and a private medical
+              team.
+            </Body1>
+            <TotalInfo />
+          </CollapsibleContent>
+        </Collapsible>
+      </div>
+    </div>
+  );
+};
+
+export const TotalInfo = () => {
+  const { membership } = useOnboarding();
+
+  if (!membership) {
+    return Array(3)
+      .fill(0)
+      .map((_, i) => <Skeleton key={i} className="h-6 w-full rounded-md" />);
+  }
+
+  return (
+    <div className="space-y-4">
+      {membership?.meta.map((m) => (
+        <div className="flex items-center justify-between" key={m.title}>
+          <Body1
+            className={cn(
+              m.title === 'Applied discount'
+                ? 'text-vermillion-900'
+                : 'text-zinc-500',
+            )}
+          >
+            {m.title}
+          </Body1>
+          <Body1
+            className={cn(
+              m.title === 'Applied discount' ? 'text-vermillion-900' : null,
+            )}
+          >
+            {m.amount}
+          </Body1>
+        </div>
+      ))}
+      <Separator />
+      <div className="flex items-center justify-between">
+        <Body1 className="text-zinc-500">Total</Body1>
+        {membership ? (
+          <Body1>{formatMoney(membership.total)}</Body1>
+        ) : (
+          <Body1>Unavailable</Body1>
+        )}
+      </div>
+    </div>
+  );
+};

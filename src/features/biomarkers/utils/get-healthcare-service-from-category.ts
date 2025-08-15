@@ -1,3 +1,15 @@
+import {
+  CONTINUOUS_GLUCOSE_MONITOR,
+  DEXA_SCAN,
+  ENVIRONMENTAL_TOXINS,
+  FOOD_ENVIRENMENTAL_ALLERGY,
+  FULL_BODY_MRI,
+  FULL_GENETIC_SEQUENCING,
+  GRAIL_GALLERI_MULTI_CANCER_TEST,
+  GUT_MICROBIOME_ANALYSIS,
+  SUPERPOWER_BLOOD_PANEL,
+  VO2_MAX_TEST,
+} from '@/const';
 import { ToolbarCategoryType } from '@/features/biomarkers/types/filters';
 
 export const getHealthcareServiceFromCategory = (
@@ -5,24 +17,24 @@ export const getHealthcareServiceFromCategory = (
 ): string => {
   switch (category) {
     case 'Allergies':
-      return 'Food & Environmental Allergy Testing';
+      return FOOD_ENVIRENMENTAL_ALLERGY;
     case 'Blood':
-      return 'Superpower Blood Panel';
+      return SUPERPOWER_BLOOD_PANEL;
     case 'Cancer':
-      return 'Grail Galleri Multi Cancer Test';
+      return GRAIL_GALLERI_MULTI_CANCER_TEST;
     case 'Gut':
-      return 'Gut Microbiome Analysis';
+      return GUT_MICROBIOME_ANALYSIS;
     case 'Glucose':
-      return 'Continuous Glucose Monitor';
+      return CONTINUOUS_GLUCOSE_MONITOR;
     case 'DEXA':
-      return 'DEXA Scan';
+      return DEXA_SCAN;
     case 'Genetic':
-      return 'Full Genetic Sequencing';
+      return FULL_GENETIC_SEQUENCING;
     case 'MRI':
-      return 'Full Body MRI';
+      return FULL_BODY_MRI;
     case 'Toxins':
-      return 'Environmental Toxins';
+      return ENVIRONMENTAL_TOXINS;
     case 'VO2 Max':
-      return 'VO2 Max Test';
+      return VO2_MAX_TEST;
   }
 };

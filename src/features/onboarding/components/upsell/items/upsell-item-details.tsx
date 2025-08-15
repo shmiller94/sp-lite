@@ -59,7 +59,11 @@ export const UpsellItemDetails = ({
   selectItem,
   goToNext,
 }: {
-  item: HealthcareService & { tag?: string; faqs?: ServiceFaq[] };
+  item: HealthcareService & {
+    tag?: string;
+    faqs?: ServiceFaq[];
+    image?: string;
+  };
   selectItem: (item: HealthcareService) => void;
   goToNext: () => void;
 }) => {

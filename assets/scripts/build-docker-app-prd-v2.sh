@@ -30,7 +30,7 @@ REQUIRED_VARS=(
 check_vars "${REQUIRED_VARS[@]}"
 
 info "Fetching Doppler secrets..."
-doppler secrets download -p superpower-app -c stg_emr --no-file --format=env > .env
+doppler secrets download -p superpower-app -c prd_v2 --no-file --format=env > .env
 
 # Debugging github workflows
 debug "BUILD_ENV: ${BUILD_ENV}"
@@ -50,6 +50,6 @@ if [ "${BUILD_ENV}" == "dev" ]; then
 else
     docker buildx build --push \
         --platform=linux/arm64 \
-        -t ${AWS_ECR_URL}/${SERVICE}:${VERSION} \
+        -t ${AWS_ECR_URL}/${SERVICE}:${VERSION}-v2 \
         -f ./Dockerfile .
 fi

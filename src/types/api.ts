@@ -167,7 +167,6 @@ export type HealthcareService = Entity<{
   price: number;
   active: boolean;
   phlebotomy: boolean;
-  image?: string;
   items: ServiceItem[];
   sampleReportLink?: string;
 }>;
@@ -271,8 +270,6 @@ export type VerifyOPT = {
 
 /* SUBSCRIPTIONS */
 
-export type SubscriptionName = 'membership';
-
 export type SubscriptionStatus =
   | 'active'
   | 'all'
@@ -294,20 +291,17 @@ export type Subscription = {
   current_period_start: number;
   status: SubscriptionStatus;
   canceled_at: number | null;
-  name: SubscriptionName | null;
-  type: SubscriptionType | null;
+  name: 'membership' | null;
   latest_invoice?: string;
   payment_intent?: string | null;
 };
-
-export type SubscriptionType = 'baseline' | 'advanced' | 'essential';
 
 export type AvailableSubscription = {
   coupon: Coupon;
   description: string;
   total: number;
   subtotal: number;
-  type: SubscriptionType;
+  name: string;
   meta: MembershipPriceMeta[];
 };
 
@@ -346,6 +340,7 @@ export type Annotation = Entity<{
 
 export type Order = Entity<{
   serviceId: string;
+  serviceName: string;
   serviceItemIds: string[];
   name: string;
   status: OrderStatus;

@@ -22,7 +22,8 @@ export const BiomarkerValueUnit = ({
 }: ValueUnitProps): JSX.Element => {
   const value =
     result?.quantity.value !== undefined ? result?.quantity.value : '-';
-  const unit = result?.quantity.unit || baseUnit || '';
+  // Favor OD unit as the Observation unit is not formatted correctly for Quest
+  const unit = baseUnit || result?.quantity.unit || '';
 
   return (
     <div className="flex gap-1">
