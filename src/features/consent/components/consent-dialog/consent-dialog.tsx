@@ -12,7 +12,7 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from '@/components/ui/sonner';
 import { Body1, Body2, H2 } from '@/components/ui/typography';
-import { LEGAL_DESCLAIMERS } from '@/const';
+import { LEGAL_DESCLAIMERS, LEGAL_LINKS } from '@/const';
 import { useCreateConsent, useGetConsent } from '@/features/consent/api';
 import { useUser } from '@/lib/auth';
 
@@ -169,33 +169,17 @@ const ConsentNotice = ({ onNext }: { onNext: () => void }) => {
           You can read the updated versions here:
         </Body1>
         <ul className="space-y-2 pl-4">
-          <li>
-            <a
-              href="https://superpower-health.webflow.io/terms"
-              className="flex items-center gap-2 text-vermillion-900"
-            >
-              <span className="size-1.5 rounded-full bg-zinc-300" />
-              <span>Terms of Service</span>
-            </a>
-          </li>
-          <li>
-            <a
-              href="https://superpower-health.webflow.io/privacy"
-              className="flex items-center gap-2 text-vermillion-900"
-            >
-              <span className="size-1.5 rounded-full bg-zinc-300" />
-              <span>Privacy Policy</span>
-            </a>
-          </li>
-          <li>
-            <a
-              href="https://superpower-health.webflow.io/membership-agreement"
-              className="flex items-center gap-2 text-vermillion-900"
-            >
-              <span className="size-1.5 rounded-full bg-zinc-300" />
-              <span>Membership Agreement</span>
-            </a>
-          </li>
+          {LEGAL_LINKS.map(([href, label]) => (
+            <li key={href}>
+              <a
+                href={href}
+                className="flex items-center gap-2 text-vermillion-900"
+              >
+                <span className="size-1.5 rounded-full bg-zinc-300" />
+                <span>{label}</span>
+              </a>
+            </li>
+          ))}
         </ul>
         <Body1 className="text-left text-zinc-500">
           The updated Informed Consent document will be provided on the next

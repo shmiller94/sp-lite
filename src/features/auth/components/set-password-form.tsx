@@ -2,7 +2,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 
-import { SuperpowerLogo } from '@/components/icons/superpower-logo';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -44,8 +43,10 @@ export const SetPasswordForm = ({
   if (setPasswordMutation.isSuccess) {
     return (
       <div className="flex size-full max-w-3xl flex-1 flex-col justify-between gap-6 rounded-t-3xl bg-white p-8 md:gap-16 md:rounded-3xl md:p-16">
-        <SuperpowerLogo />
-        <div data-testid="success" className="text-center">
+        <div
+          data-testid="success"
+          className="flex h-full items-center justify-center"
+        >
           Password set. You can now&nbsp;
           <a
             className="text-vermillion-900 hover:cursor-pointer"
@@ -54,24 +55,6 @@ export const SetPasswordForm = ({
             sign in
           </a>
           .
-        </div>
-        <div className="flex gap-6 text-xs text-zinc-400">
-          <a
-            href="https://www.superpower.com/privacy"
-            target="_blank"
-            rel="noreferrer"
-            className="transition-colors duration-150 hover:text-zinc-500"
-          >
-            Privacy Policy
-          </a>
-          <a
-            href="https://www.superpower.com/terms"
-            target="_blank"
-            rel="noreferrer"
-            className="transition-colors duration-150 hover:text-zinc-500"
-          >
-            Terms of services
-          </a>
         </div>
       </div>
     );

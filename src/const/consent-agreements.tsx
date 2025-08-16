@@ -1,3 +1,9 @@
+export const LEGAL_LINKS = [
+  ['https://superpower.com/legal/terms', 'Terms of Service'],
+  ['https://superpower.com/legal/privacy', 'Privacy Policy'],
+  ['https://superpower.com/legal/membership', 'Membership Agreement'],
+];
+
 export const LEGAL_DESCLAIMERS = {
   generic: (
     <>
