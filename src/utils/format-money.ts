@@ -1,16 +1,17 @@
 import { REQUESTABLE_SERVICES } from '@/const';
 import { HealthcareService } from '@/types/api';
 
-export const formatMoney = (
-  amount: number,
-  decimalPlaces: number = 2,
-): string => {
-  return (
-    'US $' +
-    (amount / 100)
-      .toFixed(decimalPlaces)
-      .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-  );
+const addThousandSeparators = (value: string): string =>
+  value.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+
+export const formatMoney = (amount: number, decimalPlaces?: number): string => {
+  const dollars = amount / 100;
+
+  if (decimalPlaces !== undefined) {
+    return '$' + addThousandSeparators(dollars.toFixed(decimalPlaces));
+  }
+
+  return '$' + addThousandSeparators(dollars.toFixed(0));
 };
 
 export const getHealthcareServicePriceLabel = (

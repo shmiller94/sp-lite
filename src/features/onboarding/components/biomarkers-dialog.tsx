@@ -94,7 +94,7 @@ const BiomarkersFaqDialog = ({
           {isLoading ? (
             <TransactionSpinner className="flex justify-center" />
           ) : (
-            'Purchase'
+            'Upgrade to Advanced (+$189)'
           )}
         </Button>
       </div>

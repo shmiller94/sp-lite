@@ -79,7 +79,7 @@ const AdvancedUpgrade = () => {
       <div className="w-full space-y-8 px-4 md:px-8">
         <SuperpowerLogo />
         <div className="space-y-2">
-          <H2>Want to get more out of your membership?</H2>
+          <H2>Upgrade your Baseline Test</H2>
           <Body1 className="text-zinc-500">
             The Advanced Panel is a one-time upgrade that adds 30+ biomarkers on
             top of your baseline panel, providing deep insights across hormone
@@ -133,7 +133,7 @@ const AdvancedUpgrade = () => {
             {upgradeOrderMutation.isPending || isTaskUpdating ? (
               <TransactionSpinner className="flex justify-center" />
             ) : (
-              'Purchase'
+              'Upgrade to Advanced (+$189)'
             )}
           </Button>
           <Button
@@ -236,12 +236,12 @@ const TotalInfo = () => {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <Body1 className="text-zinc-500">Subtotal</Body1>
-        <Body1>{formatMoney(UPGRADE_PRICE)}</Body1>
+        <Body1>+{formatMoney(UPGRADE_PRICE)}</Body1>
       </div>
       <Separator />
       <div className="flex items-center justify-between">
         <Body1 className="text-zinc-500">Total</Body1>
-        <Body1>{formatMoney(UPGRADE_PRICE)}</Body1>
+        <Body1>+{formatMoney(UPGRADE_PRICE)}</Body1>
       </div>
     </div>
   );
