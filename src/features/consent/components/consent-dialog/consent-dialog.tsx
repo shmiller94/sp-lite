@@ -71,6 +71,8 @@ export const ConsentDialog = ({
       <DialogContent
         className="overflow-scroll px-6 pt-6 md:px-14 md:pt-16"
         data-testid="consent-modal"
+        preventCloseAutoFocus
+        onInteractOutside={(event) => event.preventDefault()}
       >
         {step === 0 ? (
           <ConsentNotice onNext={() => setStep(1)} />
