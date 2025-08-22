@@ -266,7 +266,9 @@ export const UpsellCheckout = ({
         <TestimonialCarousel darkMode={false} />
         <div className="h-24 md:hidden" />
       </div>
-      <ItemPreviews selectedServices={services} />
+      <ItemPreviews
+        selectedServices={services as (HealthcareService & { image: string })[]}
+      />
     </>
   );
 };
