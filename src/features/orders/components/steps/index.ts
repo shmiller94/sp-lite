@@ -8,4 +8,3 @@ export * from './request-early-access';
 export * from './service-details';
 export * from './success';
 export * from './summary';
-export * from './toxins-select';

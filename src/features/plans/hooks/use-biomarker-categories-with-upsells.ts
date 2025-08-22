@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { ENVIRONMENTAL_TOXINS, NUTRITION_AND_GUT } from '@/const/health-score';
 import {
-  ENVIRONMENTAL_TOXINS as ENVIRONMENTAL_TOXINS_SERVICE,
+  ENVIRONMENTAL_TOXIN_TEST as ENVIRONMENTAL_TOXINS_TEST_SERVICE,
   GUT_MICROBIOME_ANALYSIS as NUTRITION_AND_GUT_SERVICE,
 } from '@/const/services';
 import { useServices } from '@/features/services/api';
@@ -75,7 +75,7 @@ export const useBiomarkerCategoriesWithUpsells = (
     () =>
       environmentalBiomarkers.hasNulls
         ? servicesData?.services?.find(
-            (s) => s.name === ENVIRONMENTAL_TOXINS_SERVICE,
+            (s) => s.name === ENVIRONMENTAL_TOXINS_TEST_SERVICE,
           )
         : undefined,
     [environmentalBiomarkers.hasNulls, servicesData?.services],

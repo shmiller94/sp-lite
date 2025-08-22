@@ -44,17 +44,6 @@ export const services = [
     items: [],
   },
   {
-    id: '841398c0-b129-43fc-a5d3-977f88250789',
-    name: 'Environmental Toxins',
-    description:
-      'Know how heavy metals, pesticides, plastics, and other environmental toxins may be harming your health.',
-    price: 35900,
-    active: true,
-    image: '/services/environmental_toxins.png',
-    phlebotomy: false,
-    items: [],
-  },
-  {
     id: 'a79045d6-9240-496a-94ae-cc73bb363769',
     name: 'Intestinal Permeability Panel',
     description:
@@ -360,7 +349,7 @@ export const services = [
       'Know how heavy metals, mycotoxins, and other environmental toxins may be harming your health.',
     price: 55000,
     active: true,
-    image: '/services/total_toxins.png',
+    image: '/services/environmental_toxin_test.png',
     phlebotomy: false,
     items: [],
   },
@@ -379,7 +368,7 @@ export const services = [
     id: '4995f636-25c5-4973-8f83-8e64ec92de6f',
     name: 'Environmental Toxin',
     description:
-      'The Environmental Toxins panel measures levels of environmental toxins in the body.',
+      'Uncover hidden chemical exposures that could be draining your health.',
     price: 34900,
     active: true,
     image: '/services/environmental_toxin.png',

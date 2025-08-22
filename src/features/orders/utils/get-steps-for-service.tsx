@@ -6,7 +6,6 @@ import {
   CONTINUOUS_GLUCOSE_MONITOR,
   DEXA_SCAN,
   ENVIRONMENTAL_TOXIN_TEST,
-  ENVIRONMENTAL_TOXINS,
   FULL_BODY_MRI,
   FULL_GENETIC_SEQUENCING,
   GRAIL_GALLERI_MULTI_CANCER_TEST,
@@ -30,7 +29,6 @@ import {
   PhlebotomyLocationSelect,
   PhlebotomyScheduler,
   Success,
-  ToxinsSelect,
 } from '../components/steps';
 import { StepID } from '../types/step-id';
 
@@ -84,16 +82,6 @@ export const getStepsFromService = (
         { id: StepID.SUCCESS, content: <Success /> },
         // { id: StepID.REFERRAL, content: <InviteFriend /> },
       ];
-    case ENVIRONMENTAL_TOXINS:
-      return [
-        { id: StepID.TOXIN_SELECT, content: <ToxinsSelect /> },
-        { id: StepID.INFO, content: <HealthcareServiceDetails /> },
-        { id: StepID.INFORMED_CONSENT, content: <InformedConsent /> },
-        { id: StepID.CONFIRM_ADDRESS, content: <ConfirmAddress /> },
-        { id: StepID.SUMMARY, content: <OrderSummary /> },
-        { id: StepID.SUCCESS, content: <Success /> },
-        // { id: StepID.REFERRAL, content: <InviteFriend /> },
-      ];
     case CONTINUOUS_GLUCOSE_MONITOR:
     case GUT_MICROBIOME_ANALYSIS:
       return [
@@ -125,13 +113,13 @@ export const getStepsFromService = (
         // { id: StepID.REFERRAL, content: <InviteFriend /> },
       ];
     }
-    // if separate toxin test is recommended via action plan
     case TOTAL_TOXIN_TEST:
     case ENVIRONMENTAL_TOXIN_TEST:
     case MYCOTOXINS_TEST:
     case HEAVY_METALS_TEST:
       return [
         { id: StepID.INFO, content: <HealthcareServiceDetails /> },
+        { id: StepID.INFORMED_CONSENT, content: <InformedConsent /> },
         { id: StepID.CONFIRM_ADDRESS, content: <ConfirmAddress /> },
         { id: StepID.SUMMARY, content: <OrderSummary /> },
         { id: StepID.SUCCESS, content: <Success /> },

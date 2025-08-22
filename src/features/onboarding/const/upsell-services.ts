@@ -2,7 +2,7 @@ import { SERVICE_DETAILS } from '@/const/service-details';
 import {
   GRAIL_GALLERI_MULTI_CANCER_TEST,
   GUT_MICROBIOME_ANALYSIS,
-  TOTAL_TOXIN_TEST,
+  ENVIRONMENTAL_TOXIN_TEST,
 } from '@/const/services';
 import { ServiceDetails } from '@/types/service';
 
@@ -60,9 +60,9 @@ export const UPSELL_SERVICES = [
       backgroundImage: '/onboarding/upsell/total-toxin-test-background.webp',
     },
     item: {
-      name: TOTAL_TOXIN_TEST,
+      name: ENVIRONMENTAL_TOXIN_TEST,
       image: '/services/transparent/total_toxin_test.png',
-      ...SERVICE_DETAILS[TOTAL_TOXIN_TEST],
+      ...SERVICE_DETAILS[ENVIRONMENTAL_TOXIN_TEST],
     },
   },
   {

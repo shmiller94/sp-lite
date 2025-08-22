@@ -11,13 +11,13 @@ import {
   FULL_BODY_MRI,
   FULL_GENETIC_SEQUENCING,
   GRAIL_GALLERI_MULTI_CANCER_TEST,
+  HEAVY_METALS_TEST,
+  MYCOTOXINS_TEST,
   GUT_MICROBIOME_ANALYSIS,
   HEART_CALCIUM_SCAN,
-  HEAVY_METALS_TEST,
   INTESTINAL_PERMEABILITY_PANEL,
   IV_DRIP,
   LEGAL_DESCLAIMERS,
-  MYCOTOXINS_TEST,
   PFAS_CHEMICALS,
   SUPERPOWER_ADVANCED_BLOOD_PANEL,
   SUPERPOWER_BLOOD_PANEL,
@@ -89,10 +89,10 @@ export const getSampleReportLinkForService = (service: string) => {
         pdf: '/sample-reports/gut-microbiome-analysis.pdf',
         preview: '/sample-reports/gut-microbiome-analysis-placeholder.webp',
       };
-    case TOTAL_TOXIN_TEST:
+    case ENVIRONMENTAL_TOXIN_TEST:
       return {
-        pdf: '/sample-reports/total-toxins.pdf',
-        preview: '/sample-reports/total-toxins-placeholder.webp',
+        pdf: '/sample-reports/environmental-toxin-test.pdf',
+        preview: '/sample-reports/environmental-toxin-test-placeholder.webp',
       };
     default:
       return undefined;
@@ -125,7 +125,10 @@ export const getInformedConsentForService = (service: string): JSX.Element => {
   switch (service) {
     case GRAIL_GALLERI_MULTI_CANCER_TEST:
       return LEGAL_DESCLAIMERS.grail;
-    case ENVIRONMENTAL_TOXINS:
+    case ENVIRONMENTAL_TOXIN_TEST ||
+      HEAVY_METALS_TEST ||
+      MYCOTOXINS_TEST ||
+      TOTAL_TOXIN_TEST:
       return LEGAL_DESCLAIMERS.toxins;
     case GUT_MICROBIOME_ANALYSIS:
       return LEGAL_DESCLAIMERS.gut;
