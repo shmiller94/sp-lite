@@ -1,14 +1,15 @@
 <!doctype html>
 <html lang="en">
   <head>
+    
     <!-- React Scan -->
     <!--    <script src="https://unpkg.com/react-scan/dist/auto.global.js"></script>-->
     <!-- Google Tag Manager -->
     <script>
       (function (w, d, s, l, i) {
         if (
-          window.location.pathname.includes('/onboarding') ||
-          window.location.pathname.includes('/register')
+          window.location.pathname.startsWith('/onboarding') ||
+          window.location.pathname.startsWith('/register')
         ) {
           w[l] = w[l] || [];
           w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
