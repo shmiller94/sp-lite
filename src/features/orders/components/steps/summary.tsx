@@ -1,8 +1,6 @@
-import { Check } from 'lucide-react';
 import moment from 'moment';
 import React, { ReactNode } from 'react';
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/components/ui/sonner';
@@ -68,11 +66,6 @@ export function OrderSummary(): ReactNode {
     .find((o) => o.serviceId === service.id);
 
   const price = serviceQuery.data?.service.price;
-
-  const isIncludedInMembership =
-    price !== undefined &&
-    price === 0 &&
-    CORE_BLOOD_TESTS.includes(service.name);
 
   // Helper function to track order events
   const trackOrderEvents = () => {
@@ -194,28 +187,17 @@ export function OrderSummary(): ReactNode {
         ) : null}
         {defaultPaymentMethod && !isQueryLoading ? (
           <>
-            {isIncludedInMembership ? (
-              <Alert className="mb-8" variant="success">
-                <Check className="size-4" />
-                <AlertTitle>Heads up!</AlertTitle>
-                <AlertDescription>
-                  We found a free {service.name} that is included with your
-                  membership.
-                </AlertDescription>
-              </Alert>
-            ) : null}
-
             {price !== undefined ? (
               <CreateOrderSummaryItem basePrice={price} />
             ) : null}
-            {service.phlebotomy ? (
-              <OrderAppointmentDetails
-                collectionMethod={collectionMethod ?? undefined}
-                slot={slot ?? undefined}
-                timezone={tz ?? moment.tz.guess()}
-                location={location ?? undefined}
-              />
-            ) : null}
+            <OrderAppointmentDetails
+              collectionMethod={collectionMethod ?? undefined}
+              slot={slot ?? undefined}
+              timezone={tz ?? moment.tz.guess()}
+              location={location ?? undefined}
+              isPhlebotomy={service.phlebotomy}
+              serviceName={service.name}
+            />
             {price && price > 0 ? <CurrentPaymentMethodCard /> : null}
           </>
         ) : null}
@@ -288,9 +270,11 @@ function CreateOrderSummaryItem({
             )}
           </div>
         </div>
-        <div className="flex gap-2 md:hidden">
-          Total: <Price basePrice={basePrice} />
-        </div>
+        {basePrice > 0 ? (
+          <div className="flex gap-2 md:hidden">
+            Total: <Price basePrice={basePrice} />
+          </div>
+        ) : null}
       </div>
       <div className="hidden text-nowrap md:block">
         <Price basePrice={basePrice} />
@@ -300,5 +284,5 @@ function CreateOrderSummaryItem({
 }
 
 const Price = ({ basePrice }: { basePrice: number }) => {
-  return <Body1>{basePrice === 0 ? 'Included' : formatMoney(basePrice)}</Body1>;
+  return basePrice > 0 ? <Body1>{formatMoney(basePrice)}</Body1> : null;
 };

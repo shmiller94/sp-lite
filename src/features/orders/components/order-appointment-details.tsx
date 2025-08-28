@@ -31,6 +31,7 @@ interface OrderAppointmentDetailsProps {
   collectionMethod?: CollectionMethodType;
   serviceName?: string;
   orderId?: string;
+  isPhlebotomy?: boolean;
 }
 
 function OrderFileLinkFromFiles({ orderId }: { orderId: string }) {
@@ -77,6 +78,7 @@ export function OrderAppointmentDetails({
   collectionMethod,
   orderId,
   serviceName,
+  isPhlebotomy,
 }: OrderAppointmentDetailsProps): React.ReactNode {
   if (!location?.address) {
     return null;
@@ -116,26 +118,32 @@ export function OrderAppointmentDetails({
 
   return (
     <div>
-      <H4>Appointment details</H4>
+      <H4>{isPhlebotomy ? 'Appointment details' : 'Details'}</H4>
 
       {orderId ? <OrderFileLinkFromFiles orderId={orderId} /> : null}
-      <div className="flex gap-4 px-4 py-6">
-        <Calendar className="size-5 text-zinc-500" />
-        <div className="space-y-1">
-          <Body1 className="text-zinc-500">Date scheduled</Body1>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4">
-            <Body1>
-              {moment(slot?.start).tz(timezone).format('MMM Do, YYYY')}
-            </Body1>
-            <DotIcon fill="#18181B" className="hidden sm:block" />
-            <Body1>
-              {moment(slot?.start).tz(timezone).format('h:mma')}-{' '}
-              {moment(slot?.end).tz(timezone).format('h:mma z')}
-            </Body1>
+      {isPhlebotomy && slot ? (
+        <div className="flex gap-4 px-4 py-6">
+          <Calendar className="size-5 text-zinc-500" />
+          <div className="flex flex-1 flex-col sm:flex-row sm:items-center sm:gap-4">
+            <div className="space-y-1">
+              <Body1 className="text-zinc-500">Date scheduled</Body1>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4">
+                <Body1>
+                  {moment(slot.start).tz(timezone).format('MMM Do, YYYY')}
+                </Body1>
+                <DotIcon fill="#18181B" className="hidden sm:block" />
+                <Body1>
+                  {moment(slot.start).tz(timezone).format('h:mma')}-{' '}
+                  {moment(slot.end).tz(timezone).format('h:mma z')}
+                </Body1>
+              </div>
+            </div>
+            <div className="mt-2 flex sm:ml-auto sm:mt-0">
+              {renderAddToCalendar()}
+            </div>
           </div>
-          {renderAddToCalendar()}
         </div>
-      </div>
+      ) : null}
       {location?.address ? (
         <div className="flex gap-4 px-4 py-6">
           {collectionMethodIcon}
