@@ -94,7 +94,7 @@ export const SERVICE_DETAILS: Record<string, ServiceDetails> = {
       {
         question: "What's the process?",
         answer:
-          '1. Receive your kit at home in 3–5 days.\n2. Schedule an at-home blood draw with a licensed phlebotomist (no fasting required).\n3. Get results in 2–3 weeks via your Superpower dashboard.\n4. (Optional) Book a consultation to review results with our care team.',
+          '1. Receive your kit at home in 3–5 days.\n2. Schedule an at-home blood draw with a licensed phlebotomist (no fasting required).\n3. Get results in 2–3 weeks via your Superpower dashboard.',
       },
     ],
   },
