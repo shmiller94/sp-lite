@@ -198,8 +198,13 @@ export const BillingSection = () => {
       <div className="space-y-2">
         <H3 className="text-primary">Purchase Membership</H3>
         <Body1 className="text-zinc-500">
-          Your membership auto-renews each year. Cancel anytime. HSA/FSA
-          eligible.
+          Your membership auto-renews each year. Cancel anytime.
+          <br />
+          To use your HSA/FSA card and get reimbursed, please email{' '}
+          <a href="mailto:concierge@superpower.com">
+            concierge@superpower.com
+          </a>{' '}
+          after checking out and our team will help you submit!
         </Body1>
       </div>
       <div className="space-y-4">
@@ -274,9 +279,10 @@ export const BillingSection = () => {
           at the then-current rate, unless you cancel in accordance with the
           Membership Agreement. You authorize Superpower to charge your payment
           method for the initial term and any subsequent renewal terms unless
-          canceled. To cancel, email concierge@superpower.com or log into your
-          account and follow the cancellation instructions. No refunds are
-          provided for the remainder of the subscription term after
+          canceled. To cancel, email{' '}
+          <a href="mailto:concierge@superpower.com">concierge@superpower.com</a>{' '}
+          or log into your account and follow the cancellation instructions. No
+          refunds are provided for the remainder of the subscription term after
           cancellation. For full details, please refer to your Membership
           Agreement.
         </Body2>
