@@ -6,11 +6,13 @@ import { toast } from '@/components/ui/sonner';
 import { Spinner } from '@/components/ui/spinner';
 import { useCreateVerificationSession } from '@/features/onboarding/api/create-verification-session';
 import { useUpdateTask } from '@/features/tasks/api/update-task';
+import { useAnalytics } from '@/hooks/use-analytics';
 
 export const IdentityDialog = () => {
   const stripe = useStripe();
   const createVerificationMutation = useCreateVerificationSession({});
   const { mutate } = useUpdateTask();
+  const { track } = useAnalytics();
 
   const verify = async () => {
     if (!stripe) return;
@@ -33,6 +35,9 @@ export const IdentityDialog = () => {
         // toast.error(error.code);
         return;
       }
+
+      // Track successful identity verification
+      track('verified_id');
 
       mutate({
         data: { status: 'in-progress' },

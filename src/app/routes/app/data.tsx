@@ -1,4 +1,5 @@
 import { Database } from 'lucide-react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ContentLayout } from '@/components/layouts';
@@ -7,9 +8,15 @@ import { Button } from '@/components/ui/button';
 import { Body1 } from '@/components/ui/typography';
 import { BiomarkersDataTable } from '@/features/biomarkers/components/biomarkers-data-table/biomarker-data-table';
 import { DataCards } from '@/features/biomarkers/components/data-cards';
+import { useAnalytics } from '@/hooks/use-analytics';
 
 export const DataRoute = () => {
   const navigate = useNavigate();
+  const { track } = useAnalytics();
+
+  useEffect(() => {
+    track('viewed_data');
+  }, [track]);
 
   return (
     <ContentLayout title="Data">

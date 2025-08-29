@@ -12,12 +12,13 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { TransactionSpinner } from '@/components/ui/spinner/transaction-spinner';
 import { Body1, Body2, H2, H3, H4 } from '@/components/ui/typography';
-import { UPGRADE_INFO } from '@/const';
+import { UPGRADE_INFO, ADVANCED_BLOOD_PANEL } from '@/const';
 import BiomarkersFaqDialog from '@/features/onboarding/components/biomarkers-dialog';
 import { ConfiguratorLayout } from '@/features/onboarding/components/layouts';
 import { useUpgradeOrder } from '@/features/orders/api/upgrade-order';
 import { useUpdateTask } from '@/features/tasks/api/update-task';
 import { CurrentPaymentMethodCard } from '@/features/users/components/current-payment-method-card';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { useUser } from '@/lib/auth';
 import { useStepper } from '@/lib/stepper';
 import { cn } from '@/lib/utils';
@@ -33,6 +34,7 @@ const AdvancedUpgrade = () => {
   } = useUpdateTask();
   const upgradeOrderMutation = useUpgradeOrder();
   const { data: user } = useUser();
+  const { track } = useAnalytics();
 
   const price = getUpgradePrice(user);
 
@@ -50,6 +52,12 @@ const AdvancedUpgrade = () => {
   const upgradeOrder = async () => {
     await upgradeOrderMutation.mutateAsync({
       data: { upgradeType: 'advanced' },
+    });
+
+    // Track blood test order for advanced upgrade
+    track('ordered_blood_test', {
+      blood_test: ADVANCED_BLOOD_PANEL,
+      value: price,
     });
 
     await updateStep();

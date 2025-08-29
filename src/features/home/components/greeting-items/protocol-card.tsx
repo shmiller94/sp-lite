@@ -48,14 +48,16 @@ export const ProtocolCard = () => {
         : `Access your latest plan from ${startDateFormatted}`;
   }
 
+  const handleActionPlanClick = () => {
+    if (latestAvailablePlan) {
+      navigate(`/plans/${latestAvailablePlan?.id}`);
+    }
+  };
+
   return (
     <GreetingCard
       isLoading={getPlansQuery.isLoading}
-      onClick={() => {
-        if (latestAvailablePlan) {
-          navigate(`/plans/${latestAvailablePlan?.id}`);
-        }
-      }}
+      onClick={handleActionPlanClick}
       className={cn(
         'mx-auto max-w-sm cursor-pointer',
         latestAvailablePlan ? 'cursor-pointer' : undefined,
@@ -98,7 +100,7 @@ export const ProtocolCard = () => {
                   type="button"
                   variant="white"
                   size="medium"
-                  onClick={() => navigate(`/plans/${latestAvailablePlan?.id}`)}
+                  onClick={handleActionPlanClick}
                   className="border border-primary/10"
                 >
                   More info

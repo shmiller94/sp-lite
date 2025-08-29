@@ -1,6 +1,6 @@
 import { useChat } from '@ai-sdk/react';
 import type { Attachment, Message } from 'ai';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { toast } from '@/components/ui/sonner';
 import { env } from '@/config/env';
@@ -9,6 +9,7 @@ import { Greeting } from '@/features/messages/components/ai/greeting';
 import { ChatOptions } from '@/features/messages/components/chat-options';
 import { CreateMessageForm } from '@/features/messages/components/create-message-form';
 import { useChatStore } from '@/features/messages/stores/chat-store';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { cn, getActiveLogin } from '@/lib/utils';
 import { generateUUID } from '@/utils/generate-uiud';
 
@@ -27,6 +28,10 @@ export function Chat({
   initialMessages: Array<Message>;
 }) {
   const { refetch } = useHistory();
+  const { track } = useAnalytics();
+  const [lastUserMessageTime, setLastUserMessageTime] = useState<number | null>(
+    null,
+  );
   const {
     messages,
     setMessages,
@@ -49,6 +54,21 @@ export function Chat({
     generateId: generateUUID,
     onFinish: () => {
       refetch();
+
+      // Calculate response time
+      const responseTime = lastUserMessageTime
+        ? Date.now() - lastUserMessageTime
+        : null;
+
+      // Track response time for average calculation
+      if (responseTime) {
+        addResponseTime(responseTime);
+      }
+
+      // Track the AI response event
+      track('received_message_ai', {
+        response_time: responseTime,
+      });
     },
     onError: (error) => {
       if (publicErrors.some((publicError) => publicError === error.message)) {
@@ -62,8 +82,19 @@ export function Chat({
     },
   });
   const type = useChatStore((s) => s.type);
+  const sessionStartTime = useChatStore((s) => s.sessionStartTime);
+  const setSessionStartTime = useChatStore((s) => s.setSessionStartTime);
+  const incrementMessageCount = useChatStore((s) => s.incrementMessageCount);
+  const addResponseTime = useChatStore((s) => s.addResponseTime);
 
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
+
+  // Initialize session start time when component mounts for AI chat
+  useEffect(() => {
+    if (type === 'ai' && !sessionStartTime) {
+      setSessionStartTime(Date.now());
+    }
+  }, [type, sessionStartTime, setSessionStartTime]);
 
   if (type === 'concierge') {
     return (
@@ -104,7 +135,11 @@ export function Chat({
             chatId={id}
             input={input}
             setInput={setInput}
-            handleSubmit={handleSubmit}
+            handleSubmit={(e) => {
+              setLastUserMessageTime(Date.now());
+              incrementMessageCount();
+              handleSubmit(e);
+            }}
             status={status}
             stop={stop}
             attachments={attachments}

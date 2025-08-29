@@ -5,6 +5,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Body1, Body2 } from '@/components/ui/typography';
 import { InfoDialog } from '@/features/messages/components/info-dialog';
 import { useChatStore } from '@/features/messages/stores/chat-store';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { cn } from '@/lib/utils';
 
 import { AnimatedIcon } from './ai/animated-icon';
@@ -12,6 +13,8 @@ import { AnimatedIcon } from './ai/animated-icon';
 const AICard = () => {
   const type = useChatStore((s) => s.type);
   const updateType = useChatStore((s) => s.update);
+  const resetSession = useChatStore((s) => s.resetSession);
+  const { track } = useAnalytics();
 
   return (
     <div
@@ -22,7 +25,13 @@ const AICard = () => {
           ? 'border-vermillion-900 shadow-lg shadow-vermillion-900/15'
           : 'border-zinc-100 hover:border-zinc-200',
       )}
-      onClick={() => updateType('ai')}
+      onClick={() => {
+        updateType('ai');
+        // Reset session data for new chat session
+        resetSession();
+        // Track AI chat session start when user selects AI
+        track('started_chat_session_ai');
+      }}
       role="presentation"
     >
       <div className="flex items-center justify-between">

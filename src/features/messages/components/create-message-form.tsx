@@ -22,6 +22,7 @@ import {
 import { toast } from '@/components/ui/sonner';
 import { Textarea } from '@/components/ui/textarea';
 import { Body1, H3 } from '@/components/ui/typography';
+import { useAnalytics } from '@/hooks/use-analytics';
 
 import {
   CreateMessageInput,
@@ -40,6 +41,8 @@ export const CreateMessageForm = (): JSX.Element => {
     },
   });
 
+  const { track } = useAnalytics();
+
   const createMessageMutation = useCreateMessage({
     mutationConfig: {
       onSuccess: () => {
@@ -52,6 +55,10 @@ export const CreateMessageForm = (): JSX.Element => {
 
   function onSubmit(values: CreateMessageInput) {
     if (createMessageMutation.isPending) return;
+
+    // Track the concierge message event
+    track('sent_message_concierge');
+
     createMessageMutation.mutate({ data: values });
   }
 

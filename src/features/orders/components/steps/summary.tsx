@@ -73,22 +73,20 @@ export function OrderSummary(): ReactNode {
     if (service.phlebotomy) {
       track('scheduled_blood_draw', {
         scheduled_date: slot ? slot.start : new Date().toISOString(),
-        booked_date: new Date().toISOString(),
         collection_method: collectionMethod,
+        value: service.price,
       });
     }
 
     if (CORE_BLOOD_TESTS.includes(service.name)) {
       track('ordered_blood_test', {
         blood_test: service.name,
-        amount: service.price,
         value: service.price,
       });
     }
 
     track('ordered_service', {
       service_name: service.name,
-      amount: service.price,
       value: service.price,
     });
   };

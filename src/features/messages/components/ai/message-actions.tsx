@@ -12,6 +12,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { useAnalytics } from '@/hooks/use-analytics';
 
 export function PureMessageActions({
   message,
@@ -21,6 +22,8 @@ export function PureMessageActions({
   message: Message;
   isLoading: boolean;
 }) {
+  const { track } = useAnalytics();
+
   if (isLoading) return null;
   if (message.role === 'user') return null;
   if (message.toolInvocations && message.toolInvocations.length > 0)
@@ -42,6 +45,9 @@ export function PureMessageActions({
     if (plainTextContent) {
       await navigator.clipboard.writeText(plainTextContent);
       toast.success('Copied to clipboard!');
+
+      // Track the copy event
+      track('copied_to_clipboard_ai');
     } else {
       toast.error('No content to copy.');
     }

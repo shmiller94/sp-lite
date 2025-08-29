@@ -7,6 +7,7 @@ import { TestimonialCarousel } from '@/components/shared/testimonials/components
 import { Button } from '@/components/ui/button';
 import { TextShimmer } from '@/components/ui/text-shimmer';
 import { Body1, H3, H4 } from '@/components/ui/typography';
+import { SUPERPOWER_BLOOD_PANEL, ADVANCED_BLOOD_PANEL } from '@/const/services';
 import { useUpsellOrders } from '@/features/onboarding/hooks/use-upsell-orders';
 import { getUpsellServices } from '@/features/onboarding/utils/get-upsell-services';
 import { useOrders } from '@/features/orders/api';
@@ -28,28 +29,26 @@ import { ItemPreviews } from '../item-previews';
 
 const AnimatedCheckmark = ({ isOpen }: { isOpen: boolean }) => {
   return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 20 20"
-      fill="none"
-      className="mr-3"
-      xmlns="http://www.w3.org/2000/svg"
+    <div
+      className={cn(
+        'flex size-8 items-center justify-center rounded-full bg-green-500 text-white transition-all duration-300',
+        isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0',
+      )}
     >
-      <path
-        d="M16.6673 5L7.50065 14.1667L3.33398 10"
-        stroke="#FC5F2B"
-        strokeWidth="1.66667"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        style={{
-          strokeDasharray: '20 20',
-          strokeDashoffset: isOpen ? '0' : '20',
-          transition: 'stroke-dashoffset 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-          willChange: 'stroke-dashoffset',
-        }}
-      />
-    </svg>
+      <svg
+        className="size-5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M5 13l4 4L19 7"
+        />
+      </svg>
+    </div>
   );
 };
 
@@ -117,6 +116,21 @@ export const UpsellCheckout = ({
   const createBulkOrdersFromServices = useCallback(async () => {
     if (!user) return;
     const orders: CreateOrderInput[] = [];
+
+    // Track blood test orders
+    const bloodTests = services.filter(
+      (service) =>
+        service.name === SUPERPOWER_BLOOD_PANEL ||
+        service.name === ADVANCED_BLOOD_PANEL,
+    );
+
+    for (const bloodTest of bloodTests) {
+      track('ordered_blood_test', {
+        blood_test: bloodTest.name,
+        value: bloodTest.price,
+      });
+    }
+
     for (const service of services) {
       const collectionMethod = getDefaultCollectionMethod(service);
 
@@ -133,15 +147,6 @@ export const UpsellCheckout = ({
     }
 
     await mutateAsync({ data: orders });
-
-    // track each ordered service
-    services.forEach((service) => {
-      track('ordered_service', {
-        service_name: service.name,
-        amount: service.price,
-        value: service.price,
-      });
-    });
 
     return updateStep();
   }, [user, mutateAsync, services, updateStep, track]);

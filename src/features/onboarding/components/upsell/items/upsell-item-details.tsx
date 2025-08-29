@@ -180,7 +180,6 @@ export const UpsellItemDetails = ({
               if (!isAlreadyBooked) {
                 track('added_service', {
                   service_name: item.name,
-                  amount: item.price,
                   value: item.price,
                 });
               }

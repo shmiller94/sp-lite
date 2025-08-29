@@ -9,6 +9,7 @@ import { generateUUID } from '@/utils/generate-uiud';
 export const ConciergeRoute = () => {
   const generatedUUID = generateUUID();
   const { id } = useParams();
+
   const getMessagesQuery = useMessages({
     chatId: id as string,
     queryConfig: {

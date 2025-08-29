@@ -1,4 +1,5 @@
 import { CarePlan as FhirCarePlan } from '@medplum/fhirtypes';
+import { useEffect, useRef } from 'react';
 
 import { MainErrorFallback } from '@/components/errors/main';
 import { Spinner } from '@/components/ui/spinner';
@@ -9,7 +10,9 @@ import { RecommendedItems } from '@/features/plans/components/consultation/recom
 import { PlanGoals } from '@/features/plans/components/goals/plan-goals';
 import { PlanOverview } from '@/features/plans/components/plan-overview';
 import { PlanTopper } from '@/features/plans/components/plan-topper';
+import { useProductAvailability } from '@/features/plans/hooks/use-product-availability';
 import { useProducts } from '@/features/shop/api';
+import { useAnalytics } from '@/hooks/use-analytics';
 
 import { CarePlanProvider, useCarePlan } from '../context/care-plan-context';
 
@@ -19,6 +22,26 @@ import { CarePlanHeader } from './plan-header';
 
 function CarePlanContent() {
   const { isAnnualReport } = useCarePlan();
+  const { availableProducts, isLoading } = useProductAvailability();
+  const { track } = useAnalytics();
+  const didSendViewedAiap = useRef(false);
+
+  useEffect(() => {
+    // Exit conditions to prevent multiple tracking calls
+    if (isLoading || didSendViewedAiap.current) return;
+
+    const recommendedProducts = availableProducts.map((product) => ({
+      id: product.id,
+      name: product.name,
+    }));
+
+    track('viewed_aiap', {
+      recommended_products: recommendedProducts,
+    });
+
+    // Mark as sent to prevent duplicate tracking
+    didSendViewedAiap.current = true;
+  }, [track, availableProducts, isLoading]);
 
   return (
     <div className="mx-auto w-full max-w-screen-md space-y-4 px-4 pb-16">
