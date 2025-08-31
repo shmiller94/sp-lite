@@ -42,3 +42,11 @@ export type ServiceLabType = ServiceLabTypeEnum;
 // so we just stick to that approach
 export const UPGRADE_PRICE = 18900;
 export const UPGRADE_PRICE_NYNJ = 19900;
+
+export const isBloodPanel = (serviceName: string) => {
+  return (
+    serviceName === SUPERPOWER_BLOOD_PANEL ||
+    serviceName === CUSTOM_BLOOD_PANEL ||
+    serviceName === ADVANCED_BLOOD_PANEL
+  );
+};

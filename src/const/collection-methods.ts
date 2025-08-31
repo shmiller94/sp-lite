@@ -7,6 +7,7 @@ export type CollectionOptionType = {
   cancelationText?: string;
   price: number;
   disabled: boolean;
+  pricingText?: string;
 };
 
 export const COLLECTION_METHODS: Record<

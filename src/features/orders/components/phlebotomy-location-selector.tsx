@@ -3,12 +3,14 @@ import { useMemo } from 'react';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Body1, H3 } from '@/components/ui/typography';
+import { isBloodPanel } from '@/const';
+import { useOrders } from '@/features/orders/api';
 import { useOrder } from '@/features/orders/stores/order-store';
 import { getCollectionMethods } from '@/features/orders/utils/get-collection-methods';
 import { useUser } from '@/lib/auth';
 import { useAuthorization } from '@/lib/authorization';
 import { cn } from '@/lib/utils';
-import { CollectionMethodType } from '@/types/api';
+import { CollectionMethodType, OrderStatus } from '@/types/api';
 import { formatMoney } from '@/utils/format-money';
 
 export const CreateOrderPhlebotomyLocationSelector = () => {
@@ -22,6 +24,7 @@ export const CreateOrderPhlebotomyLocationSelector = () => {
   const { data: user } = useUser();
   const { checkAdminActorAccess } = useAuthorization();
   const isAdmin = checkAdminActorAccess();
+  const { data: ordersData } = useOrders();
 
   const handleOptionClick = (optionValue: CollectionMethodType) => {
     updateCollectionMethod(
@@ -31,9 +34,27 @@ export const CreateOrderPhlebotomyLocationSelector = () => {
     updateSlot(null);
   };
 
+  // Check if user has an AT_HOME credit from a draft order
+  const hasAtHomeCredit = useMemo(() => {
+    if (!ordersData?.orders) return false;
+
+    return ordersData.orders.some(
+      (order) =>
+        order.status === OrderStatus.draft &&
+        order.method.includes('AT_HOME') &&
+        isBloodPanel(order.name),
+    );
+  }, [ordersData?.orders]);
+
   const options = useMemo(
-    () => getCollectionMethods(service, user?.primaryAddress, isAdmin),
-    [service, user?.primaryAddress, isAdmin],
+    () =>
+      getCollectionMethods(
+        service,
+        user?.primaryAddress,
+        isAdmin,
+        hasAtHomeCredit,
+      ),
+    [service, user?.primaryAddress, isAdmin, hasAtHomeCredit],
   );
 
   return (
@@ -72,9 +93,10 @@ export const CreateOrderPhlebotomyLocationSelector = () => {
                 </Body1>
               </div>
               <Body1 className="text-sm text-zinc-500 sm:text-base">
-                {option.price === 0
-                  ? 'Included'
-                  : `+${formatMoney(option.price)}`}
+                {option.pricingText ??
+                  (option.price === 0
+                    ? 'Included'
+                    : `+${formatMoney(option.price)}`)}
               </Body1>
             </div>
           </Label>

@@ -22,8 +22,8 @@ export const HealthcareServiceRescheduleConfirmation = ({
 
   const lateFeeMessage = (() => {
     return mode === 'reschedule'
-      ? 'Your appointment is within 24 hours. Rescheduling now will incur a $99 late fee.'
-      : 'Your appointment is within 24 hours. Cancelling now will incur a $99 late fee.';
+      ? 'Your appointment is within 24 hours. As you are rescheduling within 24 hours of your appointment, your $99 booking fee is non-refundable.'
+      : 'Your appointment is within 24 hours. As you are cancelling within 24 hours of your appointment, your $99 booking fee is non-refundable.';
   })();
 
   return (

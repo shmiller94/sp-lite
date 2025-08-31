@@ -1,12 +1,13 @@
 import {
-  CUSTOM_BLOOD_PANEL,
-  SUPERPOWER_BLOOD_PANEL,
   ADVANCED_BLOOD_PANEL,
   COLLECTION_METHODS,
+  CUSTOM_BLOOD_PANEL,
+  SUPERPOWER_BLOOD_PANEL,
   type CollectionOptionType,
 } from '@/const';
 import { getInterpretedAtHomeMethod } from '@/features/orders/utils/get-interpreted-method';
 import { Address, HealthcareService } from '@/types/api';
+import { formatMoney } from '@/utils/format-money';
 
 /**
  * Returns a list of collection methods available for the given service and draft order.
@@ -14,12 +15,14 @@ import { Address, HealthcareService } from '@/types/api';
  * @param {HealthcareService} service - The healthcare service for which to get the collection methods.
  * @param primaryAddress - Primary address of user
  * @param isAdmin - Whether the user is an admin
+ * @param hasAtHomeCredit - Whether the user has an AT_HOME credit from a draft order
  * @returns {CollectionOptionType[]} An array of available collection methods.
  */
 export const getCollectionMethods = (
   service: HealthcareService,
   primaryAddress?: Address,
   isAdmin = false,
+  hasAtHomeCredit = false,
 ): CollectionOptionType[] => {
   const isBloodPanel =
     service.name === SUPERPOWER_BLOOD_PANEL ||
@@ -27,51 +30,79 @@ export const getCollectionMethods = (
     service.name == ADVANCED_BLOOD_PANEL;
   const INTERPRETED = getInterpretedAtHomeMethod(service);
 
+  // Helper function to create collection method options with proper pricing
+  const createInLabOption = (overrides: Partial<CollectionOptionType> = {}) => {
+    const inLabOption = { ...COLLECTION_METHODS.IN_LAB, ...overrides };
+    const pricingText = hasAtHomeCredit
+      ? "Included (we'll refund your at-home fee)"
+      : inLabOption.price === 0
+        ? 'Included'
+        : `+${formatMoney(inLabOption.price)}`;
+
+    return {
+      ...inLabOption,
+      pricingText,
+    };
+  };
+
+  const createInterpretedOption = (
+    overrides: Partial<CollectionOptionType> = {},
+  ) => {
+    const interpretedOption = { ...INTERPRETED, ...overrides };
+    const pricingText = hasAtHomeCredit
+      ? 'Prepaid'
+      : interpretedOption.price === 0
+        ? 'Included'
+        : `+${formatMoney(interpretedOption.price)}`;
+
+    return {
+      ...interpretedOption,
+      pricingText,
+    };
+  };
+
   if (primaryAddress) {
     const state = primaryAddress.state;
 
     // If user is admin, allow in-lab options regardless of state
     if (isAdmin) {
-      return [COLLECTION_METHODS.IN_LAB, INTERPRETED];
+      return [createInLabOption(), createInterpretedOption()];
     }
 
     // For NY and NJ, only allow at-home appointments
     if (state === 'NY' || state === 'NJ') {
       return [
-        {
-          ...COLLECTION_METHODS.IN_LAB,
+        createInLabOption({
           disabled: true,
           description:
             'We currently support at-home appointments only in New York (NY) and New Jersey (NJ).',
-        },
-        INTERPRETED,
+        }),
+        createInterpretedOption(),
       ];
     }
 
-    // For NY and NJ, only allow at-home appointments
+    // For AZ, only allow at-home appointments
     if (state === 'AZ') {
       return [
-        {
-          ...COLLECTION_METHODS.IN_LAB,
+        createInLabOption({
           disabled: true,
           description:
             'We currently support at-home appointments only in Arizona (AZ).',
-        },
-        INTERPRETED,
+        }),
+        createInterpretedOption(),
       ];
     }
   }
 
   if (!isBloodPanel) {
     return [
-      {
-        ...COLLECTION_METHODS.IN_LAB,
+      createInLabOption({
         disabled: true,
         description: "This service doesn't support in-lab",
-      },
-      INTERPRETED,
+      }),
+      createInterpretedOption(),
     ];
   }
 
-  return [COLLECTION_METHODS.IN_LAB, INTERPRETED];
+  return [createInLabOption(), createInterpretedOption()];
 };
