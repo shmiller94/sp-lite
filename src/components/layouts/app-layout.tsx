@@ -20,7 +20,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const hideNavBar =
     !data ||
     pathname.includes('onboarding') ||
-    pathname.includes('plans') ||
     pathname.includes('questionnaire');
 
   const whiteBgPaths = ['services'];

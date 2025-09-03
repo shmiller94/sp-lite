@@ -18,7 +18,7 @@ export const NotServiceableDialog = ({
   onClick: () => void;
 }) => {
   const { riveFile } = useRiveFile({
-    src: '/animations/superpower_animations.riv',
+    src: '/animations/superpower.riv',
   });
 
   if (!riveFile) return null;

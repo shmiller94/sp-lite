@@ -7,8 +7,6 @@ import { useBiomarkers } from '@/features/biomarkers/api';
 import { BiomarkerTableDialogRow } from '@/features/biomarkers/components/biomarkers-data-table/biomarker-table-dialog-row';
 import { BiomarkerSparklineChart } from '@/features/biomarkers/components/charts/biomarker-sparkline-chart';
 import { BiomarkerRange } from '@/features/biomarkers/components/range';
-import { BiomarkerValueUnit } from '@/features/biomarkers/components/value-unit';
-import { mostRecent } from '@/features/biomarkers/utils/most-recent-biomarker';
 import { cn } from '@/lib/utils';
 
 export type PlanObservationProps = {
@@ -31,14 +29,13 @@ export function PlanGoalObservation({ id, className }: PlanObservationProps) {
 
   if (!biomarker) return null;
 
-  const result = mostRecent(biomarker.value);
   const { status, name } = biomarker;
 
   return (
     <BiomarkerTableDialogRow biomarker={biomarker}>
       <div
         className={cn(
-          'flex h-[64px] grow items-center justify-between rounded-xl bg-zinc-50 py-2.5 pl-5 pr-3 hover:cursor-pointer',
+          'flex bg-white h-[64px] transition-all hover:bg-zinc-50 grow items-center justify-between rounded-2xl border border-zinc-200 shadow shadow-black/[0.025] py-2.5 pl-5 pr-3 hover:cursor-pointer',
           className,
         )}
       >
@@ -56,18 +53,13 @@ export function PlanGoalObservation({ id, className }: PlanObservationProps) {
               />
               <Body2 className="line-clamp-1 max-w-[200px]">{name}</Body2>
             </div>
-            <BiomarkerValueUnit
-              baseUnit={biomarker.unit}
-              result={result}
-              textClassName="text-xs md:text-xs"
-            />
           </div>
         </div>
 
         <div className="flex w-1/2 items-center justify-end md:justify-between">
           <BiomarkerRange
             biomarker={biomarker}
-            className="hidden rounded-[20px] px-3 py-2 text-xs md:block"
+            className="hidden rounded-lg px-2 py-1.5 text-xs md:block"
           />
           <BiomarkerSparklineChart
             biomarker={biomarker}

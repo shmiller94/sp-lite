@@ -1,34 +1,39 @@
 import { CarePlanActivity } from '@medplum/fhirtypes';
+import { LucideIcon, Pencil, Pill, TestTube } from 'lucide-react';
 import React from 'react';
 
-import { Separator } from '@/components/ui/separator';
-import { Body1, H3, H4 } from '@/components/ui/typography';
-import { Disclaimer } from '@/features/plans/components/plan-disclaimer';
+import { IconHighlight } from '@/components/shared/icon-highlight';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
+import { Body1, H2, H4 } from '@/components/ui/typography';
 import { useProducts } from '@/features/shop/api';
 
 import { useCarePlan } from '../../context/care-plan-context';
-import {
-  PlanSection,
-  PlanSectionContent,
-  PlanSectionHeader,
-  PlanSectionTitle,
-} from '../plan-section';
+import { useSection } from '../../hooks/use-section';
+import { PlanActivity } from '../activities/plan-activity';
+import { Disclaimer } from '../plan-disclaimer';
 
-import { PlanActivity } from './plan-activity';
+import { SectionTitle } from './section-title';
 
 interface ActivityGroup {
   activities: CarePlanActivity[];
+  icon: LucideIcon;
   title: string;
   titleSubtext?: string;
   renderActivity: (activity: CarePlanActivity, index: number) => JSX.Element;
   disclaimer?: JSX.Element;
 }
 
-export function PlanActivities() {
+export const ProtocolSection = () => {
   const { plan } = useCarePlan();
+  const { title, order, total } = useSection('protocol');
   const getProductsQuery = useProducts({});
 
-  if (!plan.activity?.length) return null;
+  const activities = plan?.activity ?? [];
 
   const {
     serviceActivities,
@@ -37,11 +42,12 @@ export function PlanActivities() {
     productAvailabilityMap,
     hasCancerService,
     hasToxinService,
-  } = categorizePlanActivities(plan.activity, getProductsQuery.data?.products);
+  } = categorizePlanActivities(activities, getProductsQuery.data?.products);
 
   const activityGroups: ActivityGroup[] = [
     {
       activities: productActivities,
+      icon: Pill,
       title: 'Products / Supplements',
       titleSubtext:
         'These are the following products your clinician has recommended to help you achieve your goals.',
@@ -75,6 +81,7 @@ export function PlanActivities() {
     {
       activities: serviceActivities,
       title: 'Follow-Up Testing',
+      icon: TestTube,
       titleSubtext:
         'These are the follow-up tests you will be taking to monitor your progress.',
       renderActivity: (activity, index) => (
@@ -97,55 +104,99 @@ export function PlanActivities() {
     {
       activities: generalActivities,
       title: 'General Notes',
+      icon: Pencil,
       titleSubtext:
         'Your clinician has left you some additional notes about your plan:',
       renderActivity: (activity, index) => (
         <div className="space-y-2" key={`general-${index}`}>
-          <H4>Note #{index + 1}</H4>
+          <H4 className="text-lg">Note #{index + 1}</H4>
           <PlanActivity activity={activity} />
         </div>
       ),
     },
   ];
 
-  return (
-    <PlanSection>
-      <PlanSectionHeader>
-        <PlanSectionTitle className="flex items-center gap-2">
-          Your protocol
-        </PlanSectionTitle>
-      </PlanSectionHeader>
-      <PlanSectionContent className="space-y-8">
-        <Body1 className="text-zinc-500">
-          Based off your action plan your clinician recommends you do the
-          following:
-        </Body1>
-
-        {activityGroups.map((group, groupIndex) =>
-          group.activities.length ? (
-            <React.Fragment key={group.title}>
-              {groupIndex > 0 && <Separator />}
-              <div className="space-y-3">
-                <H3 className="text-zinc-800">{group.title}</H3>
-                {group.titleSubtext && (
-                  <Body1 className="text-zinc-500">{group.titleSubtext}</Body1>
-                )}
-                <div className="space-y-6">
-                  {group.activities.map((activity, index) => (
-                    <div key={`activity-${group.title}-${index}`}>
-                      {group.renderActivity(activity, index)}
-                    </div>
-                  ))}
-                </div>
-                {group.disclaimer}
-              </div>
-            </React.Fragment>
-          ) : null,
-        )}
-      </PlanSectionContent>
-    </PlanSection>
+  const firstGroupWithActivities = activityGroups.find(
+    (group) => group.activities.length > 0,
   );
-}
+
+  return (
+    <section id="protocol" className="space-y-4">
+      <SectionTitle
+        style={{
+          backgroundImage: 'url(/action-plan/sections/red-background.webp)',
+        }}
+      >
+        <Body1 className="text-white">
+          {order} of {total}
+        </Body1>
+        <H2 id="section-title" className="text-white">
+          {title}
+        </H2>
+      </SectionTitle>
+      <div className="space-y-8">
+        {activities.length > 0 && (
+          <Body1 className="text-zinc-500">
+            Based off your action plan your clinician recommends you do the
+            following:
+          </Body1>
+        )}
+        {activities.length === 0 ? (
+          <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-zinc-200 py-8">
+            <H4 className="text-center">No protocol recommended</H4>
+            <Body1 className="max-w-sm text-balance text-center text-secondary">
+              Your longevity advisor has no protocol recommendations for you.
+            </Body1>
+          </div>
+        ) : (
+          <Accordion
+            type="multiple"
+            defaultValue={
+              firstGroupWithActivities
+                ? [`group-${firstGroupWithActivities.title}`]
+                : []
+            }
+          >
+            {activityGroups.map((group) =>
+              group.activities.length ? (
+                <AccordionItem key={group.title} value={`group-${group.title}`}>
+                  <AccordionTrigger className="group flex flex-1 items-center justify-between py-4 font-medium text-zinc-900 transition-colors hover:text-zinc-600 [&[data-state=open]>svg]:rotate-180">
+                    <div className="flex items-center gap-3">
+                      <IconHighlight
+                        icon={group.icon}
+                        className="flex size-8 items-center justify-center p-1.5"
+                      />
+                      <H4 className="m-0 text-zinc-800 transition-colors group-hover:text-zinc-600">
+                        {group.title}
+                      </H4>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="pb-4">
+                    <div className="space-y-3">
+                      {group.titleSubtext && (
+                        <Body1 className="text-zinc-500">
+                          {group.titleSubtext}
+                        </Body1>
+                      )}
+                      <div className="space-y-6">
+                        {group.activities.map((activity, index) => (
+                          <div key={`activity-${group.title}-${index}`}>
+                            {group.renderActivity(activity, index)}
+                          </div>
+                        ))}
+                      </div>
+                      {group.disclaimer}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              ) : null,
+            )}
+          </Accordion>
+        )}
+      </div>
+    </section>
+  );
+};
 
 function categorizePlanActivities(
   activities: CarePlanActivity[],

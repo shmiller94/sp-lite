@@ -1,6 +1,7 @@
 import { ReactNode, useMemo } from 'react';
 
-import { HealthGradeComponent } from '@/components/ui/health-grade';
+import { MiniScoreChart } from '@/components/ui/charts/mini-donut-chart/mini-donut-chart';
+import { CategoryValue } from '@/components/ui/charts/types/categories';
 import { Spinner } from '@/components/ui/spinner';
 import { Body1, Body2, H4 } from '@/components/ui/typography';
 import { ServiceActivity } from '@/features/plans/components/activities/plan-activity';
@@ -64,7 +65,7 @@ export const BlockGroupComponent = ({
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <HealthGradeComponent grade={component.value} />
+            <MiniScoreChart value={component.value as CategoryValue} />
             <Body1>{component.title}</Body1>
           </div>
         </div>

@@ -3,30 +3,40 @@ import remarkGfm from 'remark-gfm';
 
 import { Body1, H1, H2, H3, H4 } from '@/components/ui/typography';
 
-// safely render markdown with fallback to old plaintext
-export const SafeMarkdown = ({ content }: { content: string }) => {
+export const PlanMarkdown = ({ content }: { content: string }) => {
   try {
     return (
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
           p: (props) => (
-            <Body1 className="mb-4 break-words text-zinc-500" {...props} />
+            <Body1 className="mb-4 break-words text-primary" {...props} />
           ),
           h1: (props) => <H1 className="mb-2 break-words" {...props} />,
           h2: (props) => <H2 className="mb-2 break-words" {...props} />,
           h3: (props) => <H3 className="mb-2 break-words" {...props} />,
           h4: (props) => <H4 className="mb-2 break-words" {...props} />,
           ul: (props) => (
-            <ul className="mb-4 ml-5 list-disc text-zinc-500" {...props} />
+            <ul
+              className="mb-4 ml-3 list-outside list-disc space-y-1 font-sans text-base [&_li::marker]:text-zinc-300"
+              {...props}
+            />
           ),
           ol: (props) => (
-            <ol className="mb-4 ml-5 list-decimal text-zinc-500" {...props} />
+            <ol
+              className="mb-4 ml-5 list-decimal text-base text-primary"
+              {...props}
+            />
           ),
-          li: (props) => <li className="mb-1 break-words" {...props} />,
+          li: (props) => (
+            <li
+              className="mb-1 break-words font-sans text-primary"
+              {...props}
+            />
+          ),
           strong: (props) => (
             <strong
-              className="break-words font-bold text-zinc-800"
+              className="break-words font-bold text-vermillion-900"
               {...props}
             />
           ),

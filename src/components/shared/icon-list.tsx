@@ -1,7 +1,8 @@
 import { LucideIcon } from 'lucide-react';
-import React from 'react';
 
-import { Body1 } from '@/components/ui/typography';
+import { Body1 } from '../ui/typography';
+
+import { IconHighlight } from './icon-highlight';
 
 export interface IconListItem {
   icon: LucideIcon;
@@ -23,15 +24,15 @@ export const IconList = ({
   return (
     <div className={className}>
       {items.map((item, index) => {
-        const IconComponent = item.icon;
         const isLastItem = index === items.length - 1;
 
         return (
           <div key={index} className="relative">
             <div className="flex items-start">
-              <div className="relative z-10 mr-4 mt-1 rounded-full border-2 border-vermillion-900/20 bg-white p-2">
-                <IconComponent className="size-5 text-vermillion-900" />
-              </div>
+              <IconHighlight
+                icon={item.icon}
+                className="relative z-10 mr-4 mt-1 bg-white"
+              />
               <div className="mb-5 py-2">
                 <Body1 className="font-medium text-foreground">
                   {item.title}

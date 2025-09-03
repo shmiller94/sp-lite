@@ -1,64 +1,20 @@
 import { CarePlan as FhirCarePlan } from '@medplum/fhirtypes';
-import { useEffect, useRef } from 'react';
 
 import { MainErrorFallback } from '@/components/errors/main';
 import { Spinner } from '@/components/ui/spinner';
 import { useBiomarkers } from '@/features/biomarkers/api/get-biomarkers';
 import { usePlan } from '@/features/plans/api/get-plan';
-import { PlanHealthScore } from '@/features/plans/components/annual-report/plan-health-score';
-import { RecommendedItems } from '@/features/plans/components/consultation/recommended-items';
-import { PlanGoals } from '@/features/plans/components/goals/plan-goals';
-import { PlanOverview } from '@/features/plans/components/plan-overview';
-import { PlanTopper } from '@/features/plans/components/plan-topper';
-import { useProductAvailability } from '@/features/plans/hooks/use-product-availability';
 import { useProducts } from '@/features/shop/api';
-import { useAnalytics } from '@/hooks/use-analytics';
 
-import { CarePlanProvider, useCarePlan } from '../context/care-plan-context';
+import { CarePlanProvider } from '../context/care-plan-context';
 
-import { PlanActivities } from './activities/plan-activities';
-import { CarePlanFooter } from './plan-footer';
-import { CarePlanHeader } from './plan-header';
-
-function CarePlanContent() {
-  const { isAnnualReport } = useCarePlan();
-  const { availableProducts, isLoading } = useProductAvailability();
-  const { track } = useAnalytics();
-  const didSendViewedAiap = useRef(false);
-
-  useEffect(() => {
-    // Exit conditions to prevent multiple tracking calls
-    if (isLoading || didSendViewedAiap.current) return;
-
-    const recommendedProducts = availableProducts.map((product) => ({
-      id: product.id,
-      name: product.name,
-    }));
-
-    track('viewed_aiap', {
-      recommended_products: recommendedProducts,
-    });
-
-    // Mark as sent to prevent duplicate tracking
-    didSendViewedAiap.current = true;
-  }, [track, availableProducts, isLoading]);
-
-  return (
-    <div className="mx-auto w-full max-w-screen-md space-y-4 px-4 pb-16">
-      <PlanTopper />
-      <PlanOverview />
-      {isAnnualReport ? <PlanHealthScore /> : null}
-      <PlanGoals />
-      <PlanActivities />
-      <RecommendedItems />
-    </div>
-  );
-}
+import { CarePlanContent } from './care-plan-content';
+import { CarePlanSidebar } from './care-plan-sidebar';
 
 function LoadingSpinner() {
   return (
     <div className="flex h-screen w-full items-center justify-center">
-      <Spinner size="lg" variant="primary" />
+      <Spinner size="md" variant="primary" />
     </div>
   );
 }
@@ -75,6 +31,7 @@ const isAnnualReportPlan = (plan: FhirCarePlan) => {
 
 export function CarePlan({ id }: { id: string }) {
   const getPlansQuery = usePlan({ id });
+
   // preload products and biomarkers for cache
   const getProductsQuery = useProducts({});
   const getBiomarkersQuery = useBiomarkers();
@@ -105,11 +62,15 @@ export function CarePlan({ id }: { id: string }) {
   const isAnnualReport = isAnnualReportPlan(actionPlan);
 
   return (
-    <div className="min-h-screen w-full space-y-4 bg-zinc-50">
+    <div className="mt-6 w-full bg-zinc-50">
       <CarePlanProvider plan={actionPlan} isAnnualReport={isAnnualReport}>
-        <CarePlanHeader />
-        <CarePlanContent />
-        <CarePlanFooter />
+        <div className="relative mx-auto flex size-full h-full max-w-6xl flex-col px-6 lg:flex-row lg:gap-20 lg:px-0">
+          <CarePlanSidebar />
+          <div className="flex flex-1 flex-col pt-10">
+            <CarePlanContent />
+          </div>
+          <div className="hidden w-full max-w-48 shrink-0 lg:block" />
+        </div>
       </CarePlanProvider>
     </div>
   );
