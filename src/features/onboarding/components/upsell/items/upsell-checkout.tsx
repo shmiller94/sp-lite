@@ -29,26 +29,28 @@ import { ItemPreviews } from '../item-previews';
 
 const AnimatedCheckmark = ({ isOpen }: { isOpen: boolean }) => {
   return (
-    <div
-      className={cn(
-        'flex size-8 items-center justify-center rounded-full bg-green-500 text-white transition-all duration-300',
-        isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0',
-      )}
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="none"
+      className="mr-3 text-vermillion-900"
+      xmlns="http://www.w3.org/2000/svg"
     >
-      <svg
-        className="size-5"
-        fill="none"
+      <path
+        d="M16.6673 5L7.50065 14.1667L3.33398 10"
         stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M5 13l4 4L19 7"
-        />
-      </svg>
-    </div>
+        strokeWidth="1.66667"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        style={{
+          strokeDasharray: '20 20',
+          strokeDashoffset: isOpen ? '0' : '20',
+          transition: 'stroke-dashoffset 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          willChange: 'stroke-dashoffset',
+        }}
+      />
+    </svg>
   );
 };
 

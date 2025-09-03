@@ -1,5 +1,5 @@
 import { ChevronRight } from 'lucide-react';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { PdfViewer } from '@/components/shared/pdf-viewer';
 import { StyledMarkdown } from '@/components/shared/styled-markdown';
@@ -67,12 +67,11 @@ export const UpsellItemDetails = ({
   selectItem: (item: HealthcareService) => void;
   goToNext: () => void;
 }) => {
-  const { isScrolled, isAtBottom } = useScrollDetection({
+  const { isScrolled } = useScrollDetection({
     threshold: 180,
     bottomOffset: 10,
   });
   const sampleReportLink = getSampleReportLinkForService(item.name);
-  const skipButtonRef = useRef<HTMLButtonElement>(null);
 
   const { data, isLoading } = useOrders();
   const { track } = useAnalytics();
@@ -89,14 +88,6 @@ export const UpsellItemDetails = ({
       toast.success(`${item.name} is already paid`);
     }
   }, [isAlreadyBooked, item.name]);
-
-  // disable skip button if user hasn't scrolled to the bottom of the page
-  useEffect(() => {
-    const skipButton = skipButtonRef.current;
-    if (!skipButton || isAlreadyBooked) return;
-
-    skipButton.disabled = isLoading || !isAtBottom;
-  }, [isLoading, isAlreadyBooked, isAtBottom]);
 
   return (
     <>
@@ -202,7 +193,6 @@ export const UpsellItemDetails = ({
             disabled={isLoading || isAlreadyBooked}
             size="icon"
             className="group h-12 w-full flex-1 border border-zinc-100 bg-white text-base text-zinc-500 shadow-sm hover:text-zinc-600 disabled:bg-white/75 disabled:text-zinc-300 disabled:opacity-100 disabled:backdrop-blur-md md:border-transparent md:bg-transparent md:shadow-none"
-            ref={skipButtonRef}
           >
             Skip
             <ChevronRight
