@@ -35,11 +35,11 @@ export const ReferAFriendBanner: React.FC = () => {
               Refer your friends and earn $50
             </Body1>
             <Body2 className="line-clamp-1 text-white/50">
-              They&apos;ll receive $50 off their membership too
+              Get $50 each when your friend joins Superpower.
             </Body2>
           </div>
         </div>
-        <div className="py-5">
+        <div className="flex flex-col justify-center py-5">
           <NavLink to={`/invite`}>
             <Button variant="outline" className="bg-white" size="medium">
               Earn $50
