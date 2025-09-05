@@ -4,17 +4,16 @@ import { CopyToClipboard } from '@/components/ui/copy-to-clipboard';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
 import { Body1, Body2, H1 } from '@/components/ui/typography';
-import { useAffiliateLinks } from '@/features/affiliate/api';
+import { useInviteLink } from '@/features/affiliate/hooks/use-invite-link';
 import { useUpdateTask } from '@/features/tasks/api/update-task';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { trackEvent } from '@/utils/analytics';
 
 export const Share = () => {
-  const { data, isLoading } = useAffiliateLinks();
   const { mutateAsync: updateTaskProgress, isPending } = useUpdateTask();
   const { track } = useAnalytics();
 
-  const { links } = data || { links: [] };
+  const { link } = useInviteLink();
 
   return (
     <section className="mx-auto flex max-w-[500px] flex-col gap-y-12 py-12">
@@ -41,25 +40,19 @@ export const Share = () => {
                 variant="glass"
                 disabled
                 className="disabled:opacity-100"
-                value={
-                  links.length ? links[0] : "Can't get your link at the moment."
-                }
+                value={link}
               />
-              {links.length > 0 ? (
-                <CopyToClipboard
-                  link={links[0]}
-                  className="flex min-w-14 items-center justify-center bg-white"
-                />
-              ) : null}
+              <CopyToClipboard
+                link={link}
+                className="flex min-w-14 items-center justify-center bg-white"
+              />
             </div>
           </div>
         </div>
         <Button
           onClick={async () => {
             // Track onboarding completion event with UTM context
-            trackEvent('Onboarding Completed', {
-              referralLinksAvailable: links.length > 0,
-            });
+            trackEvent('Onboarding Completed', {});
 
             await updateTaskProgress({
               taskName: 'onboarding',
@@ -68,12 +61,12 @@ export const Share = () => {
 
             track('completed_onboarding');
           }}
-          disabled={isLoading || isPending}
+          disabled={isPending}
           type="submit"
           className="w-full"
           variant="white"
         >
-          {isPending || isLoading ? <Spinner variant="primary" /> : 'Continue'}
+          {isPending ? <Spinner variant="primary" /> : 'Continue'}
         </Button>
       </div>
     </section>

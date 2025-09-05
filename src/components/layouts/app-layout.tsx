@@ -22,7 +22,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     pathname.includes('onboarding') ||
     pathname.includes('questionnaire');
 
-  const whiteBgPaths = ['services'];
+  const whiteBgPaths = ['services', 'invite'];
   const isWhiteBg =
     whiteBgPaths.some((path) => pathname.includes(path)) || pathname === '/';
 

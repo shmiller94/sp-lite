@@ -89,14 +89,19 @@ export const Navbar = () => {
   );
 };
 
+const lightNavPaths = ['/', '/invite'];
+const blurThresholds: Record<string, number> = {
+  '/': 621,
+  '/invite': 500,
+};
+
 export const DesktopNavbar = () => {
   const { checkAccess } = useAuthorization();
   const { pathname } = useLocation();
 
-  const isHomePage = pathname === '/';
-
+  const isLight = lightNavPaths.includes(pathname);
   const isBlurred = useScrollThreshold({
-    thresholdPx: isHomePage ? 621 : 10,
+    thresholdPx: blurThresholds[pathname] || 10,
   });
 
   const protectedLinks: Link[] = [
@@ -130,16 +135,14 @@ export const DesktopNavbar = () => {
         <div className="flex flex-1">
           <NavLink
             to="/"
-            className={({ isActive }) =>
+            className={() =>
               cn(
                 'self-start transition-colors duration-150',
-                isHomePage
+                isLight
                   ? isBlurred
                     ? 'text-black hover:text-secondary'
                     : 'text-white'
-                  : isActive
-                    ? 'text-white'
-                    : 'text-black hover:text-secondary',
+                  : 'text-black hover:text-secondary',
               )
             }
           >
@@ -173,7 +176,7 @@ export const DesktopNavbar = () => {
               className={({ isActive }) =>
                 cn(
                   'group relative z-10 truncate px-4 py-1.5 transition-all duration-150',
-                  isHomePage
+                  isLight
                     ? isBlurred
                       ? 'text-secondary hover:text-black'
                       : 'text-white'
@@ -193,7 +196,7 @@ export const DesktopNavbar = () => {
                 <button
                   className={cn(
                     'border-0 bg-transparent p-0 focus:outline-none flex items-center gap-1.5',
-                    isHomePage
+                    isLight
                       ? isBlurred
                         ? 'text-secondary hover:text-black'
                         : 'text-white'
@@ -237,7 +240,7 @@ export const DesktopNavbar = () => {
                 <button
                   className={cn(
                     'border-0 bg-transparent px-4 focus:outline-none flex items-center gap-1.5',
-                    isHomePage
+                    isLight
                       ? isBlurred
                         ? 'text-secondary hover:text-black'
                         : 'text-white'

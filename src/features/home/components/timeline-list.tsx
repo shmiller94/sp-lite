@@ -19,6 +19,7 @@ import { useServices } from '@/features/services/api';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 import { cn } from '@/lib/utils';
 
+import { Banner } from './banner/banner';
 import {
   ActionPlanTimelineItem,
   OrderTimelineItem,
@@ -80,6 +81,7 @@ export const TimelineList = () => {
 
   return (
     <div className="mt-10 w-full md:mt-auto">
+      <Banner />
       <Timeline className="w-full">
         {onboardingItems?.length ? (
           <div>

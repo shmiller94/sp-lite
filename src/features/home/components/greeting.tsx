@@ -43,8 +43,8 @@ export const Greeting = () => {
         {
           // We want to show a carousel on mobile
           width <= 1024 ? (
-            <Carousel className="cursor-grab [mask-image:linear-gradient(to_right,transparent_0%,black_10%,black_90%,transparent_100%)] active:cursor-grabbing">
-              <CarouselMainContainer className="px-4">
+            <Carousel className="cursor-grab px-4 [mask-image:linear-gradient(to_right,transparent_0%,black_10%,black_90%,transparent_100%)] active:cursor-grabbing">
+              <CarouselMainContainer>
                 {cards.map((card, index) => (
                   <SliderMainItem
                     key={index}

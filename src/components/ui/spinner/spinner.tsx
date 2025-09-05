@@ -1,5 +1,7 @@
 import { ring2 } from 'ldrs';
 
+import { cn } from '@/lib/utils';
+
 /**
  * If we don't have that, components that are using Spinner fail due to: Invalid string length
  * For now we will disable register for testing and will investigate later.
@@ -24,9 +26,14 @@ const variants = {
 export type SpinnerProps = {
   size?: keyof typeof sizes;
   variant?: keyof typeof variants;
+  className?: string;
 };
 
-export const Spinner = ({ size = 'sm', variant = 'light' }: SpinnerProps) => {
+export const Spinner = ({
+  size = 'sm',
+  variant = 'light',
+  className,
+}: SpinnerProps) => {
   const strokeWidth = 3;
   const radius = sizes[size] / 2 - strokeWidth;
   const circumference = 2 * Math.PI * radius;
@@ -34,7 +41,11 @@ export const Spinner = ({ size = 'sm', variant = 'light' }: SpinnerProps) => {
 
   return (
     <>
-      <svg width={sizes[size]} height={sizes[size]} className="relative">
+      <svg
+        width={sizes[size]}
+        height={sizes[size]}
+        className={cn('relative', className)}
+      >
         {/* Background circle - full circle with low opacity */}
         <circle
           cx={sizes[size] / 2}

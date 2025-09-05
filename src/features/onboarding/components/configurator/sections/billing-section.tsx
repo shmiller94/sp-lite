@@ -31,6 +31,7 @@ import { useStepper } from '@/lib/stepper';
 import { cn } from '@/lib/utils';
 import { getAccessCode } from '@/utils/access-code';
 import { trackSubscription } from '@/utils/gtm';
+import { getReferralId } from '@/utils/referral-id';
 import { getUtmData } from '@/utils/utm-middleware';
 
 import { DigitalWalletSection } from './digital-wallet-section';
@@ -63,7 +64,7 @@ export const BillingSection = () => {
       const subscription = await createSubscriptionMutation.mutateAsync({
         data: {
           code: getAccessCode() ?? undefined,
-          referralId: (window as any)?.Rewardful?.referral,
+          referralId: getReferralId() ?? undefined,
           campaignData: getUtmData() ?? undefined,
         },
       });
