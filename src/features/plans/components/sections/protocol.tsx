@@ -70,7 +70,7 @@ export const ProtocolSection = () => {
       disclaimer:
         productActivities.length > 0 ? (
           <Disclaimer>
-            <p className="text-zinc-500">
+            <p>
               Consult your primary care physician before starting new
               supplement, especially if you have health conditions or take
               medications.
@@ -91,7 +91,7 @@ export const ProtocolSection = () => {
         hasCancerService || hasToxinService ? (
           <div className="mt-4">
             <Disclaimer>
-              <p className="text-zinc-500">
+              <p>
                 The Grail Galleri test and the Total Toxins test are advanced
                 screenings that require further evaluation and approval by one
                 of Superpower&apos;s qualified and licensed physicians or nurse
@@ -136,7 +136,7 @@ export const ProtocolSection = () => {
       </SectionTitle>
       <div className="space-y-8">
         {activities.length > 0 && (
-          <Body1 className="text-zinc-500">
+          <Body1>
             Based off your action plan your clinician recommends you do the
             following:
           </Body1>
@@ -174,9 +174,7 @@ export const ProtocolSection = () => {
                   <AccordionContent className="px-4 pb-4">
                     <div className="space-y-3">
                       {group.titleSubtext && (
-                        <Body1 className="text-zinc-500">
-                          {group.titleSubtext}
-                        </Body1>
+                        <Body1>{group.titleSubtext}</Body1>
                       )}
                       <div className="space-y-6">
                         {group.activities.map((activity, index) => (

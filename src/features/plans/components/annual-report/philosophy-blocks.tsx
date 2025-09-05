@@ -61,7 +61,7 @@ export const BlockGroupComponent = ({
   }
 
   return (
-    <div className={cn('health-grade-card p-5', className)}>
+    <div className={cn('health-grade-card py-5', className)}>
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -70,9 +70,9 @@ export const BlockGroupComponent = ({
           </div>
         </div>
         {hasCustomDescription ? (
-          <Body2 className="text-zinc-500">{description}</Body2>
+          <Body2>{description}</Body2>
         ) : (
-          <Body2 className="text-zinc-500">
+          <Body2>
             Your {title} is {description} based on our records.
           </Body2>
         )}

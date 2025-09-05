@@ -67,9 +67,7 @@ export const ProductCard = ({
     }
   }, [product, isProductAvailable]);
 
-  const isSelected = useMemo(() => {
-    return product ? isProductSelected(product.id) : false;
-  }, [product, isProductSelected]);
+  const isSelected = product ? isProductSelected(product.id) : false;
 
   const actionButton = useMemo(() => {
     if (!isProductAvailable || !product || hideButton) return null;

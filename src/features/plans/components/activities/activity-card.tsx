@@ -26,13 +26,20 @@ export function ActivityCard({
         className,
       )}
     >
-      <div className="flex w-full items-center space-x-6">
+      <div className="flex w-full items-center space-x-4">
         {image ? (
-          <img
-            src={image}
-            alt={name}
-            className="size-[72px] rounded-[8px] bg-white object-cover object-center p-4"
-          />
+          <div className="ml-0.5 size-[56px] rounded-md bg-white">
+            <img
+              src={image}
+              alt={name}
+              className="size-full object-cover object-center"
+              style={{
+                WebkitMask:
+                  'radial-gradient(circle at center, black 50%, transparent 75%)',
+                mask: 'radial-gradient(circle at center, black 50%, transparent 75%)',
+              }}
+            />
+          </div>
         ) : (
           <div className="flex size-[72px] items-center justify-center rounded-[8px] bg-white p-4">
             <Image size={48} className="text-zinc-500" />

@@ -35,7 +35,7 @@ export function PlanGoalObservation({ id, className }: PlanObservationProps) {
     <BiomarkerTableDialogRow biomarker={biomarker}>
       <div
         className={cn(
-          'flex bg-white h-[64px] transition-all hover:bg-zinc-50 grow items-center justify-between rounded-2xl border border-zinc-200 shadow shadow-black/[0.025] py-2.5 pl-5 pr-3 hover:cursor-pointer',
+          'flex bg-white h-20 transition-all hover:bg-zinc-50 grow items-center justify-between rounded-2xl border border-zinc-200 shadow shadow-black/[0.025] py-2.5 pl-6 pr-3 hover:cursor-pointer',
           className,
         )}
       >
