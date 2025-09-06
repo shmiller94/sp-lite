@@ -1,4 +1,3 @@
-import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -6,15 +5,15 @@ import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/sonner';
 import { Body2, H3 } from '@/components/ui/typography';
 import { useValidateCode } from '@/features/auth/api';
-import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
+import { useCheckoutContext } from '@/features/auth/stores';
 import { useIsFirstRender } from '@/hooks/use-first-render';
 import { cn } from '@/lib/utils';
 import { clearManualCouponOverride, getAccessCode } from '@/utils/access-code';
 
 const AccessCodeInputSection = () => {
   const { isFirstRender } = useIsFirstRender();
-  const { processing, setCoupon, coupon, showAccessCode, setShowAccessCode } =
-    useOnboarding();
+  const { processing, setCoupon, coupon, showCoupon, setShowCoupon } =
+    useCheckoutContext();
 
   const [code, setCode] = useState(coupon ?? '');
 
@@ -53,12 +52,12 @@ const AccessCodeInputSection = () => {
         <div className="flex items-center justify-between">
           <H3 className="text-[#1E1E1E]">Access code</H3>
 
-          {showAccessCode ? (
+          {showCoupon ? (
             <Button
               variant="link"
               size="small"
               className="px-0 text-zinc-500 underline"
-              onClick={() => setShowAccessCode(false)}
+              onClick={() => setShowCoupon(false)}
               disabled={processing}
             >
               Hide
@@ -97,6 +96,7 @@ const AccessCodeInputSection = () => {
             disabled={
               validateCodeMutation.isPending || processing || !code.trim()
             }
+            type="button"
             onClick={handleApply}
           >
             Apply
@@ -109,7 +109,7 @@ const AccessCodeInputSection = () => {
           <Body2 className="text-pink-700">Invalid or expired code</Body2>
         ) : null}
         {validateCodeMutation.data?.coupon ? (
-          <Body2 className="text-vermillion-900">Access code applied</Body2>
+          <Body2 className="text-vermillion-700">Access code applied</Body2>
         ) : null}
       </div>
     </section>
@@ -120,36 +120,7 @@ const AccessCodeInputSection = () => {
  * Verifies a given coupon code and determines whether the associated access code section should be displayed.
  */
 export const VerifyCouponCodeSection = () => {
-  const showAccessCode = useOnboarding((s) => s.showAccessCode);
+  const showAccessCode = useCheckoutContext((s) => s.showCoupon);
 
-  return (
-    <AnimatePresence>
-      {showAccessCode ? (
-        <motion.div
-          initial={{ opacity: 0, height: 0, filter: 'blur(5px)' }}
-          animate={{ opacity: 1, height: 'auto', filter: 'blur(0px)' }}
-          exit={{ opacity: 0, height: 0, filter: 'blur(5px)', marginBottom: 0 }}
-          transition={{
-            duration: 0.4,
-            ease: [0.4, 0, 0.2, 1],
-            opacity: { duration: 0.5 },
-            height: {
-              duration: 0.5,
-              type: 'spring',
-              stiffness: 100,
-              damping: 20,
-            },
-            filter: { duration: 0.4 },
-          }}
-          style={{
-            willChange: 'transform, opacity, height, filter',
-          }}
-          key="access-code-section"
-          className="mb-6" // hardcoded spacing to avoid layout jump after animation exit
-        >
-          <AccessCodeInputSection />
-        </motion.div>
-      ) : null}
-    </AnimatePresence>
-  );
+  return showAccessCode ? <AccessCodeInputSection /> : null;
 };

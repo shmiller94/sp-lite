@@ -301,6 +301,7 @@ export type Subscription = {
   name: 'membership' | null;
   latest_invoice?: string;
   payment_intent?: string | null;
+  total: number | null;
 };
 
 export type AvailableSubscription = {

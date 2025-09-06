@@ -74,13 +74,14 @@ export function ResetPasswordForm(): JSX.Element {
               <FormField
                 control={form.control}
                 name="email"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Your email"
                         autoCapitalize="none"
+                        variant={fieldState.error ? 'error' : 'default'}
                         autoComplete="email"
                         autoCorrect="off"
                         {...field}

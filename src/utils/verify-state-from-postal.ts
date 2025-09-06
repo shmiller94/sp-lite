@@ -3,7 +3,7 @@ export function getState(
 ): { state: string; stateName: string } | undefined {
   /* Ensure we have exactly 5 characters to parse */
   if (zipString.length !== 5) {
-    console.error('Must pass a 5-digit zipcode.');
+    // console.error('Must pass a 5-digit zipcode.');
     return;
   }
 

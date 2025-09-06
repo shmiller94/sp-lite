@@ -3,7 +3,6 @@ import * as React from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { NavigationProgress } from '@/components/ui/navigation-progress';
-import { AddressDialog } from '@/features/users/components/dialogs/address-dialog';
 import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 import { ConsentDialog } from 'src/features/consent/components/consent-dialog';
@@ -20,7 +19,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const hideNavBar =
     !data ||
     pathname.includes('onboarding') ||
-    pathname.includes('questionnaire');
+    pathname.includes('questionnaire') ||
+    pathname.includes('legacy-checkout');
 
   const whiteBgPaths = ['services', 'invite'];
   const isWhiteBg =
@@ -29,9 +29,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <main className={isWhiteBg ? 'bg-white' : 'bg-zinc-50'}>
       {!hideNavBar && <Navbar />}
-      {data && data.primaryAddress === undefined ? (
-        <AddressDialog mode={'add'} isDialogClosable={false} />
-      ) : null}
       <ConsentDialog />
       <NavigationProgress />
       <motion.div

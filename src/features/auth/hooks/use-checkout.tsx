@@ -1,0 +1,301 @@
+import {
+  CardNumberElement,
+  useElements,
+  useStripe,
+} from '@stripe/react-stripe-js';
+import {
+  StripeError,
+  StripeExpressCheckoutElementConfirmEvent,
+} from '@stripe/stripe-js';
+import { useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import { toast } from '@/components/ui/sonner';
+import { useCheckoutContext } from '@/features/auth/stores';
+import {
+  useAddPaymentMethod,
+  useCreateSetupIntent,
+  useCreateSubscription,
+} from '@/features/settings/api';
+import { RegisterInput, useRegister } from '@/lib/auth';
+import { getActiveLogin } from '@/lib/utils';
+import { User } from '@/types/api';
+import { getAccessCode } from '@/utils/access-code';
+import { getUtmData } from '@/utils/utm-middleware';
+import { getState } from '@/utils/verify-state-from-postal';
+
+export const useCheckout = ({
+  postalCode,
+  onSuccess,
+}: {
+  postalCode: string;
+  onSuccess?: () => Promise<void>;
+}) => {
+  const elements = useElements();
+  const stripe = useStripe();
+  const navigate = useNavigate();
+  const [stripeError, setStripeError] = useState<StripeError | undefined>(
+    undefined,
+  );
+  const queryClient = useQueryClient();
+
+  // queries / mutations
+  const addPaymentMethodMutation = useAddPaymentMethod();
+  const createSubscriptionMutation = useCreateSubscription({
+    mutationConfig: {
+      onSuccess: async () => {
+        /**
+         * Optimistically mark the cached 'authenticated-user' as subscribed.
+         *
+         * @remarks
+         * The `subscribed` flag is updated asynchronously by an
+         * "after-subscription-created" backend subscriber that runs *after*
+         * the create-subscription API call resolves. Once that call succeeds,
+         * we know the user will be subscribed, so we update the cache immediately
+         * for a snappy UI. A later refetch/invalidations will reconcile with
+         * the server if needed.
+         */
+        queryClient.setQueryData<User | undefined>(
+          ['authenticated-user'],
+          (old) => (old ? { ...old, subscribed: true } : old),
+        );
+
+        await onSuccess?.();
+        navigate('/onboarding');
+      },
+    },
+  });
+  const setupIntentMutation = useCreateSetupIntent();
+  const registerMutation = useRegister();
+
+  // register/form context
+  const { membership, setProcessing, processing } = useCheckoutContext();
+
+  const createSubscription = async (paymentMethod: string) => {
+    setProcessing(true);
+    try {
+      await createSubscriptionMutation.mutateAsync({
+        data: {
+          state: getState(postalCode)?.state ?? 'CA',
+          code: getAccessCode() ?? undefined,
+          referralId: (window as any)?.Rewardful?.referral,
+          campaignData: getUtmData() ?? undefined,
+          paymentMethod,
+        },
+      });
+    } catch (e) {
+      console.error(e);
+      toast.error((e as StripeError)?.message ?? 'An error occurred');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  /**
+   * Ensure a user account exists before attaching a payment method or creating a subscription.
+   *
+   * @param data - Registration payload gathered earlier in the flow. If absent, nothing is done.
+   *
+   * @why
+   * - Users can arrive here unauthenticated (direct entry, refresh, deep-link).
+   * - We must have an authenticated account before adding a payment method or creating a subscription.
+   * - If a previous attempt created the account but payment failed midway,
+   *   a naive retry would call `register` again and the backend would return
+   *   "user already exists". To avoid noisy errors and wasted network calls,
+   *   we **skip registration when an access token is already present**.
+   *
+   * @behavior
+   * - If there is **no** active session (no access token) and `data` is provided → register now.
+   * - If there **is** an active session → skip registration.
+   */
+  const createUserIfRequired = async (data?: RegisterInput) => {
+    if (!data) return;
+
+    const isLoggedIn = getActiveLogin()?.accessToken;
+    console.warn('Register data was passed, creating account first');
+
+    if (!isLoggedIn) {
+      await registerMutation.mutateAsync(data);
+    } else {
+      console.warn(
+        'Access token already present for user, skipping registration...',
+      );
+    }
+  };
+
+  const handleCardNumberPayment = async (data?: RegisterInput) => {
+    // safety check
+    if (processing) return;
+
+    if (!stripe || !elements) {
+      toast.error('Payment provider is not ready yet.');
+      return;
+    }
+
+    if (!membership) {
+      toast.error('No memberships available for your state. Contact support.');
+      return;
+    }
+
+    const cardNumber = elements.getElement(CardNumberElement);
+    if (!cardNumber) {
+      return;
+    }
+
+    setProcessing(true);
+
+    try {
+      // first trigger validation & ensure card number is valid
+      const { error, paymentMethod } = await stripe.createPaymentMethod({
+        type: 'card',
+        card: cardNumber,
+      });
+
+      if (error) {
+        setStripeError(error);
+        throw new Error(`Failed adding payment method: ${error.message}`);
+      }
+
+      // then do real test if card is valid, not stolen, etc
+      const { client_secret } =
+        await setupIntentMutation.mutateAsync(undefined);
+
+      const { error: confirmSetupError, setupIntent } =
+        await stripe.confirmSetup({
+          clientSecret: client_secret,
+          confirmParams: {
+            return_url: `${window.location.origin}`,
+            payment_method: paymentMethod?.id,
+          },
+          redirect: 'if_required',
+        });
+
+      const isValidSetupIntent =
+        setupIntent?.status === 'succeeded' ||
+        setupIntent?.status === 'processing';
+
+      if (confirmSetupError || !isValidSetupIntent) {
+        throw confirmSetupError;
+      }
+
+      const intentPm = setupIntent?.payment_method as string;
+
+      if (!intentPm) {
+        throw new Error('No payment method found in setup intent');
+      }
+
+      // create user if data was passed
+      await createUserIfRequired(data);
+
+      // add payment method to user
+      const { success } = await addPaymentMethodMutation.mutateAsync({
+        data: { paymentMethodId: intentPm },
+      });
+
+      if (!success) {
+        throw new Error('Failed adding payment method');
+      }
+
+      // create subscription
+      await createSubscription('card');
+    } catch (e: any) {
+      // this is stripe error
+      if ('type' in e) {
+        console.error(e);
+        toast.error((e as StripeError)?.message ?? 'An error occurred');
+      }
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleDigitalWalletPayment = async (
+    event: StripeExpressCheckoutElementConfirmEvent,
+    data?: RegisterInput,
+  ) => {
+    // safety check
+    if (processing) return;
+
+    if (!stripe || !elements) {
+      toast.error('Payment provider is not ready yet.');
+      return;
+    }
+
+    if (!membership) {
+      toast.error('No memberships available for your state. Contact support.');
+      return;
+    }
+
+    setProcessing(true);
+
+    try {
+      const { error: submitError } = await elements.submit();
+
+      if (submitError) {
+        throw submitError;
+      }
+
+      const { client_secret } =
+        await setupIntentMutation.mutateAsync(undefined);
+
+      const { error: confirmSetupError, setupIntent } =
+        await stripe.confirmSetup({
+          elements,
+          clientSecret: client_secret,
+          confirmParams: {
+            return_url: `${window.location.origin}`,
+          },
+          redirect: 'if_required',
+        });
+
+      const isValidSetupIntent =
+        setupIntent?.status === 'succeeded' ||
+        setupIntent?.status === 'processing';
+
+      if (confirmSetupError || !isValidSetupIntent) {
+        throw confirmSetupError;
+      }
+
+      const paymentMethod = setupIntent?.payment_method as string;
+
+      if (!paymentMethod) {
+        throw new Error('No payment method found in setup intent');
+      }
+
+      // create user if data was passed
+      await createUserIfRequired(data);
+
+      // add payment method to user
+      const { success } = await addPaymentMethodMutation.mutateAsync({
+        data: { paymentMethodId: paymentMethod },
+      });
+
+      if (!success) {
+        throw new Error('Failed adding payment method');
+      }
+
+      await createSubscription(event.expressPaymentType);
+    } catch (e: any) {
+      // this is stripe error
+      if ('type' in e) {
+        console.error(e);
+        toast.error((e as StripeError)?.message ?? 'An error occurred');
+      }
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  return {
+    handleDigitalWalletPayment,
+    handleCardNumberPayment,
+    stripeError,
+    setStripeError,
+    isMutationPending:
+      createSubscriptionMutation.isPending ||
+      registerMutation.isPending ||
+      setupIntentMutation.isPending ||
+      addPaymentMethodMutation.isPending,
+  };
+};

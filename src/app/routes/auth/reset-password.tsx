@@ -1,10 +1,10 @@
-import { ImageWithWithBlockLayout } from '@/components/layouts';
+import { AuthLayout } from '@/components/layouts';
 import { ResetPasswordForm } from '@/features/auth/components/reset-password-form';
 
 export const ResetPasswordRoute = () => {
   return (
-    <ImageWithWithBlockLayout title="Reset password">
+    <AuthLayout title="Reset password">
       <ResetPasswordForm />
-    </ImageWithWithBlockLayout>
+    </AuthLayout>
   );
 };

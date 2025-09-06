@@ -5,7 +5,7 @@ import { api } from '@/lib/api-client';
 import { QueryConfig } from '@/lib/react-query';
 
 export const getConsentInputSchema = z.object({
-  userId: z.string().min(1, 'Required'),
+  userId: z.string().min(1, 'This is required.'),
 });
 
 export type GetConsentInput = z.infer<typeof getConsentInputSchema>;

@@ -2,7 +2,6 @@ import { X } from 'lucide-react';
 import React from 'react';
 
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogClose,
@@ -19,30 +18,23 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { TransactionSpinner } from '@/components/ui/spinner/transaction-spinner';
 import { Body1, H3, H4 } from '@/components/ui/typography';
-import { BIOMARKER_CATEGORIES } from '@/features/onboarding/const/biomarkers-content';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
-import { formatMoney } from '@/utils/format-money';
 
-interface BiomarkersFaqDialogProps {
+import { AVAILABLE_BIOMARKERS } from './biomarkers-content';
+
+interface AvailableBiomarkersDialogProps {
   children: React.ReactNode;
-  onUpgradeOrder: () => Promise<void>;
-  isLoading: boolean;
-  price: number;
 }
-const BiomarkersFaqDialog = ({
+const AvailableBiomarkersDialog = ({
   children,
-  onUpgradeOrder,
-  isLoading,
-  price,
-}: BiomarkersFaqDialogProps) => {
+}: AvailableBiomarkersDialogProps) => {
   const { width } = useWindowDimensions();
 
   const renderContent = () => (
     <>
       <div className="space-y-14">
-        {BIOMARKER_CATEGORIES.map((category, categoryIndex) => (
+        {AVAILABLE_BIOMARKERS.map((category, categoryIndex) => (
           <div key={categoryIndex} className="space-y-6">
             <div className="flex items-center space-x-4">
               <img
@@ -77,29 +69,6 @@ const BiomarkersFaqDialog = ({
             )}
           </div>
         ))}
-      </div>
-
-      <div className="mt-10 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-        <DialogClose asChild>
-          <Button
-            variant="outline"
-            className="w-full text-sm sm:w-auto"
-            disabled={isLoading}
-          >
-            No thanks
-          </Button>
-        </DialogClose>
-        <Button
-          className="w-full text-sm sm:w-auto"
-          disabled={isLoading}
-          onClick={onUpgradeOrder}
-        >
-          {isLoading ? (
-            <TransactionSpinner className="flex justify-center" />
-          ) : (
-            <>Upgrade to Advanced (+{formatMoney(price)})</>
-          )}
-        </Button>
       </div>
     </>
   );
@@ -147,4 +116,4 @@ const BiomarkersFaqDialog = ({
   );
 };
 
-export default BiomarkersFaqDialog;
+export { AvailableBiomarkersDialog };

@@ -3,7 +3,7 @@ import * as React from 'react';
 import { SuperpowerLogo } from '@/components/icons/superpower-logo';
 import { Head } from '@/components/seo';
 import { Progress } from '@/components/ui/progress';
-import { Body2, H2 } from '@/components/ui/typography';
+import { Body2 } from '@/components/ui/typography';
 import { cn } from '@/lib/utils';
 
 // NOTE: progress here is used if we want to indicate any type of progress like 1/3 steps etc
@@ -38,25 +38,21 @@ const FooterLinks = () => (
   </div>
 );
 
-export const ImageWithWithBlockLayout = ({
-  children,
-  title,
-  progress,
-}: LayoutProps) => {
+export const AuthLayout = ({ children, title, progress }: LayoutProps) => {
   return (
     <>
       <Head title={title} />
       <div
         className={cn(
-          'relative w-full flex flex-col items-center justify-center ' +
-            'lg:grid lg:grid-cols-2 lg:items-center lg:justify-between md:min-h-screen',
+          'relative w-full flex flex-col',
+          'md:min-h-screen md:items-center md:justify-center',
         )}
       >
-        <div className="relative order-1 max-h-[180px] w-full md:absolute md:inset-0 md:max-h-none lg:order-1">
+        <div className="relative z-0 order-1 max-h-[180px] w-full md:absolute md:inset-0 md:max-h-none">
           <img
             src="/onboarding/register-bg-alt.webp"
             alt="auth-background"
-            className="pointer-events-none size-full object-cover duration-1000 animate-in fade-in-0 "
+            className="pointer-events-none size-full select-none object-cover"
             style={{ minHeight: '100%', minWidth: '100%' }}
           />
 
@@ -75,16 +71,10 @@ export const ImageWithWithBlockLayout = ({
               </div>
             ) : null}
           </div>
-          <div className="absolute inset-0 mt-7 flex flex-col items-center justify-center text-white md:hidden lg:inset-y-0 lg:left-1/2 lg:right-0 lg:mt-0 lg:flex">
-            <div className="text-center">
-              <H2 className="text-white lg:text-6xl">Every body has</H2>
-              <H2 className="text-white/70 lg:text-6xl">100 year potential</H2>
-            </div>
-          </div>
         </div>
 
-        <div className="relative z-20 order-2 flex h-auto w-full flex-col px-0 md:items-center md:p-10 lg:h-full">
-          <div className="flex size-full max-w-3xl flex-1 flex-col justify-between gap-6 overflow-auto rounded-t-3xl bg-white p-8 md:gap-5 md:rounded-3xl md:p-12 lg:p-16">
+        <div className="relative z-20 order-2 flex w-full flex-col md:h-dvh md:py-12">
+          <div className="mx-auto flex size-full flex-col justify-between gap-6 overflow-auto rounded-t-3xl bg-white p-8 md:max-w-3xl md:gap-5 md:rounded-3xl md:p-16">
             <div className="hidden items-center justify-between md:flex">
               <SuperpowerLogo width={122} />
               {progress ? (

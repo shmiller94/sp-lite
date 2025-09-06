@@ -3,31 +3,27 @@ import { create } from 'zustand';
 import { AvailableSubscription } from '@/types/api';
 import { getAccessCode, setManualCouponOverride } from '@/utils/access-code';
 
-type OnboardingStore = {
+type CheckoutStore = {
   membership: AvailableSubscription | null;
   updateMembership: (membershipType: AvailableSubscription | null) => void;
-  consentGiven: boolean;
-  setConsentGiven: (consentGiven: boolean) => void;
   processing: boolean;
   setProcessing: (processing: boolean) => void;
-  showAccessCode: boolean;
-  setShowAccessCode: (show: boolean) => void;
+  showCoupon: boolean;
+  setShowCoupon: (show: boolean) => void;
   coupon: string | null;
   setCoupon: (coupon: string | null) => void;
 };
 
-export const useOnboarding = create<OnboardingStore>()((set) => ({
+export const useCheckoutContext = create<CheckoutStore>()((set) => ({
   membership: null,
   updateMembership: (membership) => {
     console.warn(`Updated membership to ${JSON.stringify(membership)}`);
     set({ membership });
   },
-  consentGiven: false,
-  setConsentGiven: (consentGiven) => set({ consentGiven }),
   processing: false,
   setProcessing: (processing) => set({ processing }),
-  showAccessCode: false,
-  setShowAccessCode: (show) => set({ showAccessCode: show }),
+  showCoupon: false,
+  setShowCoupon: (showCoupon) => set({ showCoupon }),
   coupon: getAccessCode(),
   setCoupon: (coupon) => {
     set({ coupon });

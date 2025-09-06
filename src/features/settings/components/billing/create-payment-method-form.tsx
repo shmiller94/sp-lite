@@ -6,7 +6,7 @@ import {
 import { StripeError } from '@stripe/stripe-js';
 import React, { FormEvent, useEffect, useState } from 'react';
 
-import { StripeCardForm } from '@/components/shared/stripe-card-form';
+import { StripeCardElement } from '@/components/shared/stripe-card-element';
 import { Button } from '@/components/ui/button';
 import { DialogClose } from '@/components/ui/dialog';
 import { toast } from '@/components/ui/sonner';
@@ -79,12 +79,10 @@ export const CreatePaymentMethodForm = ({
 
   return (
     <div className="space-y-8">
-      <StripeCardForm
+      <StripeCardElement
         processing={processing}
-        onSubmit={handleSubmit}
         error={error}
         setError={setError}
-        id="paymentMethodForm"
       />
       <div className="flex w-full flex-col gap-4 pt-6 md:flex-row md:justify-end">
         <DialogClose asChild>
@@ -93,7 +91,7 @@ export const CreatePaymentMethodForm = ({
           </Button>
         </DialogClose>
 
-        <Button type="submit" form="paymentMethodForm" disabled={processing}>
+        <Button onClick={handleSubmit} disabled={processing}>
           {processing ? (
             <TextShimmer
               className="line-clamp-1 text-base [--base-color:white] [--base-gradient-color:#a1a1aa]"

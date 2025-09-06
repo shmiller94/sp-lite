@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
-import { ImageWithWithBlockLayout } from '@/components/layouts/image-with-block-layout';
+import { AuthLayout } from '@/components/layouts';
 import { LoginForm } from '@/features/auth/components/login-form';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useUser } from '@/lib/auth';
@@ -29,7 +29,7 @@ export const LoginRoute = () => {
   }, [user.data, navigate, shouldRedirect, redirectTo]);
 
   return (
-    <ImageWithWithBlockLayout title="Log in">
+    <AuthLayout title="Log in">
       <LoginForm
         onSuccess={(user) => {
           navigate(`${shouldRedirect ? `${redirectTo}` : '/'}`, {
@@ -46,6 +46,6 @@ export const LoginRoute = () => {
           track('logged_in');
         }}
       />
-    </ImageWithWithBlockLayout>
+    </AuthLayout>
   );
 };

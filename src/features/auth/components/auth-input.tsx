@@ -7,7 +7,7 @@ export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   icon?: React.ReactNode;
   border: 'top' | 'bottom';
-  variant?: 'connected' | 'individual';
+  variant?: 'connected' | 'individual' | 'error';
 }
 
 const AuthInput = React.forwardRef<HTMLInputElement, InputProps>(
@@ -17,9 +17,9 @@ const AuthInput = React.forwardRef<HTMLInputElement, InputProps>(
   ) => {
     const [showPassword, setShowPassword] = React.useState(false);
 
-    const togglePasswordVisibility = () => {
-      setShowPassword(!showPassword);
-    };
+    const togglePasswordVisibility = () => setShowPassword((v) => !v);
+
+    const isPassword = type === 'password';
 
     return (
       <div
@@ -32,6 +32,8 @@ const AuthInput = React.forwardRef<HTMLInputElement, InputProps>(
             : variant === 'individual'
               ? 'rounded-xl shadow-sm transition-all duration-150 gap-3 h-14'
               : 'rounded-xl',
+          variant === 'error' &&
+            'border-pink-700 bg-pink-50 focus-within:ring-1 focus-within:ring-pink-700 transition-none duration-0',
         )}
       >
         {icon && <div className="pl-4">{icon}</div>}
@@ -41,16 +43,18 @@ const AuthInput = React.forwardRef<HTMLInputElement, InputProps>(
             type === 'password' ? (showPassword ? 'text' : 'password') : type
           }
           className={cn(
-            'flex w-full rounded-xl caret-vermillion-900 p-4 text-base transition-colors placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none',
+            'flex w-full rounded-xl caret-vermillion-900 px-6 py-4 text-base transition-colors placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none',
             // Distinguish between connected and individual variants - individual ones should act like default inputs
             variant === 'individual' &&
-              'flex absolute inset-0 w-full caret-vermillion-900 py-5 px-6 rounded-xl text-base transition-all duration-150 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:bg-zinc-50 focus-visible:ring-2 focus-visible:ring-ring',
+              'flex absolute inset-0 w-full caret-vermillion-900 rounded-xl text-base transition-all duration-150 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:bg-zinc-50 focus-visible:ring-2 focus-visible:ring-ring',
+            variant === 'error' &&
+              'border-pink-700 bg-pink-50 caret-vermillion-900 placeholder:text-pink-700 focus-visible:bg-pink-50 focus-visible:ring-pink-700 transition-none duration-0',
             className,
           )}
           ref={ref}
           {...props}
         />
-        {type === 'password' && (
+        {isPassword && (
           <button
             type="button"
             onClick={togglePasswordVisibility}
@@ -58,7 +62,8 @@ const AuthInput = React.forwardRef<HTMLInputElement, InputProps>(
           >
             <div
               className={cn(
-                'absolute left-1/2 top-1/2 w-[1.5px] -translate-x-1/2 -translate-y-1/2 rotate-45 rounded-full bg-zinc-400 outline outline-2 outline-white transition-all group-hover:bg-zinc-600',
+                'absolute left-1/2 top-1/2 w-[1.5px] -translate-x-1/2 -translate-y-1/2 rotate-45 rounded-full bg-zinc-400 outline outline-2 transition-all group-hover:bg-zinc-600',
+                variant === 'error' ? 'outline-pink-50' : 'outline-white',
                 showPassword ? 'h-0 opacity-0' : 'h-4',
               )}
             />

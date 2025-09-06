@@ -2,8 +2,8 @@ import { RewardfulWindow } from '@/types/window';
 import { getAccessCode } from '@/utils/access-code';
 
 export const trackSubscription = (
-  price: number | undefined,
-  paymentMethod: string,
+  price: number | null,
+  paymentMethod?: string,
 ) => {
   try {
     // We'll handle this server-side, keeping only GTM for now

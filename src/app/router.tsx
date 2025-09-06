@@ -1,17 +1,9 @@
 import { useMemo } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-import { ConciergeRoute } from '@/app/routes/app/concierge';
-import { DataRoute } from '@/app/routes/app/data';
-import { HomeRoute } from '@/app/routes/app/home';
-import { ServicesRoute } from '@/app/routes/app/services';
-import { SettingsRoute } from '@/app/routes/app/settings';
-import { SupplementsMarketplaceRoute } from '@/app/routes/app/supplements-marketplace';
 import { MainErrorFallback } from '@/components/errors/main';
-import { ConciergeLayout } from '@/features/messages/layouts/concierge-layout';
 import { ProtectedRoute } from '@/lib/auth';
 
-import { PrescriptionsMarketplaceRoute } from './routes/app/prescriptions-marketplace';
 import { AppRoot } from './routes/app/root';
 import { NotFoundRoute } from './routes/not-found';
 
@@ -64,11 +56,17 @@ export const createRouter = () =>
       children: [
         {
           path: '',
-          element: <HomeRoute />,
+          lazy: async () => {
+            const { HomeRoute } = await import('./routes/app/home');
+            return { Component: HomeRoute };
+          },
         },
         {
           path: 'services',
-          element: <ServicesRoute />,
+          lazy: async () => {
+            const { ServicesRoute } = await import('./routes/app/services');
+            return { Component: ServicesRoute };
+          },
           errorElement: <MainErrorFallback />,
         },
         {
@@ -103,15 +101,38 @@ export const createRouter = () =>
         },
         {
           path: 'settings',
-          element: <SettingsRoute />,
+          lazy: async () => {
+            const { SettingsRoute } = await import('./routes/app/settings');
+            return { Component: SettingsRoute };
+          },
         },
         {
           path: 'prescriptions',
-          element: <PrescriptionsMarketplaceRoute />,
+          lazy: async () => {
+            const { PrescriptionsMarketplaceRoute } = await import(
+              './routes/app/prescriptions-marketplace'
+            );
+            return { Component: PrescriptionsMarketplaceRoute };
+          },
         },
         {
           path: 'marketplace',
-          element: <SupplementsMarketplaceRoute />,
+          lazy: async () => {
+            const { SupplementsMarketplaceRoute } = await import(
+              './routes/app/supplements-marketplace'
+            );
+            return { Component: SupplementsMarketplaceRoute };
+          },
+        },
+        {
+          path: 'legacy-checkout',
+          lazy: async () => {
+            const { LegacyCheckoutRoute } = await import(
+              './routes/app/legacy-checkout'
+            );
+            return { Component: LegacyCheckoutRoute };
+          },
+          errorElement: <MainErrorFallback />,
         },
         {
           path: 'onboarding',
@@ -129,15 +150,28 @@ export const createRouter = () =>
         },
         {
           path: 'concierge',
-          element: <ConciergeLayout />,
-          children: [
-            { index: true, element: <ConciergeRoute /> }, // new chat
-            { path: ':id', element: <ConciergeRoute /> }, // existing chat
-          ],
+          lazy: async () => {
+            const { ConciergeLayout } = await import(
+              '../features/messages/layouts/concierge-layout'
+            );
+            const { ConciergeRoute } = await import('./routes/app/concierge');
+
+            return {
+              Component: ConciergeLayout,
+              children: [
+                { index: true, Component: ConciergeRoute }, // new chat
+                { path: ':id', Component: ConciergeRoute }, // existing chat
+              ],
+            };
+          },
+          errorElement: <MainErrorFallback />,
         },
         {
           path: 'data',
-          element: <DataRoute />,
+          lazy: async () => {
+            const { DataRoute } = await import('./routes/app/data');
+            return { Component: DataRoute };
+          },
           errorElement: <MainErrorFallback />,
         },
         {

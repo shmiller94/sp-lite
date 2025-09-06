@@ -1,12 +1,9 @@
 import { AnimationProps, motion } from 'framer-motion';
 
 import { SuperpowerLogo } from '@/components/icons/superpower-logo';
-import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 
-export const MembershipCard = () => {
-  const { data: user } = useUser();
-
+export const OnboardingCard = () => {
   const shimmerAnimation = {
     opacity: [0.7, 1, 0.7],
     filter: ['brightness(1)', 'brightness(0.7)', 'brightness(1)'],
@@ -15,13 +12,14 @@ export const MembershipCard = () => {
   return (
     <motion.div
       className={cn(
-        'z-10 absolute aspect-[4/3] h-56 w-96 overflow-hidden rounded-2xl bg-cover bg-center outline outline-1 -outline-offset-1 outline-white/10 bg-[url("/onboarding/card-organic-bg.webp")]',
+        'relative aspect-[16/9] h-56 w-96 overflow-hidden rounded-2xl bg-cover bg-center outline outline-1 -outline-offset-1 outline-white/10 bg-[url("/onboarding/card-organic-bg.webp")]',
       )}
-      initial={{ y: 500, opacity: 0 }}
+      initial={{ rotate: 0, scale: 0.7, opacity: 0, filter: 'blur(5px)' }}
       animate={{
-        y: 0,
         rotate: -4,
+        scale: 1,
         opacity: 1,
+        filter: 'blur(0px)',
         zIndex: 10,
       }}
       transition={{
@@ -32,21 +30,20 @@ export const MembershipCard = () => {
       }}
     >
       <motion.div
+        className="absolute left-6 top-5 z-20 inline-block"
+        initial={{ opacity: 0.8, filter: 'brightness(1)' }}
         animate={shimmerAnimation}
         transition={{
-          duration: 2.5,
-          repeat: 2,
+          duration: 1.8,
+          repeat: Infinity,
+          repeatType: 'reverse',
           ease: 'easeInOut',
         }}
-        className="mix-blend-soft-light"
       >
-        <SuperpowerLogo
-          fill="white"
-          className="absolute left-6 top-5 z-20 w-32"
-        />
+        <SuperpowerLogo fill="white" className="block w-32" />
       </motion.div>
       <motion.p
-        className="absolute bottom-4 right-4 z-20 text-right text-white/95"
+        className="absolute bottom-4 right-4 z-20 text-right text-white/80"
         animate={shimmerAnimation}
         transition={{
           duration: 2.5,
@@ -55,11 +52,7 @@ export const MembershipCard = () => {
           delay: 0.5,
         }}
       >
-        <span className="font-medium">
-          {user?.firstName === 'Unknown'
-            ? user?.email
-            : `${user?.firstName} ${user?.lastName}`}
-        </span>
+        <span className="select-none text-2xl font-medium">Membership</span>
       </motion.p>
     </motion.div>
   );

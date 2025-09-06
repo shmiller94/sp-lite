@@ -7,7 +7,7 @@ type Props = {
   className?: string;
 };
 
-export const ConfiguratorLayout = (props: Props) => {
+export const SplitScreenLayout = (props: Props) => {
   return (
     <div
       className={cn(

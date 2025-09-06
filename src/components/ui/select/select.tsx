@@ -10,14 +10,23 @@ const SelectGroup = SelectPrimitive.Group;
 
 const SelectValue = SelectPrimitive.Value;
 
+type SelectTriggerProps = React.ComponentPropsWithoutRef<
+  typeof SelectPrimitive.Trigger
+> & {
+  variant?: 'default' | 'error';
+};
+
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
+  SelectTriggerProps
+>(({ className, children, variant = 'default', ...props }, ref) => (
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
       'flex w-full shadow-sm items-center justify-between rounded-xl border border-input bg-background p-4 text-base ring-offset-background placeholder:text-secondary text-gray-900 focus:outline-none focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 disabled:bg-zinc-50',
+      variant === 'error'
+        ? 'border-pink-700 bg-pink-50 focus:ring-1 focus:ring-pink-700 transition-none duration-0 placeholder:text-pink-700'
+        : null,
       className,
     )}
     {...props}

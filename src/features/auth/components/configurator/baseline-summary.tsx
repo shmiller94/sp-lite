@@ -1,5 +1,6 @@
 import { ChevronDown } from 'lucide-react';
 
+import { AtHomeNoticeSection } from '@/components/shared/at-home-notice-section';
 import { Button } from '@/components/ui/button';
 import {
   Collapsible,
@@ -9,20 +10,21 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Body1, Body2, H3, H4 } from '@/components/ui/typography';
-import { useOnboarding } from '@/features/onboarding/stores/onboarding-store';
+import { useCheckoutContext } from '@/features/auth/stores';
 import { cn } from '@/lib/utils';
 import { formatMoney } from '@/utils/format-money';
 
-export const BaselineSummary = () => (
+export const BaselineSummary = ({ postalCode }: { postalCode: string }) => (
   <div className="hidden w-full flex-col gap-4 rounded-3xl border border-zinc-200 bg-white p-10 lg:sticky lg:top-8 lg:flex lg:h-[calc(100svh-4rem)] lg:max-h-[calc(100svh-4rem)] lg:overflow-auto">
     <Body1 className="text-zinc-500">Order summary</Body1>
     <CardInfo />
     <TotalInfo />
+    <AtHomeNoticeSection postalCode={postalCode} />
   </div>
 );
 
 export const CardInfo = ({ className }: { className?: string }) => {
-  const { membership } = useOnboarding();
+  const { membership } = useCheckoutContext();
 
   return (
     <div
@@ -34,7 +36,7 @@ export const CardInfo = ({ className }: { className?: string }) => {
       <img
         src="/services/upgrade/baseline-panel.png"
         alt="advanced"
-        className="pointer-events-none mx-auto h-[180px] w-full object-contain pt-4"
+        className="pointer-events-none mx-auto h-[180px] w-full select-none object-contain pt-4"
       />
       <div className="hidden lg:block">
         <H4>Superpower Baseline Membership</H4>
@@ -42,6 +44,7 @@ export const CardInfo = ({ className }: { className?: string }) => {
           100+ lab tests, results tracked over time and a private medical team.
         </Body2>
       </div>
+
       <div className="flex flex-col items-center justify-center gap-2 lg:hidden">
         <div className="flex items-center gap-2">
           <Body1 className="text-zinc-500">
@@ -77,7 +80,7 @@ export const CardInfo = ({ className }: { className?: string }) => {
 };
 
 export const TotalInfo = () => {
-  const { membership } = useOnboarding();
+  const { membership } = useCheckoutContext();
 
   if (!membership) {
     return Array(3)

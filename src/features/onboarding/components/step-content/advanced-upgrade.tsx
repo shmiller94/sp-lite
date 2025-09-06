@@ -1,6 +1,8 @@
 import { ArrowRight, ChevronDown } from 'lucide-react';
 
 import { SuperpowerLogo } from '@/components/icons/superpower-logo';
+import { SplitScreenLayout } from '@/components/layouts';
+import { AvailableBiomarkersDialog } from '@/components/shared/available-biomarkers';
 import { PaymentDetails } from '@/components/shared/payment-details';
 import { StyledMarkdown } from '@/components/shared/styled-markdown';
 import { Button } from '@/components/ui/button';
@@ -13,8 +15,6 @@ import { Separator } from '@/components/ui/separator';
 import { TransactionSpinner } from '@/components/ui/spinner/transaction-spinner';
 import { Body1, Body2, H2, H3, H4 } from '@/components/ui/typography';
 import { UPGRADE_INFO, ADVANCED_BLOOD_PANEL } from '@/const';
-import BiomarkersFaqDialog from '@/features/onboarding/components/biomarkers-dialog';
-import { ConfiguratorLayout } from '@/features/onboarding/components/layouts';
 import { useUpgradeOrder } from '@/features/orders/api/upgrade-order';
 import { useUpdateTask } from '@/features/tasks/api/update-task';
 import { CurrentPaymentMethodCard } from '@/features/users/components/current-payment-method-card';
@@ -77,11 +77,7 @@ const AdvancedUpgrade = () => {
           </Body1>
 
           <CardInfo className="lg:hidden" price={price} />
-          <BiomarkersFaqDialog
-            onUpgradeOrder={upgradeOrder}
-            isLoading={upgradeOrderMutation.isPending}
-            price={price}
-          >
+          <AvailableBiomarkersDialog>
             <Button
               variant="ghost"
               className="gap-1 px-0 py-2 text-sm text-zinc-500"
@@ -89,7 +85,7 @@ const AdvancedUpgrade = () => {
               View all tested 130+ biomarkers
               <ArrowRight size={16} />
             </Button>
-          </BiomarkersFaqDialog>
+          </AvailableBiomarkersDialog>
         </div>
         {UPGRADE_INFO.map(({ title, preview, markdown }) => (
           <div key={title} className="space-y-2">
@@ -244,7 +240,7 @@ const TotalInfo = ({ price }: { price: number }) => {
 };
 
 export const AdvancedUpgradeStep = () => (
-  <ConfiguratorLayout title="Upgrade" className="bg-zinc-50">
+  <SplitScreenLayout title="Upgrade" className="bg-zinc-50">
     <AdvancedUpgrade />
-  </ConfiguratorLayout>
+  </SplitScreenLayout>
 );

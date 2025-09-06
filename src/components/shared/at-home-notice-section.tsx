@@ -1,34 +1,37 @@
-import { LucideInfo } from 'lucide-react';
+import { AlertCircle, LucideInfo } from 'lucide-react';
+import * as React from 'react';
 
 import { Body2 } from '@/components/ui/typography';
 import { US_STATES, ADDITIONAL_LAB_FEES, COLLECTION_METHODS } from '@/const';
-import { useUser } from '@/lib/auth';
+import { cn } from '@/lib/utils';
 import { formatMoney } from '@/utils/format-money';
+import { getState } from '@/utils/verify-state-from-postal';
 
 const NOTICE_STATES = ['NY', 'NJ', 'AZ'];
+const SURCHARGE_STATES = ['NY', 'NJ'];
 
 // This component is used to display a notice about the additional lab fee required for at-home collection
 export const AtHomeNoticeSection = ({
-  fallbackState,
+  postalCode,
+  className,
 }: {
-  fallbackState?: string;
+  postalCode: string;
+  className?: string;
 }) => {
-  const { data: user } = useUser();
-
-  const state = user?.primaryAddress?.state ?? fallbackState;
+  const state = getState(postalCode);
   if (!state) return null;
 
-  if (!NOTICE_STATES.includes(state)) return null;
+  if (!NOTICE_STATES.includes(state.state)) return null;
 
-  const stateName = US_STATES.find((s) => s.value === state)?.label;
+  const stateName = US_STATES.find((s) => s.value === state.state)?.label;
   if (!stateName) return null;
 
   const nynjNotice = (
     <Body2 className="ml-6 text-zinc-400">
       {stateName} State has unique rules around blood test billing. To comply
       with these regulations, there is an additional annual fee of&nbsp;
-      {formatMoney(ADDITIONAL_LAB_FEES[state])}. Blood draws are also done in
-      the comfort of your own home via our at-home testing partners.
+      {formatMoney(ADDITIONAL_LAB_FEES[state.state])}. Blood draws are also done
+      in the comfort of your own home via our at-home testing partners.
     </Body2>
   );
   const azNotice = (
@@ -41,13 +44,46 @@ export const AtHomeNoticeSection = ({
   );
 
   return (
-    <div className="w-full rounded-xl border border-zinc-200 bg-white p-3">
+    <div
+      className={cn(
+        'w-full rounded-xl border border-zinc-200 bg-white p-3',
+        className,
+      )}
+    >
       <div className="mb-1 flex items-center gap-2">
         <LucideInfo className="size-4 text-vermillion-900" />
         <Body2>Additional charge required for {stateName} State</Body2>
       </div>
-      {state === 'NY' || state === 'NJ' ? nynjNotice : null}
-      {state === 'AZ' ? azNotice : null}
+      {state.state === 'NY' || state.state === 'NJ' ? nynjNotice : null}
+      {state.state === 'AZ' ? azNotice : null}
     </div>
+  );
+};
+
+export const AtHomeNoticeAlert = ({
+  postalCode,
+  className,
+}: {
+  postalCode: string;
+  className?: string;
+}) => {
+  const state = getState(postalCode);
+  if (!state) return null;
+
+  if (!SURCHARGE_STATES.includes(state.state)) return null;
+
+  const stateName = US_STATES.find((s) => s.value === state.state)?.label;
+  if (!stateName) return null;
+
+  return (
+    <p className={cn('text-sm font-medium text-vermillion-700', className)}>
+      <span className="flex items-center gap-3">
+        <AlertCircle className="size-4 shrink-0 text-vermillion-700" />
+        <span>
+          {formatMoney(ADDITIONAL_LAB_FEES[state.state])} NY/NJ surcharge
+          applied
+        </span>
+      </span>
+    </p>
   );
 };

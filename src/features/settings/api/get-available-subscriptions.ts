@@ -6,22 +6,31 @@ import { AvailableSubscription } from '@/types/api';
 
 export const getAvailableSubscriptions = (
   coupon?: string,
+  state?: string,
 ): Promise<AvailableSubscription[]> => {
-  return api.get(
-    `billing/subscription/available${coupon ? `?code=${coupon}` : ''}`,
-  );
+  const params = new URLSearchParams();
+
+  if (coupon) params.append('code', coupon);
+  if (state) params.append('state', state);
+
+  const query = params.toString();
+  return api.get(`billing/subscriptions/available${query ? `?${query}` : ''}`);
 };
 
-export const availableSubscriptionsQueryOptions = (code?: string) => {
+export const availableSubscriptionsQueryOptions = (
+  coupon?: string,
+  state?: string,
+) => {
   return queryOptions({
     // we dont need cache key here because its highly dynamic
-    queryKey: ['availableSubscriptions', code],
-    queryFn: () => getAvailableSubscriptions(code),
+    queryKey: ['availableSubscriptions', coupon, state],
+    queryFn: () => getAvailableSubscriptions(coupon, state),
   });
 };
 
 type UseAvailableSubscriptionsOptions = {
-  code?: string;
+  coupon?: string;
+  state?: string;
   queryConfig?: QueryConfig<typeof availableSubscriptionsQueryOptions>;
 };
 
@@ -30,10 +39,11 @@ type UseAvailableSubscriptionsOptions = {
  * */
 export const useAvailableSubscriptions = ({
   queryConfig,
-  code,
+  coupon,
+  state,
 }: UseAvailableSubscriptionsOptions = {}) => {
   return useQuery({
-    ...availableSubscriptionsQueryOptions(code),
+    ...availableSubscriptionsQueryOptions(coupon, state),
     ...queryConfig,
   });
 };

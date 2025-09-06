@@ -54,6 +54,7 @@ export const ConsentDialog = ({
     if (isAdmin) return;
 
     if (pathname.includes('onboarding')) return; // should always be disabled in onboarding
+    if (pathname.includes('legacy-checkout')) return; // should always be disabled in legacy checkout
 
     if (!hasConsent) setInternalOpen(true);
   }, [isControlled, user, isLoading, hasConsent, isAdmin, pathname]);

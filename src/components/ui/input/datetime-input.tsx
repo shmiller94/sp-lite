@@ -49,82 +49,103 @@ const DatetimeGrid = forwardRef<
     values: Record<DateFormat, string>;
     onChange: (type: DateFormat, value: string) => void;
     placeholders: InputPlaceholders;
+    variant?: 'individual' | 'error' | 'default';
   }
->(({ format, className, values, onChange, placeholders }, ref) => {
-  const monthRef = useRef<HTMLInputElement>(null);
-  const dayRef = useRef<HTMLInputElement>(null);
-  const yearRef = useRef<HTMLInputElement>(null);
+>(
+  (
+    {
+      format,
+      className,
+      values,
+      onChange,
+      placeholders,
+      variant = 'individual',
+    },
+    ref,
+  ) => {
+    const monthRef = useRef<HTMLInputElement>(null);
+    const dayRef = useRef<HTMLInputElement>(null);
+    const yearRef = useRef<HTMLInputElement>(null);
 
-  const handleChange = (type: DateFormat, value: string) => {
-    value = value.replace(/\D/g, '');
+    const handleChange = (type: DateFormat, value: string) => {
+      value = value.replace(/\D/g, '');
 
-    if (value.length > MAX_LENGTHS[type]) {
-      value = value.slice(0, MAX_LENGTHS[type]);
-    }
-
-    if (type === 'months') {
-      const num = parseInt(value, 10);
-      if (!isNaN(num) && num > 12) {
-        value = '12';
+      if (value.length > MAX_LENGTHS[type]) {
+        value = value.slice(0, MAX_LENGTHS[type]);
       }
-    }
-    if (type === 'days') {
-      const num = parseInt(value, 10);
-      if (!isNaN(num) && num > 31) {
-        value = '31';
+
+      if (type === 'months') {
+        const num = parseInt(value, 10);
+        if (!isNaN(num) && num > 12) {
+          value = '12';
+        }
       }
-    }
-
-    onChange(type, value);
-
-    if (value.length === MAX_LENGTHS[type]) {
-      switch (type) {
-        case 'months':
-          dayRef.current?.focus();
-          break;
-        case 'days':
-          yearRef.current?.focus();
-          break;
-        default:
-          break;
+      if (type === 'days') {
+        const num = parseInt(value, 10);
+        if (!isNaN(num) && num > 31) {
+          value = '31';
+        }
       }
-    }
-  };
 
-  return (
-    <div
-      className={cn(
-        'flex items-center px-6 py-4 border',
-        className,
-        'border-input rounded-xl gap-1 selection:bg-transparent selection:text-foreground',
-      )}
-      ref={ref}
-    >
-      {(format[0] || []).map((unit, j) => (
-        <React.Fragment key={unit}>
-          <Input
-            ref={
-              unit === 'months' ? monthRef : unit === 'days' ? dayRef : yearRef
-            }
-            className={cn(
-              'p-0 inline h-fit shadow-none border-none outline-none select-none content-box focus-visible:bg-zinc-100 rounded-sm w-full text-center focus-visible:ring-0 focus-visible:outline-none min-w-8',
-              { 'min-w-12': unit === 'years' },
+      onChange(type, value);
+
+      if (value.length === MAX_LENGTHS[type]) {
+        switch (type) {
+          case 'months':
+            dayRef.current?.focus();
+            break;
+          case 'days':
+            yearRef.current?.focus();
+            break;
+          default:
+            break;
+        }
+      }
+    };
+
+    return (
+      <div
+        className={cn(
+          'flex items-center px-6 py-4 border rounded-xl gap-1 selection:bg-transparent selection:text-foreground',
+          variant === 'error'
+            ? 'border-pink-700 bg-pink-50 focus-within:ring-1 focus-within:ring-pink-700 transition-none duration-0'
+            : 'border-input bg-white shadow-sm focus-within:ring-2 focus-within:ring-ring  transition-[box-shadow] duration-150',
+          className,
+        )}
+        ref={ref}
+      >
+        {(format[0] || []).map((unit, j) => (
+          <React.Fragment key={unit}>
+            <Input
+              ref={
+                unit === 'months'
+                  ? monthRef
+                  : unit === 'days'
+                    ? dayRef
+                    : yearRef
+              }
+              className={cn(
+                'p-0 inline h-fit shadow-none border-none outline-none select-none content-box focus-visible:bg-zinc-100 rounded-sm w-full text-center focus-visible:ring-0 focus-visible:outline-none min-w-8',
+                { 'min-w-12': unit === 'years' },
+                variant === 'error' &&
+                  'bg-transparent focus-visible:!bg-transparent placeholder:text-pink-700 transition-none duration-0',
+              )}
+              inputMode="numeric"
+              value={values[unit]}
+              onChange={(e) => handleChange(unit, e.target.value)}
+              placeholder={placeholders[unit]}
+              data-testid={TEST_IDS[unit]}
+              maxLength={MAX_LENGTHS[unit]}
+            />
+            {j < (format[0]?.length || 0) - 1 && (
+              <span className={timePickerSeparatorBase}>/</span>
             )}
-            inputMode="numeric"
-            value={values[unit]}
-            onChange={(e) => handleChange(unit, e.target.value)}
-            placeholder={placeholders[unit]}
-            data-testid={TEST_IDS[unit]}
-            maxLength={MAX_LENGTHS[unit]}
-          />
-          {j < (format[0]?.length || 0) - 1 && (
-            <span className={timePickerSeparatorBase}>/</span>
-          )}
-        </React.Fragment>
-      ))}
-    </div>
-  );
-});
+          </React.Fragment>
+        ))}
+      </div>
+    );
+  },
+);
 DatetimeGrid.displayName = 'DatetimeGrid';
 
 interface DateTimeInput {
@@ -133,11 +154,19 @@ interface DateTimeInput {
   placeholders?: InputPlaceholders;
   onChange?: (date: Date | undefined) => void;
   className?: string;
+  variant?: 'individual' | 'error' | 'default';
 }
 
 export const DatetimePicker = forwardRef<HTMLDivElement, DateTimeInput>(
   (
-    { value = undefined, format = DEFAULTS, placeholders, onChange, className },
+    {
+      value = undefined,
+      format = DEFAULTS,
+      placeholders,
+      onChange,
+      className,
+      variant = 'individual',
+    },
     ref,
   ) => {
     const [month, setMonth] = useState<string>('');
@@ -205,6 +234,7 @@ export const DatetimePicker = forwardRef<HTMLDivElement, DateTimeInput>(
       <DatetimeGrid
         format={format}
         className={className}
+        variant={variant}
         values={values}
         onChange={(type, value) => {
           switch (type) {

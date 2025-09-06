@@ -4,9 +4,9 @@ import { getState } from '@/utils/verify-state-from-postal';
 
 export const addressInputSchema = z.object({
   line: z.array(z.string()),
-  city: z.string().min(1, 'Required'),
-  state: z.string().min(1, 'Required'),
-  postalCode: z.string().min(5, 'Required'),
+  city: z.string().min(1, 'This is required.'),
+  state: z.string().min(1, 'This is required.'),
+  postalCode: z.string().min(5, 'This is required.'),
   use: z.enum(['old', 'home', 'work', 'temp', 'billing']),
 });
 

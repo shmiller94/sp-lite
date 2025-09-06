@@ -1,17 +1,20 @@
-import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
-import { RegisterForm } from '@/features/auth/components/register';
+import { RegisterForm } from '@/features/auth/components/register-form';
 
 export const RegisterRoute = () => {
-  const navigate = useNavigate();
+  // this is basic hook to prevent refreshses during checkout operation
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = ''; // Required for Chrome
+    };
 
-  return (
-    <RegisterForm
-      onSuccess={() =>
-        navigate('/onboarding', {
-          replace: true,
-        })
-      }
-    />
-  );
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+
+  return <RegisterForm />;
 };

@@ -1,20 +1,20 @@
 import {
   BookingStep,
   CommitmentStep,
-  ConfiguratorStep,
   UpsellStep,
   UpsellBookingStep,
   MissionStep,
   ShareStep,
   QuestionnaireStep,
   AdvancedUpgradeStep,
+  UpdateInfoStep,
 } from '@/features/onboarding/components/step-content';
 import { StepItem } from '@/lib/stepper/stepper-store-creator';
 
 export const steps: StepItem[] = [
   {
-    id: 'configurator',
-    content: <ConfiguratorStep />,
+    id: 'update-info',
+    content: <UpdateInfoStep />,
   },
   {
     id: 'advanced-upgrade',

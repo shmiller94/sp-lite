@@ -4,81 +4,56 @@ import * as React from 'react';
 
 import { cn } from '@/lib/utils';
 
-const makeEnterKeyHandler = (
-  checked: boolean | undefined,
-  onCheckedChange: ((checked: boolean) => void) | undefined,
-  onKeyDown?: React.KeyboardEventHandler<HTMLButtonElement>,
-): React.KeyboardEventHandler<HTMLButtonElement> => {
-  return (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      if (typeof onCheckedChange === 'function') {
-        const next = typeof checked === 'boolean' ? !checked : true;
-        onCheckedChange(next);
-      }
-    }
-    onKeyDown?.(e);
-  };
+type CheckboxProps = React.ComponentPropsWithoutRef<
+  typeof CheckboxPrimitive.Root
+> & {
+  variant?: 'default' | 'error';
 };
 
 const Checkbox = React.forwardRef<
   React.ElementRef<typeof CheckboxPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root> & {
-    checked?: boolean;
-    onCheckedChange?: (checked: boolean) => void;
-  }
->(({ className, onKeyDown, checked, onCheckedChange, ...props }, ref) => {
-  const handleKeyDown = makeEnterKeyHandler(
-    checked,
-    onCheckedChange,
-    onKeyDown,
-  );
-
-  return (
-    <CheckboxPrimitive.Root
-      ref={ref}
-      className={cn(
-        'peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground',
-        className,
-      )}
-      onKeyDown={handleKeyDown}
-      checked={checked}
-      onCheckedChange={onCheckedChange}
-      {...props}
+  CheckboxProps
+>(({ className, variant = 'default', ...props }, ref) => (
+  <CheckboxPrimitive.Root
+    ref={ref}
+    className={cn(
+      'peer h-4 w-4 shrink-0 rounded-sm border ring-offset-background focus-visible:outline-none focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:text-primary-foreground',
+      variant === 'error'
+        ? 'border-pink-700 bg-pink-50 focus-visible:ring-1 focus-visible:ring-pink-700 transition-none duration-0'
+        : 'border-primary data-[state=checked]:bg-primary focus-visible:ring-2 focus-visible:ring-ring',
+      className,
+    )}
+    {...props}
+  >
+    <CheckboxPrimitive.Indicator
+      className={cn('flex items-center justify-center text-current')}
     >
-      <CheckboxPrimitive.Indicator
-        className={cn('flex items-center justify-center text-current')}
-      >
-        <Check className="size-4" />
-      </CheckboxPrimitive.Indicator>
-    </CheckboxPrimitive.Root>
-  );
-});
+      <Check className="size-4" />
+    </CheckboxPrimitive.Indicator>
+  </CheckboxPrimitive.Root>
+));
 Checkbox.displayName = CheckboxPrimitive.Root.displayName;
+
+type AnimatedCheckboxProps = React.ComponentPropsWithoutRef<
+  typeof CheckboxPrimitive.Root
+> & {
+  variant?: 'default' | 'error';
+};
 
 const AnimatedCheckbox = React.forwardRef<
   React.ElementRef<typeof CheckboxPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root> & {
-    checked?: boolean;
-    onCheckedChange?: (checked: boolean) => void;
-  }
->(({ className, onKeyDown, checked, onCheckedChange, ...props }, ref) => {
-  const handleKeyDown = makeEnterKeyHandler(
-    checked,
-    onCheckedChange,
-    onKeyDown,
-  );
-
+  AnimatedCheckboxProps
+>(({ className, variant = 'default', ...props }, ref) => {
   return (
     <CheckboxPrimitive.Root
       ref={ref}
       className={cn(
-        'peer group h-4 w-4 shrink-0 rounded-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:text-primary-foreground',
+        'peer group h-4 w-4 shrink-0 rounded-sm ring-offset-background focus-visible:outline-none focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:text-primary-foreground',
+        variant === 'error'
+          ? 'border-pink-700 bg-pink-50 focus-visible:ring-1 focus-visible:ring-pink-700 transition-none duration-0'
+          : 'border-zinc-200 data-[state=checked]:bg-black focus-visible:ring-2 focus-visible:ring-ring',
         className,
       )}
-      onKeyDown={handleKeyDown}
-      checked={checked}
-      onCheckedChange={onCheckedChange}
       {...props}
     >
       <CheckboxPrimitive.Indicator

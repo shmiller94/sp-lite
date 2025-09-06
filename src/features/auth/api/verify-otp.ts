@@ -6,7 +6,7 @@ import { MutationConfig } from '@/lib/react-query';
 import { VerifyOPT } from '@/types/api';
 
 export const verifyOtpInputSchema = z.object({
-  phone: z.string().min(1, 'Required'),
+  phone: z.string().min(1, 'This is required.'),
   code: z.string().min(5, {
     message: 'Your one-time password must be 5 characters.',
   }),

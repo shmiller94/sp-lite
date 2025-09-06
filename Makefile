@@ -216,8 +216,8 @@ cleanup/app/feature: prereq
 ### Test
 
 .PHONY: test
-test: description = Run build, unit tests, lint, type checks, e2e
-test: util/install build/local test/lint test/type-check test/unit test/e2e
+test: description = Run build, unit tests, lint, type checks
+test: util/install build/local test/lint test/type-check test/unit
 
 .PHONY: test/lint
 test/lint: description = Run linting

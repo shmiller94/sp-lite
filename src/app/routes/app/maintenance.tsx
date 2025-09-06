@@ -1,9 +1,8 @@
 import { motion } from 'framer-motion';
 
+import { SuperpowerLogo } from '@/components/icons/superpower-logo';
 import { Body1, H1 } from '@/components/ui/typography';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
-
-import { SuperpowerLogo } from '../icons/superpower-logo';
 
 export const MaintenancePage = () => {
   const { width } = useWindowDimensions();

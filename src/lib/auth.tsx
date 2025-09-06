@@ -9,7 +9,6 @@ import { SuperpowerLoadingLogo } from '@/components/icons/superpower-logo';
 import { useTask } from '@/features/tasks/api/get-task';
 import { MutationConfig } from '@/lib/react-query';
 import { clearActiveLogin, setActiveLogin } from '@/lib/utils';
-import { AddressInput, formAddressInputSchema } from '@/types/address';
 import {
   LoginAuthenticationResponse,
   OAuthGrantType,
@@ -62,25 +61,25 @@ const loginWithEmailAndPassword = (
   return api.post('/auth/login', data);
 };
 
-export const registerInputSchema = z.object({
-  firstName: z.string().min(2, 'Please enter your full first name.'),
-  lastName: z.string().min(2, 'Please enter your full last name.'),
-  email: z.string().email('Please enter a valid email address.'),
-  phone: z
-    .string()
-    .min(1, 'Please enter your phone number.')
-    .refine(
-      (value) => {
-        if (!isValidPhoneNumber(value)) return false;
+const REQUIRED_MSG = 'This is required.';
 
-        const phoneNumber = parsePhoneNumber(value);
-        return phoneNumber && phoneNumber.country === 'US';
-      },
-      {
-        message: 'Please enter a valid US phone number.',
-      },
-    ),
-  dateOfBirth: z.date().refine((data) => {
+const requiredString = () =>
+  z.string({ required_error: REQUIRED_MSG }).min(1, REQUIRED_MSG);
+
+export const registerInputSchema = z.object({
+  email: requiredString().email('Please enter a valid email address.'),
+  phone: requiredString().refine(
+    (value) => {
+      if (!isValidPhoneNumber(value)) return false;
+
+      const phoneNumber = parsePhoneNumber(value);
+      return phoneNumber && phoneNumber.country === 'US';
+    },
+    {
+      message: 'Please enter a valid US phone number.',
+    },
+  ),
+  dateOfBirth: z.date({ required_error: REQUIRED_MSG }).refine((data) => {
     const today = new Date();
     const birthDate = new Date(data);
     let age = today.getFullYear() - birthDate.getFullYear();
@@ -93,12 +92,23 @@ export const registerInputSchema = z.object({
 
     return age >= 18;
   }, 'You must be over 18 years old to register.'),
-  gender: z.enum(['MALE', 'FEMALE']),
-  password: z
-    .string()
-    .min(8, 'Please enter a password with at least 8 characters.'),
-  textMessageConsent: z.boolean(),
-  address: formAddressInputSchema,
+  password: requiredString()
+    .min(8, {
+      message:
+        'Password must be at least 8 characters and include one number and one special character.',
+    })
+    .regex(/^(?=.*[0-9])(?=.*[^A-Za-z0-9])/, {
+      message:
+        'Password must be at least 8 characters and include one number and one special character.',
+    }),
+  consent: z
+    .boolean({ required_error: 'Please agree to the Terms to continue.' })
+    .refine((v) => v === true, {
+      message: 'Please agree to the Terms to continue.',
+    }),
+  postalCode: requiredString().min(5, {
+    message: 'Please enter a valid zip code.',
+  }),
 });
 
 export type RegisterInput = z.infer<typeof registerInputSchema>;
@@ -106,24 +116,9 @@ export type RegisterInput = z.infer<typeof registerInputSchema>;
 const registerWithEmailAndPassword = (
   data: RegisterInput,
 ): Promise<LoginAuthenticationResponse> => {
-  const line = [data.address.line1];
-
-  if (data.address.line2) {
-    line.push(data.address.line2);
-  }
-
-  const address: AddressInput = {
-    line: line,
-    city: data.address.city,
-    state: data.address.state,
-    postalCode: data.address.postalCode,
-    use: 'home',
-  };
-
   const registerData = {
     user: {
       ...data,
-      address,
       dateOfBirth: new Date(
         Date.UTC(
           data.dateOfBirth.getFullYear(),
@@ -282,6 +277,13 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
         <button onClick={() => taskQuery.refetch()}>Retry</button>
       </div>
     );
+  }
+
+  if (!userQuery.data.subscribed) {
+    if (location.pathname !== '/legacy-checkout') {
+      return <Navigate to="/legacy-checkout" replace />;
+    }
+    return children;
   }
 
   if (taskQuery.data) {

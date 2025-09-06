@@ -9,7 +9,7 @@ type BiomarkerCategory = {
   biomarkers: Biomarker[];
 };
 
-export const BIOMARKER_CATEGORIES: BiomarkerCategory[] = [
+export const AVAILABLE_BIOMARKERS: BiomarkerCategory[] = [
   {
     title: 'Longevity Markers',
     image: 'onboarding/biomarkers/longevity-markers.webp',

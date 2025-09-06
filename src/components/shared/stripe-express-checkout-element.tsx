@@ -1,22 +1,25 @@
 import { ExpressCheckoutElement } from '@stripe/react-stripe-js';
 import {
+  StripeExpressCheckoutElementClickEvent,
   StripeExpressCheckoutElementConfirmEvent,
   StripeExpressCheckoutElementOptions,
 } from '@stripe/stripe-js';
 import { useState } from 'react';
 
-import { Body1 } from '@/components/ui/typography';
-
-export const DigitalWalletSection = ({
+export const StripeExpressCheckoutElement = ({
   onConfirm,
   membershipAmountInCents,
   processing,
+  onClick,
+  onAvailabilityChange,
 }: {
   onConfirm: (
     event: StripeExpressCheckoutElementConfirmEvent,
   ) => void | Promise<void>;
+  onClick?: (event: StripeExpressCheckoutElementClickEvent) => any;
   membershipAmountInCents?: number;
   processing: boolean;
+  onAvailabilityChange?: (available: boolean) => void;
 }): JSX.Element => {
   const [isReady, setIsReady] = useState(false);
 
@@ -75,25 +78,20 @@ export const DigitalWalletSection = ({
       >
         <ExpressCheckoutElement
           onConfirm={onConfirm}
+          className={processing ? 'animate-pulse opacity-50' : undefined}
           onReady={({ availablePaymentMethods }) => {
             // Only show this section if the user has a digital wallet
             // available through either Apple Pay or Google Pay
-            if (
+            const available = Boolean(
               availablePaymentMethods?.applePay ||
-              availablePaymentMethods?.googlePay
-            ) {
-              setIsReady(true);
-            }
+                availablePaymentMethods?.googlePay,
+            );
+            onAvailabilityChange?.(available);
+            setIsReady(available);
           }}
+          onClick={onClick}
           options={options}
         />
-      </div>
-      <div className="flex items-center">
-        <div className="h-px flex-1 bg-zinc-200" />
-        <Body1 className="mx-4 text-center text-base text-zinc-500">
-          or pay by card
-        </Body1>
-        <div className="h-px flex-1 bg-zinc-200" />
       </div>
     </div>
   );

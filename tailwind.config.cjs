@@ -36,6 +36,7 @@ module.exports = {
         'baseline-membership': "url('/settings/membership/baseline.webp')",
         'advanced-membership': "url('/settings/membership/advanced.webp')",
         home: "url('/home/default.webp')",
+        auth: "url('/onboarding/register-bg-alt.webp')"
       },
       colors: {
         border: 'hsl(var(--border))',

@@ -33,6 +33,7 @@ export interface AddressAutocompleteProps
   value: string;
   onChange: (...event: any[]) => void;
   onBlur: () => void;
+  variant?: 'default' | 'error' | 'glass';
 }
 
 const container = {
@@ -66,7 +67,16 @@ export const AddressAutocomplete = forwardRef<
   AddressAutocompleteProps
 >(
   (
-    { placeholder, onFormSubmit, value, disabled, onChange, onBlur, ...rest },
+    {
+      placeholder,
+      onFormSubmit,
+      value,
+      disabled,
+      onChange,
+      onBlur,
+      variant = 'default',
+      ...rest
+    },
     ref,
   ) => {
     const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
@@ -118,6 +128,7 @@ export const AddressAutocomplete = forwardRef<
           placeholder={placeholder ?? 'Address'}
           disabled={disabled}
           ref={ref}
+          variant={variant}
           value={value}
           onChange={(e) => {
             getPlacePredictions({ input: e.target.value });

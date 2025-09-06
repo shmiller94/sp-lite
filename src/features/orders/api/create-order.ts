@@ -40,12 +40,12 @@ export const consentInputSchema = z.object({
 
 export const createOrderInputSchema = z.object({
   id: z.string().optional(),
-  serviceId: z.string().min(1, 'Required'),
+  serviceId: z.string().min(1, 'This is required.'),
   items: z.array(serviceItemInputSchema).optional(),
   location: locationInputSchema,
-  timestamp: z.string().min(1, 'Required'),
+  timestamp: z.string().min(1, 'This is required.'),
   externalId: z.string().optional(),
-  timezone: z.string().min(1, 'Required'),
+  timezone: z.string().min(1, 'This is required.'),
   method: z.array(z.enum(['AT_HOME', 'IN_LAB', 'PHLEBOTOMY_KIT', 'EVENT'])),
   status: z
     .enum([

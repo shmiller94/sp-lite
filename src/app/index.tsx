@@ -1,4 +1,4 @@
-import { MaintenancePage } from '@/components/layouts/maintenance-page';
+import { MaintenancePage } from '@/app/routes/app/maintenance';
 import { env } from '@/config/env';
 import { shouldBypassMaintenance } from '@/utils/maintenance-bypass';
 
