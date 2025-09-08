@@ -26,7 +26,7 @@ export const createSubscription = ({
   data,
 }: {
   data: CreateSubscriptionInput;
-}): Promise<Subscription> => {
+}): Promise<{ subscription: Subscription }> => {
   // Get UTM data from cookie if not provided
   if (!data.campaignData) {
     data.campaignData = getUtmData() || undefined;
@@ -56,10 +56,13 @@ export const useCreateSubscription = ({
           access_code: getAccessCode(),
           referral_id: (window as any)?.Rewardful?.referral,
           currency: 'USD',
-          value: args[0].total,
+          value: args[0].subscription.total,
           payment_method: args[1].data.paymentMethod,
         });
-        trackSubscription(args[0].total, args[1].data.paymentMethod);
+        trackSubscription(
+          args[0].subscription.total,
+          args[1].data.paymentMethod,
+        );
       } catch (e) {
         console.error('Failed to track subscription:', e);
       }
