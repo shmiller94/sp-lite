@@ -14,7 +14,8 @@ import {
 import { Spinner } from '@/components/ui/spinner';
 import { Body2, H1 } from '@/components/ui/typography';
 import { AuthInput } from '@/features/auth/components/auth-input';
-import { LoginInput, loginInputSchema, useLogin } from '@/lib/auth';
+import { LoginInput, loginInputSchema } from '@/lib/auth';
+import { useLogin } from '@/lib/auth';
 import { User } from '@/types/api';
 
 type LoginFormProps = {

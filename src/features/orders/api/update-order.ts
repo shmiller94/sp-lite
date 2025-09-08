@@ -1,6 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 
+import {
+  SUPERPOWER_BLOOD_PANEL,
+  SUPERPOWER_ADVANCED_BLOOD_PANEL,
+} from '@/const/services';
 import { getTimelineQueryOptions } from '@/features/home/api/get-timeline';
 import {
   consentInputSchema,
@@ -8,6 +12,7 @@ import {
 } from '@/features/orders/api/create-order';
 import { getOrdersQueryOptions } from '@/features/orders/api/get-orders';
 import { getServicesQueryOptions } from '@/features/services/api';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { api } from '@/lib/api-client';
 import { MutationConfig } from '@/lib/react-query';
 import { Order } from '@/types/api';
@@ -52,10 +57,29 @@ export const useUpdateOrder = ({
   mutationConfig,
 }: UseUpdateOrderOptions = {}) => {
   const queryClient = useQueryClient();
+  const { track } = useAnalytics();
   const { onSuccess, ...restConfig } = mutationConfig || {};
 
   return useMutation({
-    onSuccess: (...args) => {
+    onSuccess: (response, variables, context) => {
+      // Track order update events for blood draw scheduling
+      const order = response.order;
+
+      // Track blood draw scheduling (when status changes from DRAFT to PENDING)
+      if (variables.data.status === 'PENDING') {
+        const CORE_BLOOD_TESTS = [
+          SUPERPOWER_BLOOD_PANEL,
+          SUPERPOWER_ADVANCED_BLOOD_PANEL,
+        ];
+        if (CORE_BLOOD_TESTS.includes(order.serviceName)) {
+          track('scheduled_blood_draw', {
+            scheduled_date: variables.data.timestamp || order.startTimestamp,
+            collection_method: variables.data.method || order.method?.[0],
+            value: order.amount,
+          });
+        }
+      }
+
       queryClient.invalidateQueries({
         queryKey: getOrdersQueryOptions().queryKey,
       });
@@ -68,7 +92,7 @@ export const useUpdateOrder = ({
       queryClient.invalidateQueries({
         queryKey: ['service'],
       });
-      onSuccess?.(...args);
+      onSuccess?.(response, variables, context);
     },
     ...restConfig,
     mutationFn: updateOrder,

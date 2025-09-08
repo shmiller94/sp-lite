@@ -7,11 +7,11 @@ export const WearableDialog = () => {
   const { track } = useAnalytics();
 
   const handleWearableConnected = () => {
-    track('integrated_wearable');
     mutate({
       data: { status: 'in-progress' },
       taskName: 'onboarding-wearable',
     });
+    track('integrated_wearable');
   };
 
   return (

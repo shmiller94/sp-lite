@@ -15,6 +15,7 @@ export const QuestionnaireStep = ({
 }: QuestionnaireStepProps) => {
   const { nextStep, activeStep } = useStepper((s) => s);
   const { track } = useAnalytics();
+
   const { mutateAsync: updateTaskProgress, isError } = useUpdateTask();
 
   const updateStep = async () => {
@@ -23,11 +24,11 @@ export const QuestionnaireStep = ({
       data: { progress: activeStep + 1 },
     });
 
-    if (type === 'intake') {
-      track('completed_intake');
-    }
-
     if (!isError) {
+      // Track intake completion
+      if (type === 'intake') {
+        track('completed_intake');
+      }
       nextStep();
     }
   };

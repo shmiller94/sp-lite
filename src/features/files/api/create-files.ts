@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { toast } from '@/components/ui/sonner';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { api } from '@/lib/api-client';
 import { MutationConfig } from '@/lib/react-query';
 import {
@@ -51,17 +52,35 @@ export const createFiles = ({
 
 type UseCreateFilesOptions = {
   mutationConfig?: MutationConfig<typeof createFiles>;
+  context?: 'ai-chat' | 'general';
 };
 
 export const useCreateFiles = ({
   mutationConfig,
+  context = 'general',
 }: UseCreateFilesOptions = {}) => {
   const queryClient = useQueryClient();
-
+  const { track } = useAnalytics();
   const { onSuccess, ...restConfig } = mutationConfig || {};
 
   return useMutation({
-    onSuccess: (response: UploadFilesAPIResponse, ...args) => {
+    onSuccess: (
+      response: UploadFilesAPIResponse,
+      variables,
+      mutationContext,
+    ) => {
+      // Track file upload for AI context only
+      if (
+        context === 'ai-chat' &&
+        variables.data.files.some((file) => file.source === 'user')
+      ) {
+        track('uploaded_file_ai', {
+          file_count: response.successful.length,
+          file_types: response.successful.map((file) => file.contentType),
+          file_sizes: variables.data.files.map((file) => file.rawFile.size),
+        });
+      }
+
       queryClient.setQueryData(
         getFilesQueryOptions().queryKey,
         (oldData: { files: SPFile[] } | undefined) => ({
@@ -89,7 +108,7 @@ export const useCreateFiles = ({
         });
       }
 
-      onSuccess?.(response, ...args);
+      onSuccess?.(response, variables, mutationContext);
     },
     ...restConfig,
     mutationFn: createFiles,

@@ -5,9 +5,11 @@ import {
 } from '@tanstack/react-query';
 import { z } from 'zod';
 
+import { SUPERPOWER_ADVANCED_BLOOD_PANEL } from '@/const/services';
 import { getTimelineQueryOptions } from '@/features/home/api/get-timeline';
 import { getOrdersQueryOptions } from '@/features/orders/api/get-orders';
 import { getServicesQueryOptions } from '@/features/services/api';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { api } from '@/lib/api-client';
 import { MutationConfig } from '@/lib/react-query';
 import { Order } from '@/types/api';
@@ -56,15 +58,39 @@ export const useUpgradeOrder = (
   },
 ) => {
   const queryClient = useQueryClient();
+  const { track } = useAnalytics();
   const { onSuccess, ...restConfig } = mutationConfig || {};
 
   return useMutation({
     mutationFn: upgradeOrder,
-    onSuccess: (...args) => {
+    onSuccess: (response, variables, context) => {
+      // Track upgrade order events
+      const order = response.order;
+
+      // Track service order
+      track('ordered_service', {
+        service_name: order.serviceName,
+        value: order.amount,
+      });
+
+      // Track blood test orders for advanced blood panel
+      if (order.serviceName === SUPERPOWER_ADVANCED_BLOOD_PANEL) {
+        track('ordered_blood_test', {
+          blood_test: order.serviceName,
+          value: order.amount,
+        });
+
+        track('scheduled_blood_draw', {
+          scheduled_date: order.startTimestamp,
+          collection_method: order.method?.[0],
+          value: order.amount,
+        });
+      }
+
       if (shouldResyncImmediately)
         resyncDataAfterUpgradedOrder({ queryClient });
 
-      onSuccess?.(...args);
+      onSuccess?.(response, variables, context);
     },
     ...restConfig,
   });

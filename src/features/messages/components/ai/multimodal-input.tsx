@@ -60,8 +60,8 @@ function PureMultimodalInput({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const inputWrapperRef = useRef<HTMLDivElement>(null);
   const { width } = useWindowDimensions();
-  const createFilesMutation = useCreateFiles();
   const { track } = useAnalytics();
+  const createFilesMutation = useCreateFiles({ context: 'ai-chat' });
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadQueue, setUploadQueue] = useState<Array<string>>([]);
@@ -125,11 +125,6 @@ function PureMultimodalInput({
 
   const submitForm = useCallback(() => {
     window.history.replaceState({}, '', `/concierge/${chatId}`);
-
-    // Track the AI message event
-    track('sent_message_ai', {
-      message_length: input.length,
-    });
 
     handleSubmit(undefined, {
       experimental_attachments: attachments,
@@ -210,15 +205,6 @@ function PureMultimodalInput({
           ...currentAttachments,
           ...uploadedAttachments,
         ]);
-
-        // Track the file upload event
-        if (uploadedAttachments.length > 0) {
-          track('uploaded_file_ai', {
-            file_count: uploadedAttachments.length,
-            file_types: uploadedAttachments.map((att) => att.contentType),
-            file_sizes: files.map((file) => file.size),
-          });
-        }
       } catch (error) {
         console.error('Error uploading files!', error);
       } finally {

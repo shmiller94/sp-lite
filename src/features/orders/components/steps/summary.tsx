@@ -6,7 +6,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/components/ui/sonner';
 import { TransactionSpinner } from '@/components/ui/spinner/transaction-spinner';
 import { Body1, Body2, H2 } from '@/components/ui/typography';
-import { SUPERPOWER_BLOOD_PANEL, ADVANCED_BLOOD_PANEL } from '@/const/services';
 import {
   CreateOrderInput,
   UpdateOrderInput,
@@ -21,14 +20,10 @@ import { useService } from '@/features/services/api';
 import { usePaymentMethods } from '@/features/settings/api';
 import { CreatePaymentMethodForm } from '@/features/settings/components/billing/create-payment-method-form';
 import { CurrentPaymentMethodCard } from '@/features/users/components/current-payment-method-card';
-import { useAnalytics } from '@/hooks/use-analytics';
 import { useStepper } from '@/lib/stepper';
 import { OrderStatus } from '@/types/api';
 import { formatMoney } from '@/utils/format-money';
 import { getServiceImage } from '@/utils/service';
-
-// track core blood test purchases for CVR & upsell calculation
-const CORE_BLOOD_TESTS = [SUPERPOWER_BLOOD_PANEL, ADVANCED_BLOOD_PANEL];
 
 export function OrderSummary(): ReactNode {
   const {
@@ -42,7 +37,7 @@ export function OrderSummary(): ReactNode {
     updateCreatedOrderId,
   } = useOrder((s) => s);
   const { nextStep, prevStep } = useStepper((s) => s);
-  const { track } = useAnalytics();
+
   const ordersQuery = useOrders({
     queryConfig: { refetchOnMount: 'always' },
   });
@@ -66,30 +61,6 @@ export function OrderSummary(): ReactNode {
     .find((o) => o.serviceId === service.id);
 
   const price = serviceQuery.data?.service.price;
-
-  // Helper function to track order events
-  const trackOrderEvents = () => {
-    // only track blood draw scheduling for phlebotomy services
-    if (service.phlebotomy) {
-      track('scheduled_blood_draw', {
-        scheduled_date: slot ? slot.start : new Date().toISOString(),
-        collection_method: collectionMethod,
-        value: service.price,
-      });
-    }
-
-    if (CORE_BLOOD_TESTS.includes(service.name)) {
-      track('ordered_blood_test', {
-        blood_test: service.name,
-        value: service.price,
-      });
-    }
-
-    track('ordered_service', {
-      service_name: service.name,
-      value: service.price,
-    });
-  };
 
   const createOrderMutation = useCreateOrder();
   const updateOrderMutation = useUpdateOrder({
@@ -139,7 +110,6 @@ export function OrderSummary(): ReactNode {
     });
 
     if (response.order) {
-      trackOrderEvents();
       updateCreatedOrderId(response.order.id);
       nextStep();
     }
@@ -169,8 +139,6 @@ export function OrderSummary(): ReactNode {
       orderId: existingDraftOrder.id,
       data,
     });
-
-    trackOrderEvents();
   };
 
   return (

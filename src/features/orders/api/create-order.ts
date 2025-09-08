@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { getTimelineQueryOptions } from '@/features/home/api/get-timeline';
 import { getOrdersQueryOptions } from '@/features/orders/api/get-orders';
 import { getServicesQueryOptions } from '@/features/services/api';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { api } from '@/lib/api-client';
 import { MutationConfig } from '@/lib/react-query';
 import { addressInputSchema } from '@/types/address';
@@ -79,11 +80,41 @@ export const useCreateOrder = ({
   mutationConfig,
 }: UseCreateOrderOptions = {}) => {
   const queryClient = useQueryClient();
-
+  const { track } = useAnalytics();
   const { onSuccess, ...restConfig } = mutationConfig || {};
 
   return useMutation({
-    onSuccess: (...args) => {
+    onSuccess: (response, variables, context) => {
+      // Track order events
+      const order = response.order;
+
+      // Track service order
+      track('ordered_service', {
+        service_name: order.serviceName,
+        value: order.amount,
+      });
+
+      // Track blood test orders for core blood tests
+      const CORE_BLOOD_TESTS = [
+        'Comprehensive Blood Panel',
+        'Basic Blood Panel',
+      ];
+      if (CORE_BLOOD_TESTS.includes(order.serviceName)) {
+        track('ordered_blood_test', {
+          blood_test: order.serviceName,
+          value: order.amount,
+        });
+      }
+
+      // Track blood draw scheduling for phlebotomy services
+      if (order.method?.includes('PHLEBOTOMY_KIT')) {
+        track('scheduled_blood_draw', {
+          scheduled_date: variables.data.timestamp,
+          collection_method: variables.data.method?.[0],
+          value: order.amount,
+        });
+      }
+
       queryClient.invalidateQueries({
         queryKey: getOrdersQueryOptions().queryKey,
       });
@@ -99,7 +130,7 @@ export const useCreateOrder = ({
         queryKey: ['service'],
       });
 
-      onSuccess?.(...args);
+      onSuccess?.(response, variables, context);
     },
     ...restConfig,
     mutationFn: createOrder,

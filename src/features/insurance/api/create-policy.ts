@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { z } from 'zod';
 
+import { useAnalytics } from '@/hooks/use-analytics';
 import { api } from '@/lib/api-client';
 import { MutationConfig } from '@/lib/react-query';
 import { BridgePolicy } from '@/types/api';
@@ -60,11 +61,15 @@ type UseCreatePolicyOptions = {
 export const useCreatePolicy = ({
   mutationConfig,
 }: UseCreatePolicyOptions = {}) => {
+  const { track } = useAnalytics();
   const { onSuccess, ...restConfig } = mutationConfig || {};
 
   return useMutation({
-    onSuccess: (...args) => {
-      onSuccess?.(...args);
+    onSuccess: (policy, variables, context) => {
+      // Track insurance addition
+      track('added_insurance');
+
+      onSuccess?.(policy, variables, context);
     },
     ...restConfig,
     mutationFn: createPolicy,

@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { z } from 'zod';
 
+import { useAnalytics } from '@/hooks/use-analytics';
 import { api } from '@/lib/api-client';
 import { MutationConfig } from '@/lib/react-query';
 import { Message } from '@/types/api';
@@ -28,9 +29,18 @@ type UseCreateMessageOptions = {
 export const useCreateMessage = ({
   mutationConfig,
 }: UseCreateMessageOptions = {}) => {
-  const { ...restConfig } = mutationConfig || {};
+  const { track } = useAnalytics();
+  const { onSuccess, ...restConfig } = mutationConfig || {};
 
   return useMutation({
+    onSuccess: (message, variables, context) => {
+      // Track concierge message
+      if (variables.data.type === 'concierge') {
+        track('sent_message_concierge');
+      }
+
+      onSuccess?.(message, variables, context);
+    },
     ...restConfig,
     mutationFn: createMessage,
   });

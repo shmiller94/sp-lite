@@ -14,7 +14,7 @@ export const LoginRoute = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get('redirectTo');
-  const { track, identify } = useAnalytics();
+  const { identify, track } = useAnalytics();
 
   // when we sign in from users (as admin) we don't want to be redirected to the same page
   const shouldRedirect =
@@ -32,6 +32,7 @@ export const LoginRoute = () => {
     <AuthLayout title="Log in">
       <LoginForm
         onSuccess={(user) => {
+          track('logged_in');
           navigate(`${shouldRedirect ? `${redirectTo}` : '/'}`, {
             replace: true,
           });
@@ -43,7 +44,6 @@ export const LoginRoute = () => {
               phone: user.phone,
             },
           });
-          track('logged_in');
         }}
       />
     </AuthLayout>

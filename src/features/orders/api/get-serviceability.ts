@@ -29,9 +29,12 @@ type UseGetServiceabilityOptions = {
 export const useGetServiceability = ({
   mutationConfig,
 }: UseGetServiceabilityOptions = {}) => {
-  const { ...restConfig } = mutationConfig || {};
+  const { onSuccess, ...restConfig } = mutationConfig || {};
 
   return useMutation({
+    onSuccess: (response, variables, context) => {
+      onSuccess?.(response, variables, context);
+    },
     ...restConfig,
     mutationFn: getServiceability,
   });

@@ -29,7 +29,7 @@ const AICard = () => {
         updateType('ai');
         // Reset session data for new chat session
         resetSession();
-        // Track AI chat session start when user selects AI
+        // Track AI chat session start
         track('started_chat_session_ai');
       }}
       role="presentation"

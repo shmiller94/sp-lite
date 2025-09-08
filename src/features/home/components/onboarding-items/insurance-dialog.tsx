@@ -22,14 +22,13 @@ import {
 import { Body1, Body2 } from '@/components/ui/typography';
 import { CreatePolicyForm } from '@/features/insurance/components/create-policy-form';
 import { useUpdateTask } from '@/features/tasks/api/update-task';
-import { useAnalytics } from '@/hooks/use-analytics';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 import { cn } from '@/lib/utils';
 
 export const InsuranceDialog = () => {
   const { width } = useWindowDimensions();
   const { mutate } = useUpdateTask();
-  const { track } = useAnalytics();
+
   const [current, setCurrent] = useState<'collection' | 'submitted'>(
     'collection',
   );
@@ -37,7 +36,6 @@ export const InsuranceDialog = () => {
   const handleOpenChange = (open: boolean) => {
     if (!open) {
       if (current === 'submitted') {
-        track('added_insurance');
         mutate({
           data: { status: 'completed' },
           taskName: 'onboarding-insurance',

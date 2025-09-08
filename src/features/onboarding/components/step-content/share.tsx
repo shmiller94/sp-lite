@@ -6,12 +6,10 @@ import { Spinner } from '@/components/ui/spinner';
 import { Body1, Body2, H1 } from '@/components/ui/typography';
 import { useInviteLink } from '@/features/affiliate/hooks/use-invite-link';
 import { useUpdateTask } from '@/features/tasks/api/update-task';
-import { useAnalytics } from '@/hooks/use-analytics';
 import { trackEvent } from '@/utils/analytics';
 
 export const Share = () => {
   const { mutateAsync: updateTaskProgress, isPending } = useUpdateTask();
-  const { track } = useAnalytics();
 
   const { link } = useInviteLink();
 
@@ -58,8 +56,6 @@ export const Share = () => {
               taskName: 'onboarding',
               data: { status: 'completed' },
             });
-
-            track('completed_onboarding');
           }}
           disabled={isPending}
           type="submit"

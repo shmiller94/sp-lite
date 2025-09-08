@@ -10,11 +10,10 @@ import { TimelineItemStatus } from '@/types/api';
 export function GiftButton({ status }: { status?: TimelineItemStatus }) {
   const { mutate } = useUpdateTask();
   const { data: user } = useUser();
-  const giftUrl = buildGiftUrl(user);
   const { track } = useAnalytics();
+  const giftUrl = buildGiftUrl(user);
 
   const handleClick = () => {
-    track('clicked_gift_button');
     // Only mark as completed if it's not already done
     if (status !== 'DONE') {
       mutate({
@@ -22,6 +21,7 @@ export function GiftButton({ status }: { status?: TimelineItemStatus }) {
         taskName: 'onboarding-gift',
       });
     }
+    track('clicked_gift_button');
   };
 
   return (

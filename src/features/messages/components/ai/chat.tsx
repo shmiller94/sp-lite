@@ -29,7 +29,11 @@ export function Chat({
 }) {
   const { refetch } = useHistory();
   const { track } = useAnalytics();
+
   const [lastUserMessageTime, setLastUserMessageTime] = useState<number | null>(
+    null,
+  );
+  const [lastSentMessageTime, setLastSentMessageTime] = useState<number | null>(
     null,
   );
   const {
@@ -52,8 +56,24 @@ export function Chat({
     initialMessages,
     experimental_throttle: 100,
     generateId: generateUUID,
-    onFinish: () => {
+    onFinish: (message) => {
       refetch();
+
+      // Track AI message events
+      if (message.role === 'user') {
+        const currentTime = Date.now();
+        setLastSentMessageTime(currentTime);
+        track('sent_message_ai', {
+          message_length: message.content?.length || 0,
+        });
+      } else if (message.role === 'assistant') {
+        const responseTime = lastSentMessageTime
+          ? Date.now() - lastSentMessageTime
+          : null;
+        track('received_message_ai', {
+          response_time: responseTime,
+        });
+      }
 
       // Calculate response time
       const responseTime = lastUserMessageTime
@@ -64,11 +84,6 @@ export function Chat({
       if (responseTime) {
         addResponseTime(responseTime);
       }
-
-      // Track the AI response event
-      track('received_message_ai', {
-        response_time: responseTime,
-      });
     },
     onError: (error) => {
       if (publicErrors.some((publicError) => publicError === error.message)) {

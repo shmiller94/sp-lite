@@ -7,7 +7,6 @@ import { TestimonialCarousel } from '@/components/shared/testimonials/components
 import { Button } from '@/components/ui/button';
 import { TextShimmer } from '@/components/ui/text-shimmer';
 import { Body1, H3, H4 } from '@/components/ui/typography';
-import { SUPERPOWER_BLOOD_PANEL, ADVANCED_BLOOD_PANEL } from '@/const/services';
 import { useUpsellOrders } from '@/features/onboarding/hooks/use-upsell-orders';
 import { getUpsellServices } from '@/features/onboarding/utils/get-upsell-services';
 import { useOrders } from '@/features/orders/api';
@@ -65,6 +64,7 @@ export const UpsellCheckout = ({
   const { data: ordersData } = useOrders();
   const { mutateAsync, isPending, error } = useCreateBulkOrders();
   const { track } = useAnalytics();
+
   const { nextStep, activeStep } = useStepper((s) => s);
   const { mutateAsync: updateTaskProgress, isError } = useUpdateTask();
   const { data: upsellOrders } = useUpsellOrders();
@@ -118,20 +118,6 @@ export const UpsellCheckout = ({
   const createBulkOrdersFromServices = useCallback(async () => {
     if (!user) return;
     const orders: CreateOrderInput[] = [];
-
-    // Track blood test orders
-    const bloodTests = services.filter(
-      (service) =>
-        service.name === SUPERPOWER_BLOOD_PANEL ||
-        service.name === ADVANCED_BLOOD_PANEL,
-    );
-
-    for (const bloodTest of bloodTests) {
-      track('ordered_blood_test', {
-        blood_test: bloodTest.name,
-        value: bloodTest.price,
-      });
-    }
 
     for (const service of services) {
       const collectionMethod = getDefaultCollectionMethod(service);
