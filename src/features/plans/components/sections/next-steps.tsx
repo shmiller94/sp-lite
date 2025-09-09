@@ -16,8 +16,7 @@ import { useCarePlanCart } from '../../stores/care-plan-cart-store';
 import { ProductCard } from '../activities/product-card';
 import { ActionPlanCheckoutModal } from '../checkout/checkout-modal';
 import { NotificationDot } from '../notification-dot';
-
-import { SectionTitle } from './section-title';
+import { SectionTitle } from '../section-title';
 
 export const NextStepsSection = () => {
   const { plan } = useCarePlan();

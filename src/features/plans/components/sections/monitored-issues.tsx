@@ -10,8 +10,7 @@ import { useCarePlan } from '../../context/care-plan-context';
 import { useSection } from '../../hooks/use-section';
 import { PlanGoal } from '../goals/plan-goal';
 import { PlanGoalPriority } from '../goals/plan-goal-priority';
-
-import { SectionTitle } from './section-title';
+import { SectionTitle } from '../section-title';
 
 export const MonitoredIssues = () => {
   const { plan } = useCarePlan();

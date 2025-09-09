@@ -3,8 +3,7 @@ import { Body1, H2 } from '@/components/ui/typography';
 import { useCarePlan } from '../../context/care-plan-context';
 import { useSection } from '../../hooks/use-section';
 import { PlanMarkdown } from '../plan-markdown';
-
-import { SectionTitle } from './section-title';
+import { SectionTitle } from '../section-title';
 
 export const Overview = () => {
   const { plan } = useCarePlan();

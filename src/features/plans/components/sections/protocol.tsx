@@ -16,8 +16,7 @@ import { useCarePlan } from '../../context/care-plan-context';
 import { useSection } from '../../hooks/use-section';
 import { PlanActivity } from '../activities/plan-activity';
 import { Disclaimer } from '../plan-disclaimer';
-
-import { SectionTitle } from './section-title';
+import { SectionTitle } from '../section-title';
 
 interface ActivityGroup {
   activities: CarePlanActivity[];

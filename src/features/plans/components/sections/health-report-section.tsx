@@ -2,8 +2,7 @@ import { Body1, H2 } from '@/components/ui/typography';
 
 import { useSection } from '../../hooks/use-section';
 import { PlanHealthScore } from '../annual-report/plan-health-score';
-
-import { SectionTitle } from './section-title';
+import { SectionTitle } from '../section-title';
 
 export const HealthReportSection = () => {
   const { title, order, total } = useSection('health-report');

@@ -115,7 +115,7 @@ export const PhilosophyBlocks = ({ className }: { className?: string }) => {
 
   if (isHealthScoreLoading || biomarkerCategoriesLoading) {
     return (
-      <div className="flex h-48 w-full items-center justify-center">
+      <div className="flex min-h-96 w-full items-center justify-center">
         <Spinner variant="primary" />
       </div>
     );
