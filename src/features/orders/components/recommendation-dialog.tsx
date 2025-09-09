@@ -1,5 +1,4 @@
 import { X } from 'lucide-react';
-import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -18,20 +17,22 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 import { H3 } from '@/components/ui/typography';
+import { useRecommendationsVisibility } from '@/features/orders/hooks/use-recommendations-visibility';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 import { useUser } from '@/lib/auth';
 
 import { PhlebotomyRecommendations } from './phlebotomy-recommendations';
 
 export const RecommendationDialog = () => {
-  const [isOpen, setIsOpen] = useState(true);
+  const { isVisible: isOpen, setIsVisible: setIsOpen } =
+    useRecommendationsVisibility();
   const { width } = useWindowDimensions();
   const { isLoading } = useUser();
 
   if (width <= 768) {
     return (
       <Sheet open={isOpen && !isLoading} onOpenChange={setIsOpen}>
-        <SheetContent className="flex flex-col overflow-hidden rounded-t-2xl">
+        <SheetContent className="flex flex-col rounded-t-2xl">
           <SheetHeader className="pb-0">
             <SheetTitle className="ml-4">
               <H3>Recommendations for testing</H3>
@@ -46,7 +47,7 @@ export const RecommendationDialog = () => {
             <div className="space-y-4">
               <PhlebotomyRecommendations />
             </div>
-            <div className="mt-12 flex justify-end">
+            <div className="sticky bottom-2 z-10 mt-12 flex justify-end pb-4">
               <SheetClose asChild>
                 <Button variant="default" className="w-full text-sm">
                   Continue

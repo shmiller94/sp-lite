@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { Scheduler } from '@/components/shared/scheduler';
@@ -11,6 +11,7 @@ import {
 } from '@/const';
 import { HealthcareServiceFooter } from '@/features/orders/components/healthcare-service-footer';
 import { RecommendationDialog } from '@/features/orders/components/recommendation-dialog';
+import { useRecommendationsVisibility } from '@/features/orders/hooks/use-recommendations-visibility';
 import { useOrder } from '@/features/orders/stores/order-store';
 import { getCollectionInstructions } from '@/features/orders/utils/get-collection-instructions';
 import { shouldUsePrimaryAddress } from '@/features/orders/utils/should-use-primary-address';
@@ -22,7 +23,8 @@ import { Address, Slot } from '@/types/api';
 import { PhlebotomyRecommendations } from '../phlebotomy-recommendations';
 
 export const PhlebotomyScheduler = () => {
-  const [showInlineRecs, setShowInlineRecs] = useState(true);
+  const { isVisible: showInlineRecs, setIsVisible: setShowInlineRecs } =
+    useRecommendationsVisibility();
 
   const {
     service,
