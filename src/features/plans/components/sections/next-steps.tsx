@@ -106,7 +106,7 @@ export const NextStepsSection = () => {
   }
 
   return (
-    <section id="next-steps" className="space-y-4">
+    <section id="next-steps" className="min-h-[70vh] space-y-4">
       <SectionTitle
         style={{
           backgroundImage: 'url(/action-plan/sections/yellow-background.webp)',

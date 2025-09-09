@@ -182,7 +182,10 @@ export const ProtocolSection = () => {
                         icon={group.icon}
                         className="flex size-8 items-center justify-center p-1.5"
                       />
-                      <H4 className="m-0 text-zinc-800 transition-colors group-hover:text-zinc-600">
+                      <H4
+                        id="section-heading"
+                        className="m-0 text-zinc-800 transition-colors group-hover:text-zinc-600"
+                      >
                         {group.title}
                       </H4>
                     </div>

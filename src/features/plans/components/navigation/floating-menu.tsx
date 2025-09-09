@@ -26,10 +26,8 @@ const Contents = ({
       onClick={() => setShowContents(!showContents)}
       className={cn(
         'flex flex-col w-full rounded-3xl pointer-events-auto overflow-hidden absolute right-4 justify-start border border-zinc-200 bg-white px-4 py-3 shadow-lg transition-all duration-300 ease-in-out',
-        isOpen
-          ? 'max-w-64 bottom-28 delay-75'
-          : 'max-w-12 bottom-0 opacity-0 scale-95',
-        showContents ? (isOpen ? 'h-48' : 'h-12') : 'h-12',
+        isOpen ? 'max-w-64 bottom-28' : 'max-w-12 bottom-0 opacity-0 scale-95',
+        showContents ? (isOpen ? 'max-h-[70vh]' : 'max-h-12') : 'max-h-12',
       )}
     >
       <div className="relative z-10 flex w-full items-center justify-between pb-2">
@@ -45,7 +43,8 @@ const Contents = ({
         onClick={() => setIsOpen(false)}
         className={cn(
           'transition-all overflow-y-auto scrollbar-none',
-          showContents ? 'h-56' : 'h-0 opacity-0 overflow-hidden',
+          isOpen && 'delay-75',
+          showContents ? 'max-h-[70vh]' : 'max-h-0 opacity-0 overflow-hidden',
         )}
       >
         <TableOfContents />

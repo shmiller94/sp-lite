@@ -59,7 +59,10 @@ export const MonitoredIssues = () => {
                     <H4 className="transition-colors group-hover:text-zinc-600">
                       {index + 1}.
                     </H4>
-                    <H4 className="line-clamp-2 font-semibold transition-colors group-hover:text-zinc-600">
+                    <H4
+                      id="section-heading"
+                      className="line-clamp-2 font-semibold transition-colors group-hover:text-zinc-600"
+                    >
                       {goal.resource.description.text ||
                         goal.resource.description.coding?.[0].display ||
                         `Issue #${index + 1}`}
