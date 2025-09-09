@@ -7,7 +7,7 @@ import { ProductsSection } from './products-section';
 
 export const AffiliateBody = () => {
   return (
-    <div className="mx-auto flex max-w-[40rem] flex-col gap-16 pt-12">
+    <div className="mx-auto flex max-w-[40rem] flex-col gap-16">
       <section>
         <div className="space-y-1.5">
           <H3>Refer your friends and earn $50</H3>

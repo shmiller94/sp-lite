@@ -35,60 +35,57 @@ const PRODUCTS: {
   },
 ];
 
-export const AffilliateHero = () => {
+export const AffiliateHero = () => {
   const { width } = useWindowDimensions();
 
   return (
     <header className="mx-auto flex h-full flex-col justify-end pb-40">
       <div className="relative z-10 py-16">
         <H2 className="text-white">
-          Refer your friends
-          <br />
+          Refer your friends <br />
+          <span className="text-white/75">Earn Rewards</span>
         </H2>
-        <H2 className="text-white/75">Earn Rewards</H2>
+
         <div className="mt-8">
-          {
-            // We want to show a carousel on mobile
-            width <= 1024 ? (
-              <Carousel className="cursor-grab px-4 [mask-image:linear-gradient(to_right,transparent_0%,black_10%,black_90%,transparent_100%)] active:cursor-grabbing">
-                <CarouselMainContainer>
-                  {PRODUCTS.map((card, index) => (
-                    <SliderMainItem
-                      key={index}
-                      className={index > 0 ? 'px-4' : ''}
-                    >
-                      <ProductCard
-                        title={card.title}
-                        image={card.image}
-                        description={card.description}
-                      />
-                    </SliderMainItem>
-                  ))}
-                </CarouselMainContainer>
-                <CarouselThumbsContainer className="justify-center gap-x-1.5">
-                  {Array.from({ length: PRODUCTS.length }).map((_, index) => (
-                    <CarouselIndicator
-                      key={index}
-                      index={index}
-                      className="size-1.5 data-[active='false']:bg-white/30 data-[active='true']:bg-white hover:bg-white/50"
-                    />
-                  ))}
-                </CarouselThumbsContainer>
-              </Carousel>
-            ) : (
-              <div className="grid w-full grid-cols-4 gap-4">
+          {width <= 1024 ? (
+            <Carousel className="cursor-grab px-4 [mask-image:linear-gradient(to_right,transparent_0%,black_10%,black_90%,transparent_100%)] active:cursor-grabbing">
+              <CarouselMainContainer>
                 {PRODUCTS.map((card, index) => (
-                  <div key={index}>
+                  <SliderMainItem
+                    key={index}
+                    className={index > 0 ? 'px-4' : ''}
+                  >
                     <ProductCard
                       title={card.title}
                       image={card.image}
                       description={card.description}
                     />
-                  </div>
+                  </SliderMainItem>
                 ))}
-              </div>
-            )
-          }
+              </CarouselMainContainer>
+              <CarouselThumbsContainer className="justify-center gap-x-1.5">
+                {Array.from({ length: PRODUCTS.length }).map((_, index) => (
+                  <CarouselIndicator
+                    key={index}
+                    index={index}
+                    className="size-1.5 data-[active='false']:bg-white/30 data-[active='true']:bg-white hover:bg-white/50"
+                  />
+                ))}
+              </CarouselThumbsContainer>
+            </Carousel>
+          ) : (
+            <div className="grid w-full grid-cols-4 gap-4">
+              {PRODUCTS.map((card, index) => (
+                <div key={index}>
+                  <ProductCard
+                    title={card.title}
+                    image={card.image}
+                    description={card.description}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </header>

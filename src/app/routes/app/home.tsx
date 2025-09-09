@@ -26,7 +26,7 @@ export const HomeRoute = () => {
           <div className="absolute bottom-0 z-50 h-40 w-full rounded-t-[32px] bg-white" />
         </div>
       </div>
-      <div className="relative -top-40 w-full">
+      <div className="relative -top-40 w-full lg:-top-32">
         <div className="relative left-1/2 mb-8 flex w-screen -translate-x-1/2 items-center gap-6 border-b border-b-zinc-200 px-6 pb-4 md:w-auto md:justify-center md:border-b-0 md:px-0 md:pb-0">
           <button
             onClick={() => setTab('timeline')}
