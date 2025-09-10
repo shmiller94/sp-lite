@@ -20,6 +20,10 @@ export const HealthReportSection = () => {
           {title}
         </H2>
       </SectionTitle>
+      <Body1>
+        Your Health Report distills your Superpower Score, Biological Age, and
+        Biomarkers to show how your health tracks across 7 categories.
+      </Body1>
       <PlanHealthScore />
     </section>
   );

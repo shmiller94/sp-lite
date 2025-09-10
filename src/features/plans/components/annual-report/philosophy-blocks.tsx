@@ -4,7 +4,7 @@ import { MiniScoreChart } from '@/components/ui/charts/mini-donut-chart/mini-don
 import { CategoryValue } from '@/components/ui/charts/types/categories';
 import { Spinner } from '@/components/ui/spinner';
 import { Body1, Body2, H4 } from '@/components/ui/typography';
-import { ServiceActivity } from '@/features/plans/components/activities/plan-activity';
+import { Body4 } from '@/components/ui/typography/body4/body4';
 import { useBiomarkerCategoriesWithUpsells } from '@/features/plans/hooks/use-biomarker-categories-with-upsells';
 import { useLatestHealthScore } from '@/features/plans/hooks/use-latest-health-score';
 import { cn } from '@/lib/utils';
@@ -90,11 +90,7 @@ const BiomarkerBlocks = ({
   prefix: string;
 }) => {
   return biomarkers.map((bc, groupIndex) => (
-    <BlockGroupComponent
-      key={`${prefix}-${groupIndex}`}
-      component={bc}
-      className="border-b border-zinc-200"
-    />
+    <BlockGroupComponent key={`${prefix}-${groupIndex}`} component={bc} />
   ));
 };
 
@@ -108,8 +104,6 @@ export const PhilosophyBlocks = ({ className }: { className?: string }) => {
   const {
     environmentalBiomarkers,
     nutritionBiomarkers,
-    environmentalService,
-    nutritionService,
     isLoading: biomarkerCategoriesLoading,
   } = useBiomarkerCategoriesWithUpsells(latestScore?.component ?? []);
 
@@ -127,8 +121,8 @@ export const PhilosophyBlocks = ({ className }: { className?: string }) => {
 
   return (
     <section className={cn('flex flex-col', className)}>
-      <div className="flex w-full flex-col gap-1">
-        <div className="mt-8 flex flex-col gap-2">
+      <div className="mb-8 grid w-full flex-col gap-x-12 gap-y-1 md:grid-cols-2">
+        <div className="mt-8 flex flex-col gap-2 md:col-span-2">
           <H4>Overview</H4>
           <Body1>
             We have processed 100+ biomarkers to provide you with this
@@ -144,12 +138,19 @@ export const PhilosophyBlocks = ({ className }: { className?: string }) => {
           biomarkers={nutritionBiomarkers.validBiomarkers}
           prefix="nutrition"
         />
-        {environmentalService && environmentalBiomarkers.hasNulls && (
-          <ServiceActivity service={environmentalService} />
-        )}
-        {nutritionService && nutritionBiomarkers.hasNulls && (
-          <ServiceActivity service={nutritionService} />
-        )}
+        <div className="mb-8 space-y-1.5 md:col-span-2">
+          <Body4 className="text-secondary">Disclaimer</Body4>
+          <Body4 className="text-zinc-400">
+            The scores generated under Health Optimization, Nutrition & Gut, and
+            Lifestyle & Appearance are system-generated using unique data shared
+            about your medical history and health background. This report is
+            exclusively intended to be used for health optimization and wellness
+            purposes. These scores are not intended to diagnose or treat
+            disease, or to substitute a physicianʼs consultation. These insights
+            are determined by evaluating current research and may change over
+            time to reflect the most up to date research available.
+          </Body4>
+        </div>
       </div>
     </section>
   );
