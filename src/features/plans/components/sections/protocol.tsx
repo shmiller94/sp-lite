@@ -1,5 +1,13 @@
 import { CarePlanActivity } from '@medplum/fhirtypes';
-import { Info, LucideIcon, Pencil, Pill, TestTube } from 'lucide-react';
+import {
+  Apple,
+  Info,
+  LucideIcon,
+  Pill,
+  Pencil,
+  PersonStanding,
+  TestTube,
+} from 'lucide-react';
 import React from 'react';
 
 import { IconHighlight } from '@/components/shared/icon-highlight';
@@ -56,19 +64,37 @@ export const ProtocolSection = () => {
   const {
     serviceActivities,
     productActivities,
+    lifestyleActivities,
+    nutritionActivities,
     generalActivities,
-    productAvailabilityMap,
     hasCancerService,
     hasToxinService,
+    productAvailabilityMap,
   } = categorizePlanActivities(activities, getProductsQuery.data?.products);
 
   const planCitations = extractCitationsFromExtensions(plan?.extension);
 
   const activityGroups: ActivityGroup[] = [
     {
+      activities: lifestyleActivities,
+      icon: PersonStanding,
+      title: 'Lifestyle',
+      renderActivity: (activity, index) => (
+        <PlanActivity key={`lifestyle-${index}`} activity={activity} />
+      ),
+    },
+    {
+      activities: nutritionActivities,
+      icon: Apple,
+      title: 'Nutrition',
+      renderActivity: (activity, index) => (
+        <PlanActivity key={`nutrition-${index}`} activity={activity} />
+      ),
+    },
+    {
       activities: productActivities,
       icon: Pill,
-      title: 'Products / Supplements',
+      title: 'Supplements',
       titleSubtext:
         'These are the following products your clinician has recommended to help you achieve your goals.',
       renderActivity: (activity, index) => {
@@ -98,9 +124,22 @@ export const ProtocolSection = () => {
           </Disclaimer>
         ) : undefined,
     },
+    // Decision made by Shaun and Kingsley
+    // not to render this for now
+    // 09-09-2025
+    // {
+    //   activities: prescriptionActivities,
+    //   icon: File,
+    //   title: 'Prescription Treatments',
+    //   titleSubtext:
+    //     'Prescription medications and treatments recommended by your clinician.',
+    //   renderActivity: (activity, index) => (
+    //     <PlanActivity key={`prescription-${index}`} activity={activity} />
+    //   ),
+    // },
     {
       activities: serviceActivities,
-      title: 'Follow-Up Testing',
+      title: 'Diagnostic Tests',
       icon: TestTube,
       titleSubtext:
         'These are the follow-up tests you will be taking to monitor your progress.',
@@ -229,6 +268,9 @@ function categorizePlanActivities(
 ) {
   const serviceActivities: CarePlanActivity[] = [];
   const productActivities: CarePlanActivity[] = [];
+  const lifestyleActivities: CarePlanActivity[] = [];
+  const nutritionActivities: CarePlanActivity[] = [];
+  const prescriptionActivities: CarePlanActivity[] = [];
   const generalActivities: CarePlanActivity[] = [];
   const productAvailabilityMap = new Map<string, boolean>();
 
@@ -258,13 +300,32 @@ function categorizePlanActivities(
         hasToxinService = true;
       }
     } else {
-      generalActivities.push(activity);
+      // Check for activity type extension for non-product activities
+      const activityTypeExtension = detail?.extension?.find(
+        (ext) =>
+          ext.url ===
+          'https://superpower.com/fhir/StructureDefinition/care-plan-activity-type',
+      );
+      const activityType = activityTypeExtension?.valueString;
+
+      if (activityType === 'lifestyle') {
+        lifestyleActivities.push(activity);
+      } else if (activityType === 'nutrition-experimental') {
+        nutritionActivities.push(activity);
+      } else if (activityType === 'rx-experimental') {
+        prescriptionActivities.push(activity);
+      } else {
+        generalActivities.push(activity);
+      }
     }
   });
 
   return {
     serviceActivities,
     productActivities,
+    lifestyleActivities,
+    nutritionActivities,
+    prescriptionActivities,
     generalActivities,
     productAvailabilityMap,
     hasCancerService,
