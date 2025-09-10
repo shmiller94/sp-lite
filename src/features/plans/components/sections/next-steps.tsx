@@ -64,11 +64,12 @@ export const NextStepsSection = () => {
       };
     }
     return {
-      line1: 'Your care team has',
+      line1: 'Superpower recommends',
       line2: (
         <>
-          recommended{' '}
-          <span className="font-semibold">{productCount} products</span>
+          <span className="font-semibold">
+            {productCount} product{productCount > 1 ? 's' : ''} for you
+          </span>
         </>
       ),
       line3: (
@@ -122,17 +123,17 @@ export const NextStepsSection = () => {
       <Body1>
         To review the steps and track improvements, schedule your follow-up
         blood panel in 3 months ensuring interventions are effective and making
-        adjustments as needed. Consider stocking up on the recommended
-        supplements. You can either order through us at a discounted rate or
-        source them on your own. If you have any additional questions, feel free
-        to message your personal concierge or ask your Superpower AI.
+        adjustments as needed. <br /> <br /> Consider stocking up on the
+        recommended supplements. You can either order through us at a discounted
+        rate or source them on your own. <br /> <br /> If you have any
+        additional questions, feel free to message your personal concierge or
+        ask your Superpower AI.
       </Body1>
       <div className="py-8">
         {productActivities.length > 0 && (
           <H3 className="-mb-10">
-            Your longevity advisor has recommended {productActivities.length}{' '}
-            item
-            {productActivities.length > 1 ? 's' : ''} for you
+            {productActivities.length} item
+            {productActivities.length > 1 ? 's' : ''} recommended for you
           </H3>
         )}
         <div className="relative flex w-full flex-col items-center gap-6">
@@ -172,7 +173,9 @@ export const NextStepsSection = () => {
                   variant="default"
                   className="absolute bottom-8 left-1/2 -translate-x-1/2 rounded-full"
                 >
-                  View all {productActivities.length} protocol items
+                  {productActivities.length > 1
+                    ? `View all ${productActivities.length} protocol items`
+                    : `View protocol item`}
                 </Button>
               </ActionPlanCheckoutModal>
             </>

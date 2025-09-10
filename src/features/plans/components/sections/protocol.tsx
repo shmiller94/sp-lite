@@ -94,9 +94,7 @@ export const ProtocolSection = () => {
     {
       activities: productActivities,
       icon: Pill,
-      title: 'Supplements',
-      titleSubtext:
-        'These are the following products your clinician has recommended to help you achieve your goals.',
+      title: 'Products / Supplements',
       renderActivity: (activity, index) => {
         const productCode =
           activity.detail?.productCodeableConcept?.coding?.[0]?.code;
@@ -141,8 +139,6 @@ export const ProtocolSection = () => {
       activities: serviceActivities,
       title: 'Diagnostic Tests',
       icon: TestTube,
-      titleSubtext:
-        'These are the follow-up tests you will be taking to monitor your progress.',
       renderActivity: (activity, index) => (
         <PlanActivity key={`service-${index}`} activity={activity} />
       ),
@@ -164,8 +160,6 @@ export const ProtocolSection = () => {
       activities: generalActivities,
       title: 'General Notes',
       icon: Pencil,
-      titleSubtext:
-        'Your clinician has left you some additional notes about your plan:',
       renderActivity: (activity, index) => (
         <div className="space-y-2" key={`general-${index}`}>
           <H4 className="text-lg">Note #{index + 1}</H4>
@@ -196,15 +190,18 @@ export const ProtocolSection = () => {
       <div className="space-y-8">
         {activities.length > 0 && (
           <Body1>
-            Based off your action plan your clinician recommends you do the
-            following:
+            Superpower has designed a personal protocol to help target your
+            health goals and address your monitored issues. By following this
+            protocol and re-testing your blood panel, you should see great
+            progress.
           </Body1>
         )}
         {activities.length === 0 ? (
+          // This should NEVER happen
           <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-zinc-200 py-8">
             <H4 className="text-center">No protocol recommended</H4>
             <Body1 className="max-w-sm text-balance text-center text-secondary">
-              Your longevity advisor has no protocol recommendations for you.
+              We have no protocol recommendations for you.
             </Body1>
           </div>
         ) : (

@@ -130,7 +130,7 @@ export const ProductCard = ({
         <TooltipContent className="max-w-96">
           <p className="text-center">
             Product not available in store. You can order it online or contact
-            your clinician for assistance.
+            your concierge for assistance.
           </p>
         </TooltipContent>
       </Tooltip>
