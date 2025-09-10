@@ -136,18 +136,17 @@ export const AffiliateInviteForm = () => {
             <FormField
               control={form.control}
               name="email"
-              render={({ field }) => {
+              render={({ field, fieldState }) => {
                 return (
                   <FormItem className="">
                     <FormControl>
                       <Input
+                        variant={fieldState.error ? 'error' : 'default'}
                         autoComplete="off"
                         placeholder="Your friend's email"
                         {...field}
                         className="h-14"
                       />
-
-                      {/* TODO: @slavaluka "We have a new input error state coming soon" */}
                     </FormControl>
                     <FormMessage />
                   </FormItem>
