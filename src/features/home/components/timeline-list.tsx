@@ -1,8 +1,7 @@
 import { motion } from 'framer-motion';
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { ChevronUpIcon } from '@/components/icons/chevron-up-icon';
-import { Skeleton } from '@/components/ui/skeleton';
 import {
   Timeline,
   TimelineLabel,
@@ -25,6 +24,7 @@ import {
   OrderTimelineItem,
   OnboardingTimelineItem,
 } from './timeline-items';
+import { TimelineListSkeleton } from './timeline-list-skeleton';
 
 export const TimelineList = () => {
   /**
@@ -64,15 +64,7 @@ export const TimelineList = () => {
     timelineQuery.isLoading ||
     plansQuery.isLoading
   ) {
-    return (
-      <div className="w-full space-y-3">
-        {Array(5)
-          .fill(0)
-          .map((_, i) => (
-            <Skeleton className="h-[90px] w-full rounded-3xl" key={i} />
-          ))}
-      </div>
-    );
+    return <TimelineListSkeleton />;
   }
 
   if (!timelineItems) {
