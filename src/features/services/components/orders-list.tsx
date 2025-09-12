@@ -1,5 +1,6 @@
 import { ChevronDown } from 'lucide-react';
 import React, { useState } from 'react';
+import { NavLink } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -137,6 +138,9 @@ export const OrdersListEmpty = (): JSX.Element => {
         <p className="mb-4 mt-2 text-sm text-secondary">
           You have not ordered any services.
         </p>
+        <Button asChild size="medium">
+          <NavLink to="/services">Get Started</NavLink>
+        </Button>
       </div>
     </div>
   );

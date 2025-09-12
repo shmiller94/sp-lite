@@ -36,8 +36,10 @@ export const FinishScheduleList = () => {
 
   if (draftOrders.length === 0)
     return (
-      <div className="flex h-48 w-full items-center justify-center">
-        <Body1 className="text-zinc-500">Nothing here at this time.</Body1>
+      <div className="flex shrink-0 items-center justify-center rounded-3xl border border-dashed border-zinc-300 py-12">
+        <div className="mx-auto flex max-w-[420px] flex-col items-center justify-center text-center">
+          <Body1 className="text-zinc-500">Nothing here at this time.</Body1>
+        </div>
       </div>
     );
 
