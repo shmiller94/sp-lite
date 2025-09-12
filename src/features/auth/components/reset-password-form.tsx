@@ -9,7 +9,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
@@ -56,9 +55,9 @@ export function ResetPasswordForm(): JSX.Element {
   }
 
   return (
-    <div className="flex size-full max-w-3xl flex-1 flex-col justify-center gap-6 rounded-t-3xl bg-white md:gap-16 md:rounded-3xl ">
-      <div>
-        <div className="mb-8 space-y-3">
+    <div className="flex size-full max-w-3xl flex-1 flex-col justify-center gap-6 rounded-t-3xl bg-white md:gap-16 md:rounded-3xl">
+      <div className="flex flex-col gap-6">
+        <div className="space-y-3">
           <H3 className="text-3xl md:text-5xl">Reset Password</H3>
           <Body1 className="text-zinc-500">
             Enter the email associated with your account.
@@ -76,10 +75,10 @@ export function ResetPasswordForm(): JSX.Element {
                 name="email"
                 render={({ field, fieldState }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Your email"
+                        aria-label="Email"
                         autoCapitalize="none"
                         variant={fieldState.error ? 'error' : 'default'}
                         autoComplete="email"
