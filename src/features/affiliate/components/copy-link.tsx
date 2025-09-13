@@ -3,18 +3,12 @@ import React, { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Spinner } from '@/components/ui/spinner';
-import { useAffiliateLinks } from '@/features/affiliate/api';
+
+import { useInviteLink } from '../hooks/use-invite-link';
 
 export const CopyLinkInput = () => {
-  const { data, isLoading, isError } = useAffiliateLinks();
+  const { link } = useInviteLink();
   const [copied, setCopied] = useState(false);
-
-  if (isError || !data?.links?.length) {
-    return null;
-  }
-
-  const link = data.links[0];
 
   const handleCopy = () => {
     navigator.clipboard.writeText(link);
@@ -26,19 +20,9 @@ export const CopyLinkInput = () => {
     <div className="flex items-center space-x-2">
       <Input type="text" value={link} readOnly />
 
-      <Button
-        onClick={handleCopy}
-        disabled={isLoading}
-        className="flex items-center space-x-2"
-      >
-        {isLoading ? (
-          <Spinner size="sm" />
-        ) : (
-          <>
-            {!copied && <Copy className="mr-2 size-5" />}
-            {copied ? 'Copied!' : 'Copy Link'}
-          </>
-        )}
+      <Button onClick={handleCopy} className="flex items-center space-x-2">
+        {!copied && <Copy className="mr-2 size-5" />}
+        {copied ? 'Copied!' : 'Copy Link'}
       </Button>
     </div>
   );

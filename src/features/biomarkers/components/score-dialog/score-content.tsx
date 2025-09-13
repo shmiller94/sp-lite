@@ -7,8 +7,8 @@ import {
   NUTRITION_AND_GUT,
   LOOK_AND_FEEL,
 } from '@/const/health-score';
-import { useAffiliateLinks } from '@/features/affiliate/api';
 import { ShareButtons } from '@/features/affiliate/components/share-buttons';
+import { useInviteLink } from '@/features/affiliate/hooks/use-invite-link';
 import { useBiomarkers } from '@/features/biomarkers/api';
 import { BiomarkerDialogHeader } from '@/features/biomarkers/components/biomarker-dialog/biomarker-dialog-header';
 import { BiomarkerDialogMetadata } from '@/features/biomarkers/components/biomarker-dialog/biomarker-dialog-metadata';
@@ -17,7 +17,7 @@ import { ReportBlock } from '@/features/biomarkers/components/score-dialog/recor
 import { mostRecent } from '@/features/biomarkers/utils/most-recent-biomarker';
 
 export const ScoreContent = () => {
-  const { data, isError } = useAffiliateLinks();
+  const { link } = useInviteLink();
 
   const getBiomarkersQuery = useBiomarkers();
   if (getBiomarkersQuery.isLoading) {
@@ -47,10 +47,7 @@ export const ScoreContent = () => {
   const biologicalAge =
     mostRecent(biologicalAgeMarker?.value ?? [])?.quantity.value ?? null;
 
-  const affiliateLink =
-    !isError && data?.links?.length
-      ? data.links[0].replace(/^https?:\/\//, '')
-      : 'superpower.com';
+  const affiliateLink = link.replace(/^https?:\/\//, '');
 
   // Set share message based on the availability of biological age
   const shareMessage =
