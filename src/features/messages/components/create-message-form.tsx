@@ -74,7 +74,7 @@ export const CreateMessageForm = (): JSX.Element => {
                       <Textarea
                         {...field}
                         placeholder="Ask questions about your health from longevity advisors and get help from our customer service team"
-                        className="min-h-0 border-none p-1 scrollbar scrollbar-track-transparent scrollbar-thumb-zinc-300 hover:scrollbar-thumb-zinc-400 focus-visible:bg-transparent focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                        className="min-h-0 border-none p-1 outline-none scrollbar scrollbar-track-transparent scrollbar-thumb-zinc-300 hover:scrollbar-thumb-zinc-400 focus-visible:bg-transparent focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
                         disabled={createMessageMutation.isPending}
                       />
 

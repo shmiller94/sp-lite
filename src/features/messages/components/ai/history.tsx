@@ -1,5 +1,11 @@
 import { isToday, isYesterday, subMonths, subWeeks } from 'date-fns';
-import { MoreHorizontalIcon, PanelLeft, Search, SquarePen } from 'lucide-react';
+import {
+  MoreHorizontalIcon,
+  PanelLeft,
+  Search,
+  SquarePen,
+  UsersIcon,
+} from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -196,6 +202,7 @@ export function ChatHistoryContainer({ className }: { className?: string }) {
                       <Button
                         variant="ghost"
                         size="icon"
+                        disabled={!id}
                         className={cn(
                           'rounded-md p-1 text-zinc-400 transition-all hover:text-zinc-700',
                           isSidebarOpen
@@ -258,17 +265,32 @@ export function ChatHistoryContainer({ className }: { className?: string }) {
                   />
                 </div>
 
-                <Button
-                  variant="ghost"
-                  size="medium"
-                  className="justify-start gap-2 px-3 text-zinc-400"
-                  onClick={() => {
-                    navigate('/concierge');
-                  }}
-                >
-                  <SquarePen size={15} />
-                  New Chat
-                </Button>
+                <div className="mt-4 flex flex-col overflow-hidden">
+                  <Button
+                    variant="ghost"
+                    size="medium"
+                    className="justify-start gap-2 px-3 py-2 text-zinc-400"
+                    disabled={!id}
+                    onClick={() => {
+                      navigate('/concierge?type=ai');
+                    }}
+                  >
+                    <SquarePen size={15} />
+                    New AI chat
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="medium"
+                    className="justify-start gap-2 px-3 py-2 text-zinc-400"
+                    disabled={!id}
+                    onClick={() => {
+                      navigate('/concierge?type=concierge');
+                    }}
+                  >
+                    <UsersIcon size={15} />
+                    Ask care team
+                  </Button>
+                </div>
               </div>
               <div className="relative">
                 <div className="pointer-events-none absolute top-0 z-10 h-6 w-full bg-gradient-to-t from-transparent to-zinc-50" />

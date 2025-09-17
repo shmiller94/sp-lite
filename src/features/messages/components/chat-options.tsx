@@ -12,9 +12,9 @@ import { AnimatedIcon } from './ai/animated-icon';
 
 const AICard = () => {
   const type = useChatStore((s) => s.type);
-  const updateType = useChatStore((s) => s.update);
   const resetSession = useChatStore((s) => s.resetSession);
   const { track } = useAnalytics();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   return (
     <div
@@ -26,7 +26,9 @@ const AICard = () => {
           : 'border-zinc-100 hover:border-zinc-200',
       )}
       onClick={() => {
-        updateType('ai');
+        const next = new URLSearchParams(searchParams);
+        next.set('type', 'ai');
+        setSearchParams(next, { replace: true });
         // Reset session data for new chat session
         resetSession();
         // Track AI chat session start
@@ -53,7 +55,7 @@ const AICard = () => {
 
 const CareTeamCard = () => {
   const type = useChatStore((s) => s.type);
-  const updateType = useChatStore((s) => s.update);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   return (
     <div
@@ -64,7 +66,11 @@ const CareTeamCard = () => {
           ? 'border-vermillion-900 shadow-lg shadow-vermillion-900/15'
           : 'border-zinc-100 hover:border-zinc-200',
       )}
-      onClick={() => updateType('concierge')}
+      onClick={() => {
+        const next = new URLSearchParams(searchParams);
+        next.set('type', 'concierge');
+        setSearchParams(next, { replace: true });
+      }}
       role="presentation"
     >
       <div className="flex items-center justify-between">
@@ -101,7 +107,7 @@ const CareTeamCard = () => {
 };
 
 export const ChatOptions = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const type = searchParams.get('type');
   const updateType = useChatStore((s) => s.update);
 
@@ -109,9 +115,8 @@ export const ChatOptions = () => {
   useEffect(() => {
     if (type && (type === 'ai' || type === 'concierge')) {
       updateType(type as 'ai' | 'concierge');
-      setSearchParams();
     }
-  }, [type, updateType, setSearchParams]);
+  }, [type, updateType]);
 
   return (
     <div className="flex h-full flex-col items-center gap-4 md:flex-row">
