@@ -12667,6 +12667,11 @@ react-tweet@^3.2.1:
     clsx "^2.0.0"
     swr "^2.2.4"
 
+react-use-intercom@^5.5.0:
+  version "5.5.0"
+  resolved "https://registry.yarnpkg.com/react-use-intercom/-/react-use-intercom-5.5.0.tgz#950637078f0c73b0038e5a039d5e23c76e01864a"
+  integrity sha512-snqR16qzHFmcu6bRntjIiE9jePOZcDlqWKtDpoK4hiZGke1RK7+IPY81Fdgq4JZRRgzKOPkfANpv+ssVXsJMGQ==
+
 "react@^16.8.0 || ^17.0.0 || ^18.0.0", react@^18.3.1:
   version "18.3.1"
   resolved "https://registry.npmjs.org/react/-/react-18.3.1.tgz"
