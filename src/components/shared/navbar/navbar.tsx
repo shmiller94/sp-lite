@@ -216,6 +216,7 @@ export const DesktopNavbar = () => {
                   <NavLink
                     key={i}
                     to={link.to}
+                    state={{ from: pathname }}
                     data-testid={link.testid}
                     className={({ isActive }) =>
                       cn(
