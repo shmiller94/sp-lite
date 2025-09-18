@@ -74,7 +74,7 @@ export const ChartTooltip = ({
   }, [isOpen, children, displayedContent]);
   return (
     <div
-      className="pointer-events-none absolute z-50 transition-all duration-200 ease-in-out"
+      className="pointer-events-none absolute z-[53] transition-all duration-200 ease-in-out"
       style={{
         ...adjustedStyle,
         opacity: isOpen ? 1 : 0,
