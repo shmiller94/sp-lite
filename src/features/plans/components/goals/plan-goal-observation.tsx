@@ -1,12 +1,19 @@
 import { Circle } from 'lucide-react';
 
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { Body2 } from '@/components/ui/typography';
 import { STATUS_TO_COLOR } from '@/const/status-to-color';
 import { useBiomarkers } from '@/features/biomarkers/api';
 import { BiomarkerTableDialogRow } from '@/features/biomarkers/components/biomarkers-data-table/biomarker-table-dialog-row';
 import { BiomarkerSparklineChart } from '@/features/biomarkers/components/charts/biomarker-sparkline-chart';
 import { BiomarkerRange } from '@/features/biomarkers/components/range';
+import { BiomarkerValueUnit } from '@/features/biomarkers/components/value-unit';
 import { cn } from '@/lib/utils';
 
 export type PlanObservationProps = {
@@ -39,7 +46,7 @@ export function PlanGoalObservation({ id, className }: PlanObservationProps) {
           className,
         )}
       >
-        <div className="flex w-1/2 flex-col items-start">
+        <div className="flex w-1/2 flex-col items-start xs:w-1/3">
           <div className="flex flex-col justify-start gap-1">
             <div className="flex items-center gap-2.5">
               <Circle
@@ -56,11 +63,32 @@ export function PlanGoalObservation({ id, className }: PlanObservationProps) {
           </div>
         </div>
 
-        <div className="flex w-1/2 items-center justify-end md:justify-between">
-          <BiomarkerRange
-            biomarker={biomarker}
-            className="hidden rounded-lg px-2 py-1.5 text-xs md:block"
-          />
+        <div className="flex w-1/2 items-center justify-end gap-2 xs:w-2/3 md:justify-between">
+          <TooltipProvider>
+            <div className="flex-1">
+              <Tooltip delayDuration={75}>
+                <TooltipTrigger className="hidden xs:block">
+                  <BiomarkerValueUnit
+                    result={biomarker?.value[0]}
+                    baseUnit={biomarker.unit}
+                    textClassName="md:text-xs text-xs"
+                  />
+                </TooltipTrigger>
+                <TooltipContent>Your result</TooltipContent>
+              </Tooltip>
+            </div>
+            <div className="flex flex-1 justify-center">
+              <Tooltip delayDuration={75}>
+                <TooltipTrigger className="hidden md:block">
+                  <BiomarkerRange
+                    biomarker={biomarker}
+                    className="rounded-lg px-2 py-1.5 text-xs transition-colors duration-200 hover:bg-zinc-200 hover:text-zinc-700"
+                  />
+                </TooltipTrigger>
+                <TooltipContent>Optimal range</TooltipContent>
+              </Tooltip>
+            </div>
+          </TooltipProvider>
           <BiomarkerSparklineChart
             biomarker={biomarker}
             className="h-full sm:ml-0"
