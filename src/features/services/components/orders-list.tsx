@@ -1,4 +1,4 @@
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, CalendarPlus } from 'lucide-react';
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
@@ -132,15 +132,41 @@ OrdersList.displayName = 'OrdersList';
 
 export const OrdersListEmpty = (): JSX.Element => {
   return (
-    <div className="flex shrink-0 items-center justify-center rounded-3xl border border-dashed border-zinc-300 py-10">
-      <div className="mx-auto flex max-w-[420px] flex-col items-center justify-center text-center">
-        <h3 className="mt-4 text-lg">No orders yet</h3>
-        <p className="mb-4 mt-2 text-sm text-secondary">
-          You have not ordered any services.
-        </p>
-        <Button asChild size="medium">
-          <NavLink to="/services">Get Started</NavLink>
-        </Button>
+    <div className="relative overflow-hidden rounded-3xl border border-dashed border-zinc-300">
+      <div className="group relative">
+        <div
+          className={cn(
+            'mx-auto flex max-w-[420px] flex-col items-center justify-center text-center py-10 transition-all ease-out',
+            'lg:group-hover:blur-sm lg:group-hover:opacity-30',
+          )}
+        >
+          <h3 className="mt-4 text-lg">No orders yet</h3>
+          <p className="mb-4 mt-2 text-sm text-secondary">
+            You have not ordered any services.
+          </p>
+          {/* Mobile-only CTA (< md) */}
+          <div className="lg:hidden">
+            <Button asChild size="medium">
+              <NavLink to="/services">Get Started</NavLink>
+            </Button>
+          </div>
+        </div>
+
+        <NavLink
+          to="/services"
+          className={cn(
+            'absolute inset-0 flex items-center justify-center',
+            'pointer-events-none opacity-0 scale-95 transition-all duration-200 ease-out',
+            'lg:group-hover:opacity-100 lg:group-hover:scale-100 lg:pointer-events-auto',
+            'active:opacity-100 active:scale-100',
+          )}
+          aria-label="Get started with services"
+        >
+          <div className="flex flex-col items-center gap-2 rounded-2xl">
+            <CalendarPlus />
+            <span className="text-base font-medium">Get Started</span>
+          </div>
+        </NavLink>
       </div>
     </div>
   );
