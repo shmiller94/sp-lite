@@ -1,66 +1,33 @@
-import { useMemo } from 'react';
-
 import { Body1, Body2 } from '@/components/ui/typography';
-import { useUpsellOrders } from '@/features/onboarding/hooks/use-upsell-orders';
-import { useServices } from '@/features/services/api';
 import { cn } from '@/lib/utils';
-import { HealthcareService } from '@/types/api';
 
-import { getImageForUpsellService } from '../../utils/get-image-for-upsell-service';
+import { ServiceWithMetadata } from '../../hooks/use-upsell-services';
 
 import { ItemPreview } from './item-preview';
 
 export const ItemPreviews = ({
-  selectedServices,
+  services,
 }: {
-  selectedServices?: (HealthcareService & { image: string })[];
+  services?: ServiceWithMetadata[];
 }) => {
-  const { data: allServices } = useServices();
-  const { data: upsellOrders } = useUpsellOrders();
-
-  const selectedOrders = useMemo(() => {
-    const items = [] as (HealthcareService & { image: string })[];
-
-    upsellOrders.map((order) => {
-      if (allServices) {
-        const service = allServices.services.find(
-          (s) => s.id === order.serviceId,
-        );
-
-        if (!service) return;
-
-        items.push({
-          ...service,
-          image: getImageForUpsellService(service) ?? '',
-        });
-      }
-    });
-
-    return items;
-  }, [upsellOrders, allServices]);
-
-  const items =
-    selectedServices && selectedServices.length > 0
-      ? selectedServices
-      : selectedOrders;
-
   return (
     <div
       className={
-        'relative top-8 order-first mx-auto grid size-full h-96 max-h-[calc(100dvh-4.5rem)] max-w-[calc(100dvw-2rem)] grid-cols-2 place-items-center content-center items-center gap-4 overflow-hidden rounded-3xl bg-white p-4 transition-all lg:sticky lg:order-last lg:h-auto'
+        'relative top-8 order-first mx-auto hidden size-full max-h-[calc(100dvh-4.5rem)] min-h-96 max-w-[calc(100dvw-2rem)] grid-cols-2 place-items-center content-center items-center gap-4 overflow-hidden rounded-3xl bg-white p-4 py-16 transition-all md:grid lg:sticky lg:order-last lg:h-auto'
       }
     >
-      {items.length > 0 ? (
-        items.map((item, index) => (
+      {services?.length ? (
+        services.map((item, index) => (
           <div
             key={item.id}
             className={cn(
               'rounded-3xl bg-white relative',
-              items.length === 1 && 'col-span-2',
-              index % 2 !== 0 && 'md:top-56 top-24',
+              services.length === 1 && 'col-span-2',
+              services.length > 2 && index % 2 === 0 && 'md:-top-16 -top-8', // Left column: split offset up by half total offset
+              services.length > 2 && index % 2 !== 0 && 'md:top-16 top-8', // Right column: split offset down by half total offset
             )}
           >
-            <ItemPreview image={item.image ?? ''} />
+            <ItemPreview image={item.image_shadow ?? ''} />
           </div>
         ))
       ) : (

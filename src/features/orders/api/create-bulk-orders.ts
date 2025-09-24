@@ -13,7 +13,7 @@ export const createBulkOrders = ({
   data,
 }: {
   data: CreateOrderInput[];
-}): Promise<{ order: Order }> => {
+}): Promise<{ orders: Order[] }> => {
   return api.post('/orders/bulk', data);
 };
 
@@ -31,22 +31,23 @@ export const useCreateBulkOrders = ({
   return useMutation({
     onSuccess: (response, variables, context) => {
       // Track order events for each order in the bulk creation
-      const order = response.order;
+      const orders = response.orders;
 
-      // Track blood test orders for all blood panels
-      if (isBloodPanel(order.serviceName)) {
-        track('ordered_blood_test', {
-          blood_test: order.serviceName,
-          value: order.amount,
-        });
-      } else {
-        // Track service order for all non-blood panel services
-        track('ordered_service', {
-          service_name: order.serviceName,
-          value: order.amount,
-        });
-      }
-
+      orders.forEach((order) => {
+        // Track blood test orders for all blood panels
+        if (isBloodPanel(order.serviceName)) {
+          track('ordered_blood_test', {
+            blood_test: order.serviceName,
+            value: order.amount,
+          });
+        } else {
+          // Track service order for all non-blood panel services
+          track('ordered_service', {
+            service_name: order.serviceName,
+            value: order.amount,
+          });
+        }
+      });
       queryClient.invalidateQueries({
         queryKey: getOrdersQueryOptions().queryKey,
       });

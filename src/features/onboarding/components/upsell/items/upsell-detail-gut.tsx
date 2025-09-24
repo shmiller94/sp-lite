@@ -1,21 +1,14 @@
 import { ChevronRight } from 'lucide-react';
-import { useEffect, useMemo } from 'react';
 
-import { PdfViewer } from '@/components/shared/pdf-viewer';
 import { StyledMarkdown } from '@/components/shared/styled-markdown';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { toast } from '@/components/ui/sonner';
 import { Body1, H3, H4 } from '@/components/ui/typography';
-import { useOrders } from '@/features/orders/api';
+import { ServiceWithMetadata } from '@/features/onboarding/hooks/use-upsell-services';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useScrollDetection } from '@/hooks/use-scroll-detection';
-import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 import { cn } from '@/lib/utils';
-import { HealthcareService } from '@/types/api';
-import { ServiceFaq } from '@/types/service';
 import { formatMoney } from '@/utils/format-money';
 import {
   getDetailsForService,
@@ -24,85 +17,50 @@ import {
 
 import { ItemPreview } from '../item-preview';
 
-const SampleReportDialog = ({
-  url,
-  children,
-}: {
-  url: string;
-  children: React.ReactNode;
-}) => {
-  const { width } = useWindowDimensions();
+import { UpsellSampleReportDialog } from './upsell-sample-report';
 
-  if (width <= 768) {
-    return (
-      <Sheet>
-        <SheetTrigger asChild>{children}</SheetTrigger>
-        <SheetContent className="flex max-h-full flex-col rounded-t-[10px]">
-          <PdfViewer name="Sample Report" url={url} />
-        </SheetContent>
-      </Sheet>
-    );
-  }
-
-  return (
-    <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="h-full max-h-[80%] max-w-2xl">
-        <PdfViewer name="Sample Report" url={url} />
-      </DialogContent>
-    </Dialog>
-  );
-};
-
-export const UpsellItemDetails = ({
-  item,
-  selectItem,
+export const UpsellDetailGut = ({
+  service,
+  toggleService,
   goToNext,
 }: {
-  item: HealthcareService & {
-    tag?: string;
-    faqs?: ServiceFaq[];
-    image?: string;
-  };
-  selectItem: (item: HealthcareService) => void;
+  service: ServiceWithMetadata;
+  toggleService: (item: ServiceWithMetadata) => void;
   goToNext: () => void;
 }) => {
+  const { track } = useAnalytics();
+
+  const serviceDetails = getDetailsForService(service.name);
+
+  const sampleReportLink = getSampleReportLinkForService(service.name);
+
   const { isScrolled } = useScrollDetection({
     threshold: 180,
     bottomOffset: 10,
   });
-  const sampleReportLink = getSampleReportLinkForService(item.name);
 
-  const { data, isLoading } = useOrders();
-  const { track } = useAnalytics();
-  const serviceDetails = getDetailsForService(item.name);
-
-  const isAlreadyBooked = useMemo(() => {
-    return (
-      data?.orders?.find((order) => order.name === item.name) !== undefined
-    );
-  }, [data, item.name]);
-
-  useEffect(() => {
-    if (isAlreadyBooked) {
-      toast.success(`${item.name} is already paid`);
-    }
-  }, [isAlreadyBooked, item.name]);
+  const onAddToCart = () => {
+    toggleService(service);
+    track('added_service', {
+      service_name: service.name,
+      value: service.price,
+    });
+    toast.success(`${service.name} added`);
+    goToNext();
+  };
 
   return (
     <>
-      <div className="mx-auto flex size-full flex-col items-start px-6 pt-8 md:mt-0 lg:max-w-[512px] lg:pt-16">
-        {item.tag && (
-          <Badge
-            className={cn(
-              'mb-4 rounded-lg bg-vermillion-100 px-2 py-1 text-sm text-vermillion-900 transition-all duration-500',
-              isScrolled &&
-                '-translate-y-10 opacity-0 lg:translate-y-0 lg:opacity-100',
-            )}
-          >
-            {item.tag}
-          </Badge>
-        )}
+      <div className="mx-auto flex size-full flex-col items-start px-6 pt-8 md:mt-0 lg:max-w-[700px] lg:pt-16">
+        <Badge
+          className={cn(
+            'mb-4 rounded-lg bg-vermillion-100 px-2 py-1 text-sm text-vermillion-900 transition-all duration-500',
+            isScrolled &&
+              '-translate-y-10 opacity-0 lg:translate-y-0 lg:opacity-100',
+          )}
+        >
+          Most popular
+        </Badge>
         <div
           className={cn(
             'mb-4 w-full transition-all duration-500',
@@ -111,14 +69,14 @@ export const UpsellItemDetails = ({
           )}
         >
           <div className="flex w-full flex-1 items-center justify-between gap-4">
-            <H3 className="m-0 mb-1 leading-none text-primary">{item.name}</H3>
+            <H3 className="m-0 mb-1 leading-none text-primary">
+              {service.name}
+            </H3>
           </div>
-          <H4 className="m-0 text-primary">
-            {isAlreadyBooked ? '$0 (Paid already)' : formatMoney(item.price)}
-          </H4>
+          <H4 className="m-0 text-primary">{formatMoney(service.price)}</H4>
         </div>
         <Body1 className="mb-8 text-zinc-500 md:order-none">
-          {item.description}
+          {service.description}
         </Body1>
 
         <div className="w-full pb-64 lg:pb-0">
@@ -140,7 +98,7 @@ export const UpsellItemDetails = ({
         <div className="sticky top-[calc(100dvh-15rem)] z-50 order-first -mt-80 w-full space-y-2 bg-gradient-to-b from-transparent via-zinc-50 to-zinc-50 pb-6 md:static md:top-0 md:order-none md:mt-0 md:pb-0">
           {sampleReportLink && (
             <div className="mb-4 w-full lg:pb-0">
-              <SampleReportDialog url={sampleReportLink.pdf}>
+              <UpsellSampleReportDialog url={sampleReportLink.pdf}>
                 <Button
                   variant="ghost"
                   className="group mt-8 flex w-full items-center justify-between gap-4 rounded-[20px] bg-zinc-100 px-4 py-3 text-zinc-500 hover:bg-zinc-200/50"
@@ -160,37 +118,15 @@ export const UpsellItemDetails = ({
                     className="text-zinc-400 transition-all group-hover:translate-x-0.5 group-hover:text-zinc-500"
                   />
                 </Button>
-              </SampleReportDialog>
+              </UpsellSampleReportDialog>
             </div>
           )}
-          <Button
-            onClick={() => {
-              selectItem(item);
-
-              // track service addition
-              if (!isAlreadyBooked) {
-                track('added_service', {
-                  service_name: item.name,
-                  value: item.price,
-                });
-              }
-
-              // show toast for user feedback
-              if (!isAlreadyBooked) {
-                toast.success(`${item.name} added`);
-              }
-
-              goToNext();
-            }}
-            disabled={isLoading}
-            className="w-full hover:bg-zinc-800"
-          >
-            {isAlreadyBooked ? 'Next service' : 'Add to cart'}
+          <Button onClick={onAddToCart} className="w-full hover:bg-zinc-800">
+            Add to cart
           </Button>
           <Button
             onClick={goToNext}
             variant="ghost"
-            disabled={isLoading || isAlreadyBooked}
             size="icon"
             className="group h-12 w-full flex-1 border border-zinc-100 bg-white text-base text-zinc-500 shadow-sm hover:text-zinc-600 disabled:bg-white/75 disabled:text-zinc-300 disabled:opacity-100 disabled:backdrop-blur-md md:border-transparent md:bg-transparent md:shadow-none"
           >
@@ -219,7 +155,7 @@ export const UpsellItemDetails = ({
               isScrolled ? 'w-20 lg:w-full' : 'w-full',
             )}
           >
-            {item.image && <ItemPreview image={item.image} />}
+            <ItemPreview image={service?.image_shadow ?? ''} />
           </div>
           <div
             className={cn(
@@ -229,9 +165,9 @@ export const UpsellItemDetails = ({
                 : 'max-w-0 translate-x-10 opacity-0',
             )}
           >
-            <Body1>{item.name}</Body1>
+            <Body1>{service.displayName}</Body1>
             <Body1 className="text-secondary">
-              {isAlreadyBooked ? '$0 (Paid already)' : formatMoney(item.price)}
+              {formatMoney(service.price)}
             </Body1>
           </div>
         </div>

@@ -6,6 +6,17 @@ import {
   SUPERPOWER_BLOOD_PANEL,
   TOTAL_TOXIN_TEST,
   ENVIRONMENTAL_TOXIN_TEST,
+  FOOD_ENVIRONMENTAL_ALLERGY,
+  HEAVY_METALS_TEST,
+  MYCOTOXINS_TEST,
+  INTESTINAL_PERMEABILITY_PANEL,
+  PFAS_CHEMICALS,
+  CONTINUOUS_GLUCOSE_MONITOR,
+  HEART_CALCIUM_SCAN,
+  FULL_BODY_MRI,
+  VO2_MAX_TEST,
+  FULL_GENETIC_SEQUENCING,
+  DEXA_SCAN,
 } from '@/const/services';
 import { ServiceDetails } from '@/types/service';
 
@@ -99,7 +110,7 @@ export const SERVICE_DETAILS: Record<string, ServiceDetails> = {
     ],
   },
 
-  'Food & Environmental Allergy Testing': {
+  [FOOD_ENVIRONMENTAL_ALLERGY]: {
     faqs: [
       {
         question: "What's measured?",
@@ -154,7 +165,7 @@ export const SERVICE_DETAILS: Record<string, ServiceDetails> = {
     ],
   },
 
-  'Heavy Metals': {
+  [HEAVY_METALS_TEST]: {
     faqs: [
       {
         question: "What's measured?",
@@ -218,7 +229,7 @@ export const SERVICE_DETAILS: Record<string, ServiceDetails> = {
     ],
   },
 
-  Mycotoxins: {
+  [MYCOTOXINS_TEST]: {
     faqs: [
       {
         question: "What's measured?",
@@ -253,7 +264,7 @@ export const SERVICE_DETAILS: Record<string, ServiceDetails> = {
     ],
   },
 
-  'Intestinal Permeability Panel': {
+  [INTESTINAL_PERMEABILITY_PANEL]: {
     faqs: [
       {
         question: "What's measured?",
@@ -278,7 +289,7 @@ export const SERVICE_DETAILS: Record<string, ServiceDetails> = {
     ],
   },
 
-  'PFAS Chemicals': {
+  [PFAS_CHEMICALS]: {
     faqs: [
       {
         question: "What's measured?",
@@ -303,7 +314,7 @@ export const SERVICE_DETAILS: Record<string, ServiceDetails> = {
     ],
   },
 
-  'Continuous Glucose Monitor': {
+  [CONTINUOUS_GLUCOSE_MONITOR]: {
     faqs: [
       {
         question: "What's measured?",
@@ -328,7 +339,7 @@ export const SERVICE_DETAILS: Record<string, ServiceDetails> = {
     ],
   },
 
-  'Heart Calcium Scan': {
+  [HEART_CALCIUM_SCAN]: {
     faqs: [
       {
         question: "What's measured?",
@@ -374,7 +385,7 @@ export const SERVICE_DETAILS: Record<string, ServiceDetails> = {
     ],
   },
 
-  'Full Body MRI': {
+  [FULL_BODY_MRI]: {
     faqs: [
       {
         question: "What's measured?",
@@ -399,7 +410,7 @@ export const SERVICE_DETAILS: Record<string, ServiceDetails> = {
     ],
   },
 
-  'VO2 Max Test': {
+  [VO2_MAX_TEST]: {
     faqs: [
       {
         question: "What's measured?",
@@ -424,7 +435,7 @@ export const SERVICE_DETAILS: Record<string, ServiceDetails> = {
     ],
   },
 
-  'Full Genetic Sequencing': {
+  [FULL_GENETIC_SEQUENCING]: {
     faqs: [
       {
         question: "What's measured?",
@@ -448,7 +459,7 @@ export const SERVICE_DETAILS: Record<string, ServiceDetails> = {
     ],
   },
 
-  'DEXA Scan': {
+  [DEXA_SCAN]: {
     faqs: [
       {
         question: "What's measured?",

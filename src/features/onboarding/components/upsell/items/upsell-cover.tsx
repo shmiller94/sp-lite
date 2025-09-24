@@ -66,45 +66,50 @@ const ProgressCircle = ({ progress }: { progress: number }) => {
 };
 
 export const UpsellItemCover = ({
-  cover,
+  title,
+  femaleTitle,
+  description,
+  circularProgress,
+  source,
+  foregroundImage,
+  femaleForegroundImage,
+  backgroundImage,
   goToNext,
 }: {
-  cover: {
-    title: string;
-    femaleTitle?: string;
-    description: string;
-    circularProgress: number;
-    source: string;
-    foregroundImage: string;
-    femaleForegroundImage?: string;
-    backgroundImage: string;
-  };
+  title: string;
+  femaleTitle?: string;
+  description: string;
+  circularProgress: number;
+  source: string;
+  foregroundImage: string;
+  femaleForegroundImage?: string;
+  backgroundImage: string;
   goToNext: () => void;
 }) => {
   const { data: user, isLoading } = useUser();
 
   const statisticTitle = useMemo(() => {
-    return getGenderBasedValue(user?.gender, cover.title, {
-      female: cover.femaleTitle,
+    return getGenderBasedValue(user?.gender, title, {
+      female: femaleTitle,
     });
-  }, [cover.title, cover.femaleTitle, user?.gender]);
+  }, [title, femaleTitle, user?.gender]);
 
   const coverImage = useMemo(() => {
-    return getGenderBasedValue(user?.gender, cover.foregroundImage, {
-      female: cover.femaleForegroundImage,
+    return getGenderBasedValue(user?.gender, foregroundImage, {
+      female: femaleForegroundImage,
     });
-  }, [cover.foregroundImage, cover.femaleForegroundImage, user?.gender]);
+  }, [foregroundImage, femaleForegroundImage, user?.gender]);
 
   return (
     <>
       <div className="absolute left-1/2 top-1/2 z-50 mx-auto flex w-full max-w-[calc(100%-48px)] -translate-x-1/2 -translate-y-1/2 flex-col justify-center gap-4 rounded-2xl bg-[#563D3D]/20 p-6 backdrop-blur-2xl md:static md:size-full md:translate-x-0 md:translate-y-0 md:bg-transparent lg:max-w-[512px]">
-        {cover.femaleTitle && isLoading ? (
+        {femaleTitle && isLoading ? (
           <Skeleton className="h-12 w-full rounded-xl" />
         ) : (
           <H3 className="text-white md:text-primary">{statisticTitle}</H3>
         )}
         <Body1 className="mb-4 text-white md:text-zinc-500">
-          {cover.description}
+          {description}
         </Body1>
         <Button onClick={goToNext} className="hidden md:block">
           Continue
@@ -112,7 +117,7 @@ export const UpsellItemCover = ({
       </div>
       <div
         style={{
-          backgroundImage: `url(${cover.backgroundImage})`,
+          backgroundImage: `url(${backgroundImage})`,
         }}
         className="absolute top-1/2 flex h-dvh w-full -translate-y-1/2 items-center justify-center overflow-hidden bg-cover bg-center md:relative md:order-first md:size-full md:rounded-3xl md:p-24 lg:order-last"
       >
@@ -122,15 +127,13 @@ export const UpsellItemCover = ({
             <img
               className="size-full object-cover object-top duration-1000 animate-in fade-in lg:object-contain lg:object-bottom"
               src={coverImage}
-              alt={`${cover.title} person standing in front of a circle`}
+              alt={`${title} person standing in front of a circle`}
             />
           )}
         </div>
-        <ProgressCircle progress={cover.circularProgress} />
+        <ProgressCircle progress={circularProgress} />
         <div className="absolute bottom-4 left-1/2 z-50 w-full -translate-x-1/2 space-y-4 px-4">
-          <p className="text-center text-xs text-white/60">
-            Source: {cover.source}
-          </p>
+          <p className="text-center text-xs text-white/60">Source: {source}</p>
           <Button
             onClick={goToNext}
             className="w-full md:hidden"

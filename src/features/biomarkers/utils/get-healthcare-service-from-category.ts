@@ -2,7 +2,7 @@ import {
   CONTINUOUS_GLUCOSE_MONITOR,
   DEXA_SCAN,
   ENVIRONMENTAL_TOXINS,
-  FOOD_ENVIRENMENTAL_ALLERGY,
+  FOOD_ENVIRONMENTAL_ALLERGY,
   FULL_BODY_MRI,
   FULL_GENETIC_SEQUENCING,
   GRAIL_GALLERI_MULTI_CANCER_TEST,
@@ -17,7 +17,7 @@ export const getHealthcareServiceFromCategory = (
 ): string => {
   switch (category) {
     case 'Allergies':
-      return FOOD_ENVIRENMENTAL_ALLERGY;
+      return FOOD_ENVIRONMENTAL_ALLERGY;
     case 'Blood':
       return SUPERPOWER_BLOOD_PANEL;
     case 'Cancer':

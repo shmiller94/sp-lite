@@ -1,63 +1,89 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { Skeleton } from '@/components/ui/skeleton';
-import { getUpsellServices } from '@/features/onboarding/utils/get-upsell-services';
-import { useOrders } from '@/features/orders/api';
-import { useServices } from '@/features/services/api/get-services';
-import { HealthcareService } from '@/types/api';
+import {
+  ENVIRONMENTAL_TOXIN_TEST_ID,
+  GUT_MICROBIOME_ANALYSIS_ID,
+  HEAVY_METALS_TEST_ID,
+  MYCOTOXINS_TEST_ID,
+  TOTAL_TOXIN_TEST_ID,
+} from '@/const/services';
+import {
+  ServiceWithMetadata,
+  useUpsellServices,
+} from '@/features/onboarding/hooks/use-upsell-services';
 
 import { UpsellCover } from '../upsell-cover';
 
 import { UpsellCheckout } from './upsell-checkout';
-import { UpsellItemCover } from './upsell-item-cover';
-import { UpsellItemDetails } from './upsell-item-details';
+import { UpsellItemCover } from './upsell-cover';
+import { UpsellDetailGut } from './upsell-detail-gut';
+import { UpsellDetailToxins } from './upsell-detail-toxins';
+
+enum STEPS {
+  MAIN_COVER = 'MAIN_COVER',
+  GUT_COVER = 'GUT_COVER',
+  GUT_DETAIL = 'GUT_DETAIL',
+  TOXINS_COVER = 'TOXINS_COVER',
+  TOXINS_DETAIL = 'TOXINS_DETAIL',
+  CHECKOUT = 'CHECKOUT',
+}
+
+type STEP = (typeof STEPS)[keyof typeof STEPS];
+
+const UPSSELL_STEPS = Object.values(STEPS) as STEP[];
 
 export const UpsellSequence = () => {
-  const [upsells, setUpsells] = useState<HealthcareService[]>([]);
-  const [currentPosition, setCurrentPosition] = useState(0);
-  const [showMainCover, setShowMainCover] = useState(true);
+  const { services, selectedServices, setSelectedServices, isLoading } =
+    useUpsellServices();
 
-  const { data: services, isLoading: isServicesLoading } = useServices();
+  const [currentStep, setCurrentStep] = useState<STEP>(STEPS.MAIN_COVER);
 
-  let upsellServices = getUpsellServices(services?.services ?? []);
+  const gutService = useMemo(
+    () =>
+      services?.find((service) => service.id === GUT_MICROBIOME_ANALYSIS_ID),
+    [services],
+  );
 
-  const { data: orders, isLoading: isOrdersLoading } = useOrders();
+  const toxinsServices = useMemo(
+    () =>
+      services?.filter((service) =>
+        [
+          ENVIRONMENTAL_TOXIN_TEST_ID,
+          MYCOTOXINS_TEST_ID,
+          HEAVY_METALS_TEST_ID,
+          TOTAL_TOXIN_TEST_ID,
+        ].includes(service.id),
+      ) ?? [],
+    [services],
+  );
 
-  // we remove services that are already booked for
-  upsellServices = upsellServices.filter((service) => {
-    return !orders?.orders?.some((order) => order.name === service?.item.name);
-  });
-
-  // for each service there are two steps, the first one is the cover and the second one is the details
-  const maxPosition = upsellServices.length * 2;
-
-  // all even numbers in the positions are covers, so we check if we need to show it - avoiding having state chaos
-  const isShowingCover = currentPosition % 2 === 0;
-
-  // we get the current service index by dividing the current position by 2
-  const currentServiceIndex = Math.floor(currentPosition / 2);
-  // we get the current service by the index
-  const currentService = upsellServices[currentServiceIndex];
-
-  // if we have shown all services, we show the checkout
-  const showCheckout = currentPosition >= maxPosition;
-
-  // adds the upsell service to the cart
-  const selectItem = (item: HealthcareService) => {
-    setUpsells((prev) => [...prev, item]);
-  };
+  const toggleService = useCallback(
+    (item: ServiceWithMetadata) => {
+      setSelectedServices(item);
+    },
+    [setSelectedServices],
+  );
 
   const goToNext = () => {
-    if (currentPosition < maxPosition) {
-      setCurrentPosition(currentPosition + 1);
+    const currentIndex = UPSSELL_STEPS.indexOf(currentStep);
+    if (currentIndex < UPSSELL_STEPS.length - 1) {
+      let nextStep = UPSSELL_STEPS[currentIndex + 1];
+
+      // Skip gut steps if gut service is already ordered
+      if (gutService?.order) {
+        if (nextStep === STEPS.GUT_COVER) {
+          nextStep = STEPS.TOXINS_COVER;
+        } else if (nextStep === STEPS.GUT_DETAIL) {
+          nextStep = STEPS.TOXINS_DETAIL;
+        }
+      }
+
+      setCurrentStep(nextStep);
     }
   };
 
-  if (showMainCover) {
-    return <UpsellCover goToNext={() => setShowMainCover(false)} />;
-  }
-
-  if (isServicesLoading || isOrdersLoading)
+  if (isLoading)
     return (
       <>
         <div className="mx-auto flex size-full max-w-[512px] flex-col justify-center gap-4 px-4 lg:px-0">
@@ -72,19 +98,71 @@ export const UpsellSequence = () => {
       </>
     );
 
-  if (showCheckout) {
-    return <UpsellCheckout services={upsells} updateServices={setUpsells} />;
+  switch (currentStep) {
+    case STEPS.MAIN_COVER:
+      return <UpsellCover goToNext={goToNext} />;
+
+    case STEPS.GUT_COVER:
+      return (
+        <UpsellItemCover
+          title="Up to 40% of healthy adults show signs of gut microbiome imbalance."
+          description="This doesn’t always cause digestive symptoms, but it can lead to issues like fatigue, skin conditions, or mood disorders over time."
+          circularProgress={0.4}
+          source="NIH Human Microbiome Project"
+          foregroundImage="/onboarding/upsell/gut-microbiome-test-foreground.webp"
+          backgroundImage="/onboarding/upsell/gut-microbiome-test-background.webp"
+          goToNext={goToNext}
+        />
+      );
+
+    case STEPS.GUT_DETAIL:
+      if (gutService) {
+        return (
+          <UpsellDetailGut
+            service={gutService}
+            toggleService={toggleService}
+            goToNext={goToNext}
+          />
+        );
+      }
+      break;
+
+    case STEPS.TOXINS_COVER:
+      return (
+        <UpsellItemCover
+          title="Over 90% of people have hormone-disrupting plastics in their blood."
+          description="This doesn’t always cause digestive symptoms, but it can lead to issues like fatigue, skin conditions, or mood disorders over time."
+          circularProgress={0.9}
+          source="Endocrine Society, 2022"
+          foregroundImage="/onboarding/upsell/total-toxin-test-foreground.webp"
+          backgroundImage="/onboarding/upsell/total-toxin-test-background.webp"
+          goToNext={goToNext}
+        />
+      );
+
+    case STEPS.TOXINS_DETAIL:
+      if (toxinsServices) {
+        return (
+          <UpsellDetailToxins
+            services={toxinsServices}
+            selectedServices={selectedServices}
+            toggleService={toggleService}
+            goToNext={goToNext}
+          />
+        );
+      }
+      break;
+
+    case STEPS.CHECKOUT:
+      return (
+        <UpsellCheckout
+          services={services}
+          selectedServices={selectedServices}
+          toggleService={toggleService}
+        />
+      );
+
+    default:
+      return null;
   }
-
-  if (!currentService) return null;
-
-  return isShowingCover ? (
-    <UpsellItemCover cover={currentService.cover} goToNext={goToNext} />
-  ) : (
-    <UpsellItemDetails
-      item={currentService.item}
-      selectItem={selectItem}
-      goToNext={goToNext}
-    />
-  );
 };

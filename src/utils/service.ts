@@ -7,7 +7,7 @@ import {
   DEXA_SCAN,
   ENVIRONMENTAL_TOXIN_TEST,
   ENVIRONMENTAL_TOXINS,
-  FOOD_ENVIRENMENTAL_ALLERGY,
+  FOOD_ENVIRONMENTAL_ALLERGY,
   FULL_BODY_MRI,
   FULL_GENETIC_SEQUENCING,
   GRAIL_GALLERI_MULTI_CANCER_TEST,
@@ -71,9 +71,9 @@ export const getServiceTimeline = (
 };
 
 export const getDetailsForService = (
-  healthcareServiceName: string,
+  serviceName: string,
 ): ServiceDetails | undefined => {
-  return SERVICE_DETAILS[healthcareServiceName];
+  return SERVICE_DETAILS[serviceName];
 };
 
 export const getSampleReportLinkForService = (service: string) => {
@@ -210,7 +210,7 @@ export const getServiceImage = (name: string): string => {
     case ENVIRONMENTAL_TOXINS:
       return serviceImages.EnvironmentToxins;
 
-    case FOOD_ENVIRENMENTAL_ALLERGY:
+    case FOOD_ENVIRONMENTAL_ALLERGY:
       return serviceImages.FoodAndEnvAllergyTesting;
 
     case FULL_GENETIC_SEQUENCING:

@@ -194,7 +194,7 @@ const HealthcareServiceDialogConsumer = ({
       <DialogContent className="flex max-h-[90vh] flex-col px-0.5">
         <DialogHeader className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm">
           <div className="flex items-center gap-2">
-            {steps.length > 1 ? (
+            {steps.length > 1 && (
               <>
                 <DialogTitle className="text-zinc-500">
                   Step {activeStep + 1} / {steps.length}
@@ -204,10 +204,6 @@ const HealthcareServiceDialogConsumer = ({
                   className="ml-2 h-1 w-32"
                 />
               </>
-            ) : (
-              <DialogTitle className="text-zinc-500">
-                Book a service
-              </DialogTitle>
             )}
           </div>
           <DialogDescription className="sr-only">
