@@ -2,6 +2,11 @@ import { Range } from '@/types/api';
 
 import { ChartDimensions } from '../types/chart';
 
+import {
+  getBinaryBiomarkerDimensions,
+  isBinaryBiomarker,
+} from './binary-biomarker';
+
 // calculates the dimensions of the chart, including the min and max values, the total range, and the optimal and normal ranges
 export const calculateChartDimensions = (
   range: Range[],
@@ -27,6 +32,11 @@ export const calculateChartDimensions = (
 
   const optimalRange = range?.find((r) => r.status === 'OPTIMAL');
   const normalRange = range?.find((r) => r.status === 'NORMAL');
+
+  // Binary biomarkers: use forced ranges (-1..1.1 with optimal 0..1.1)
+  if (isBinaryBiomarker(optimalRange, normalRange)) {
+    return getBinaryBiomarkerDimensions(minValue, maxValue);
+  }
 
   if (!optimalRange) {
     const totalRange = maxValue - minValue || 1;
@@ -72,7 +82,7 @@ export const calculateChartDimensions = (
   if (!normalRange) {
     const rangeSpan = optimalHigh - optimalLow;
     const rangeExtension = rangeSpan * rangeExtensionFactor;
-    const chartMinValue = Math.min(minValue, 0 - rangeExtension);
+    const chartMinValue = Math.min(minValue, optimalLow - rangeExtension);
     const chartMaxValue = Math.max(maxValue, optimalHigh + rangeExtension);
     const totalRange = chartMaxValue - chartMinValue || 1;
 
@@ -84,8 +94,8 @@ export const calculateChartDimensions = (
       totalRange,
       optimalLow,
       optimalHigh,
-      normalLow: 0,
-      normalHigh: Math.max(optimalHigh, maxValue),
+      normalLow: optimalLow,
+      normalHigh: optimalHigh,
     };
   }
 
