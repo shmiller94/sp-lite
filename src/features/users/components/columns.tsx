@@ -1,9 +1,50 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { ColumnDef } from '@tanstack/react-table';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { useLogin } from '@/lib/auth';
 import { AdminUser } from '@/types/api';
+
+import { DeleteUserModal } from './delete-user-modal';
+import { UpdateUserForm } from './update-user-form';
+
+const ActionsCell = ({ user }: { user: AdminUser }) => {
+  const [isUpdateFormOpen, setIsUpdateFormOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const isDeleted = user.isDeleted;
+
+  return (
+    <>
+      <div className="flex gap-2 py-2">
+        <Button
+          variant="outline"
+          onClick={() => setIsUpdateFormOpen(true)}
+          disabled={isDeleted}
+        >
+          Edit
+        </Button>
+        <Button
+          variant="destructive"
+          onClick={() => setIsDeleteModalOpen(true)}
+          disabled={isDeleted}
+        >
+          Delete
+        </Button>
+      </div>
+      <UpdateUserForm
+        user={user}
+        isOpen={isUpdateFormOpen}
+        onClose={() => setIsUpdateFormOpen(false)}
+      />
+      <DeleteUserModal
+        user={user}
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+      />
+    </>
+  );
+};
 
 export const columns: ColumnDef<AdminUser>[] = [
   {
@@ -59,6 +100,35 @@ export const columns: ColumnDef<AdminUser>[] = [
     },
   },
   {
+    id: 'isDeleted',
+    header: 'Status',
+    cell: ({ row }) => {
+      const isDeleted = row.original.isDeleted;
+      return (
+        <div className="flex items-center gap-2">
+          <span
+            className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
+              isDeleted
+                ? 'bg-red-100 text-red-800'
+                : 'bg-green-100 text-green-800'
+            }`}
+          >
+            {isDeleted ? 'Deleted' : 'Active'}
+          </span>
+          {isDeleted && row.original.deletedAt && (
+            <span className="text-xs text-gray-500">
+              {new Date(row.original.deletedAt).toLocaleDateString()}
+            </span>
+          )}
+        </div>
+      );
+    },
+  },
+  {
+    id: 'actions',
+    cell: ({ row }) => <ActionsCell user={row.original} />,
+  },
+  {
     id: 'login',
     cell: function CellComponent({ row }) {
       const loginMutation = useLogin({});
@@ -67,6 +137,7 @@ export const columns: ColumnDef<AdminUser>[] = [
       const userEmail = row.original.email;
       return (
         <Button
+          disabled={row.original.isDeleted}
           onClick={async () => {
             await loginMutation.mutateAsync({
               email: userEmail,

@@ -39,6 +39,9 @@ interface BaseUser {
 }
 
 export interface AdminUser extends BaseUser {
+  gender: string;
+  isDeleted: boolean;
+  deletedAt: string | null;
   stripeCustomerId: string;
   _count: {
     observations: number;

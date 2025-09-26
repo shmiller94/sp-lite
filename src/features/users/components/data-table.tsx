@@ -42,6 +42,7 @@ export function UsersDataTable<TData, TValue>({
     lastName: false,
     stripeCustomerId: false,
     serviceRequests: false,
+    observations: false, // this number is wrong after EMR migration
   });
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
