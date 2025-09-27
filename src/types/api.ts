@@ -366,7 +366,6 @@ export type Order = Entity<{
   createdAt: string;
   externalId?: string;
   fileId?: string;
-  amount: number;
   invoiceId?: string;
   consent?: InformedConsent;
   note: Annotation[];

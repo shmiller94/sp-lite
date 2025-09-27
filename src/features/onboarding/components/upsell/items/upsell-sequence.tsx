@@ -12,6 +12,7 @@ import {
   ServiceWithMetadata,
   useUpsellServices,
 } from '@/features/onboarding/hooks/use-upsell-services';
+import { useAnalytics } from '@/hooks/use-analytics';
 
 import { UpsellCover } from '../upsell-cover';
 
@@ -34,6 +35,7 @@ type STEP = (typeof STEPS)[keyof typeof STEPS];
 const UPSSELL_STEPS = Object.values(STEPS) as STEP[];
 
 export const UpsellSequence = () => {
+  const { track } = useAnalytics();
   const { services, selectedServices, setSelectedServices, isLoading } =
     useUpsellServices();
 
@@ -60,9 +62,14 @@ export const UpsellSequence = () => {
 
   const toggleService = useCallback(
     (item: ServiceWithMetadata) => {
+      track('service_added_to_cart', {
+        service_id: item.id,
+        service_name: item.name,
+        value: item.price,
+      });
       setSelectedServices(item);
     },
-    [setSelectedServices],
+    [setSelectedServices, track],
   );
 
   const goToNext = () => {

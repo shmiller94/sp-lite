@@ -59,9 +59,9 @@ export const CheckEmailRoute = () => {
     });
 
     // Track analytics
-    const eventName =
-      origin === 'registration' ? 'user_confirmed' : 'logged_in';
-    track(eventName);
+    track('logged_in', {
+      method: 'otp',
+    });
 
     identify(response.user.id, {
       $set: {

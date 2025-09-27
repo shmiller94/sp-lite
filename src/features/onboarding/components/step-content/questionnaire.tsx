@@ -1,7 +1,6 @@
 import { IntakeQuestionnaire } from '@/features/questionnaires/components/intake-questionnaire';
 import { ScreeningQuestionnaire } from '@/features/questionnaires/components/screening-questionnaire';
 import { useUpdateTask } from '@/features/tasks/api/update-task';
-import { useAnalytics } from '@/hooks/use-analytics';
 import { useStepper } from '@/lib/stepper/stepper';
 
 interface QuestionnaireStepProps {
@@ -14,7 +13,6 @@ export const QuestionnaireStep = ({
   showIntro = true,
 }: QuestionnaireStepProps) => {
   const { nextStep, activeStep } = useStepper((s) => s);
-  const { track } = useAnalytics();
 
   const { mutateAsync: updateTaskProgress, isError } = useUpdateTask();
 
@@ -25,10 +23,6 @@ export const QuestionnaireStep = ({
     });
 
     if (!isError) {
-      // Track intake completion
-      if (type === 'intake') {
-        track('completed_intake');
-      }
       nextStep();
     }
   };

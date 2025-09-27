@@ -49,9 +49,9 @@ export const VerifyEmailRoute = () => {
     });
 
     // Track analytics
-    const eventName =
-      response.origin === 'registration' ? 'user_confirmed' : 'logged_in';
-    track(eventName);
+    track('logged_in', {
+      method: 'magic_link',
+    });
 
     identify(response.user.id, {
       $set: {

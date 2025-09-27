@@ -11,8 +11,10 @@ import { getOrdersQueryOptions } from '@/features/orders/api/get-orders';
 import { getServicesQueryOptions } from '@/features/services/api';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { api } from '@/lib/api-client';
+import { useUser } from '@/lib/auth';
 import { MutationConfig } from '@/lib/react-query';
 import { Order } from '@/types/api';
+import { getUpgradePrice } from '@/utils/get-upgrade-price';
 
 export const upgradeOrderInputSchema = z.object({
   upgradeType: z.enum(['advanced']),
@@ -59,6 +61,7 @@ export const useUpgradeOrder = (
 ) => {
   const queryClient = useQueryClient();
   const { track } = useAnalytics();
+  const { data: user } = useUser();
   const { onSuccess, ...restConfig } = mutationConfig || {};
 
   return useMutation({
@@ -67,19 +70,19 @@ export const useUpgradeOrder = (
       // Track upgrade order events
       const order = response.order;
 
-      // Track blood test orders for all blood panels
-      if (isBloodPanel(order.serviceName)) {
-        track('ordered_blood_test', {
-          blood_test: order.serviceName,
-          value: order.amount,
-        });
-      } else {
-        // Track service order for all non-blood panel services
-        track('ordered_service', {
-          service_name: order.serviceName,
-          value: order.amount,
-        });
-      }
+      track('order_upgraded', {
+        order_id: order.id,
+        order_invoice_id: order.invoiceId,
+        order_name: order.name,
+        order_status: order.status,
+        order_collection_method: order.method?.[0],
+        service_id: order.serviceId,
+        service_name: order.serviceName,
+        is_blood_panel: isBloodPanel(order.serviceName),
+        value: getUpgradePrice(user),
+        currency: 'USD',
+        order,
+      });
 
       if (shouldResyncImmediately)
         resyncDataAfterUpgradedOrder({ queryClient });

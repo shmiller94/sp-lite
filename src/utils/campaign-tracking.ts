@@ -1,7 +1,6 @@
 import { CampaignData } from '../types/campaign';
 
 import { getAccessCode } from './access-code';
-import { getReferralId } from './referral-id';
 
 const CAMPAIGN_STORAGE_KEY = 'superpower_campaign_data';
 
@@ -103,10 +102,6 @@ export function getCampaignData(): CampaignData | null {
  * Call this function on app initialization or page load
  */
 export function captureCampaignParameters(): CampaignData | null {
-  // capture referral invite
-  const referralId = getReferralId();
-  console.log('Current referral id:', referralId);
-
   // Always extract current UTM parameters from URL
   const currentUrlData = extractCampaignParameters();
   const hasCurrentUrlParams = Object.keys(currentUrlData).length > 0;

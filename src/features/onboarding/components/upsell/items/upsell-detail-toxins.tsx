@@ -13,7 +13,6 @@ import {
   TOTAL_TOXIN_TEST_ID,
 } from '@/const/services';
 import { ServiceWithMetadata } from '@/features/onboarding/hooks/use-upsell-services';
-import { useAnalytics } from '@/hooks/use-analytics';
 
 import { ItemPreviews } from '../item-previews';
 
@@ -30,16 +29,7 @@ export const UpsellDetailToxins = ({
   toggleService: (item: ServiceWithMetadata) => void;
   goToNext: () => void;
 }) => {
-  const { track } = useAnalytics();
-
   const onAddToCart = () => {
-    // Add all selected services to cart
-    selectedServices.forEach((service) => {
-      track('added_service', {
-        service_name: service.name,
-        value: service.price,
-      });
-    });
     toast.success(
       `${selectedServices.length} ${selectedServices.length === 1 ? 'service' : 'services'} added`,
     );

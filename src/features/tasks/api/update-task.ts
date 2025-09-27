@@ -21,7 +21,7 @@ export const updateTask = ({
 }: {
   data: UpdateTaskInput;
   taskName: TaskName;
-}): Promise<Task> => {
+}): Promise<{ task: Task }> => {
   return api.patch(`/tasks/${taskName}`, data);
 };
 
@@ -38,13 +38,22 @@ export const useUpdateTask = ({
 
   return useMutation({
     onSuccess: (data, variables, context) => {
-      // Track onboarding completion
-      if (
-        variables.taskName === 'onboarding' &&
-        variables.data.status === 'completed'
-      ) {
-        track('completed_onboarding');
-      }
+      const prefix = `task_${data.task.name}`.toLowerCase();
+
+      const set: Record<string, any> = {};
+      set[`${prefix}_status`] = data.task.status;
+      set[`${prefix}_progress`] = data.task.progress;
+      if (data.task.status === 'completed')
+        set[`${prefix}_completed_at`] = new Date().toISOString();
+
+      // Track task update
+
+      track('task_updated', {
+        task_name: data.task.name,
+        task_status: data.task.status,
+        task_progress: data.task.progress,
+        $set: set,
+      });
 
       queryClient.invalidateQueries({
         queryKey: getTaskQueryOptions(variables.taskName).queryKey,

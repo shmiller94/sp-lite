@@ -14,6 +14,7 @@ import { CreateOrderInput } from '@/features/orders/api/create-order';
 import { getDefaultCollectionMethod } from '@/features/orders/utils/get-default-collection-method';
 import { useUpdateTask } from '@/features/tasks/api/update-task';
 import { CurrentPaymentMethodCard } from '@/features/users/components/current-payment-method-card';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { useUser } from '@/lib/auth';
 import { useStepper } from '@/lib/stepper';
 import { OrderStatus } from '@/types/api';
@@ -33,6 +34,7 @@ export const UpsellCheckout = ({
 }) => {
   const { data: user } = useUser();
   const { mutateAsync, isPending, error } = useCreateBulkOrders();
+  const { track } = useAnalytics();
 
   const { nextStep, activeStep } = useStepper((s) => s);
   const { mutateAsync: updateTaskProgress, isError } = useUpdateTask();
@@ -91,8 +93,16 @@ export const UpsellCheckout = ({
 
     await mutateAsync({ data: orders });
 
+    track('upsell_checkout_completed', {
+      number_of_services: selectedServices.length,
+      value: totalPrice,
+      currency: 'USD',
+      services: selectedServices.map((service) => service.name),
+      service_ids: selectedServices.map((service) => service.id),
+    });
+
     return updateStep();
-  }, [user, mutateAsync, selectedServices, updateStep]);
+  }, [user, mutateAsync, selectedServices, updateStep, totalPrice, track]);
 
   const existingOrders = useMemo(() => {
     return services.some((service) => service.order);

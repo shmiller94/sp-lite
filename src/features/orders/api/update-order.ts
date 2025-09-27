@@ -8,7 +8,7 @@ import {
   locationInputSchema,
 } from '@/features/orders/api/create-order';
 import { getOrdersQueryOptions } from '@/features/orders/api/get-orders';
-import { getServicesQueryOptions } from '@/features/services/api';
+import { getServicesQueryOptions, useServices } from '@/features/services/api';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { api } from '@/lib/api-client';
 import { MutationConfig } from '@/lib/react-query';
@@ -56,28 +56,29 @@ export const useUpdateOrder = ({
   const queryClient = useQueryClient();
   const { track } = useAnalytics();
   const { onSuccess, ...restConfig } = mutationConfig || {};
+  const { data: servicesData } = useServices();
 
   return useMutation({
     onSuccess: (response, variables, context) => {
       // Track order update events for blood draw scheduling
       const order = response.order;
 
-      // Track blood draw scheduling and order (when status changes from DRAFT to PENDING)
-      if (
-        variables.data.status === 'PENDING' &&
-        isBloodPanel(order.serviceName)
-      ) {
-        track('ordered_blood_test', {
-          blood_test: order.serviceName,
-          value: order.amount,
-        });
+      const service = servicesData?.services?.find(
+        (s) => s.id === order.serviceId,
+      );
 
-        track('scheduled_blood_draw', {
-          scheduled_date: variables.data.timestamp || order.startTimestamp,
-          collection_method: variables.data.method || order.method?.[0],
-          value: order.amount,
-        });
-      }
+      track('order_updated', {
+        order_id: order.id,
+        order_invoice_id: order.invoiceId,
+        order_name: order.name,
+        order_status: order.status,
+        order_collection_method: order.method?.[0],
+        service_id: order.serviceId,
+        service_name: order.serviceName,
+        is_blood_panel: isBloodPanel(order.serviceName),
+        value: service?.price,
+        currency: 'USD',
+      });
 
       queryClient.invalidateQueries({
         queryKey: getOrdersQueryOptions().queryKey,

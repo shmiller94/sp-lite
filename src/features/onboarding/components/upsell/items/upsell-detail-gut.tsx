@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/sonner';
 import { Body1, H3, H4 } from '@/components/ui/typography';
 import { ServiceWithMetadata } from '@/features/onboarding/hooks/use-upsell-services';
-import { useAnalytics } from '@/hooks/use-analytics';
 import { useScrollDetection } from '@/hooks/use-scroll-detection';
 import { cn } from '@/lib/utils';
 import { formatMoney } from '@/utils/format-money';
@@ -28,8 +27,6 @@ export const UpsellDetailGut = ({
   toggleService: (item: ServiceWithMetadata) => void;
   goToNext: () => void;
 }) => {
-  const { track } = useAnalytics();
-
   const serviceDetails = getDetailsForService(service.name);
 
   const sampleReportLink = getSampleReportLinkForService(service.name);
@@ -41,10 +38,6 @@ export const UpsellDetailGut = ({
 
   const onAddToCart = () => {
     toggleService(service);
-    track('added_service', {
-      service_name: service.name,
-      value: service.price,
-    });
     toast.success(`${service.name} added`);
     goToNext();
   };

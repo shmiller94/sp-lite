@@ -33,7 +33,9 @@ export const LoginRoute = () => {
   const handleLoginWithPasswordSuccess = useCallback(
     (user: User) => {
       // Password path completes entirely client-side after token exchange
-      track('logged_in');
+      track('logged_in', {
+        method: 'password',
+      });
       navigate(`${shouldRedirect ? `${redirectTo}` : '/'}`, {
         replace: true,
       });
