@@ -10,6 +10,7 @@ import { Body1, Body2 } from '@/components/ui/typography';
 import { useCheckoutContext } from '@/features/auth/stores';
 import { RegisterInput } from '@/lib/auth';
 
+import { AtHomeDrawCreditSection } from './baseline-summary';
 import {
   BillingSection,
   YourDetailsSection,
@@ -29,6 +30,9 @@ const ConfiguratorSections = ({ onPrev }: { onPrev: () => void }) => {
     },
     {
       component: <PurchaseMembershipInfoSection />,
+    },
+    {
+      component: <AtHomeDrawCreditSection className="lg:hidden" />,
     },
     {
       component: <YourDetailsSection />,

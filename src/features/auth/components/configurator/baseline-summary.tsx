@@ -1,4 +1,4 @@
-import { ChevronDown } from 'lucide-react';
+import { CheckCircle, ChevronDown } from 'lucide-react';
 
 import { AtHomeNoticeSection } from '@/components/shared/at-home-notice-section';
 import { Button } from '@/components/ui/button';
@@ -14,14 +14,23 @@ import { useCheckoutContext } from '@/features/auth/stores';
 import { cn } from '@/lib/utils';
 import { formatMoney } from '@/utils/format-money';
 
-export const BaselineSummary = ({ postalCode }: { postalCode: string }) => (
-  <div className="hidden w-full flex-col gap-4 rounded-3xl border border-zinc-200 bg-white p-10 lg:sticky lg:top-8 lg:flex lg:h-[calc(100svh-4rem)] lg:max-h-[calc(100svh-4rem)] lg:overflow-auto">
-    <Body1 className="text-zinc-500">Order summary</Body1>
-    <CardInfo />
-    <TotalInfo />
-    <AtHomeNoticeSection postalCode={postalCode} />
-  </div>
-);
+export const BaselineSummary = ({ postalCode }: { postalCode: string }) => {
+  const { couponMetadata } = useCheckoutContext();
+  const atHomeDrawCredit = couponMetadata?.event_type === 'at_home_draw_credit';
+
+  return (
+    <div className="hidden w-full flex-col gap-4 rounded-3xl border border-zinc-200 bg-white p-10 lg:sticky lg:top-8 lg:flex lg:h-[calc(100svh-4rem)] lg:max-h-[calc(100svh-4rem)] lg:overflow-auto">
+      <Body1 className="text-zinc-500">Order summary</Body1>
+      <CardInfo />
+      <TotalInfo />
+      <AtHomeDrawCreditSection />
+      <AtHomeNoticeSection
+        postalCode={postalCode}
+        atHomeDrawCredit={atHomeDrawCredit}
+      />
+    </div>
+  );
+};
 
 export const CardInfo = ({ className }: { className?: string }) => {
   const { membership } = useCheckoutContext();
@@ -118,6 +127,39 @@ export const TotalInfo = () => {
         ) : (
           <Body1>Unavailable</Body1>
         )}
+      </div>
+    </div>
+  );
+};
+
+export const AtHomeDrawCreditSection = ({
+  className,
+}: {
+  className?: string;
+}) => {
+  const { couponMetadata } = useCheckoutContext();
+  const atHomeDrawCredit = couponMetadata?.event_type === 'at_home_draw_credit';
+
+  if (!atHomeDrawCredit) {
+    return null;
+  }
+
+  return (
+    <div
+      className={cn(
+        'space-y-2 rounded-[20px] border border-green-200 bg-green-50 p-4 shadow-sm',
+        className,
+      )}
+    >
+      <div className="flex items-center gap-3">
+        <CheckCircle className="size-5 text-green-600" />
+        <div className="flex-1">
+          <H4>Your Promo Code Has Been Applied </H4>
+          <Body2 className="text-zinc-500">
+            You&apos;ll schedule your free at-home blood draw after you&apos;ve
+            activated your membership.
+          </Body2>
+        </div>
       </div>
     </div>
   );

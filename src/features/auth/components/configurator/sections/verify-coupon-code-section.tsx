@@ -18,8 +18,14 @@ import { EventDrawInvitationModal } from '../../event-draw-invitation-modal';
 
 const AccessCodeInputSection = () => {
   const { isFirstRender } = useIsFirstRender();
-  const { processing, setCoupon, coupon, showCoupon, setShowCoupon } =
-    useCheckoutContext();
+  const {
+    processing,
+    setCoupon,
+    coupon,
+    showCoupon,
+    setShowCoupon,
+    setCouponMetadata,
+  } = useCheckoutContext();
 
   const [code, setCode] = useState(coupon ?? '');
   const [showEventDrawModal, setShowEventDrawModal] = useState(false);
@@ -43,6 +49,7 @@ const AccessCodeInputSection = () => {
           } else {
             setCoupon(variables.accessCode);
             setCode(variables.accessCode);
+            setCouponMetadata(data.coupon.metadata ?? null);
           }
 
           toast.success('Access code successfully applied');
@@ -53,6 +60,7 @@ const AccessCodeInputSection = () => {
         setCoupon(null);
         clearManualCouponOverride();
         setShowEventDrawModal(false);
+        setCouponMetadata(null);
       },
     },
   });
@@ -69,6 +77,7 @@ const AccessCodeInputSection = () => {
       setCoupon(getAccessCode());
       validateCodeMutation.reset();
       setShowEventDrawModal(false);
+      setCouponMetadata(null);
     }
   }, [code, isFirstRender]);
 

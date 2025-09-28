@@ -114,3 +114,17 @@ export const getEventDrawMetadata = (): Record<string, string> | null => {
   }
   return null;
 };
+
+// Get coupon metadata from session storage
+export const getCouponMetadata = (): Record<string, string> | null => {
+  try {
+    const stored = sessionStorage.getItem('superpower-manual-coupon');
+    if (stored) {
+      const override = JSON.parse(stored);
+      return override.metadata || null;
+    }
+  } catch (error) {
+    clearManualCouponOverride();
+  }
+  return null;
+};

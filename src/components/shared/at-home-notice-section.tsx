@@ -13,15 +13,17 @@ const SURCHARGE_STATES = ['NY', 'NJ'];
 // This component is used to display a notice about the additional lab fee required for at-home collection
 export const AtHomeNoticeSection = ({
   postalCode,
+  atHomeDrawCredit = false,
   className,
 }: {
   postalCode: string;
+  atHomeDrawCredit?: boolean;
   className?: string;
 }) => {
   const state = getState(postalCode);
   if (!state) return null;
-
   if (!NOTICE_STATES.includes(state.state)) return null;
+  if (state.state === 'AZ' && atHomeDrawCredit) return null;
 
   const stateName = US_STATES.find((s) => s.value === state.state)?.label;
   if (!stateName) return null;

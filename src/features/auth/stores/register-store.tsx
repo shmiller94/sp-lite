@@ -1,7 +1,11 @@
 import { create } from 'zustand';
 
 import { AvailableSubscription } from '@/types/api';
-import { getAccessCode, setManualCouponOverride } from '@/utils/access-code';
+import {
+  getAccessCode,
+  getCouponMetadata,
+  setManualCouponOverride,
+} from '@/utils/access-code';
 
 type CheckoutStore = {
   membership: AvailableSubscription | null;
@@ -12,6 +16,8 @@ type CheckoutStore = {
   setShowCoupon: (show: boolean) => void;
   coupon: string | null;
   setCoupon: (coupon: string | null) => void;
+  couponMetadata: Record<string, string> | null;
+  setCouponMetadata: (metadata: Record<string, string> | null) => void;
 };
 
 export const useCheckoutContext = create<CheckoutStore>()((set) => ({
@@ -33,4 +39,6 @@ export const useCheckoutContext = create<CheckoutStore>()((set) => ({
       setManualCouponOverride(coupon);
     }
   },
+  couponMetadata: getCouponMetadata(),
+  setCouponMetadata: (metadata) => set({ couponMetadata: metadata }),
 }));

@@ -11,7 +11,10 @@ import { Button } from '@/components/ui/button';
 import { AnimatedCheckbox } from '@/components/ui/checkbox';
 import { TransactionSpinner } from '@/components/ui/spinner/transaction-spinner';
 import { Body1, Body2, H3 } from '@/components/ui/typography';
-import { BaselineSummary } from '@/features/auth/components/configurator';
+import {
+  AtHomeDrawCreditSection,
+  BaselineSummary,
+} from '@/features/auth/components/configurator';
 import {
   CouponCodeBtn,
   PurchaseMembershipInfoSection,
@@ -98,9 +101,10 @@ export const LegacyCheckoutRoute = () => {
 };
 
 export const BillingInfo = ({ postalCode }: { postalCode: string }) => {
-  const { membership, processing } = useCheckoutContext();
+  const { membership, processing, couponMetadata } = useCheckoutContext();
   const [expressAvailable, setExpressAvailable] = useState(false);
   const [consentGiven, setConsentGiven] = useState(false);
+  const atHomeDrawCredit = couponMetadata?.event_type === 'at_home_draw_credit';
 
   const {
     handleCardNumberPayment,
@@ -112,8 +116,13 @@ export const BillingInfo = ({ postalCode }: { postalCode: string }) => {
 
   return (
     <div className="space-y-8 px-4 md:px-8">
-      <AtHomeNoticeSection postalCode={postalCode} className="lg:hidden" />
+      <AtHomeNoticeSection
+        postalCode={postalCode}
+        atHomeDrawCredit={atHomeDrawCredit}
+        className="lg:hidden"
+      />
       <PurchaseMembershipInfoSection />
+      <AtHomeDrawCreditSection />
       <div className="space-y-4">
         {expressAvailable ? <H3 className="text-primary">Payment</H3> : null}
         <StripeExpressCheckoutElement
