@@ -6,7 +6,11 @@ export const getTimelineItems = (
 ) => {
   const getOnboardingItems = () => {
     return timelineItems?.filter(
-      (ti) => ti.type === 'ONBOARDING_TASK' && ti.status !== 'DONE',
+      (ti) =>
+        ti.type === 'ONBOARDING_TASK' &&
+        ti.status !== 'DONE' &&
+        ti.name !== 'Insurance', // This is necessary to avoid UI bugs
+      // https://linear.app/superpower/issue/ENG-9105/remove-insurance-task-from-sign-up-process
     );
   };
 

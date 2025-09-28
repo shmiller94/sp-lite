@@ -5,7 +5,6 @@ import { TimelineItem } from '@/types/api';
 
 import {
   IdentityDialog,
-  InsuranceDialog,
   WearableDialog,
   GiftButton,
 } from '../components/onboarding-items';
@@ -15,7 +14,6 @@ const ONBOARDING_ITEMS = {
   INTAKE: 'Intake',
   SCREENING: 'Screening',
   WEARABLES: 'Wearable',
-  INSURANCE: 'Insurance',
   GIFT: 'Gift friends & family 100 years',
 } as const;
 
@@ -52,11 +50,6 @@ export const getOnboardingTimelineItem = (timelineItem: TimelineItem) => {
       return {
         image: 'timeline/wearables.webp',
         button: <WearableDialog />,
-      };
-    case ONBOARDING_ITEMS.INSURANCE:
-      return {
-        image: 'timeline/insurance.webp',
-        button: <InsuranceDialog />,
       };
     case ONBOARDING_ITEMS.GIFT:
       return {
