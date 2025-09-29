@@ -7,3 +7,4 @@ export * from './upsell-booking';
 export * from './questionnaire';
 export * from './advanced-upgrade';
 export * from './update-info';
+export * from './heard-about-us';

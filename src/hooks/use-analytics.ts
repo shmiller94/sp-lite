@@ -19,6 +19,8 @@ export type PersonProperties = {
    */
   birthday?: string;
   birthday_year?: number;
+  hdyhau_category?: string;
+  hdyhau_option?: string;
 };
 
 export type TrackProperties = Properties & {

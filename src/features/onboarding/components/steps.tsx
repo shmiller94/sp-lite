@@ -8,6 +8,7 @@ import {
   QuestionnaireStep,
   AdvancedUpgradeStep,
   UpdateInfoStep,
+  HeardAboutUsStep,
 } from '@/features/onboarding/components/step-content';
 import { StepItem } from '@/lib/stepper/stepper-store-creator';
 
@@ -19,6 +20,10 @@ export const steps: StepItem[] = [
   {
     id: 'advanced-upgrade',
     content: <AdvancedUpgradeStep />,
+  },
+  {
+    id: 'heard-about-us',
+    content: <HeardAboutUsStep />,
   },
   {
     id: 'intake',
