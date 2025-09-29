@@ -57,7 +57,7 @@ export const UpsellCheckout = ({
   }, [activeStep, isError, nextStep, updateTaskProgress]);
 
   const skipStep = async () => {
-    const stepToJump = getStepIndexById('mission');
+    const stepToJump = getStepIndexById('booking');
     if (stepToJump === -1) {
       toast.error("Something went wrong. Can't skip this step.");
     }
@@ -68,7 +68,7 @@ export const UpsellCheckout = ({
     });
 
     if (!isError) {
-      jump('mission');
+      jump('booking');
     }
   };
 
