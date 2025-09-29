@@ -125,7 +125,7 @@ export const QuestionnaireQuestion = ({
           </Button>
         )}
         <Button type="button" className="w-full" onClick={handleNextStep}>
-          Next
+          {item.linkId === 'intro' ? 'I Understand' : 'Next'}
         </Button>
       </div>
     </div>
@@ -250,7 +250,7 @@ export const QuestionnaireQuestion = ({
             onClick={handleNextStep}
             disabled={isResponseEmpty(item, response, checkForQuestionEnabled)}
           >
-            Next
+            {item.linkId === 'intro' ? 'I Understand' : 'Next'}
           </Button>
         </div>
       )}
