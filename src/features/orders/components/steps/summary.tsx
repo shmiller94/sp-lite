@@ -20,7 +20,6 @@ import { useService } from '@/features/services/api';
 import { usePaymentMethods } from '@/features/settings/api';
 import { CreatePaymentMethodForm } from '@/features/settings/components/billing/create-payment-method-form';
 import { CurrentPaymentMethodCard } from '@/features/users/components/current-payment-method-card';
-import { useEventDraw } from '@/hooks/use-event-draw';
 import { useStepper } from '@/lib/stepper';
 import { OrderStatus } from '@/types/api';
 import { formatMoney } from '@/utils/format-money';
@@ -61,8 +60,6 @@ export function OrderSummary(): ReactNode {
     .filter((o) => o.status === OrderStatus.draft)
     .find((o) => o.serviceId === service.id);
 
-  const { isEventDrawUser } = useEventDraw();
-
   const price = serviceQuery.data?.service.price;
 
   const createOrderMutation = useCreateOrder();
@@ -85,12 +82,32 @@ export function OrderSummary(): ReactNode {
     ordersQuery.isLoading ||
     paymentMethodsQuery.isLoading;
 
+  /*
+   * If user books new service (draftOrderId was not initialized)
+   *
+   * we just create regular order
+   * */
   const createOrderFn = async (): Promise<void> => {
     if (service === null)
       throw Error('There was a problem creating the order.');
 
-    const data = buildCreateOrderData();
-    const response = await createOrderMutation.mutateAsync({ data });
+    const data: CreateOrderInput = {
+      serviceId: service.id,
+      items,
+      location: location ? location : {},
+      timestamp: slot ? slot.start : new Date().toISOString(),
+      timezone: tz || moment.tz.guess(),
+      method: collectionMethod ? [collectionMethod] : [],
+    };
+
+    // if step requires consent, add it to the final data object we send to server
+    if (informedConsent) {
+      data.informedConsent = { agreedAt: new Date().toISOString() };
+    }
+
+    const response = await createOrderMutation.mutateAsync({
+      data,
+    });
 
     if (response.order) {
       updateCreatedOrderId(response.order.id);
@@ -104,61 +121,24 @@ export function OrderSummary(): ReactNode {
       return;
     }
 
-    const data = buildUpdateOrderData();
+    const data: UpdateOrderInput = {
+      location: location ? location : {},
+      timezone: tz || moment.tz.guess(),
+      method: collectionMethod ? collectionMethod : undefined,
+
+      timestamp: slot ? slot.start : new Date().toISOString(),
+      status: OrderStatus.pending,
+    };
+
+    // if step requires consent, add it to the final data object we send to server
+    if (informedConsent) {
+      data.informedConsent = { agreedAt: new Date().toISOString() };
+    }
+
     await updateOrderMutation.mutateAsync({
       orderId: existingDraftOrder.id,
       data,
     });
-  };
-
-  const buildCreateOrderData = (): CreateOrderInput => {
-    const data: CreateOrderInput = {
-      serviceId: service.id,
-      items,
-      location: location ? location : {},
-      timestamp: slot ? slot.start : new Date().toISOString(),
-      timezone: tz || moment.tz.guess(),
-      method: collectionMethod ? [collectionMethod] : [],
-    };
-
-    if (informedConsent) {
-      data.informedConsent = { agreedAt: new Date().toISOString() };
-    }
-
-    return data;
-  };
-
-  const buildUpdateOrderData = (): UpdateOrderInput => {
-    const orderStatus = isEventDrawUser
-      ? OrderStatus.active
-      : OrderStatus.pending;
-
-    const finalLocation = isEventDrawUser
-      ? existingDraftOrder?.location || {}
-      : location || {};
-
-    const finalTimezone = isEventDrawUser
-      ? existingDraftOrder?.timezone || 'UTC'
-      : tz || moment.tz.guess();
-
-    const finalTimestamp = slot ? slot.start : new Date().toISOString();
-
-    const data: UpdateOrderInput = {
-      location: finalLocation,
-      timezone: finalTimezone,
-      method: collectionMethod || undefined,
-      status: orderStatus,
-    };
-
-    if (!isEventDrawUser) {
-      data.timestamp = finalTimestamp;
-    }
-
-    if (informedConsent) {
-      data.informedConsent = { agreedAt: new Date().toISOString() };
-    }
-
-    return data;
   };
 
   return (
@@ -174,10 +154,7 @@ export function OrderSummary(): ReactNode {
         {defaultPaymentMethod && !isQueryLoading ? (
           <>
             {price !== undefined ? (
-              <CreateOrderSummaryItem
-                basePrice={price}
-                collectionMethod={collectionMethod ?? undefined}
-              />
+              <CreateOrderSummaryItem basePrice={price} />
             ) : null}
             <OrderAppointmentDetails
               collectionMethod={collectionMethod ?? undefined}
@@ -232,15 +209,10 @@ export function OrderSummary(): ReactNode {
 
 function CreateOrderSummaryItem({
   basePrice,
-  collectionMethod: propCollectionMethod,
 }: {
   basePrice: number;
-  collectionMethod?: string;
 }): ReactNode {
-  const { service, collectionMethod: storeCollectionMethod } = useOrder(
-    (s) => s,
-  );
-  const collectionMethod = propCollectionMethod || storeCollectionMethod;
+  const { service, collectionMethod } = useOrder((s) => s);
 
   return (
     <div className="flex flex-col items-start justify-between sm:flex-row sm:items-center">

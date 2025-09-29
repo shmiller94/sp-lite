@@ -47,6 +47,7 @@ spec:
               value: '{{ .VITE_APP_KLAVIYO_LIST_ID }}'
             - name: VITE_APP_KLAVIYO_PUBLIC_API_KEY
               value: '{{ .VITE_APP_KLAVIYO_PUBLIC_API_KEY }}'
+
 ---
 apiVersion: v1
 kind: Service

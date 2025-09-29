@@ -331,7 +331,6 @@ export enum OrderStatus {
   revoked = 'REVOKED',
   draft = 'DRAFT',
   pending = 'PENDING',
-  active = 'ACTIVE',
 }
 
 export type CollectionMethodType =

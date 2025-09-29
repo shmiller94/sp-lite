@@ -87,34 +87,6 @@ export const getAccessCode = (): string | null => {
   return null;
 };
 
-// Check if the current coupon is an event draw coupon
-export const isEventDrawCoupon = (): boolean => {
-  try {
-    const stored = sessionStorage.getItem('superpower-manual-coupon');
-    if (stored) {
-      const override = JSON.parse(stored);
-      return override.metadata?.event_type === 'event_draw';
-    }
-  } catch (error) {
-    clearManualCouponOverride();
-  }
-  return false;
-};
-
-// Get event draw metadata from the current coupon
-export const getEventDrawMetadata = (): Record<string, string> | null => {
-  try {
-    const stored = sessionStorage.getItem('superpower-manual-coupon');
-    if (stored) {
-      const override = JSON.parse(stored);
-      return override.metadata || null;
-    }
-  } catch (error) {
-    clearManualCouponOverride();
-  }
-  return null;
-};
-
 // Get coupon metadata from session storage
 export const getCouponMetadata = (): Record<string, string> | null => {
   try {
