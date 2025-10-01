@@ -1,4 +1,10 @@
-import { startTransition, useCallback, useEffect, useState } from 'react';
+import {
+  startTransition,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import { SuperpowerLogo } from '@/components/icons/superpower-logo';
 import {
@@ -27,6 +33,7 @@ export const CheckEmailScreen = ({
 }: CheckEmailScreenProps) => {
   const [cooldownSeconds, setCooldownSeconds] = useState(20);
   const [otpCode, setOtpCode] = useState('');
+  const lastSubmittedCodeRef = useRef<string | null>(null);
 
   const sendMagicLinkMutation = useSendMagicLink({
     mutationConfig: {
@@ -38,9 +45,15 @@ export const CheckEmailScreen = ({
 
   const verifyOTPMutation = useVerifyEmailOTP({
     mutationConfig: {
-      onSuccess: onOtpSuccess,
-      onSettled: () => {
-        // Reset input in a transition to avoid visible flicker
+      onSuccess: (response) => {
+        // Keep the code visible during auth processing
+        onOtpSuccess(response);
+        // Reset tracking to allow new attempts if needed
+        lastSubmittedCodeRef.current = null;
+      },
+      onError: () => {
+        // Clear code on error so user can try again
+        lastSubmittedCodeRef.current = null;
         startTransition(() => setOtpCode(''));
       },
     },
@@ -83,13 +96,17 @@ export const CheckEmailScreen = ({
       const cleanValue = value.replace(/\D/g, '').slice(0, 6);
       setOtpCode(cleanValue);
 
-      if (cleanValue.length === 6) {
-        setTimeout(() => {
-          verifyOTPMutation.mutate({ data: { email, code: cleanValue } });
-        }, 100);
+      if (
+        cleanValue.length === 6 &&
+        cleanValue !== lastSubmittedCodeRef.current &&
+        !verifyOTPMutation.isPending &&
+        !isLoading
+      ) {
+        lastSubmittedCodeRef.current = cleanValue;
+        verifyOTPMutation.mutate({ data: { email, code: cleanValue } });
       }
     },
-    [verifyOTPMutation, email],
+    [verifyOTPMutation, email, isLoading],
   );
 
   const canResend =
@@ -123,7 +140,7 @@ export const CheckEmailScreen = ({
             <Body1 className="text-white">
               {origin === 'expired-link'
                 ? `That link expired, so we've sent a fresh magic link to ${email}.`
-                : `We've sent a magic link to ${email} to ${origin === 'login' ? 'log in' : 'get started'}.`}
+                : `We've sent a magic link to ${email}.`}
             </Body1>
 
             <Body1 className="text-white">

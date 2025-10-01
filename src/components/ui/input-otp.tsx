@@ -13,7 +13,7 @@ const InputOTP = React.forwardRef<
   <OTPInput
     ref={ref}
     containerClassName={cn(
-      'flex items-center gap-2.5 has-[:disabled]:opacity-50',
+      'flex w-full items-center justify-center has-[:disabled]:opacity-50',
       containerClassName,
     )}
     className={cn(
@@ -29,7 +29,11 @@ const InputOTPGroup = React.forwardRef<
   React.ElementRef<'div'>,
   React.ComponentPropsWithoutRef<'div'>
 >(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn('flex items-center', className)} {...props} />
+  <div
+    ref={ref}
+    className={cn('flex items-center justify-center gap-2 w-full', className)}
+    {...props}
+  />
 ));
 InputOTPGroup.displayName = 'InputOTPGroup';
 
@@ -44,7 +48,7 @@ const InputOTPSlot = React.forwardRef<
     <div
       ref={ref}
       className={cn(
-        'relative mr-2 flex h-14 w-14 items-center justify-center rounded-[12px] backdrop-blur-lg transition-all',
+        'relative flex flex-1 aspect-square max-w-14 items-center justify-center rounded-[12px] backdrop-blur-lg transition-all',
         'bg-black/12 bg-white/20 border border-white',
         !isActive && 'border-opacity-20',
         className,
