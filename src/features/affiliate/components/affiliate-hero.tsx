@@ -14,9 +14,9 @@ const PRODUCTS: {
   description: string;
 }[] = [
   {
-    title: 'Manta Sleep Mask',
-    image: '/affiliate/manta-sleep-mask.webp',
-    description: 'Invite 2 friends',
+    title: 'Magnesium Glycinate',
+    image: '/affiliate/magnesium-glycinate.webp',
+    description: 'Invite 1 friend',
   },
   {
     title: 'Classic Night Swannies',
@@ -106,7 +106,7 @@ const ProductCard = ({
       <img
         src={image}
         alt={title}
-        className="absolute inset-0 size-full select-none object-contain"
+        className="absolute inset-0 size-full select-none object-contain pt-6 lg:pt-0"
       />
       <div className="relative flex size-full h-48 flex-col">
         <H4 className="text-white">{title}</H4>
