@@ -4,16 +4,16 @@ import { Body1, Body3, H1 } from '@/components/ui/typography';
 export const IntakeScreen = ({ handleNext }: { handleNext: () => void }) => {
   return (
     <div className="flex w-full flex-1 flex-col items-center justify-start md:justify-center">
-      <p className="mb-2 text-center text-sm text-white duration-300 animate-in fade-in slide-in-from-bottom-4">
-        It&apos;s time to
-      </p>
-      <H1 className="mx-auto mb-10 max-w-md text-center text-white duration-500 animate-in fade-in slide-in-from-bottom-4 max-md:text-5xl md:max-w-xl">
-        Set up your membership
+      <H1 className="mb-6 w-full max-w-full text-center text-white duration-500 animate-in fade-in slide-in-from-bottom-4 max-md:text-5xl sm:w-full">
+        Let&apos;s get to know you
       </H1>
-      <Body1 className="mx-auto mb-8 max-w-sm text-balance text-center text-white duration-500 animate-in fade-in slide-in-from-bottom-4 md:max-w-lg">
-        We use your intake to personalize your Superpower experience.
-        <br /> <br /> Complete your comprehensive intake survey to get the best
-        action plan custom to you in the next day to activate your membership.
+      <Body1 className="mb-8 max-w-md text-balance text-center text-white duration-500 animate-in fade-in slide-in-from-bottom-4 md:max-w-lg">
+        We’re going to ask a few short questions about your health.
+        <br />
+        <br />
+        Everything you share – your goals, challenges, & experiences – helps us
+        personalize your health insights, action plan, and journey with
+        Superpower.
       </Body1>
       <div className="absolute bottom-8 flex w-full max-w-[calc(100%-2rem)] flex-col gap-4 md:static">
         <Button
