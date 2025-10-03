@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { SUPPLEMENTS_MARKETPLACE_URL } from '@/const/marketplaces';
 import { useGetMultipassUrl } from '@/features/shop/api/get-multipass-url';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { useUser } from '@/lib/auth';
 import { isMobile } from '@/utils/browser-detection';
 
@@ -11,11 +12,13 @@ export const SupplementsMarketplaceRoute = () => {
   const location = useLocation();
   const { data: user } = useUser();
   const { data: multipassData, isLoading } = useGetMultipassUrl();
+  const { track } = useAnalytics();
 
   // Detect if user is on mobile
   const isMobileDevice = isMobile();
 
   useEffect(() => {
+    track('click_products_marketplace');
     // If user is signed in and multipass URL is available, redirect to the multipass URL
     if (multipassData?.url) {
       if (isMobileDevice) {
@@ -52,6 +55,7 @@ export const SupplementsMarketplaceRoute = () => {
     isLoading,
     location.state,
     isMobileDevice,
+    track,
   ]);
 
   return null;

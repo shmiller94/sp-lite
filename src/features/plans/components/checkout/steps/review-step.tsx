@@ -10,6 +10,7 @@ import { useProductAvailability } from '@/features/plans/hooks/use-product-avail
 import { useSortedProducts } from '@/features/plans/hooks/use-sorted-products';
 import { useCarePlanCart } from '@/features/plans/stores/care-plan-cart-store';
 import { useCreateCheckoutUrl } from '@/features/shop/api';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { cn } from '@/lib/utils';
 import { Product } from '@/types/api';
 
@@ -17,6 +18,7 @@ import { calculateTotals } from '../../../utils/calculate-totals';
 import { CheckoutPrice } from '../checkout-price';
 
 export const ReviewStep = (): JSX.Element => {
+  const { track } = useAnalytics();
   const { productRequests, availableProducts, isLoading } =
     useProductAvailability();
   const { selectedProducts, addProduct, removeProduct, isProductSelected } =
@@ -50,6 +52,13 @@ export const ReviewStep = (): JSX.Element => {
   );
 
   const handleCheckout = () => {
+    track('aiap_checkout', {
+      products: selectedProducts.map((product) => ({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+      })),
+    });
     // Remove the utm data from the API call
     createCheckoutUrlMutation.mutate({
       data: { products: selectedProducts },

@@ -18,6 +18,7 @@ import {
 import { Body1, H2 } from '@/components/ui/typography';
 import { useProductAvailability } from '@/features/plans/hooks/use-product-availability';
 import { useCarePlanCart } from '@/features/plans/stores/care-plan-cart-store';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 
 import { ReviewStep } from './steps/review-step';
@@ -58,10 +59,23 @@ export const ActionPlanCheckoutModal = ({
   const { unavailableProductCount, availableProducts } =
     useProductAvailability();
   const [searchParams, setSearchParams] = useSearchParams();
-
+  const { track } = useAnalytics();
   const isOpen = searchParams.get('modal') === 'checkout';
 
   const handleOpen = () => {
+    track('opened_aiap_checkout_modal', {
+      available_products: availableProducts.map((product) => ({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+      })),
+      unavailable_products: unavailableProductCount,
+      selected_products: selectedProducts.map((product) => ({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+      })),
+    });
     setSearchParams((params) => {
       params.set('modal', 'checkout');
       return params;
@@ -69,6 +83,7 @@ export const ActionPlanCheckoutModal = ({
   };
 
   const handleClose = () => {
+    track('closed_aiap_checkout_modal');
     setSearchParams((params) => {
       params.delete('modal');
       return params;

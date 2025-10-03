@@ -27,6 +27,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { useScrollThreshold } from '@/hooks/use-scroll-threshold';
 import { ROLES, useAuthorization } from '@/lib/authorization';
 import { cn } from '@/lib/utils';
@@ -98,7 +99,7 @@ const blurThresholds: Record<string, number> = {
 export const DesktopNavbar = () => {
   const { checkAccess } = useAuthorization();
   const { pathname } = useLocation();
-
+  const { track } = useAnalytics();
   const isLight = lightNavPaths.includes(pathname);
   const isBlurred = useScrollThreshold({
     thresholdPx: blurThresholds[pathname] || 10,
@@ -191,6 +192,9 @@ export const DesktopNavbar = () => {
             <DropdownMenu>
               <DropdownMenuTrigger
                 asChild
+                onClick={() => {
+                  track('click_marketplaces_btn');
+                }}
                 className="group rounded-full outline outline-1 outline-transparent transition-all duration-150 data-[state=open]:outline-2"
               >
                 <button

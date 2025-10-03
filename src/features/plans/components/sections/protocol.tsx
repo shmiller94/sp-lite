@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/accordion';
 import { Body1, Body2, H2, H4 } from '@/components/ui/typography';
 import { useProducts } from '@/features/shop/api';
+import { useAnalytics } from '@/hooks/use-analytics';
 
 import { useCarePlan } from '../../context/care-plan-context';
 import { useSection } from '../../hooks/use-section';
@@ -58,6 +59,8 @@ export const ProtocolSection = () => {
   const { plan } = useCarePlan();
   const { title, order, total } = useSection('protocol');
   const getProductsQuery = useProducts({});
+  const { track } = useAnalytics();
+  const previousValueRef = React.useRef<string[]>([]);
 
   const activities = plan?.activity ?? [];
 
@@ -73,6 +76,32 @@ export const ProtocolSection = () => {
   } = categorizePlanActivities(activities, getProductsQuery.data?.products);
 
   const planCitations = extractCitationsFromExtensions(plan?.extension);
+
+  const handleAccordionValueChange = (value: string[]) => {
+    // Find newly opened accordions by comparing with previous value
+    const newlyOpened = value.filter(
+      (item) => !previousValueRef.current.includes(item),
+    );
+
+    // Track when Products/Supplements accordion is newly opened
+    if (newlyOpened.includes('group-Products / Supplements')) {
+      track('aiap_opened_products_accordion', {
+        accordion_type: 'products_supplements',
+        section: 'protocol',
+      });
+    }
+
+    // Track when Diagnostic Tests accordion is newly opened
+    if (newlyOpened.includes('group-Diagnostic Tests')) {
+      track('aiap_opened_tests_accordion', {
+        accordion_type: 'diagnostic_tests',
+        section: 'protocol',
+      });
+    }
+
+    // Update the ref with the new value for next comparison
+    previousValueRef.current = value;
+  };
 
   const activityGroups: ActivityGroup[] = [
     {
@@ -212,6 +241,7 @@ export const ProtocolSection = () => {
                 ? [`group-${firstGroupWithActivities.title}`]
                 : []
             }
+            onValueChange={handleAccordionValueChange}
           >
             {activityGroups.map((group) =>
               group.activities.length ? (

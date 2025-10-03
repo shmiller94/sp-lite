@@ -10,6 +10,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { Body1 } from '@/components/ui/typography';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { cn } from '@/lib/utils';
 import { Product } from '@/types/api';
 
@@ -32,22 +33,33 @@ export const ProductCard = ({
 }: ProductCardProps) => {
   const [, setSearchParams] = useSearchParams();
   const { addProduct, removeProduct, isProductSelected } = useCarePlanCart();
+  const { track } = useAnalytics();
 
   const handleAddToCart = useCallback(() => {
     if (product) {
+      track('aiap_added_product_to_cart', {
+        product_id: product.id,
+        product_name: product.name,
+        product_price: product.price,
+      });
       addProduct(product);
     }
     setSearchParams((params) => {
       params.set('modal', 'checkout');
       return params;
     });
-  }, [product, addProduct, setSearchParams]);
+  }, [product, addProduct, setSearchParams, track]);
 
   const handleRemoveFromCart = useCallback(() => {
     if (product) {
+      track('aiap_removed_product_from_cart', {
+        product_id: product.id,
+        product_name: product.name,
+        product_price: product.price,
+      });
       removeProduct(product.id);
     }
-  }, [product, removeProduct]);
+  }, [product, removeProduct, track]);
 
   const isProductAvailable = useMemo(() => {
     if (!product) return false;
