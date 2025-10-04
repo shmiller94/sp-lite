@@ -1,6 +1,5 @@
 import { format } from 'date-fns';
 import { ChevronDown } from 'lucide-react';
-import React from 'react';
 
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -19,11 +18,10 @@ export const CurrentMembership = (): JSX.Element => {
     <div className="rounded-2xl lg:flex lg:flex-row lg:items-center lg:justify-between lg:bg-white lg:p-4">
       <div className="hidden space-y-1 lg:block">
         <H4 className="text-zinc-400">Current Membership</H4>
-        {isLoading ? <Skeleton className="h-[22px] w-[148px]" /> : null}
       </div>
 
       {isLoading ? (
-        <Skeleton className="h-[96px] w-full lg:w-[377px]" />
+        <Skeleton className="h-[96px] w-full rounded-xl lg:w-[377px]" />
       ) : (
         <div className="flex flex-row gap-x-2">
           <Card className="w-full rounded-2xl px-5 py-4 shadow-none lg:bg-transparent">
@@ -49,7 +47,7 @@ export const CurrentMembership = (): JSX.Element => {
           <CancelMembershipDialog membership={superpowerMembership}>
             <Card
               className={cn(
-                `w-full px-5 rounded-2xl  shadow-none py-4 lg:bg-transparent pointer-events-none`,
+                `w-full px-5 rounded-2xl shadow-none py-4 lg:bg-transparent pointer-events-none`,
                 superpowerMembership?.status === 'active' &&
                   'cursor-pointer pointer-events-auto',
               )}
@@ -69,9 +67,9 @@ export const CurrentMembership = (): JSX.Element => {
                     )}
                   </span>
                 ) : (
-                  <div className="flex flex-row items-center justify-between gap-x-1.5 md:min-w-[175px]">
+                  <div className="flex flex-row items-center justify-between gap-x-1.5">
                     <span className="md:text-xl">Membership</span>
-                    <ChevronDown className="size-4 text-zinc-400" />
+                    <ChevronDown className="size-4 shrink-0 text-zinc-400" />
                   </div>
                 )}
                 {superpowerMembership?.status === 'active' ? (
