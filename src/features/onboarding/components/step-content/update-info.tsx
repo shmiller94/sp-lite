@@ -24,13 +24,14 @@ import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
-  SelectValue,
-  SelectTrigger,
   SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select';
 import { TransactionSpinner } from '@/components/ui/spinner/transaction-spinner';
 import { Body2, H3, H4 } from '@/components/ui/typography';
 import { US_STATES } from '@/const';
+import { useCheckoutContext } from '@/features/auth/stores/register-store';
 import { OnboardingCard } from '@/features/onboarding/components/onboarding-membership-card';
 import { useUpdateTask } from '@/features/tasks/api/update-task';
 import { useCreateAddress, useEditAddress } from '@/features/users/api';
@@ -90,7 +91,8 @@ export type UpdateUserInput = z.infer<typeof updateUserInputSchema>;
 
 export const UpdateInfo = () => {
   const { data: user } = useUser();
-  const { activeStep, nextStep } = useStepper((s) => s);
+  const { couponMetadata } = useCheckoutContext();
+  const { jump, getStepIndexById } = useStepper((s) => s);
   const form = useForm<UpdateUserInput>({
     shouldUnregister: false,
     resolver: zodResolver(updateUserInputSchema),
@@ -152,11 +154,21 @@ export const UpdateInfo = () => {
       },
     });
 
+    const hasAdvancedDrawCredit =
+      couponMetadata?.event_type === 'advanced_draw_credit';
+
+    const nextStepIndex = hasAdvancedDrawCredit
+      ? getStepIndexById('intake')
+      : getStepIndexById('advanced-upgrade');
+
     await updateTaskMutation.mutateAsync({
       taskName: 'onboarding',
-      data: { progress: activeStep + 1 },
+      data: { progress: nextStepIndex },
     });
-    nextStep();
+
+    const nextStepId = hasAdvancedDrawCredit ? 'intake' : 'advanced-upgrade';
+
+    jump(nextStepId);
   };
 
   const isLoading =
