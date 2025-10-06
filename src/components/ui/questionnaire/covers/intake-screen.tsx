@@ -26,7 +26,7 @@ export const IntakeScreen = ({ handleNext }: { handleNext: () => void }) => {
         <Body3 className="order-first mx-auto max-w-md text-center text-white duration-500 animate-in fade-in slide-in-from-bottom-4 md:order-last">
           This is required to schedule your lab test.{' '}
           <br className="md:hidden" />
-          <br className="md:hidden" /> Estimated time to complete: 20 min
+          <br className="md:hidden" /> Estimated time to complete: 10 min
         </Body3>
       </div>
     </div>
