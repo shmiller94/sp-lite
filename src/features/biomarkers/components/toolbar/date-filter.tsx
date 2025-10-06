@@ -10,7 +10,10 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Body2 } from '@/components/ui/typography';
-import { SUPERPOWER_BLOOD_PANEL } from '@/const';
+import {
+  SUPERPOWER_ADVANCED_BLOOD_PANEL,
+  SUPERPOWER_BLOOD_PANEL,
+} from '@/const';
 import { useOrders } from '@/features/orders/api';
 import { cn } from '@/lib/utils';
 
@@ -27,7 +30,10 @@ export function DateFilter<TData>({
 
   const orders =
     ordersQuery.data?.orders.filter(
-      (o) => o.name === SUPERPOWER_BLOOD_PANEL && o.status === 'COMPLETED',
+      (o) =>
+        (o.name === SUPERPOWER_BLOOD_PANEL ||
+          o.name === SUPERPOWER_ADVANCED_BLOOD_PANEL) &&
+        o.status === 'COMPLETED',
     ) ?? [];
 
   // Member has one blood test => Date filter is not available
