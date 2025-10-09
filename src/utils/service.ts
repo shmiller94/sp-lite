@@ -19,10 +19,16 @@ import {
   IV_DRIP,
   LEGAL_DESCLAIMERS,
   PFAS_CHEMICALS,
-  SUPERPOWER_ADVANCED_BLOOD_PANEL,
   SUPERPOWER_BLOOD_PANEL,
   TOTAL_TOXIN_TEST,
   VO2_MAX_TEST,
+  AUTOIMMUNITY_AND_CELIAC_PANEL,
+  CARDIOVASCULAR_PANEL,
+  FEMALE_FERTILITY_PANEL,
+  METABOLIC_PANEL,
+  METHYLATION_PANEL,
+  NUTRIENT_AND_ANTIOXIDANT_PANEL,
+  ADVANCED_BLOOD_PANEL,
 } from '@/const';
 import { SERVICE_DETAILS } from '@/const/service-details';
 import { CollectionMethodType, HealthcareService } from '@/types/api';
@@ -176,6 +182,12 @@ const serviceImages: Record<string, string> = {
   PfasChemicals: '/services/pfas_chemicals.png',
   TotalToxins: '/services/total_toxins.png',
   Vo2Max: '/services/vo2_max_test.png',
+  AutoimmunityBundle: '/services/autoimmunity.png',
+  CardiometabolicBundle: '/services/cardiovascular.png',
+  FemaleFertilityBundle: '/services/female_fertility.png',
+  MetabolicBundle: '/services/metabolic.png',
+  MethylationBundle: '/services/methylation.png',
+  NutritionBundle: '/services/nutrient_and_antioxidant.png',
 };
 
 export const getServiceImage = (name: string): string => {
@@ -183,7 +195,7 @@ export const getServiceImage = (name: string): string => {
     case SUPERPOWER_BLOOD_PANEL:
       return serviceImages.SuperpowerBloodPanel;
 
-    case SUPERPOWER_ADVANCED_BLOOD_PANEL:
+    case ADVANCED_BLOOD_PANEL:
       return serviceImages.AdvancedBloodPanel;
 
     case ADVISORY_CALL:
@@ -242,6 +254,24 @@ export const getServiceImage = (name: string): string => {
 
     case IV_DRIP:
       return serviceImages.IVDrip;
+
+    case AUTOIMMUNITY_AND_CELIAC_PANEL:
+      return serviceImages.AutoimmunityBundle;
+
+    case CARDIOVASCULAR_PANEL:
+      return serviceImages.CardiometabolicBundle;
+
+    case FEMALE_FERTILITY_PANEL:
+      return serviceImages.FemaleFertilityBundle;
+
+    case METABOLIC_PANEL:
+      return serviceImages.MetabolicBundle;
+
+    case METHYLATION_PANEL:
+      return serviceImages.MethylationBundle;
+
+    case NUTRIENT_AND_ANTIOXIDANT_PANEL:
+      return serviceImages.NutritionBundle;
 
     default:
       return serviceImages.SuperpowerBloodPanel;

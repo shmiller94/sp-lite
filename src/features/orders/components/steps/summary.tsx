@@ -4,72 +4,58 @@ import React, { ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/components/ui/sonner';
-import { TransactionSpinner } from '@/components/ui/spinner/transaction-spinner';
+import { TextShimmer } from '@/components/ui/text-shimmer';
 import { Body1, Body2, H2 } from '@/components/ui/typography';
-import {
-  CreateOrderInput,
-  UpdateOrderInput,
-  useCreateOrder,
-  useOrders,
-  useUpdateOrder,
-} from '@/features/orders/api';
+import { useCreateOrder, useUpdateOrder } from '@/features/orders/api';
 import { HealthcareServiceFooter } from '@/features/orders/components/healthcare-service-footer';
 import { OrderAppointmentDetails } from '@/features/orders/components/order-appointment-details';
+import { HEALTHCARE_SERVICE_DIALOG_CONTAINER_STYLE } from '@/features/orders/const/config';
+import { useHasCredit } from '@/features/orders/hooks';
 import { useOrder } from '@/features/orders/stores/order-store';
 import { useService } from '@/features/services/api';
 import { usePaymentMethods } from '@/features/settings/api';
 import { CreatePaymentMethodForm } from '@/features/settings/components/billing/create-payment-method-form';
 import { CurrentPaymentMethodCard } from '@/features/users/components/current-payment-method-card';
 import { useStepper } from '@/lib/stepper';
-import { OrderStatus } from '@/types/api';
+import { cn } from '@/lib/utils';
 import { formatMoney } from '@/utils/format-money';
 import { getServiceImage } from '@/utils/service';
 
 export function OrderSummary(): ReactNode {
   const {
     service,
-    items,
     location,
     slot,
     collectionMethod,
     tz,
-    informedConsent,
-    updateCreatedOrderId,
+    addOnIds,
+    buildCreateOrderData,
+    buildUpdateOrderData,
+    onSuccess,
   } = useOrder((s) => s);
   const { nextStep, prevStep } = useStepper((s) => s);
 
-  const ordersQuery = useOrders({
-    queryConfig: { refetchOnMount: 'always' },
-  });
   const paymentMethodsQuery = usePaymentMethods();
-
   const serviceQuery = useService({
     serviceId: service.id,
+    addOnServiceIds: addOnIds.size > 0 ? [...addOnIds] : undefined,
     method: collectionMethod,
-    items,
-    queryConfig: {
-      refetchOnMount: 'always',
-    },
+  });
+  const { isCreditLoading, credit } = useHasCredit({
+    serviceName: service.name,
   });
 
-  const defaultPaymentMethod = paymentMethodsQuery.data?.paymentMethods.find(
-    (pm) => pm.default,
-  );
-
-  const existingDraftOrder = ordersQuery.data?.orders
-    .filter((o) => o.status === OrderStatus.draft)
-    .find((o) => o.serviceId === service.id);
-
-  const price = serviceQuery.data?.service.price;
-
-  const createOrderMutation = useCreateOrder();
+  const createOrderMutation = useCreateOrder({
+    mutationConfig: {
+      onSuccess: () => {
+        onSuccess?.();
+      },
+    },
+  });
   const updateOrderMutation = useUpdateOrder({
     mutationConfig: {
-      onSettled: () => {
-        // Use setTimeout to ensure the component has time to process the query invalidation
-        setTimeout(() => {
-          nextStep();
-        }, 50);
+      onSuccess: () => {
+        onSuccess?.();
       },
     },
   });
@@ -78,73 +64,59 @@ export function OrderSummary(): ReactNode {
     createOrderMutation.isPending || updateOrderMutation.isPending;
 
   const isQueryLoading =
-    serviceQuery.isLoading ||
-    ordersQuery.isLoading ||
-    paymentMethodsQuery.isLoading;
+    serviceQuery.isLoading || isCreditLoading || paymentMethodsQuery.isLoading;
 
-  /*
-   * If user books new service (draftOrderId was not initialized)
-   *
-   * we just create regular order
-   * */
+  const price = serviceQuery.data?.service.price;
+  const defaultPaymentMethod = paymentMethodsQuery.data?.paymentMethods.find(
+    (pm) => pm.default,
+  );
+
   const createOrderFn = async (): Promise<void> => {
     if (service === null)
       throw Error('There was a problem creating the order.');
 
-    const data: CreateOrderInput = {
-      serviceId: service.id,
-      items,
-      location: location ? location : {},
-      timestamp: slot ? slot.start : new Date().toISOString(),
-      timezone: tz || moment.tz.guess(),
-      method: collectionMethod ? [collectionMethod] : [],
-    };
-
-    // if step requires consent, add it to the final data object we send to server
-    if (informedConsent) {
-      data.informedConsent = { agreedAt: new Date().toISOString() };
-    }
-
     const response = await createOrderMutation.mutateAsync({
-      data,
+      data: buildCreateOrderData(),
     });
 
     if (response.order) {
-      updateCreatedOrderId(response.order.id);
       nextStep();
     }
   };
 
   const updateOrderFn = async (): Promise<void> => {
-    if (!existingDraftOrder) {
+    if (!credit) {
       toast('No orderId found for previous order. Contact support.');
       return;
     }
 
-    const data: UpdateOrderInput = {
-      location: location ? location : {},
-      timezone: tz || moment.tz.guess(),
-      method: collectionMethod ? collectionMethod : undefined,
-
-      timestamp: slot ? slot.start : new Date().toISOString(),
-      status: OrderStatus.pending,
-    };
-
-    // if step requires consent, add it to the final data object we send to server
-    if (informedConsent) {
-      data.informedConsent = { agreedAt: new Date().toISOString() };
-    }
-
     await updateOrderMutation.mutateAsync({
-      orderId: existingDraftOrder.id,
-      data,
+      orderId: credit.id,
+      data: buildUpdateOrderData(),
     });
+
+    nextStep();
   };
 
   return (
     <>
-      <div className="space-y-4 p-6 md:space-y-8 md:p-14">
-        <H2>Order Summary</H2>
+      <div
+        className={cn('space-y-8', HEALTHCARE_SERVICE_DIALOG_CONTAINER_STYLE)}
+      >
+        <div className="space-y-1">
+          <H2>Order Summary</H2>
+          {process.env.NODE_ENV === 'development' ? (
+            <Body2 className="text-pink-700">
+              DEBUG (not visible in prod):&nbsp;
+              {credit
+                ? `using existing draft order ${credit.id}`
+                : 'creating new order, no existing credit found'}
+            </Body2>
+          ) : null}
+          <Body1 className="text-secondary">
+            Confirm your order details below.
+          </Body1>
+        </div>
         {isQueryLoading ? (
           <>
             <Skeleton className="h-12 w-full rounded-2xl" />
@@ -152,10 +124,8 @@ export function OrderSummary(): ReactNode {
           </>
         ) : null}
         {defaultPaymentMethod && !isQueryLoading ? (
-          <>
-            {price !== undefined ? (
-              <CreateOrderSummaryItem basePrice={price} />
-            ) : null}
+          <div className="space-y-6 md:space-y-10">
+            <CreateOrderSummaryItem price={price} />
             <OrderAppointmentDetails
               collectionMethod={collectionMethod ?? undefined}
               slot={slot ?? undefined}
@@ -163,9 +133,11 @@ export function OrderSummary(): ReactNode {
               location={location ?? undefined}
               isPhlebotomy={service.phlebotomy}
               serviceName={service.name}
+              supportsLabOrder={service.supportsLabOrder}
+              selectedPanels={[...addOnIds, ...(credit?.addOnServiceIds ?? [])]}
             />
             {price && price > 0 ? <CurrentPaymentMethodCard /> : null}
-          </>
+          </div>
         ) : null}
         {!defaultPaymentMethod && !isQueryLoading ? (
           <div className="space-y-4">
@@ -174,81 +146,70 @@ export function OrderSummary(): ReactNode {
           </div>
         ) : null}
       </div>
-      {defaultPaymentMethod ? (
-        <HealthcareServiceFooter
-          prevBtn={
-            <Button
-              variant="outline"
-              className="w-full md:w-auto"
-              onClick={prevStep}
-              disabled={isMutationLoading}
-            >
-              Back
-            </Button>
-          }
-          nextBtn={
-            <Button
-              onClick={existingDraftOrder ? updateOrderFn : createOrderFn}
-              className="w-full md:w-auto"
-              disabled={
-                isMutationLoading || price === undefined || isQueryLoading
-              }
-            >
-              {isMutationLoading ? (
-                <TransactionSpinner className="flex justify-center" />
-              ) : (
-                'Confirm'
-              )}
-            </Button>
-          }
-        />
-      ) : null}
+      <HealthcareServiceFooter
+        prevBtn={
+          <Button
+            variant="outline"
+            className="w-full bg-white"
+            onClick={prevStep}
+            disabled={isMutationLoading}
+          >
+            Back
+          </Button>
+        }
+        nextBtn={
+          <Button
+            onClick={credit ? updateOrderFn : createOrderFn}
+            className="w-full"
+            disabled={
+              isMutationLoading ||
+              price === undefined ||
+              isQueryLoading ||
+              !defaultPaymentMethod
+            }
+          >
+            {isMutationLoading ? (
+              <TextShimmer
+                className="line-clamp-1 text-base [--base-color:white] [--base-gradient-color:#a1a1aa]"
+                duration={1}
+              >
+                Confirming…
+              </TextShimmer>
+            ) : (
+              'Confirm'
+            )}
+          </Button>
+        }
+      />
     </>
   );
 }
 
 function CreateOrderSummaryItem({
-  basePrice,
+  price,
+  isLoading = false,
 }: {
-  basePrice: number;
+  price?: number;
+  isLoading?: boolean;
 }): ReactNode {
-  const { service, collectionMethod } = useOrder((s) => s);
-
+  const { service } = useOrder((s) => s);
   return (
-    <div className="flex flex-col items-start justify-between sm:flex-row sm:items-center">
-      <div className="flex w-full flex-col gap-4 rounded-2xl border border-zinc-200 p-6 md:flex-row md:items-center md:border-none md:p-0">
+    <div className="flex items-center justify-between gap-2 rounded-[20px] border border-zinc-200 bg-white px-5 py-3 shadow shadow-black/[.03] sm:flex-row">
+      <div className="flex items-center gap-3">
         <img
           src={getServiceImage(service.name)}
           alt={service.name}
-          className="size-12 rounded-xl border border-zinc-200 object-cover object-center"
+          className="size-16 rounded-xl object-cover object-center"
         />
-        <div>
+        <div className="space-y-0.5">
           <Body1>{service.name}</Body1>
-          <div className="flex items-center gap-2">
-            {service.phlebotomy && (
-              <>
-                <Body2 className="text-zinc-400">
-                  {collectionMethod === 'IN_LAB'
-                    ? 'In person lab'
-                    : 'At home visit'}
-                </Body2>
-              </>
-            )}
-          </div>
+          <Body2 className="line-clamp-3 text-zinc-400">
+            {service.description}
+          </Body2>
         </div>
-        {basePrice > 0 ? (
-          <div className="flex gap-2 md:hidden">
-            Total: <Price basePrice={basePrice} />
-          </div>
-        ) : null}
       </div>
-      <div className="hidden text-nowrap md:block">
-        <Price basePrice={basePrice} />
-      </div>
+      {isLoading ? <Skeleton className="h-6 w-full" /> : null}
+      {price && price > 0 ? <Body1>{formatMoney(price)}</Body1> : null}
     </div>
   );
 }
-
-const Price = ({ basePrice }: { basePrice: number }) => {
-  return basePrice > 0 ? <Body1>{formatMoney(basePrice)}</Body1> : null;
-};

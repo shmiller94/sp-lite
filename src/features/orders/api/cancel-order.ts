@@ -1,8 +1,4 @@
-import {
-  QueryClient,
-  useMutation,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { getTimelineQueryOptions } from '@/features/home/api/get-timeline';
 import { getOrdersQueryOptions } from '@/features/orders/api/get-orders';
@@ -19,42 +15,28 @@ export const cancelOrder = ({
   return api.post(`/orders/${orderId}/cancel`);
 };
 
-export const resyncDataAfterCancelOrder = ({
-  queryClient,
-}: {
-  queryClient: QueryClient;
-}) => {
-  queryClient.invalidateQueries({
-    queryKey: getOrdersQueryOptions().queryKey,
-  });
-  queryClient.invalidateQueries({
-    queryKey: getTimelineQueryOptions().queryKey,
-  });
-  queryClient.invalidateQueries({
-    queryKey: getServicesQueryOptions().queryKey,
-  });
-  queryClient.invalidateQueries({
-    queryKey: ['service'],
-  });
-};
-
 type UseCancelOrderOptions = {
-  shouldResyncImmediately?: boolean;
   mutationConfig?: MutationConfig<typeof cancelOrder>;
 };
 
-export const useCancelOrder = (
-  { mutationConfig, shouldResyncImmediately }: UseCancelOrderOptions = {
-    shouldResyncImmediately: true,
-  },
-) => {
+export const useCancelOrder = ({
+  mutationConfig,
+}: UseCancelOrderOptions = {}) => {
   const queryClient = useQueryClient();
 
   const { onSuccess, ...restConfig } = mutationConfig || {};
 
   return useMutation({
     onSuccess: (...args) => {
-      if (shouldResyncImmediately) resyncDataAfterCancelOrder({ queryClient });
+      queryClient.invalidateQueries({
+        queryKey: getTimelineQueryOptions().queryKey,
+      });
+      queryClient.invalidateQueries({
+        queryKey: getOrdersQueryOptions().queryKey,
+      });
+      queryClient.invalidateQueries({
+        queryKey: getServicesQueryOptions().queryKey,
+      });
 
       onSuccess?.(...args);
     },

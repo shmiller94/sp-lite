@@ -1,19 +1,13 @@
 import { Skeleton } from '@/components/ui/skeleton';
 import { Body1 } from '@/components/ui/typography';
-import { useOrders } from '@/features/orders/api';
-import { OrderStatus } from '@/types/api';
-
-import { useServices } from '../api/get-services';
+import { useGroupedOrders } from '@/features/orders/hooks';
 
 import { ServiceCard } from './service-card';
 
 export const FinishScheduleList = () => {
-  const servicesQuery = useServices();
-  const ordersQuery = useOrders();
+  const { buckets, groupedOrdersLoading } = useGroupedOrders();
 
-  const isQueryLoading = servicesQuery.isLoading || ordersQuery.isLoading;
-
-  if (isQueryLoading) {
+  if (groupedOrdersLoading) {
     return (
       <div className="grid grid-cols-1 gap-1 sm:gap-x-3 sm:gap-y-9 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {Array(9)
@@ -28,13 +22,7 @@ export const FinishScheduleList = () => {
     );
   }
 
-  if (!servicesQuery.data || !ordersQuery.data) return null;
-
-  const draftOrders = ordersQuery.data.orders.filter(
-    (o) => o.status === OrderStatus.draft,
-  );
-
-  if (draftOrders.length === 0)
+  if (buckets.drafts.length === 0)
     return (
       <div className="flex shrink-0 items-center justify-center rounded-3xl border border-dashed border-zinc-300 py-12">
         <div className="mx-auto flex max-w-[420px] flex-col items-center justify-center text-center">
@@ -45,20 +33,16 @@ export const FinishScheduleList = () => {
 
   return (
     <div className="grid grid-cols-1 gap-1 sm:gap-x-3 sm:gap-y-9 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      {draftOrders.map((draftOrder) => {
-        const service = servicesQuery.data.services.find(
-          (service) => service.id === draftOrder.serviceId,
-        );
-
-        if (!service) {
+      {buckets.drafts.map((draft) => {
+        if (!draft.service) {
           return null;
         }
 
         return (
           <ServiceCard
-            key={draftOrder.id}
-            service={service}
-            draftOrder={draftOrder}
+            key={draft.order.id}
+            service={draft.service}
+            draftOrder={draft.order}
           />
         );
       })}

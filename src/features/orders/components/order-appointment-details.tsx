@@ -1,29 +1,33 @@
 import {
   Calendar,
   MapPin,
-  ArrowUpRight,
   FileIcon,
   HomeIcon,
   VideoIcon,
+  ArrowRight,
+  TestTube,
 } from 'lucide-react';
 import moment from 'moment';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { PdfFileIcon } from '@/components/icons';
 import { DotIcon } from '@/components/icons/dot';
 import { AddToCalendar } from '@/components/shared/add-to-calendar-button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Body1, H4 } from '@/components/ui/typography';
-import {
-  GRAIL_GALLERI_MULTI_CANCER_TEST,
-  SUPERPOWER_ADVANCED_BLOOD_PANEL,
-  SUPERPOWER_BLOOD_PANEL,
-  ADVISORY_CALL,
-} from '@/const';
+import { ADVISORY_CALL } from '@/const';
 import { useFiles } from '@/features/files/api';
 import { useDownloadFile } from '@/features/files/api/download-file';
 import { downloadBlob } from '@/features/files/utils/download-blob';
 import { openInMaps } from '@/features/orders/utils/open-in-maps';
-import { Location, CollectionMethodType, Slot, Address } from '@/types/api';
+import { useServices } from '@/features/services/api';
+import {
+  Location,
+  CollectionMethodType,
+  Slot,
+  Address,
+  HealthcareService,
+} from '@/types/api';
 import { isIOS } from '@/utils/browser-detection';
 
 interface OrderAppointmentDetailsProps {
@@ -34,6 +38,8 @@ interface OrderAppointmentDetailsProps {
   serviceName?: string;
   orderId?: string;
   isPhlebotomy?: boolean;
+  supportsLabOrder?: boolean;
+  selectedPanels?: string[];
 }
 
 function OrderFileLinkFromFiles({ orderId }: { orderId: string }) {
@@ -81,6 +87,8 @@ export function OrderAppointmentDetails({
   orderId,
   serviceName,
   isPhlebotomy,
+  supportsLabOrder,
+  selectedPanels,
 }: OrderAppointmentDetailsProps): React.ReactNode {
   if (!location?.address) {
     return null;
@@ -90,11 +98,7 @@ export function OrderAppointmentDetails({
     if (!slot || !serviceName || !collectionMethod || !location?.address)
       return null;
 
-    if (
-      serviceName !== SUPERPOWER_BLOOD_PANEL &&
-      serviceName !== SUPERPOWER_ADVANCED_BLOOD_PANEL &&
-      serviceName !== GRAIL_GALLERI_MULTI_CANCER_TEST
-    ) {
+    if (supportsLabOrder === false) {
       return null;
     }
 
@@ -102,8 +106,9 @@ export function OrderAppointmentDetails({
       <AddToCalendar
         address={location.address}
         slot={slot}
-        service={serviceName}
+        serviceName={serviceName}
         collectionMethod={collectionMethod}
+        variant="vermillion"
       />
     );
   };
@@ -113,15 +118,15 @@ export function OrderAppointmentDetails({
 
   const collectionMethodLabel = (() => {
     if (isAdvisoryCall) return 'Video call';
-    return method === 'AT_HOME' ? 'At home visit' : 'Location';
+    return method === 'AT_HOME' ? 'At home visit' : 'In lab visit';
   })();
 
   const collectionMethodIcon = (() => {
     if (isAdvisoryCall) return <VideoIcon className="size-5 text-zinc-500" />;
     return method === 'AT_HOME' ? (
-      <HomeIcon className="size-5 text-zinc-500" />
+      <HomeIcon className="size-4 text-zinc-500" />
     ) : (
-      <MapPin className="size-5 text-zinc-500" />
+      <MapPin className="size-4 text-zinc-500" />
     );
   })();
 
@@ -131,65 +136,125 @@ export function OrderAppointmentDetails({
 
       {orderId ? <OrderFileLinkFromFiles orderId={orderId} /> : null}
       {isPhlebotomy && slot ? (
-        <div className="flex gap-4 px-4 py-6">
-          <Calendar className="size-5 text-zinc-500" />
+        <div className="flex gap-4 py-6">
           <div className="flex flex-1 flex-col sm:flex-row sm:items-center sm:gap-4">
             <div className="space-y-1">
-              <Body1 className="text-zinc-500">Date scheduled</Body1>
-              <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4">
-                <Body1>
-                  {moment(slot.start).tz(timezone).format('MMM Do, YYYY')}
-                </Body1>
-                <DotIcon fill="#18181B" className="hidden sm:block" />
-                <Body1>
-                  {moment(slot.start).tz(timezone).format('h:mma')}-{' '}
-                  {moment(slot.end).tz(timezone).format('h:mma z')}
+              <div className="flex items-center gap-2">
+                <Calendar className="-mt-0.5 size-4 text-secondary" />
+                <Body1 className="text-secondary">
+                  {collectionMethod === 'IN_LAB' ? 'In lab' : 'At home'}{' '}
+                  appointment
                 </Body1>
               </div>
-            </div>
-            <div className="mt-2 flex sm:ml-auto sm:mt-0">
-              {renderAddToCalendar()}
+              <div className="space-y-2 pl-6">
+                <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center">
+                  <Body1>
+                    {moment(slot.start).tz(timezone).format('MMM Do, YYYY')}
+                  </Body1>
+                  <DotIcon
+                    fill="currentColor"
+                    className="hidden text-zinc-300 sm:block"
+                  />
+                  <Body1>
+                    {moment(slot.start).tz(timezone).format('h:mma')}-{' '}
+                    {moment(slot.end).tz(timezone).format('h:mma z')}
+                  </Body1>
+                </div>
+                {renderAddToCalendar()}
+              </div>
             </div>
           </div>
         </div>
       ) : null}
       {location?.address ? (
-        <div className="flex gap-4 px-4 py-6">
-          {collectionMethodIcon}
+        <div className="flex gap-4 py-6">
           <div className="space-y-1">
-            <Body1 className="text-zinc-500">{collectionMethodLabel}</Body1>
-            <div>
-              <Body1>{location.address.line.join(' ')}</Body1>
-              <Body1>
-                {location.address.city}, {location.address.state},{' '}
-                {location.address.postalCode}
-              </Body1>
+            <div className="flex items-center gap-2">
+              {collectionMethodIcon}
+              <Body1 className="text-secondary">{collectionMethodLabel}</Body1>
             </div>
-            {location?.address && method !== 'AT_HOME' && (
-              <div className="mt-2">
-                <button
-                  type="button"
-                  className="flex items-center gap-1 text-sm font-medium text-vermillion-900"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    const mapType = isIOS() ? 'apple' : 'google';
-                    const phlebotomyLocation = {
-                      name: location.name || 'Location',
-                      distance: 0,
-                      address: location.address as Address,
-                    };
-                    openInMaps(phlebotomyLocation, mapType);
-                  }}
-                >
-                  <>
-                    Open in maps <ArrowUpRight className="mb-0.5 size-4" />
-                  </>
-                </button>
+            <div className="pl-6">
+              <div>
+                <Body1>{location.address.line.join(' ')}</Body1>
+                <Body1>
+                  {location.address.city}, {location.address.state},{' '}
+                  {location.address.postalCode}
+                </Body1>
               </div>
-            )}
+              {location?.address && method !== 'AT_HOME' && (
+                <div className="mt-2">
+                  <button
+                    type="button"
+                    className="flex items-center gap-1 text-sm font-medium text-vermillion-900 transition-all duration-200 hover:opacity-75"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const mapType = isIOS() ? 'apple' : 'google';
+                      const phlebotomyLocation = {
+                        name: location.name || 'Location',
+                        distance: 0,
+                        address: location.address as Address,
+                      };
+                      openInMaps(phlebotomyLocation, mapType);
+                    }}
+                  >
+                    <>
+                      View directions{' '}
+                      <ArrowRight className="mb-0.5 size-[15px]" />
+                    </>
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
+      ) : null}
+      {selectedPanels && selectedPanels.length > 0 ? (
+        <OrderSelectedPanels selectedPanels={selectedPanels} />
       ) : null}
     </div>
   );
 }
+
+const OrderSelectedPanels = ({
+  selectedPanels,
+}: {
+  selectedPanels: string[];
+}) => {
+  const servicesQuery = useServices({ group: 'blood-panel-addon' });
+
+  const { loading, selectedServices } = useMemo(() => {
+    const services = servicesQuery.data?.services ?? [];
+    const byId = new Map(services.map((s) => [s.id, s]));
+
+    const selectedServices = selectedPanels
+      .map((id) => byId.get(id))
+      .filter((s): s is HealthcareService => Boolean(s));
+
+    return {
+      loading: servicesQuery.isLoading,
+      selectedServices,
+    };
+  }, [servicesQuery.data?.services, servicesQuery.isLoading, selectedPanels]);
+
+  return (
+    <div className="flex gap-4 py-6">
+      <div className="space-y-1">
+        <div className="flex items-center gap-2">
+          <TestTube className="-mt-0.5 size-4 text-secondary" />
+          <Body1 className="text-secondary">Selected panels</Body1>
+        </div>
+        <div className="w-full pl-6">
+          <div className="space-y-1">
+            {loading &&
+              Array(6)
+                .fill(0)
+                .map((_, i) => <Skeleton className="h-6 w-full" key={i} />)}
+            {selectedServices.map((s) => (
+              <Body1 key={s.id}>{s.name}</Body1>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

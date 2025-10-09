@@ -1,99 +1,149 @@
+import moment from 'moment/moment';
+import { ReactNode } from 'react';
 import { createStore } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 import { ADVISORY_CALL, GRAIL_GALLERI_MULTI_CANCER_TEST } from '@/const';
+import { CreateOrderInput, UpdateOrderInput } from '@/features/orders/api';
 import {
   CollectionMethodType,
   HealthcareService,
   Location,
-  ServiceItem,
+  OrderStatus,
   Slot,
 } from '@/types/api';
 
 export interface OrderStoreProps {
   service: HealthcareService;
   tz: string;
-  isBookingModal?: boolean;
+  flow: 'full' | 'info';
+
+  onSuccess?: () => void;
+  infoFlowBtn?: () => ReactNode;
 }
 
-/**
- * NB:
- * @param {string} createdOrderId - Can be updated as we set it on summary step after successful booking
- *
- * `createdOrderId` typically corresponds to id of order of status `PENDING`
- */
 export interface OrderStore extends OrderStoreProps {
-  items: ServiceItem[];
-  updateItems: (item: ServiceItem) => void;
   collectionMethod: CollectionMethodType | null;
   updateCollectionMethod: (
     collectionMethod: CollectionMethodType | null,
   ) => void;
 
+  addOnIds: Set<string>;
+  // react dispatch on purpose to support both store and regular use state in component
+  updateAddOnIds: React.Dispatch<React.SetStateAction<Set<string>>>;
   location: Location | null;
   updateLocation: (location: Location | null) => void;
   setTz: (tz: string) => void;
   slot: Slot | null;
   updateSlot: (slot: Slot | null) => void;
-  createdOrderId: string | null;
-  updateCreatedOrderId: (orderId: string | null) => void;
-  updateService: (service: HealthcareService) => void;
   reset: () => void;
   // Needs to be an optional because not all orders will have informed consent
   informedConsent: boolean | null;
   updateInformedConsent: (agreed: boolean) => void; // Updates consent with agreedToConsent and agreedAt
+
+  buildCreateOrderData: () => CreateOrderInput;
+  buildUpdateOrderData: () => UpdateOrderInput;
 }
 
 export type OrderStoreApi = ReturnType<typeof orderStoreCreator>;
 
 // Define the initial state
 const initialState = {
-  items: [],
   location: null,
   slot: null,
-  createdOrderId: null,
   informedConsent: null,
-  isBookingModal: false,
+  addOnIds: new Set<string>(),
 };
 
 export const orderStoreCreator = (initProps: OrderStoreProps) => {
+  const getInitialCollectionMethod = (): CollectionMethodType | null => {
+    if (
+      initProps.service.name === ADVISORY_CALL ||
+      initProps.service.name === GRAIL_GALLERI_MULTI_CANCER_TEST
+    ) {
+      return 'AT_HOME';
+    }
+    return null;
+  };
+
   return createStore<OrderStore>()(
     devtools(
-      (set) => ({
+      (set, get) => ({
         ...initProps,
         ...initialState,
-        isBookingModal: initProps.isBookingModal ?? false,
-
-        updateItems: (item: ServiceItem) =>
-          set((state) => {
-            const isItemInArray = state.items.some(
-              (existingItem) => existingItem.id === item.id,
-            );
-
-            return {
-              items: isItemInArray
-                ? state.items.filter(
-                    (existingItem) => existingItem.id !== item.id,
-                  )
-                : [...state.items, item],
-            };
-          }),
-        collectionMethod:
-          initProps.service.name === ADVISORY_CALL ||
-          initProps.service.name === GRAIL_GALLERI_MULTI_CANCER_TEST
-            ? 'AT_HOME'
-            : null,
+        collectionMethod: getInitialCollectionMethod(),
         updateCollectionMethod: (collectionMethod) => set({ collectionMethod }),
         updateLocation: (location) => set({ location }),
         setTz: (tz) => set({ tz }),
         updateSlot: (slot) => set({ slot }),
-        updateCreatedOrderId: (orderId) => set({ createdOrderId: orderId }),
-        updateService: (service) => set({ service }),
-        reset: () => set(initialState),
+        reset: () => {
+          set({
+            ...initialState,
+            collectionMethod: getInitialCollectionMethod(),
+          });
+        },
 
         // Update consent and set the agreedAt date when consent is given
         updateInformedConsent: (informedConsent: boolean) =>
           set({ informedConsent }),
+        updateAddOnIds: (updater) => {
+          const prev = get().addOnIds;
+          const next =
+            typeof updater === 'function' ? (updater as any)(prev) : updater;
+          set({ addOnIds: new Set(next) });
+        },
+
+        buildUpdateOrderData: (): UpdateOrderInput => {
+          const slot = get().slot;
+          const tz = get().tz;
+          const collectionMethod = get().collectionMethod;
+          const informedConsent = get().informedConsent;
+          const location = get().location;
+          const addOnServiceIds = get().addOnIds;
+
+          const data: UpdateOrderInput = {
+            location: location ? location : {},
+            timezone: tz || moment.tz.guess(),
+            method: collectionMethod ? collectionMethod : undefined,
+            timestamp: slot ? slot.start : new Date().toISOString(),
+            status: OrderStatus.pending,
+            addOnServiceIds:
+              addOnServiceIds.size > 0 ? [...addOnServiceIds] : undefined,
+          };
+
+          if (informedConsent) {
+            data.informedConsent = { agreedAt: new Date().toISOString() };
+          }
+
+          return data;
+        },
+
+        buildCreateOrderData: (): CreateOrderInput => {
+          const slot = get().slot;
+          const tz = get().tz;
+          const collectionMethod = get().collectionMethod;
+          const informedConsent = get().informedConsent;
+          const location = get().location;
+          const service = get().service;
+          const addOnServiceIds = get().addOnIds;
+
+          console.log(tz);
+          const data: CreateOrderInput = {
+            serviceId: service.id,
+            addOnServiceIds:
+              addOnServiceIds.size > 0 ? [...addOnServiceIds] : undefined,
+            location: location ? location : {},
+            timestamp: slot ? slot.start : new Date().toISOString(),
+            timezone: tz || moment.tz.guess(),
+            method: collectionMethod ?? undefined,
+          };
+
+          if (informedConsent) {
+            data.informedConsent = { agreedAt: new Date().toISOString() };
+          }
+
+          return data;
+        },
       }),
       { name: 'OrderStore' },
     ),

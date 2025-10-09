@@ -38,19 +38,24 @@ export const AnimatedTimeline = ({
             <div className="flex items-center gap-4">
               <div
                 className={cn(
-                  'flex h-10 min-w-10 items-center justify-center rounded-full border',
-                  isComplete ? 'border-green-600' : 'border-gray-300',
+                  'flex size-5 items-center justify-center rounded-full border-2',
+                  isComplete
+                    ? 'border-vermillion-900 bg-vermillion-900'
+                    : 'border-zinc-300',
                 )}
               >
-                <Check
-                  size={16}
-                  color={isComplete ? '#26936B' : '#71717A'}
-                  className="z-10"
-                />
+                {isComplete && (
+                  <Check
+                    size={12}
+                    color="currentColor"
+                    className="z-10 text-white"
+                    strokeWidth={3}
+                  />
+                )}
               </div>
               <Body1
                 className={cn(
-                  isComplete ? 'text-green-600' : 'text-gray-400',
+                  isComplete ? 'text-vermillion-900' : 'text-secondary',
                   'line-clamp-1',
                 )}
               >
@@ -63,8 +68,10 @@ export const AnimatedTimeline = ({
                 animate={{ scaleY: 1 }}
                 transition={{ delay: i * 0.3 + 0.3, duration: 0.6 }}
                 className={cn(
-                  'ml-[19px] h-6 w-px',
-                  isComplete ? 'bg-green-600' : 'bg-gray-300',
+                  'ml-[10px] h-5 my-2 w-px rounded-full',
+                  isComplete ? 'bg-vermillion-900' : 'bg-zinc-300',
+                  timeline.filter((step) => step.complete).length - 1 === i &&
+                    'bg-gradient-to-b from-vermillion-900 to-zinc-300',
                 )}
               />
             )}

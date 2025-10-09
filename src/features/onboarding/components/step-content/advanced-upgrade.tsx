@@ -25,7 +25,7 @@ import { formatMoney } from '@/utils/format-money';
 import { getUpgradePrice } from '@/utils/get-upgrade-price';
 
 const AdvancedUpgrade = () => {
-  const { nextStep, activeStep } = useStepper((s) => s);
+  const { activeStep, nextStep } = useStepper((s) => s);
   const {
     mutateAsync: updateTaskProgress,
     isError,
@@ -36,7 +36,7 @@ const AdvancedUpgrade = () => {
 
   const price = getUpgradePrice(user);
 
-  const updateStep = async () => {
+  const goToNextStep = async () => {
     await updateTaskProgress({
       taskName: 'onboarding',
       data: { progress: activeStep + 1 },
@@ -52,7 +52,7 @@ const AdvancedUpgrade = () => {
       data: { upgradeType: 'advanced' },
     });
 
-    await updateStep();
+    await goToNextStep();
   };
 
   return (
@@ -101,7 +101,7 @@ const AdvancedUpgrade = () => {
         ))}
         <div className="space-y-4">
           <PaymentDetails />
-          <CurrentPaymentMethodCard className="!bg-white" />
+          <CurrentPaymentMethodCard />
         </div>
         <div className="flex flex-col gap-2">
           <Button
@@ -117,7 +117,7 @@ const AdvancedUpgrade = () => {
           <Button
             variant="outline"
             className="bg-white"
-            onClick={updateStep}
+            onClick={goToNextStep}
             disabled={isTaskUpdating || upgradeOrderMutation.isPending}
           >
             No thanks

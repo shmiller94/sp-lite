@@ -5,7 +5,9 @@ import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { Body1, H2, H3 } from '@/components/ui/typography';
 import { useCreateInteractionEvent } from '@/features/messages/api';
+import { HEALTHCARE_SERVICE_DIALOG_CONTAINER_STYLE } from '@/features/orders/const/config';
 import { useOrder } from '@/features/orders/stores/order-store';
+import { cn } from '@/lib/utils';
 
 export const EarlyAccessContent = (): JSX.Element => {
   const [message, setMessage] = useState('');
@@ -30,7 +32,9 @@ export const EarlyAccessContent = (): JSX.Element => {
 
   if (isSuccess) {
     return (
-      <div className="space-y-4 p-6 md:p-14">
+      <div
+        className={cn('space-y-4', HEALTHCARE_SERVICE_DIALOG_CONTAINER_STYLE)}
+      >
         <H2>Your request has been sent!</H2>
         <Body1 className="mb-4 text-zinc-500">
           Your request for early access to {service.name} has been received.

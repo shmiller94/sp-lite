@@ -7,10 +7,10 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogDescription,
 } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
 import {
@@ -28,12 +28,16 @@ import {
   OrderStoreProvider,
   useOrder,
 } from '@/features/orders/stores/order-store';
-import { StepID } from '@/features/orders/types/step-id';
-import { getStepsFromService } from '@/features/orders/utils/get-steps-for-service';
+import {
+  BookingStepID,
+  getStepsFromService,
+} from '@/features/orders/utils/get-steps-for-service';
 import { getServicesQueryOptions } from '@/features/services/api';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 import { StepperStoreProvider, useStepper } from '@/lib/stepper';
 import { HealthcareService } from '@/types/api';
+
+export const HEALTHCARE_SERVICE_DIALOG_CONTAINER_STYLE = 'px-6 md:px-16';
 
 /**
  * This component is the main renderer of the scheduling process for all services.
@@ -45,20 +49,27 @@ import { HealthcareService } from '@/types/api';
  * @param {ReactNode} children - A button to trigger the dialog for scheduling services.
  * @param healthcareService - The healthcare service being scheduled. If not provided, then won't render inside the modal
  * @param excludeSteps - Steps that we want to exclude. It's important to check if step is required and can be skipped.
- * @param onSubmit - Called when user clicks "Close" button on success screen
+ * @param flow - Will render full steps flow or just information about service
+ * @param infoFlowBtn - Will replace regular footer on the info step
+ * @param onSuccess - Called when order is either created or updated
+ * @param onClose - Called when "Done" button is clicked or used closed the modal
  */
 export const HealthcareServiceDialog = ({
   healthcareService,
   excludeSteps,
-  onSubmit,
+  onSuccess,
+  onClose,
   children,
-  isBookingModal = true,
+  flow = 'full',
+  infoFlowBtn,
 }: {
   healthcareService: HealthcareService;
-  excludeSteps?: StepID[];
-  onSubmit?: () => void;
+  excludeSteps?: BookingStepID[];
+  onSuccess?: () => void;
+  onClose?: () => void;
   children?: ReactNode;
-  isBookingModal?: boolean;
+  flow?: 'full' | 'info';
+  infoFlowBtn?: () => ReactNode;
 }) => {
   let steps = getStepsFromService(healthcareService);
 
@@ -66,6 +77,20 @@ export const HealthcareServiceDialog = ({
     steps = steps.filter((step) => !excludeSteps.includes(step.id));
   }
 
+  // this is used if you only need to display information about service
+  if (flow === 'info') {
+    const info = steps.find((s) => s.id === BookingStepID.INFO);
+
+    if (!info) {
+      throw Error(
+        `Info step was not found for ${healthcareService.name}, can't render flow in info mode`,
+      );
+    }
+
+    steps = [info];
+  }
+
+  // TODO: should probably add serviceId here as well to make it unique
   const key = steps.map((s) => s.id).join('-');
 
   return (
@@ -73,9 +98,11 @@ export const HealthcareServiceDialog = ({
       <OrderStoreProvider
         service={healthcareService}
         tz={moment.tz.guess()}
-        isBookingModal={isBookingModal}
+        onSuccess={onSuccess}
+        flow={flow}
+        infoFlowBtn={infoFlowBtn}
       >
-        <HealthcareServiceDialogConsumer onSubmit={onSubmit}>
+        <HealthcareServiceDialogConsumer onClose={onClose}>
           {children}
         </HealthcareServiceDialogConsumer>
       </OrderStoreProvider>
@@ -94,9 +121,9 @@ export const HealthcareServiceDialog = ({
  */
 const HealthcareServiceDialogConsumer = ({
   children,
-  onSubmit,
+  onClose,
 }: {
-  onSubmit?: () => void;
+  onClose?: () => void;
   children?: ReactNode;
 }) => {
   const { steps, activeStep, resetSteps } = useStepper((s) => s);
@@ -112,22 +139,16 @@ const HealthcareServiceDialogConsumer = ({
    */
   const handleOpenChange = (isOpen: boolean) => {
     if (!isOpen) {
-      if (onSubmit) {
-        /**
-         * This will be triggered on last step when we close dialog
-         */
-        if (activeStep === steps.length - 1) {
-          onSubmit();
-        }
-      }
+      onClose?.();
+
       /**
-       * Refreshing list of orders after we are done (doesn't matter if regular close)
+       * Refreshing timeline
        */
       queryClient.invalidateQueries({
-        queryKey: getOrdersQueryOptions().queryKey,
+        queryKey: getTimelineQueryOptions().queryKey,
       });
       queryClient.invalidateQueries({
-        queryKey: getTimelineQueryOptions().queryKey,
+        queryKey: getOrdersQueryOptions().queryKey,
       });
       queryClient.invalidateQueries({
         queryKey: getServicesQueryOptions().queryKey,
@@ -142,6 +163,7 @@ const HealthcareServiceDialogConsumer = ({
 
   /**
    * If children (that always should be a button) is not passed, we directly call the content of modal
+   * This allows us to trigger and invoke any logic we want under handleOpenChange
    *
    * We still wrap into <Dialog /> simply because we have places where we call <DialogClose> that should be wrapped inside of Dialog
    * Moreover, it doesn't impact anything since Dialog is just a provider:
@@ -150,7 +172,9 @@ const HealthcareServiceDialogConsumer = ({
   if (!children) {
     return (
       <Dialog onOpenChange={handleOpenChange}>
-        {steps[activeStep]?.content ?? null}
+        <div className="mx-auto w-full max-w-3xl py-8">
+          {steps[activeStep]?.content ?? null}
+        </div>
       </Dialog>
     );
   }
@@ -158,8 +182,8 @@ const HealthcareServiceDialogConsumer = ({
     return (
       <Sheet onOpenChange={handleOpenChange}>
         <SheetTrigger asChild>{children}</SheetTrigger>
-        <SheetContent className="flex flex-col overflow-hidden rounded-t-2xl">
-          <SheetHeader className="sticky top-0 z-50 flex flex-col gap-4 bg-white/90 pb-4 backdrop-blur-sm">
+        <SheetContent className="flex flex-col overflow-hidden rounded-t-2xl bg-white">
+          <SheetHeader className="sticky top-0 z-50 flex flex-col gap-4 px-6 pb-4 backdrop-blur-sm">
             {steps.length > 1 ? (
               <div className="flex justify-center">
                 <Progress
@@ -191,8 +215,8 @@ const HealthcareServiceDialogConsumer = ({
   return (
     <Dialog onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="flex max-h-[90vh] flex-col px-0.5">
-        <DialogHeader className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm">
+      <DialogContent className="flex max-h-[90vh] flex-col bg-white px-0.5">
+        <DialogHeader className="sticky top-0 z-50 px-16 backdrop-blur-sm">
           <div className="flex items-center gap-2">
             {steps.length > 1 && (
               <>

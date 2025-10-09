@@ -1,15 +1,11 @@
-import { useQueryClient } from '@tanstack/react-query';
 import React, { Dispatch, SetStateAction } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { TransactionSpinner } from '@/components/ui/spinner/transaction-spinner';
 import { GRAIL_GALLERI_MULTI_CANCER_TEST } from '@/const';
-import {
-  resyncDataAfterCancelOrder,
-  useCancelOrder,
-} from '@/features/orders/api/cancel-order';
+import { useCancelOrder } from '@/features/orders/api';
 import { RescheduleDialogMode } from '@/features/orders/types/reschedule-dialog-mode';
-import { StepID } from '@/features/orders/types/step-id';
+import { BookingStepID } from '@/features/orders/utils/get-steps-for-service';
 import { useAuthorization } from '@/lib/authorization';
 import { cn } from '@/lib/utils';
 import { HealthcareService, Order } from '@/types/api';
@@ -24,15 +20,12 @@ export const HealthcareServiceRescheduleFooter = ({
 }: {
   mode: RescheduleDialogMode;
   setMode: Dispatch<SetStateAction<RescheduleDialogMode>>;
-  setSkipStepIds: Dispatch<SetStateAction<StepID[]>>;
+  setSkipStepIds: Dispatch<SetStateAction<BookingStepID[]>>;
   order: Order;
   healthcareService?: HealthcareService;
   onClose?: () => void;
 }) => {
-  const queryClient = useQueryClient();
-  const cancelOrderMutation = useCancelOrder({
-    shouldResyncImmediately: false,
-  });
+  const cancelOrderMutation = useCancelOrder();
   const isPastAppointment = new Date(order.startTimestamp) < new Date();
   const canReschedule =
     healthcareService?.name !== GRAIL_GALLERI_MULTI_CANCER_TEST;
@@ -46,10 +39,9 @@ export const HealthcareServiceRescheduleFooter = ({
     await cancelOrderMutation.mutateAsync({ orderId: order.id });
     if (mode === 'reschedule') {
       // Skip info step for rescheduling since user already knows the service
-      setSkipStepIds([StepID.INFO]);
+      setSkipStepIds([BookingStepID.INFO]);
       setMode('booking');
     } else {
-      resyncDataAfterCancelOrder({ queryClient });
       onClose?.();
     }
   };

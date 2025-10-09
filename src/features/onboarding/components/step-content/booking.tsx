@@ -1,80 +1,49 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 
 import { Spinner } from '@/components/ui/spinner';
 import { Body1 } from '@/components/ui/typography';
 import {
   ADVANCED_BLOOD_PANEL,
-  ServiceTypeEnum,
+  CUSTOM_BLOOD_PANEL,
   SUPERPOWER_BLOOD_PANEL,
 } from '@/const';
-import { ImageContentLayout } from '@/features/onboarding/components/layouts';
-import { useOrders } from '@/features/orders/api';
 import { HealthcareServiceDialog } from '@/features/orders/components/healthcare-service-dialog';
-import { StepID } from '@/features/orders/types/step-id';
-import { useServices } from '@/features/services/api';
-import { useSubscriptions } from '@/features/settings/api';
+import { useGroupedOrders } from '@/features/orders/hooks/use-grouped-orders';
+import { BookingStepID } from '@/features/orders/utils/get-steps-for-service';
 import { useUpdateTask } from '@/features/tasks/api/update-task';
 import { useStepper } from '@/lib/stepper';
 import { HealthcareService } from '@/types/api';
 
 const Booking = ({ bloodPanel }: { bloodPanel?: HealthcareService }) => {
+  const { mutateAsync: updateTaskProgress } = useUpdateTask();
   const { activeStep, nextStep } = useStepper((s) => s);
-  const ordersQuery = useOrders({});
-  const { mutateAsync: updateTaskProgress, isError } = useUpdateTask();
-
-  // ref to track if updateOrder has been called already
-  const hasCheckedRef = useRef<boolean>(false);
 
   const updateStep = async () => {
     await updateTaskProgress({
       taskName: 'onboarding',
       data: { progress: activeStep + 1 },
     });
-
-    if (!isError) {
-      nextStep();
-    }
   };
-
-  /**
-   * The idea of this useEffect is to make sure user
-   * who closed the app right after booking
-   * doesn't get into weird state
-   */
-  useEffect(() => {
-    if (!ordersQuery.data?.orders || !bloodPanel) return;
-
-    /**
-     * This is small hack to make sure we are not executing it multiple times
-     * even after orders loaded
-     *
-     * If you remove it, make sure that you implemented
-     * additional logic that prevents this from firing but still keeps behaviour
-     */
-    if (hasCheckedRef.current) return;
-    hasCheckedRef.current = true;
-
-    const existingOrder = ordersQuery.data.orders.find(
-      (o) => o.serviceId === bloodPanel.id,
-    );
-
-    if (!existingOrder) return;
-
-    if (existingOrder.status !== 'DRAFT') {
-      updateStep();
-    }
-  }, [ordersQuery.data]);
 
   if (!bloodPanel) {
     return null;
   }
 
+  const excludeSteps = [BookingStepID.INFO];
+
+  if (bloodPanel.name === CUSTOM_BLOOD_PANEL) {
+    excludeSteps.push(BookingStepID.PANELS);
+  }
+
   return (
     <HealthcareServiceDialog
       healthcareService={bloodPanel}
-      excludeSteps={[StepID.INFO, StepID.REFERRAL]}
-      onSubmit={updateStep}
-      isBookingModal={false}
+      excludeSteps={excludeSteps}
+      // this just updates it on server just in case
+      // this is also guard in case they just close the app right after booking
+      onSuccess={updateStep}
+      // let user manually click next step inside the onboarding
+      onClose={nextStep}
     />
   );
 };
@@ -88,29 +57,32 @@ const Loader = () => {
 };
 
 export const BookingStep = () => {
-  const servicesQuery = useServices();
-  const ordersQuery = useOrders();
-  const subscriptionsQuery = useSubscriptions();
+  const { buckets, groupedOrdersLoading } = useGroupedOrders();
 
-  const draftOrder = ordersQuery.data?.orders.find(
-    (o) =>
-      o.serviceId.startsWith(ServiceTypeEnum.Baseline) ||
-      o.serviceId.startsWith(ServiceTypeEnum.Advanced),
+  // this is going to be replaced in custom panels v1 but right now we need to assume
+  // that there can be 3 credits:
+  // 1. regular baseline with membership
+  // 2. advanced upgraded credit
+  // 3. add on upgraded credit
+  const draftOrder = buckets.drafts.find((d) =>
+    [ADVANCED_BLOOD_PANEL, SUPERPOWER_BLOOD_PANEL, CUSTOM_BLOOD_PANEL].includes(
+      d.order.serviceName,
+    ),
   );
-  const services = servicesQuery.data?.services;
 
-  const bloodPanel = services?.find((s) =>
-    draftOrder?.serviceId.startsWith(ServiceTypeEnum.Baseline)
-      ? s.name === SUPERPOWER_BLOOD_PANEL
-      : s.name === ADVANCED_BLOOD_PANEL,
-  );
+  // TODO: this is temp hack
+  // reason we need it is after we complete booking we no longer have draft order
+  // therefore cache gets refreshed and we no longer can find draft credit / service
+  // this makes sure we "freeze" initial service until we leave the page
+  const stableService = useStableById(draftOrder?.service);
 
   return (
-    <ImageContentLayout title="Booking" currentService={bloodPanel}>
-      {servicesQuery.isLoading || subscriptionsQuery.isLoading ? (
+    <div className="flex min-h-dvh w-full flex-col">
+      {/*<FloatingLogDebug debugInfo={draftOrder} />*/}
+      {groupedOrdersLoading ? (
         <Loader />
-      ) : bloodPanel ? (
-        <Booking bloodPanel={bloodPanel} />
+      ) : stableService ? (
+        <Booking bloodPanel={stableService} />
       ) : (
         <div className="p-6 md:p-14">
           <Body1 className="text-pink-700">
@@ -119,6 +91,21 @@ export const BookingStep = () => {
           </Body1>
         </div>
       )}
-    </ImageContentLayout>
+    </div>
   );
 };
+
+// Note: there is no need to move this into helper since its temporary HACK
+// until someone figures out better strategy
+function useStableById<T extends { id?: string } | undefined>(value: T): T {
+  const ref = useRef<T>(value);
+  const prevId = (ref.current as any)?.id;
+  const nextId = (value as any)?.id;
+
+  // Update the ref only when the identity changes (id differs).
+  if (nextId && nextId !== prevId) {
+    ref.current = value;
+  }
+  // If nextId is undefined, keep the last non-undefined value to avoid drop.
+  return ref.current;
+}

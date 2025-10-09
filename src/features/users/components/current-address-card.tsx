@@ -41,7 +41,7 @@ export const CurrentAddressCard = ({
   return (
     <div
       className={cn(
-        'w-full space-y-3 rounded-2xl border border-zinc-200 px-8 py-6 relative',
+        'w-full space-y-3 rounded-2xl border border-zinc-200 px-8 py-6 relative bg-white',
         className,
       )}
     >
@@ -59,16 +59,30 @@ export const CurrentAddressCard = ({
         </Button>
       )}
 
-      <div>
-        <Body1 className="text-zinc-700">
-          {user?.firstName} {user?.lastName}
-        </Body1>
-        <Body1 className="text-zinc-700">{address?.line.join(' ')}</Body1>
-        <Body1 className="text-zinc-700">{address?.city}</Body1>
-        <Body1 className="text-zinc-700">
-          {address?.state} {address?.postalCode}, US
-        </Body1>
-      </div>
+      {address ? (
+        <div>
+          <Body1 className="text-zinc-700">
+            {user?.firstName} {user?.lastName}
+          </Body1>
+          <Body1 className="text-zinc-700">{address?.line.join(' ')}</Body1>
+          <Body1 className="text-zinc-700">{address?.city}</Body1>
+          <Body1 className="text-zinc-700">
+            {address?.state} {address?.postalCode}, US
+          </Body1>
+        </div>
+      ) : (
+        <div>
+          <Body1 className="text-primary">
+            Primary address not found,&nbsp;
+            <span>
+              add in&nbsp;
+              <a className="text-vermillion-900 underline" href="/settings">
+                settings
+              </a>
+            </span>
+          </Body1>
+        </div>
+      )}
     </div>
   );
 };

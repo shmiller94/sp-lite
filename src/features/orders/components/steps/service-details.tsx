@@ -1,12 +1,13 @@
 import { ArrowUpRight } from 'lucide-react';
 
 import { Body1, Body2, H2 } from '@/components/ui/typography';
-import { ADVANCED_BLOOD_PANEL, SUPERPOWER_BLOOD_PANEL } from '@/const';
-import { useOrders } from '@/features/orders/api';
+import { checkLabOrderSupport } from '@/const';
 import { HealthcareServiceFooter } from '@/features/orders/components/healthcare-service-footer';
+import { HEALTHCARE_SERVICE_DIALOG_CONTAINER_STYLE } from '@/features/orders/const/config';
+import { useHasCredit } from '@/features/orders/hooks';
 import { useOrder } from '@/features/orders/stores/order-store';
 import { ServiceFaqs } from '@/features/services/components/service-faqs';
-import { OrderStatus } from '@/types/api';
+import { cn } from '@/lib/utils';
 import { getHealthcareServicePriceLabel } from '@/utils/format-money';
 import {
   getSampleReportLinkForService,
@@ -15,16 +16,17 @@ import {
 
 export const HealthcareServiceDetails = () => {
   const { service } = useOrder((s) => s);
-  const ordersQuery = useOrders();
+  const { hasCredit } = useHasCredit({ serviceName: service.name });
   const sampleReportLink = getSampleReportLinkForService(service.name);
-
-  const existingDraftOrder = ordersQuery.data?.orders
-    .filter((o) => o.status === OrderStatus.draft)
-    .find((o) => o.serviceId === service.id);
 
   return (
     <div>
-      <div className="flex flex-col justify-between gap-12 p-6 md:flex-row md:px-14 md:pb-16">
+      <div
+        className={cn(
+          'flex flex-col justify-between gap-12 md:flex-row',
+          HEALTHCARE_SERVICE_DIALOG_CONTAINER_STYLE,
+        )}
+      >
         <div className="flex flex-col justify-center gap-4 md:max-w-[278px]">
           <img
             src={getServiceImage(service.name)}
@@ -34,14 +36,11 @@ export const HealthcareServiceDetails = () => {
           <div className="max-w-[220px] space-y-4 md:max-w-none">
             <H2 className="text-zinc-900">{service.name}</H2>
             <Body2 className="text-zinc-500">
-              {existingDraftOrder
-                ? 'Included'
-                : getHealthcareServicePriceLabel(service)}
+              {hasCredit ? 'Included' : getHealthcareServicePriceLabel(service)}
             </Body2>
           </div>
           <Body1 className="text-zinc-500">{service.description}</Body1>
-          {(service.name === SUPERPOWER_BLOOD_PANEL ||
-            service.name === ADVANCED_BLOOD_PANEL) && (
+          {checkLabOrderSupport(service.name) && (
             <a
               href="https://superpower.com/biomarkers"
               target="_blank"
@@ -71,8 +70,8 @@ export const HealthcareServiceDetails = () => {
           alt={service.name}
         />
       </div>
-      <div className="mb-6 h-px w-full bg-zinc-200" />
-      <div className="px-6 md:px-12">
+      <div className="my-6 h-px w-full bg-zinc-200" />
+      <div className={HEALTHCARE_SERVICE_DIALOG_CONTAINER_STYLE}>
         <ServiceFaqs
           filter={(faq) =>
             faq.question !== 'sampleReportLink' &&

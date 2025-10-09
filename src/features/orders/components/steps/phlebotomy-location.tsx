@@ -1,20 +1,19 @@
 import { CircleAlert } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
-import { Body1, Body2, H2 } from '@/components/ui/typography';
+import { Body1, Body2, Body3, H2, H4 } from '@/components/ui/typography';
 import {
   useGetServiceability,
   usePhlebotomyLocations,
 } from '@/features/orders/api';
 import { HealthcareServiceFooter } from '@/features/orders/components/healthcare-service-footer';
 import { LocationList } from '@/features/orders/components/locations-list';
+import { HEALTHCARE_SERVICE_DIALOG_CONTAINER_STYLE } from '@/features/orders/const/config';
 import { useOrder } from '@/features/orders/stores/order-store';
 import { CurrentAddressCard } from '@/features/users/components/current-address-card';
 import { useUser } from '@/lib/auth';
-import { useStepper } from '@/lib/stepper';
 import { cn } from '@/lib/utils';
 
 import { CreateOrderPhlebotomyLocationSelector } from '../phlebotomy-location-selector';
@@ -27,41 +26,31 @@ import { CreateOrderPhlebotomyLocationSelector } from '../phlebotomy-location-se
  */
 export const PhlebotomyLocationSelect = () => {
   const { collectionMethod, location } = useOrder((s) => s);
-  const nextStep = useStepper((s) => s.nextStep);
-  const { data: user } = useUser();
 
   return (
     <>
-      <div className="p-6 md:p-14">
-        {user?.primaryAddress ? (
-          <div className="space-y-8 md:space-y-16">
-            <div className="space-y-4">
-              <H2>Select a service type</H2>
-              <CreateOrderPhlebotomyLocationSelector />
-            </div>
-            {collectionMethod === 'IN_LAB' ? (
-              <CreateOrderPhlebotomyInLab />
-            ) : null}
-            {collectionMethod === 'AT_HOME' ||
-            collectionMethod === 'PHLEBOTOMY_KIT' ? (
-              <CreateOrderPhlebotomyAtHome />
-            ) : null}
-          </div>
+      <div
+        className={cn('space-y-8', HEALTHCARE_SERVICE_DIALOG_CONTAINER_STYLE)}
+      >
+        <div className="space-y-2">
+          <H2>Where would you like to get tested?</H2>
+          <Body1 className="text-secondary">
+            Either select an in-person lab test or at-home visit.
+          </Body1>
+        </div>
+        <div className="space-y-4">
+          <CreateOrderPhlebotomyLocationSelector />
+          <Body3 className="text-zinc-400">
+            Late cancellation or rescheduling fees apply.
+          </Body3>
+        </div>
+        {collectionMethod === 'IN_LAB' ? <CreateOrderPhlebotomyInLab /> : null}
+        {collectionMethod === 'AT_HOME' ||
+        collectionMethod === 'PHLEBOTOMY_KIT' ? (
+          <CreateOrderPhlebotomyAtHome />
         ) : null}
       </div>
-      {user?.primaryAddress ? (
-        <HealthcareServiceFooter
-          nextBtn={
-            <Button
-              onClick={nextStep}
-              disabled={!location}
-              className="w-full md:w-auto"
-            >
-              Next
-            </Button>
-          }
-        />
-      ) : null}
+      <HealthcareServiceFooter nextBtnDisabled={!location} />
     </>
   );
 };
@@ -106,17 +95,17 @@ function CreateOrderPhlebotomyInLab(): JSX.Element {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-3">
-        <H2>Nearby Labs</H2>
+      <div className="space-y-1">
+        <H4>We will find a lab for you</H4>
         <Body1 className="text-zinc-500">
-          Please enter your zip code and we will find a partner laboratory
-          closest to you.
+          Please provide us your zip code, a concierge will contact you when a
+          nearby testing lab is found.
         </Body1>
       </div>
       <div className="space-y-2">
         <div className="flex items-center gap-1">
-          <Body2 className={hasError ? 'text-pink-700' : 'text-zinc-700'}>
-            My zip code
+          <Body2 className={hasError ? 'text-pink-700' : 'text-secondary'}>
+            Zip code <span className="text-vermillion-900">*</span>
           </Body2>
           {phlebotomyLocationsMutation.isLoading && (
             <span>
@@ -147,18 +136,19 @@ function CreateOrderPhlebotomyInLab(): JSX.Element {
           )}
         </div>
       </div>
-      <LocationList
-        locations={phlebotomyLocationsMutation.data?.locations}
-        isLoading={phlebotomyLocationsMutation.isLoading}
-      />
+      <div className="space-y-4">
+        <H4>Available clinics</H4>
+        <LocationList
+          locations={phlebotomyLocationsMutation.data?.locations}
+          isLoading={phlebotomyLocationsMutation.isLoading}
+        />
+      </div>
     </div>
   );
 }
 
 function CreateOrderPhlebotomyAtHome(): JSX.Element {
-  const { updateLocation, collectionMethod, isBookingModal } = useOrder(
-    (s) => s,
-  );
+  const { updateLocation, collectionMethod } = useOrder((s) => s);
   const { data: user } = useUser();
 
   const { data, mutateAsync, isPending } = useGetServiceability();
@@ -190,19 +180,21 @@ function CreateOrderPhlebotomyAtHome(): JSX.Element {
   }, [collectionMethod, user?.primaryAddress]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="space-y-3">
-        <H2>Place of service</H2>
+        <H4>Place of service</H4>
       </div>
 
       <CurrentAddressCard
         className={cn(
-          !isPending && !isServiceable ? 'border-pink-700 bg-pink-50' : null,
+          !isPending && !isServiceable && user?.primaryAddress
+            ? 'border-pink-700 bg-pink-50'
+            : null,
         )}
-        disableEdit={isBookingModal}
+        disableEdit={true}
       />
 
-      {!isServiceable && !isPending ? (
+      {!isServiceable && !isPending && user?.primaryAddress ? (
         <Body2 className="text-pink-700">
           Sorry, at-home service is currently not available in your area. Please
           go back and try a different address or contact support for assistance.

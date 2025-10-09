@@ -11,7 +11,8 @@ import {
 } from '@/components/ui/popover';
 import { Body2 } from '@/components/ui/typography';
 import {
-  SUPERPOWER_ADVANCED_BLOOD_PANEL,
+  ADVANCED_BLOOD_PANEL,
+  CUSTOM_BLOOD_PANEL,
   SUPERPOWER_BLOOD_PANEL,
 } from '@/const';
 import { useOrders } from '@/features/orders/api';
@@ -31,9 +32,11 @@ export function DateFilter<TData>({
   const orders =
     ordersQuery.data?.orders.filter(
       (o) =>
-        (o.name === SUPERPOWER_BLOOD_PANEL ||
-          o.name === SUPERPOWER_ADVANCED_BLOOD_PANEL) &&
-        o.status === 'COMPLETED',
+        [
+          SUPERPOWER_BLOOD_PANEL,
+          ADVANCED_BLOOD_PANEL,
+          CUSTOM_BLOOD_PANEL,
+        ].includes(o.serviceName) && o.status === 'COMPLETED',
     ) ?? [];
 
   // Member has one blood test => Date filter is not available

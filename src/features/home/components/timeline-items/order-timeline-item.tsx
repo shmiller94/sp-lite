@@ -49,7 +49,8 @@ const OrderTimelineItem = ({
   if (!order) return null;
 
   const isDelivery =
-    order.name === GUT_MICROBIOME_ANALYSIS || order.name === TOTAL_TOXIN_TEST;
+    order.serviceName === GUT_MICROBIOME_ANALYSIS ||
+    order.serviceName === TOTAL_TOXIN_TEST;
 
   const renderTimelineButton = () => {
     // If the order is a gut GUT_MICROBIOME_ANALYSIS test, show a button to view more details

@@ -1,14 +1,13 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 
-import { isBloodPanel } from '@/const/services';
+import { checkLabOrderSupport } from '@/const';
 import { getTimelineQueryOptions } from '@/features/home/api/get-timeline';
 import {
   consentInputSchema,
   locationInputSchema,
 } from '@/features/orders/api/create-order';
-import { getOrdersQueryOptions } from '@/features/orders/api/get-orders';
-import { getServicesQueryOptions, useServices } from '@/features/services/api';
+import { getServices } from '@/features/services/api';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { api } from '@/lib/api-client';
 import { MutationConfig } from '@/lib/react-query';
@@ -21,6 +20,7 @@ export const updateOrderInputSchema = z.object({
   timezone: z.string().optional(),
   informedConsent: consentInputSchema.optional(),
   method: z.enum(['AT_HOME', 'IN_LAB', 'PHLEBOTOMY_KIT', 'EVENT']).optional(),
+  addOnServiceIds: z.array(z.string().min(1, 'This is required.')).optional(),
   status: z
     .enum([
       'UPCOMING',
@@ -56,43 +56,32 @@ export const useUpdateOrder = ({
   const queryClient = useQueryClient();
   const { track } = useAnalytics();
   const { onSuccess, ...restConfig } = mutationConfig || {};
-  const { data: servicesData } = useServices();
 
   return useMutation({
-    onSuccess: (response, variables, context) => {
-      // Track order update events for blood draw scheduling
+    onSuccess: async (response, variables, context) => {
       const order = response.order;
 
-      const service = servicesData?.services?.find(
-        (s) => s.id === order.serviceId,
-      );
-
-      track('order_updated', {
-        order_id: order.id,
-        order_invoice_id: order.invoiceId,
-        order_name: order.name,
-        order_status: order.status,
-        order_collection_method: order.method?.[0],
-        service_id: order.serviceId,
-        service_name: order.serviceName,
-        is_blood_panel: isBloodPanel(order.serviceName),
-        value: service?.price,
-        currency: 'USD',
-      });
-
-      queryClient.invalidateQueries({
-        queryKey: getOrdersQueryOptions().queryKey,
-      });
       queryClient.invalidateQueries({
         queryKey: getTimelineQueryOptions().queryKey,
       });
-      queryClient.invalidateQueries({
-        queryKey: getServicesQueryOptions().queryKey,
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['service'],
-      });
       onSuccess?.(response, variables, context);
+
+      // should be non blocking in theory
+      // simple api call to just get data, TODO: we can likely grab it from query client cache as well
+      const data = await getServices({});
+      const service = data?.services?.find((s) => s.id === order.serviceId);
+
+      track('order_updated', {
+        order_id: order.id,
+        order_name: order.serviceName,
+        order_status: order.status,
+        order_collection_method: order.collectionMethod,
+        service_id: order.serviceId,
+        service_name: order.serviceName,
+        is_blood_panel: checkLabOrderSupport(order.serviceName),
+        value: service?.price,
+        currency: 'USD',
+      });
     },
     ...restConfig,
     mutationFn: updateOrder,

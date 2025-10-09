@@ -15,7 +15,7 @@ import { OrderCard } from '@/features/services/components/order-card';
 import { cn } from '@/lib/utils';
 import { HealthcareService, Order } from '@/types/api';
 
-import { useFilteredOrders } from '../hooks/use-filtered-orders';
+import { useVisibleOrders } from '../hooks/use-visible-orders';
 
 export const OrdersList = React.memo((): JSX.Element => {
   const [collapsibleOpen, setCollapsibleOpen] = useState(false);
@@ -31,7 +31,7 @@ export const OrdersList = React.memo((): JSX.Element => {
     totalFiltered,
     restOrders,
     defaultVisible,
-  } = useFilteredOrders();
+  } = useVisibleOrders();
 
   const handleReschedule = (order: Order, service?: HealthcareService) => {
     setRescheduleDialog({ order, service });

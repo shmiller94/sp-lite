@@ -2,20 +2,16 @@ import { useQuery, queryOptions } from '@tanstack/react-query';
 
 import { api } from '@/lib/api-client';
 import { QueryConfig } from '@/lib/react-query';
-import {
-  CollectionMethodType,
-  HealthcareService,
-  ServiceItem,
-} from '@/types/api';
+import { CollectionMethodType, HealthcareService } from '@/types/api';
 
 export const getService = ({
   serviceId,
   method,
-  items,
+  addOnServiceIds,
 }: {
   serviceId: string;
   method: CollectionMethodType | null;
-  items?: ServiceItem[];
+  addOnServiceIds?: string[];
 }): Promise<{ service: HealthcareService }> => {
   const queryParams = new URLSearchParams();
 
@@ -25,8 +21,8 @@ export const getService = ({
   }
 
   // if selected items present, then add them to request (will affect pricing)
-  if (items && items.length > 0) {
-    items.forEach((item) => queryParams.append('items', item.id));
+  if (addOnServiceIds && addOnServiceIds.length > 0) {
+    addOnServiceIds.forEach((id) => queryParams.append('addOnServiceIds', id));
   }
 
   const queryString = queryParams.toString();
@@ -40,29 +36,34 @@ export const getService = ({
 export const getServiceQueryOptions = (
   serviceId: string,
   method: CollectionMethodType | null,
-  items?: ServiceItem[],
+  addOnServiceIds?: string[],
 ) => {
   return queryOptions({
-    queryKey: ['service', serviceId, method],
-    queryFn: () => getService({ serviceId, method, items }),
+    queryKey: ['service', serviceId, method, addOnServiceIds],
+    queryFn: () => getService({ serviceId, method, addOnServiceIds }),
+    // this is on purpose to remove issues with credits / etc
+    // added oct 7, 2025 by NM
+    staleTime: 0,
+    gcTime: 0,
+    refetchOnMount: true,
   });
 };
 
 type UseServiceOptions = {
   serviceId: string;
   method: CollectionMethodType | null;
-  items?: ServiceItem[];
+  addOnServiceIds?: string[];
   queryConfig?: QueryConfig<typeof getServiceQueryOptions>;
 };
 
 export const useService = ({
   serviceId,
   method,
-  items,
+  addOnServiceIds,
   queryConfig,
 }: UseServiceOptions) => {
   return useQuery({
-    ...getServiceQueryOptions(serviceId, method, items),
+    ...getServiceQueryOptions(serviceId, method, addOnServiceIds),
     ...queryConfig,
   });
 };

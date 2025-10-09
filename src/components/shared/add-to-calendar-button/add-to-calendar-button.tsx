@@ -8,12 +8,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Body1, Body3 } from '@/components/ui/typography';
-import {
-  GRAIL_GALLERI_MULTI_CANCER_TEST,
-  SUPERPOWER_ADVANCED_BLOOD_PANEL,
-  SUPERPOWER_BLOOD_PANEL,
-} from '@/const';
+import { Body2, Body3 } from '@/components/ui/typography';
 import { cn } from '@/lib/utils';
 import { Address, CollectionMethodType, Slot } from '@/types/api';
 
@@ -23,31 +18,58 @@ export function AddToCalendar({
   slot,
   address,
   collectionMethod,
-  service,
+  serviceName,
   className,
+  variant = 'button',
 }: {
   slot: Slot;
   address: Address;
   collectionMethod: CollectionMethodType;
-  service:
-    | typeof SUPERPOWER_BLOOD_PANEL
-    | typeof GRAIL_GALLERI_MULTI_CANCER_TEST
-    | typeof SUPERPOWER_ADVANCED_BLOOD_PANEL;
+  serviceName: string;
   className?: string;
+  variant?: 'vermillion' | 'button'; // decides whether to use a orange text as a dropdown, or the default button variant
 }) {
-  const event = getCalendarEvent({ slot, address, collectionMethod, service });
+  const event = getCalendarEvent({
+    slot,
+    address,
+    collectionMethod,
+    serviceName,
+  });
+
+  if (!event) return;
 
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" className={cn('gap-2', className)}>
-          <Body1 className="text-zinc-900">Add to calendar</Body1>
-          <ChevronDown size={18} color="#A1A1AA" />
+        <Button
+          variant={variant === 'button' ? 'outline' : 'ghost'}
+          className={cn(
+            'gap-1 group',
+            variant === 'vermillion'
+              ? 'px-0 py-0 hover:opacity-75 transition-all duration-200'
+              : '',
+            className,
+          )}
+        >
+          <Body2
+            className={cn(
+              variant === 'vermillion'
+                ? 'text-vermillion-900'
+                : 'text-zinc-900',
+            )}
+          >
+            Add to calendar
+          </Body2>
+          <ChevronDown
+            size={15}
+            className="transition-all duration-200 ease-out group-data-[state=open]:-rotate-180"
+            color={variant === 'vermillion' ? '#fc5f2b' : '#A1A1AA'}
+          />
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className="z-[99999] rounded-xl border border-zinc-200 p-0"
-        align="end"
+        className="z-[99999] rounded-[20px] border border-zinc-200 p-0"
+        align="start"
       >
         <div className="flex flex-col p-2">
           <Body3 className="p-2 pb-3 text-zinc-400">

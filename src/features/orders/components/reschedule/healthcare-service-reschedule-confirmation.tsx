@@ -18,7 +18,7 @@ export const HealthcareServiceRescheduleConfirmation = ({
     return startTimestamp - now < 24 * 60 * 60 * 1000;
   }, [order.startTimestamp]);
 
-  const isAtHomeAppointment = order.method.includes('AT_HOME');
+  const isAtHomeAppointment = order.collectionMethod === 'AT_HOME';
 
   const lateFeeMessage = (() => {
     return mode === 'reschedule'

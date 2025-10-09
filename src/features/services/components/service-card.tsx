@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ProgressiveImage } from '@/components/ui/progressive-image';
 import { Body1, Body2, H4 } from '@/components/ui/typography';
-import { ADVANCED_BLOOD_PANEL } from '@/const';
+import { ADVANCED_BLOOD_PANEL, CUSTOM_BLOOD_PANEL } from '@/const';
 import { HealthcareServiceDialog } from '@/features/orders/components/healthcare-service-dialog';
 import { HealthcareService, Order } from '@/types/api';
 import { getServiceImage } from '@/utils/service';
@@ -59,7 +59,7 @@ const DesktopCard = ({
 
   return (
     <div className="relative hidden h-[386px] flex-col items-start overflow-hidden rounded-3xl border border-zinc-100 bg-zinc-100 sm:flex">
-      {service.name === ADVANCED_BLOOD_PANEL && (
+      {[ADVANCED_BLOOD_PANEL, CUSTOM_BLOOD_PANEL].includes(service.name) && (
         <Badge className="absolute right-3 top-3 z-10 bg-vermillion-100 sm:block">
           <Body2 className="uppercase text-vermillion-900">New</Body2>
         </Badge>

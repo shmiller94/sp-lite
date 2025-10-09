@@ -1,44 +1,34 @@
-import { Button } from '@/components/ui/button';
+import { useEffect } from 'react';
+
 import { H2 } from '@/components/ui/typography';
 import { HealthcareServiceFooter } from '@/features/orders/components/healthcare-service-footer';
+import { HEALTHCARE_SERVICE_DIALOG_CONTAINER_STYLE } from '@/features/orders/const/config';
 import { useOrder } from '@/features/orders/stores/order-store';
 import { CurrentAddressCard } from '@/features/users/components/current-address-card';
 import { useUser } from '@/lib/auth';
-import { useStepper } from '@/lib/stepper';
+import { cn } from '@/lib/utils';
 
 export const ConfirmAddress = () => {
-  const nextStep = useStepper((s) => s.nextStep);
-  const { updateLocation, isBookingModal } = useOrder((s) => s);
+  const { updateLocation, location } = useOrder((s) => s);
   const { data: user } = useUser();
 
-  const setLocation = () => {
+  useEffect(() => {
     if (!user?.primaryAddress) {
       return;
     }
 
     updateLocation({ address: user.primaryAddress });
-    nextStep();
-  };
+  }, [user?.primaryAddress]);
 
   return (
     <>
-      <div className="space-y-8 p-6 md:space-y-12 md:p-14">
-        <div className="space-y-4">
-          <H2 className="text-2xl md:text-3xl">Confirm shipping address</H2>
-          <CurrentAddressCard disableEdit={isBookingModal} />
-        </div>
+      <div
+        className={cn('space-y-8', HEALTHCARE_SERVICE_DIALOG_CONTAINER_STYLE)}
+      >
+        <H2 className="text-2xl md:text-3xl">Confirm shipping address</H2>
+        <CurrentAddressCard disableEdit={true} />
       </div>
-      <HealthcareServiceFooter
-        nextBtn={
-          <Button
-            onClick={setLocation}
-            disabled={!user?.primaryAddress}
-            className="w-full md:w-auto"
-          >
-            Next
-          </Button>
-        }
-      />
+      <HealthcareServiceFooter nextBtnDisabled={!location} />
     </>
   );
 };

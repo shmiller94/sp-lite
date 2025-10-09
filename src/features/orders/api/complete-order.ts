@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 
-import { getOrdersQueryOptions } from '@/features/orders/api/get-orders';
+import { getTimelineQueryOptions } from '@/features/home/api/get-timeline';
 import { api } from '@/lib/api-client';
 import { MutationConfig } from '@/lib/react-query';
 
@@ -35,7 +35,7 @@ export const useCompleteOrder = ({
   return useMutation({
     onSuccess: (...args) => {
       queryClient.invalidateQueries({
-        queryKey: getOrdersQueryOptions().queryKey,
+        queryKey: getTimelineQueryOptions().queryKey,
       });
       onSuccess?.(...args);
     },

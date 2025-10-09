@@ -1,10 +1,4 @@
-import {
-  ADVANCED_BLOOD_PANEL,
-  ADVISORY_CALL,
-  CUSTOM_BLOOD_PANEL,
-  GUT_MICROBIOME_ANALYSIS,
-  SUPERPOWER_BLOOD_PANEL,
-} from '@/const';
+import { ADVISORY_CALL, GUT_MICROBIOME_ANALYSIS } from '@/const';
 import { CollectionMethodType, HealthcareService } from '@/types/api';
 
 /**
@@ -27,12 +21,6 @@ import { CollectionMethodType, HealthcareService } from '@/types/api';
 export const getDefaultCollectionMethod = (
   service: HealthcareService,
 ): CollectionMethodType | null => {
-  const isPhlebotomy = service.phlebotomy;
-  const isBloodPanel =
-    service.name === SUPERPOWER_BLOOD_PANEL ||
-    service.name === CUSTOM_BLOOD_PANEL ||
-    service.name == ADVANCED_BLOOD_PANEL;
-
   /*
    * Extend with more services if needed
    * */
@@ -43,9 +31,9 @@ export const getDefaultCollectionMethod = (
     return null;
   }
 
-  if (!isBloodPanel && service.phlebotomy) {
+  if (!service.supportsLabOrder && service.phlebotomy) {
     return 'PHLEBOTOMY_KIT';
   }
 
-  return isPhlebotomy && isBloodPanel ? 'IN_LAB' : 'AT_HOME';
+  return service.phlebotomy && service.supportsLabOrder ? 'IN_LAB' : 'AT_HOME';
 };

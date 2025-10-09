@@ -4,7 +4,6 @@ import 'moment-timezone';
 
 import { Skeleton } from '@/components/ui/skeleton';
 import { Body1 } from '@/components/ui/typography';
-import { cn } from '@/lib/utils';
 import { Slot } from '@/types/api';
 
 import { useScheduler } from '../stores/scheduler';
@@ -36,27 +35,22 @@ export function SchedulerTimes(): JSX.Element {
       {loading ? (
         <Skeleton className="mb-2 h-5 w-full max-w-[230px] md:h-6" />
       ) : null}
-      <div
-        className={cn(
-          'rounded-2xl space-y-2 overflow-hidden p-1',
-          startRange || loading ? 'border border-zinc-200' : '',
-        )}
-      >
-        <div className="h-[240px] overflow-y-auto p-2 scrollbar scrollbar-thumb-zinc-300 [overflow:overlay] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar]:w-2">
-          {loading &&
-            Array(5)
-              .fill(0)
-              .map((_, i) => <Skeleton className="mb-1 h-14 w-full" key={i} />)}
-          {!loading &&
-            timeSlots.map((slot: Slot) => {
-              return <SchedulerTimeSlot key={slot.start} timeSlot={slot} />;
-            })}
-          {!loading && !timeSlots.length ? (
-            <div className="flex items-center justify-center py-10">
-              <Body1 className="text-zinc-500">No times found.</Body1>
-            </div>
-          ) : null}
-        </div>
+      <div className="space-y-2">
+        {loading &&
+          Array(4)
+            .fill(0)
+            .map((_, i) => (
+              <Skeleton className="h-[66px] w-full rounded-2xl" key={i} />
+            ))}
+        {!loading &&
+          timeSlots.map((slot: Slot) => {
+            return <SchedulerTimeSlot key={slot.start} timeSlot={slot} />;
+          })}
+        {!loading && !timeSlots.length ? (
+          <div className="flex items-center justify-center py-10">
+            <Body1 className="text-zinc-500">No times found.</Body1>
+          </div>
+        ) : null}
       </div>
     </>
   );

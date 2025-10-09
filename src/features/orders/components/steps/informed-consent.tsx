@@ -1,17 +1,16 @@
 import { LabeledCheckbox } from '@/components/shared/labeled-checkbox';
-import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Body2, H2 } from '@/components/ui/typography';
 import { HealthcareServiceFooter } from '@/features/orders/components/healthcare-service-footer';
+import { HEALTHCARE_SERVICE_DIALOG_CONTAINER_STYLE } from '@/features/orders/const/config';
 import { useOrder } from '@/features/orders/stores/order-store';
-import { useStepper } from '@/lib/stepper';
+import { cn } from '@/lib/utils';
 import {
   getDefaultAgreementCopyForService,
   getInformedConsentForService,
 } from '@/utils/service';
 
 export const InformedConsent = () => {
-  const { nextStep } = useStepper((s) => s);
   const service = useOrder((s) => s.service);
   const updateInformedConsent = useOrder((s) => s.updateInformedConsent);
   const informedConsent = useOrder((s) => s.informedConsent);
@@ -21,10 +20,12 @@ export const InformedConsent = () => {
 
   return (
     <>
-      <div className="space-y-8 p-6 md:space-y-12 md:p-14">
+      <div
+        className={cn('space-y-8', HEALTHCARE_SERVICE_DIALOG_CONTAINER_STYLE)}
+      >
         <div className="space-y-4">
           <H2 className="text-2xl md:text-3xl">Informed Consent</H2>
-          <ScrollArea className="md:max-h-[220px] md:overflow-y-scroll md:rounded-[20px] md:border md:border-zinc-200">
+          <ScrollArea className="bg-white md:max-h-[220px] md:overflow-y-scroll md:rounded-[20px] md:border md:border-zinc-200">
             <div className="md:p-6">
               <Body2 className="text-zinc-500">{informedConsentText}</Body2>
             </div>
@@ -39,17 +40,7 @@ export const InformedConsent = () => {
           />
         </div>
       </div>
-      <HealthcareServiceFooter
-        nextBtn={
-          <Button
-            onClick={nextStep}
-            disabled={!informedConsent}
-            className="w-full md:w-auto"
-          >
-            Next
-          </Button>
-        }
-      />
+      <HealthcareServiceFooter nextBtnDisabled={!informedConsent} />
     </>
   );
 };

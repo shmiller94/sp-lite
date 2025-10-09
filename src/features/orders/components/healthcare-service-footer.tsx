@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { Body1 } from '@/components/ui/typography';
+import { useOrder } from '@/features/orders/stores/order-store';
 import { useStepper } from '@/lib/stepper';
 import { cn } from '@/lib/utils';
 
@@ -9,12 +9,20 @@ export const HealthcareServiceFooter = ({
   className,
   nextBtn,
   prevBtn,
+  prevBtnDisabled,
+  nextBtnDisabled,
 }: {
   className?: string;
   prevBtn?: ReactNode | null;
   nextBtn?: ReactNode | null;
+  prevBtnDisabled?: boolean;
+  nextBtnDisabled?: boolean;
 }) => {
   const { activeStep, steps, prevStep, nextStep } = useStepper((s) => s);
+  const { flow, infoFlowBtn } = useOrder((s) => ({
+    flow: s.flow,
+    infoFlowBtn: s.infoFlowBtn,
+  }));
 
   const renderButton = (
     btn: ReactNode | null | undefined,
@@ -26,39 +34,53 @@ export const HealthcareServiceFooter = ({
     return btn; // This includes the case when btn is null (renders nothing) or a ReactNode
   };
 
+  const renderPrevButton = () => {
+    if (activeStep - 1 >= 0)
+      return renderButton(
+        prevBtn,
+        <Button
+          variant="outline"
+          className="w-full bg-white"
+          onClick={prevStep}
+          disabled={prevBtnDisabled}
+        >
+          Back
+        </Button>,
+      );
+
+    return null;
+  };
+
+  const renderNextButton = () => {
+    if (flow === 'info' && infoFlowBtn) return infoFlowBtn();
+
+    if (nextBtn) return nextBtn;
+
+    if (activeStep + 1 < steps.length)
+      return (
+        <Button
+          onClick={nextStep}
+          className="w-full"
+          disabled={nextBtnDisabled}
+        >
+          Next
+        </Button>
+      );
+
+    return null;
+  };
+
   return (
     <div
       className={cn(
         // sticky footer only if parent has overflow: auto/scroll (e.g. dialog)
-        'bottom-0 z-50 bg-white/90 backdrop-blur-sm flex items-center md:justify-between px-6 py-4 md:py-8 md:px-14 [.overflow-auto_&]:sticky [.overflow-y-scroll_&]:sticky',
+        'bottom-0 z-50 backdrop-blur-sm flex items-center px-6 py-4 md:py-8 md:px-16 [.overflow-auto_&]:sticky [.overflow-y-scroll_&]:sticky',
         className,
       )}
     >
-      {/* only show on scrollable parent (e.g. dialog) */}
-      <Body1 className="hidden text-zinc-400 md:block [.overflow-auto_&]:invisible [.overflow-y-scroll_&]:invisible">
-        Step {activeStep + 1} of {steps.length}
-      </Body1>
-      <div className="flex w-full flex-col items-end gap-2 md:w-auto md:flex-row">
-        {activeStep - 1 >= 0
-          ? renderButton(
-              prevBtn,
-              <Button
-                variant="outline"
-                className="w-full md:w-auto"
-                onClick={prevStep}
-              >
-                Back
-              </Button>,
-            )
-          : null}
-        {renderButton(
-          nextBtn,
-          activeStep + 1 < steps.length ? (
-            <Button onClick={nextStep} className="w-full md:w-auto">
-              Next
-            </Button>
-          ) : null,
-        )}
+      <div className="flex w-full gap-2">
+        {renderPrevButton()}
+        {renderNextButton()}
       </div>
     </div>
   );

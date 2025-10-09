@@ -149,7 +149,8 @@ const MobileDatesFilter = <TData,>({ table }: MobileFilterProps<TData>) => {
 
   const orders =
     ordersQuery.data?.orders.filter(
-      (o) => o.name === SUPERPOWER_BLOOD_PANEL && o.status === 'COMPLETED',
+      (o) =>
+        o.serviceName === SUPERPOWER_BLOOD_PANEL && o.status === 'COMPLETED',
     ) ?? [];
 
   const shouldRenderDatesFilter = orders.length > 1;

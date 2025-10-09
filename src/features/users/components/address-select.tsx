@@ -24,7 +24,7 @@ export const AddressSelect = ({ closeBtn }: { closeBtn?: ReactNode }) => {
     return (
       <div className="space-y-2">
         <Label className="text-sm text-zinc-500">Active addresses</Label>
-        <div className="rounded-xl border border-zinc-200 bg-white p-6 md:bg-transparent">
+        <div className="rounded-xl border border-zinc-200 bg-white p-6">
           <p className="mb-4 text-center text-zinc-500">No addresses found.</p>
           <AddNewAddressButton />
         </div>
@@ -36,7 +36,7 @@ export const AddressSelect = ({ closeBtn }: { closeBtn?: ReactNode }) => {
     <div className="space-y-2">
       <AddressHeader closeBtn={closeBtn} />
 
-      <div className="rounded-[20px] border border-zinc-200 bg-white md:bg-transparent">
+      <div className="rounded-[20px] border border-zinc-200 bg-white">
         <div className="space-y-2 p-2">
           {addresses.map((address) => (
             <AddressCard

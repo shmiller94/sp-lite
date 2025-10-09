@@ -8,7 +8,7 @@ import { Body1, Body2 } from '@/components/ui/typography';
 import { GRAIL_GALLERI_MULTI_CANCER_TEST_ID } from '@/const';
 import { ServiceWithMetadata } from '@/features/onboarding/hooks/use-upsell-services';
 import { HealthcareServiceDialog } from '@/features/orders/components/healthcare-service-dialog';
-import { StepID } from '@/features/orders/types/step-id';
+import { BookingStepID } from '@/features/orders/utils/get-steps-for-service';
 import { HealthcareService, OrderStatus } from '@/types/api';
 
 import { ItemPreview } from '../item-preview';
@@ -25,7 +25,11 @@ const StatusAction = ({
   return status === 'DRAFT' ? (
     <HealthcareServiceDialog
       healthcareService={service}
-      excludeSteps={[StepID.INFO, StepID.PHLEBOTOMY, StepID.SCHEDULER]}
+      excludeSteps={[
+        BookingStepID.INFO,
+        BookingStepID.PHLEBOTOMY,
+        BookingStepID.SCHEDULER,
+      ]}
     >
       <Button size="medium">{isScheduledService ? 'Book' : 'Confirm'}</Button>
     </HealthcareServiceDialog>
@@ -64,7 +68,7 @@ export const BookingCard = ({ service }: { service: ServiceWithMetadata }) => {
           />
         </motion.div>
         <div>
-          <Body1>{service.order.name}</Body1>
+          <Body1>{service.order.serviceName}</Body1>
           {service.order.status !== 'DRAFT' &&
             (isScheduledService ? (
               <Body1 className="text-zinc-500">

@@ -3,7 +3,7 @@ import { OrderStatus, Order } from '@/types/api';
 
 const DEFAULT_VISIBLE = 12;
 
-export function useFilteredOrders() {
+export function useVisibleOrders() {
   const { data, isLoading } = useOrders();
   const orders: Order[] = data?.orders ?? [];
 

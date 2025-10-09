@@ -17,6 +17,12 @@ import {
   VO2_MAX_TEST,
   FULL_GENETIC_SEQUENCING,
   DEXA_SCAN,
+  CARDIOVASCULAR_PANEL,
+  METABOLIC_PANEL,
+  METHYLATION_PANEL,
+  FEMALE_FERTILITY_PANEL,
+  AUTOIMMUNITY_AND_CELIAC_PANEL,
+  NUTRIENT_AND_ANTIOXIDANT_PANEL,
 } from '@/const/services';
 import { ServiceDetails } from '@/types/service';
 
@@ -89,13 +95,193 @@ export const SERVICE_DETAILS: Record<string, ServiceDetails> = {
     ],
   },
 
+  [CARDIOVASCULAR_PANEL]: {
+    faqs: [
+      {
+        question: "Who's this for?",
+        answer:
+          'Anyone who wants a fuller picture of heart and vascular health. Especially helpful if you have a family history of heart disease, high cholesterol, diabetes, hypertension, or if you want deeper insight than a standard cholesterol test provides.',
+      },
+      {
+        question: "What's included in this panel?",
+        answer:
+          '- **Lipoprotein Fractionation (NMR):** Goes beyond basic cholesterol by showing how many cholesterol particles you have, their size, and how they behave.\n\n  - **LDL particles:** Smaller, denser LDL particles are more damaging as they more easily penetrate artery walls and drive plaque buildup.\n  - **HDL particles:** Larger HDL particles are more protective, helping carry cholesterol away from arteries for removal.\n  - **VLDL particles:** Carry triglycerides; larger VLDL particles add strain on metabolism and increase cardiovascular risk.\n\n- **Lipoprotein(a):** A genetically influenced cholesterol particle that can raise heart risk even when other numbers look normal.\n\n- **Cystatin C:** A kidney marker that reflects how well your kidneys support heart and vascular health.\n\n- **ADMA / SDMA:** Molecules that affect blood vessel flexibility and nitric oxide production, giving insight into circulation and blood pressure.\n\n*Note: In NY/NJ, ADMA/SDMA are not available, and VLDL measures are excluded from the NMR panel.*',
+      },
+      {
+        question: 'Why is this test important?',
+        answer:
+          'Cardiovascular disease is the leading cause of death worldwide, yet standard cholesterol tests can miss hidden risks. This advanced panel evaluates lipoprotein particle quality, kidney health, and vascular function to provide a more accurate picture of long-term heart health.\n\n**This test may be especially helpful if you:**\n\n- Have a family history of heart disease or stroke.\n- Have “normal” cholesterol but elevated risk factors (e.g., diabetes, hypertension, metabolic syndrome).\n- Experience fatigue, brain fog, or poor exercise recovery linked to circulation.\n- Want a more precise measure of how well your kidneys support cardiovascular health.\n- Are considering or already on cholesterol-lowering therapy and want deeper insights.',
+      },
+      {
+        question: 'Test process',
+        answer:
+          'A simple blood draw at a nearby partner lab — or at home with a licensed phlebotomist. Your results are analyzed and delivered to your dashboard in an easy-to-understand report, complete with clear, actionable next steps.',
+      },
+      {
+        question: 'Pre-test considerations',
+        answer:
+          'To ensure the most accurate results:\n\n- Fast for 8-12 hours before your blood draw (water is fine).\n- Continue prescription medications unless directed otherwise by your provider. Statins, blood pressure medications, or diabetes drugs may affect results — let us know if youre taking them.\n- Avoid alcohol, smoking, and heavy caffeine for 24 hours before testing.\n- Stay hydrated by drinking water before your appointment.\n- Aim for a morning collection for consistency.',
+      },
+    ],
+  },
+
+  [METABOLIC_PANEL]: {
+    faqs: [
+      {
+        question: "Who's this for?",
+        answer:
+          'Anyone looking to understand their risk for diabetes, metabolic syndrome, or unexplained weight changes. Especially useful if you have a family history of diabetes, experience fatigue after meals, or want a clearer picture of insulin sensitivity.',
+      },
+      {
+        question: "What's included in this bundle?",
+        answer:
+          '- **Adiponectin** — a hormone produced by fat cells; higher levels are protective and improve insulin sensitivity.\n- **Leptin** — a hormone that regulates appetite and fat storage; imbalances can contribute to weight gain or difficulty losing weight.\n- **Insulin** — shows how much insulin your body is making.\n- **Insulin Resistance Score** — integrates insulin and C-peptide to give a direct measure of insulin sensitivity.\n- **C-Peptide** — reflects how much insulin is produced by your pancreas.\n- **Fructosamine** — reflects average blood sugar levels over the past 2-3 weeks, complementing HbA1c and glucose testing.\n\n*Note: In NY/NJ, Adiponectin and the Insulin Resistance Score are not available. The Metabolic Health Panel is offered at a reduced price of $79.*',
+      },
+      {
+        question: 'Why is this test important?',
+        answer:
+          'Insulin resistance often develops silently for years before diabetes is diagnosed. Early detection allows for targeted nutrition, lifestyle, and medical interventions to restore balance and reduce long-term risk.\n\n**This test may be especially helpful if you:**\n- Struggle with weight gain or difficulty losing weight.\n- Experience fatigue, brain fog, or sugar cravings after meals.\n- Have a family history of type 2 diabetes or metabolic syndrome.\n- Show borderline changes in glucose, HbA1c, or cholesterol.\n- Want to measure the impact of diet, exercise, or medication on your metabolism.',
+      },
+      {
+        question: 'Test process',
+        answer:
+          'A simple blood draw at a nearby partner lab — or right at home with a licensed phlebotomist. Your results are carefully analyzed and delivered straight to your dashboard in an easy-to-understand report, complete with clear, actionable next steps.',
+      },
+      {
+        question: 'Pre-test considerations',
+        answer:
+          'For the most accurate results:\n- Fast for 8-12 hours before your blood draw (water is fine).\n- Continue prescription medications unless directed otherwise by your provider. Some drugs (e.g., steroids, diabetes medications) can affect results — let us know if you`re taking them.\n- Avoid alcohol, smoking, and excess caffeine for 24 hours before testing.\n- Stay hydrated by drinking water before your appointment.\n- Morning collection is preferred for consistency.',
+      },
+    ],
+  },
+
+  [METHYLATION_PANEL]: {
+    faqs: [
+      {
+        question: "Who's this for?",
+        answer:
+          'Anyone looking to optimize energy, focus, and long-term health. Especially useful if you experience fatigue, mood changes, or have a family history of heart disease, cognitive decline, or genetic variants affecting methylation (like MTHFR).',
+      },
+      {
+        question: "What's included in this panel?",
+        answer:
+          '- **Homocysteine** — shows how well your body recycles methyl groups.\n- **Methylmalonic Acid (MMA)** — reflects vitamin B12 use.\n- **Folate (RBC)** — long-term folate status, vital for DNA and red blood cells.\n- **Vitamin B6** — supports brain chemistry and homocysteine clearance.\n- **Vitamin B2 (Riboflavin)** — powers enzymes (like MTHFR) to regulate homocysteine.\n- **Vitamin B12 (Cobalamin)** — essential for methylation, energy, and nerve health.',
+      },
+      {
+        question: 'Why is this test important?',
+        answer:
+          "Methylation is one of your body's core pathways for energy, mood, detox, and DNA repair. When it's not working well, the effects can show up across many systems.\n\n**This test may be especially helpful if you have:**\n- Fatigue, low mood, poor focus, or sleep problems\n- High homocysteine, anemia, or low folate/B12 despite supplements\n- Cardiovascular risks (cholesterol, clotting, hypertension)\n- Memory issues or a family history of dementia\n- Sensitivity to alcohol, meds, or chemicals\n- Chronic inflammation, infections, or autoimmunity",
+      },
+      {
+        question: 'Test process',
+        answer:
+          'A simple blood draw at a partner lab or right at home with a licensed phlebotomist. Results appear in your dashboard with a clear, actionable report.',
+      },
+      {
+        question: 'Pre‑test considerations',
+        answer:
+          'To make sure your results are as accurate and meaningful as possible, please follow these guidelines:\n- Fast 8-12 hours (water OK)\n- Pause high-dose B vitamins 48-72h (unless advised otherwise)\n- Continue prescriptions unless told by your provider (let us know if you take metformin, PPIs, anticonvulsants, methotrexate)\n- Avoid alcohol, smoking, and heavy caffeine for 24h\n- Stay hydrated\n- Morning collection preferred',
+      },
+    ],
+  },
+
+  [FEMALE_FERTILITY_PANEL]: {
+    faqs: [
+      {
+        question: "Who's this for?",
+        answer:
+          'Anyone trying to conceive, planning for the future, or experiencing irregular cycles, hormone-related symptoms, or difficulty getting pregnant. Especially useful if you want a clearer picture of hormone balance, ovarian reserve, thyroid function, or toxin exposure.',
+      },
+      {
+        question: "What's included in this panel?",
+        answer:
+          '- **Anti-Müllerian Hormone (AMH)** — a key marker of ovarian reserve and egg quantity.\n- **Progesterone** — confirms ovulation and supports implantation and early pregnancy.\n- **FSH (Follicle Stimulating Hormone)** — regulates ovarian function and helps assess ovarian reserve.\n- **LH (Luteinizing Hormone)** — triggers ovulation; measured alongside FSH to evaluate cycle balance.\n- **Estradiol (E2, ultrasensitive LC/MS)** — the main estrogen; reflects ovarian activity and cycle health.\n- **Prolactin** — high levels can disrupt ovulation and menstrual cycles.\n- **Thyroid Antibodies (TPO, ATG)** — markers of autoimmune thyroid disease, which can interfere with fertility and pregnancy.\n- **Insulin & Glucose (fasting)** — evaluate blood sugar control and metabolic health, important for conditions like PCOS.\n- **Mercury (whole blood)** — screens for heavy metal exposure that can impact fertility.\n- **17-Hydroxyprogesterone** — helps assess adrenal and ovarian hormone pathways, relevant in PCOS and other hormone disorders.',
+      },
+      {
+        question: 'Why is this test important?',
+        answer:
+          'Hormonal imbalances, thyroid autoimmunity, and metabolic dysfunction are common, underdiagnosed causes of fertility challenges. Identifying these factors early can help guide interventions — from lifestyle and nutrition changes to medical treatment — that improve reproductive outcomes and overall health.\n\n**This test may be especially helpful if you:**\n- Have irregular or absent periods.\n- Experience PMS, heavy bleeding, or signs of hormone imbalance.\n- Have been trying to conceive without success.\n- Have a family history of thyroid disease or autoimmune conditions.\n- Suspect PCOS or insulin resistance.\n- Want a comprehensive fertility “check-in” before starting a family.',
+      },
+      {
+        question: 'Test process',
+        answer:
+          'A simple blood draw at a nearby partner lab — or right at home with a licensed phlebotomist. Your results are carefully analyzed and delivered straight to your dashboard in an easy-to-understand report, complete with clear, actionable next steps.',
+      },
+      {
+        question: 'Pre-test considerations',
+        answer:
+          '- **Cycle timing matters:** For the most complete picture, this panel is best collected early in the menstrual cycle (days 2-5). At this time, FSH, LH, estradiol, and AMH give the clearest insights into ovarian reserve and cycle balance. Progesterone is included in this panel and, when measured early in the cycle, reflects baseline levels.\n- **Fasting required** for glucose and insulin (8-12 hours; water is fine).\n- **Continue prescription medications** unless instructed otherwise by your provider.\n- **Avoid high-dose biotin supplements** for 48 hours, as they can interfere with hormone assays.\n- **Stay hydrated** before your appointment.\n- **Morning collection** is preferred for consistency.',
+      },
+    ],
+  },
+
+  [AUTOIMMUNITY_AND_CELIAC_PANEL]: {
+    faqs: [
+      {
+        question: "Who's this for?",
+        answer:
+          'Anyone with ongoing fatigue, joint pain, digestive issues, skin changes, or a family/personal history of autoimmune disease. Especially useful if you have thyroid concerns or unexplained inflammation.',
+      },
+      {
+        question: "What's included in this panel?",
+        answer:
+          '- **TPO & Thyroglobulin Antibodies** — markers of autoimmune thyroid disease (Hashimoto’s, Graves’).\n- **ANA Screen, IFA + Reflex** — flags antibodies linked to systemic autoimmune conditions (e.g., lupus); expands to 11 more if positive.\n- **Rheumatoid Factor (RF)** — often elevated in rheumatoid arthritis.\n- **dsDNA Antibody** — specific marker for lupus.\n- **CCP IgG** — early antibody for rheumatoid arthritis.\n- **tTG IgA** — key test for celiac disease.\n- **Total IgA** — confirms accurate celiac results by checking for IgA deficiency.\n\n*Note: For Quest members, ANA reflex testing only if the screen is positive. In NY/NJ, the panel also includes SSA 52, SSA 60, dsDNA, SS-B, Smith & RNP antibodies.*',
+      },
+      {
+        question: 'Why is this test important?',
+        answer:
+          'Autoimmune diseases often build slowly with vague, overlapping symptoms. Detecting antibodies early helps explain what’s driving inflammation and gives you clearer next steps.\n- Ongoing fatigue, joint pain, or stiffness\n- Digestive problems (bloating, diarrhea, malabsorption)\n- Unexplained rashes, hair loss, or skin changes\n- Thyroid dysfunction\n- Family history of autoimmune disorders',
+      },
+      {
+        question: 'Test process',
+        answer:
+          'A quick blood draw at a partner lab or at home with a licensed phlebotomist. Results are delivered in a clear, actionable report through your dashboard.',
+      },
+      {
+        question: 'Pre-test considerations',
+        answer:
+          '- No fasting required\n- Continue prescriptions unless told otherwise\n- Stop high-dose biotin (B7) for 48h before\n- Drink water beforehand\n- Morning collection preferred',
+      },
+    ],
+  },
+
+  [NUTRIENT_AND_ANTIOXIDANT_PANEL]: {
+    faqs: [
+      {
+        question: "Who's this for?",
+        answer:
+          'Anyone looking to optimize energy, immunity, and overall resilience. Especially useful if you experience fatigue, frequent illness, slow recovery, or follow a restricted diet (vegan, vegetarian, keto, etc.).',
+      },
+      {
+        question: "What's included in this panel?",
+        answer:
+          'Nutrients don’t act in isolation. These panels measure vitamins and minerals in the context of their pathways, cofactors, and interactions — giving you a more accurate picture of true nutritional balance. This bundle includes:\n- **Vitamin A** — vision, skin & immune health\n- **Vitamin E** — antioxidant protection & cell stability\n- **Vitamin K** — bone & heart health, clotting balance\n- **Vitamin C** — immune defense, collagen, iron absorption\n- **Selenium** — thyroid support & antioxidant defense\n- **Magnesium (RBC)** — energy, nerves & muscle function',
+      },
+      {
+        question: 'Why is this test important?',
+        answer:
+          'Nutrient status shapes how well your body produces energy, fights infections, balances hormones, and controls inflammation. Even with a balanced diet, genetics, absorption issues, stress, or lifestyle factors can create gaps.\n\n**This test is especially valuable if you are:**\n- Actively supplementing and want to confirm absorption, utilization, or avoid imbalances.\n- Considering supplements and want clarity on what you truly need before starting.\n- Experiencing symptoms such as fatigue, brain fog, mood changes, skin/hair issues, or slow recovery.\n- Managing thyroid, hormonal, or cardiometabolic concerns (e.g., cholesterol, blood sugar, blood pressure).\n- Living with digestive issues (IBS, IBD, celiac) or other conditions that affect nutrient absorption.\n- Facing increased demands — athletes, people under chronic stress, or recovering from illness.\n- Following a restricted diet (vegan, vegetarian, keto, etc.) or eating pattern that limits nutrient intake.',
+      },
+      {
+        question: 'Test process',
+        answer:
+          'A quick blood draw at a local lab or at home with a licensed phlebotomist. Results land in your dashboard with clear insights and next steps tailored to you.',
+      },
+      {
+        question: 'Pre-test considerations',
+        answer:
+          'For the most accurate results:\n- **Fast for 8-12 hours** before your blood draw (water is fine).\n- **Continue prescription medications** unless instructed otherwise by your provider. Some drugs (e.g., PPIs, metformin, oral contraceptives) can influence nutrient levels — let us know if you’re taking them.\n- **Pause high-dose supplements** (vitamins, minerals, fish oil, iron) for 48-72 hours unless otherwise directed.\n- **Refrain from eating liver** ~24 hours before your draw.\n- **Avoid alcohol, smoking, and excess caffeine** for 24 hours before testing.\n- **Avoid unusually high intakes** of fortified foods or supplements the day before (especially vitamin C).\n- **Stay hydrated** by drinking water before your appointment.\n- **Morning collection** is preferred for consistency.',
+      },
+    ],
+  },
+
   [GRAIL_GALLERI_MULTI_CANCER_TEST]: {
     image: '/services/transparent/grail_galleri_multi_cancer_test.png',
     faqs: [
       {
         question: 'Why this matters?',
         answer:
-          "- Cancer risk increases with age, regardless of family history.\n- Only 5–10% of cancers are inherited — meaning most are not genetic.\n- The remaining 90–95% are sporadic, caused by environmental exposures, lifestyle and aging-related somatic mutations\n- Adults over 50 are 13× more likely to develop cancer than those under 50.\n\nEarly detection saves lives. Most cancers show no symptoms until it's too late.",
+          "- Cancer risk increases with age, regardless of family history.\n- Only 5-10% of cancers are inherited — meaning most are not genetic.\n- The remaining 90-95% are sporadic, caused by environmental exposures, lifestyle and aging-related somatic mutations\n- Adults over 50 are 13x more likely to develop cancer than those under 50.\n\nEarly detection saves lives. Most cancers show no symptoms until it's too late.",
       },
       {
         question: "What's measured?",
@@ -105,7 +291,7 @@ export const SERVICE_DETAILS: Record<string, ServiceDetails> = {
       {
         question: "What's the process?",
         answer:
-          '1. Receive your kit at home in 3–5 days.\n2. Schedule an at-home blood draw with a licensed phlebotomist (no fasting required).\n3. Get results in 2–3 weeks via your Superpower dashboard.',
+          '1. Receive your kit at home in 3-5 days.\n2. Schedule an at-home blood draw with a licensed phlebotomist (no fasting required).\n3. Get results in 2-3 weeks via your Superpower dashboard.',
       },
     ],
   },
@@ -405,7 +591,7 @@ export const SERVICE_DETAILS: Record<string, ServiceDetails> = {
       {
         question: 'Pre-test considerations',
         answer:
-          "- No fasting is required.\n- It is recommended to eat lighter (e.g. no fried, greasy, heavy foods) and to eat less gassy foods (e.g. soda, seltzer water, beans, broccoli, cabbage, etc.) before the scan.\n- Try to limit fluid intake approximately 1.5 – 2 hours prior to your appointment so you don't feel the need to stop the scan.\n- Connect with your membership advisor if you have any questions or concerns ahead of testing.",
+          "- No fasting is required.\n- It is recommended to eat lighter (e.g. no fried, greasy, heavy foods) and to eat less gassy foods (e.g. soda, seltzer water, beans, broccoli, cabbage, etc.) before the scan.\n- Try to limit fluid intake approximately 1.5 - 2 hours prior to your appointment so you don't feel the need to stop the scan.\n- Connect with your membership advisor if you have any questions or concerns ahead of testing.",
       },
     ],
   },
@@ -469,7 +655,7 @@ export const SERVICE_DETAILS: Record<string, ServiceDetails> = {
       {
         question: 'Why is this test important?',
         answer:
-          'Most people are accustomed to stepping on a bathroom scale every now and then, but monitoring weight – while helpful – is not a precise method of assessing wellness and fitness.\n\nA DEXA scan provides an in-depth body fat analysis including segmental fat mass, lean mass, and bone density. Knowing this information about your body is crucial for optimizing your wellness, preventing disease, and tracking change over time.',
+          'Most people are accustomed to stepping on a bathroom scale every now and then, but monitoring weight - while helpful - is not a precise method of assessing wellness and fitness.\n\nA DEXA scan provides an in-depth body fat analysis including segmental fat mass, lean mass, and bone density. Knowing this information about your body is crucial for optimizing your wellness, preventing disease, and tracking change over time.',
       },
       {
         question: 'Test process',

@@ -2,6 +2,8 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { Skeleton } from '@/components/ui/skeleton';
 import {
+  ADVANCED_BLOOD_PANEL,
+  CUSTOM_BLOOD_PANEL,
   ENVIRONMENTAL_TOXIN_TEST_ID,
   GUT_MICROBIOME_ANALYSIS_ID,
   HEAVY_METALS_TEST_ID,
@@ -12,10 +14,12 @@ import {
   ServiceWithMetadata,
   useUpsellServices,
 } from '@/features/onboarding/hooks/use-upsell-services';
+import { useGroupedOrders } from '@/features/orders/hooks';
 import { useAnalytics } from '@/hooks/use-analytics';
 
 import { UpsellCover } from '../upsell-cover';
 
+import { UpsellAddOn } from './upsell-addon';
 import { UpsellCheckout } from './upsell-checkout';
 import { UpsellItemCover } from './upsell-cover';
 import { UpsellDetailGut } from './upsell-detail-gut';
@@ -23,6 +27,7 @@ import { UpsellDetailToxins } from './upsell-detail-toxins';
 
 enum STEPS {
   MAIN_COVER = 'MAIN_COVER',
+  ADD_ON = 'ADD_ON',
   GUT_COVER = 'GUT_COVER',
   GUT_DETAIL = 'GUT_DETAIL',
   TOXINS_COVER = 'TOXINS_COVER',
@@ -32,10 +37,12 @@ enum STEPS {
 
 type STEP = (typeof STEPS)[keyof typeof STEPS];
 
-const UPSSELL_STEPS = Object.values(STEPS) as STEP[];
+const UPSELL_STEPS = Object.values(STEPS) as STEP[];
 
 export const UpsellSequence = () => {
   const { track } = useAnalytics();
+  const { buckets } = useGroupedOrders();
+
   const { services, selectedServices, setSelectedServices, isLoading } =
     useUpsellServices();
 
@@ -73,9 +80,27 @@ export const UpsellSequence = () => {
   );
 
   const goToNext = () => {
-    const currentIndex = UPSSELL_STEPS.indexOf(currentStep);
-    if (currentIndex < UPSSELL_STEPS.length - 1) {
-      let nextStep = UPSSELL_STEPS[currentIndex + 1];
+    const currentIndex = UPSELL_STEPS.indexOf(currentStep);
+    if (currentIndex < UPSELL_STEPS.length - 1) {
+      let nextStep = UPSELL_STEPS[currentIndex + 1];
+
+      // we currently do not support upgrade of advanced credits sicne they already hit 14 tubes limit
+      if (
+        buckets.drafts.find((d) => d.order.serviceName === ADVANCED_BLOOD_PANEL)
+      ) {
+        if (nextStep === STEPS.ADD_ON) {
+          nextStep = STEPS.GUT_COVER;
+        }
+      }
+
+      // if custom blood panel exists already we dont need to show it again
+      if (
+        buckets.drafts.find((d) => d.order.serviceName === CUSTOM_BLOOD_PANEL)
+      ) {
+        if (nextStep === STEPS.ADD_ON) {
+          nextStep = STEPS.GUT_COVER;
+        }
+      }
 
       // Skip gut steps if gut service is already ordered
       if (gutService?.order) {
@@ -108,6 +133,9 @@ export const UpsellSequence = () => {
   switch (currentStep) {
     case STEPS.MAIN_COVER:
       return <UpsellCover goToNext={goToNext} />;
+
+    case STEPS.ADD_ON:
+      return <UpsellAddOn goToNext={goToNext} />;
 
     case STEPS.GUT_COVER:
       return (

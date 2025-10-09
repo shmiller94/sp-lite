@@ -13,10 +13,10 @@ test('One slot', async () => {
         description:
           'Build your own blood panel and choose from dozens of laboratory tests covering hundreds of biomarkers.',
         price: 0,
-        method: 'at_home_phlebotomy',
         active: false,
         phlebotomy: true,
-        items: [],
+        supportsLabOrder: true,
+        bloodTubeCount: 6,
       }}
       collectionMethod="AT_HOME"
       address={{

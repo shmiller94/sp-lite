@@ -1,6 +1,7 @@
 import moment, { Moment } from 'moment';
 import 'moment-timezone';
 
+import { Body1, Body2, H2 } from '@/components/ui/typography';
 import { cn } from '@/lib/utils';
 
 import { useScheduler } from '../stores/scheduler';
@@ -16,10 +17,10 @@ export function SchedulerDaySlot({ day }: { day: Moment }): JSX.Element {
   return (
     <div
       className={cn(
-        'p-4 border rounded-2xl w-full border-zinc-200 cursor-pointer',
-        disabled ? 'cursor-not-allowed' : '',
+        'p-4 border rounded-2xl w-full transition-all duration-200 border-zinc-200 bg-white cursor-pointer px-4 py-5 space-y-1',
+        disabled ? 'cursor-not-allowed opacity-50' : '',
         selected && !disabled
-          ? 'border-2 border-zinc-900 bg-zinc-50 cursor-default'
+          ? 'border-vermillion-900 shadow-lg shadow-vermillion-900/10'
           : '',
       )}
       onClick={() => {
@@ -28,51 +29,11 @@ export function SchedulerDaySlot({ day }: { day: Moment }): JSX.Element {
       }}
       role="presentation"
     >
-      <div
-        className={cn(
-          'flex flex-row sm:flex-col justify-between h-full',
-          !selected ? 'border border-transparent' : '',
-        )}
-      >
-        <div className="flex flex-row items-center gap-1.5 sm:flex-col sm:items-start">
-          <span
-            className={cn(
-              'text-base',
-              selected
-                ? 'text-zinc-900'
-                : disabled
-                  ? 'text-zinc-200'
-                  : 'text-zinc-500',
-            )}
-          >
-            {moment(day).tz(tz).format('dddd').substring(0, 3)}
-          </span>
-          <span
-            className={cn(
-              'text-base sm:text-6xl',
-              selected
-                ? 'text-zinc-900'
-                : disabled
-                  ? 'text-zinc-200'
-                  : 'text-zinc-500',
-            )}
-          >
-            {moment(day).tz(tz).format('DD')}
-          </span>
-        </div>
-        <span
-          className={cn(
-            'text-sm',
-            selected
-              ? 'text-zinc-900'
-              : disabled
-                ? 'text-zinc-200'
-                : 'text-zinc-500',
-          )}
-        >
-          {numSlots && numSlots > 0 ? numSlots : 'No'} slots
-        </span>
-      </div>
+      <Body1>{moment(day).tz(tz).format('dddd').substring(0, 3)}</Body1>
+      <H2>{moment(day).tz(tz).format('DD')}</H2>
+      <Body2 className={'text-secondary'}>
+        {numSlots && numSlots > 0 ? numSlots : 'No'} slots
+      </Body2>
     </div>
   );
 }

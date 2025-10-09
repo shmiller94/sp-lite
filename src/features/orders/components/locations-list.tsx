@@ -1,10 +1,15 @@
-import { ExternalLink } from 'lucide-react';
+import { CornerUpRight, ExternalLink } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Body1, Body2, Body3 } from '@/components/ui/typography';
+import {
+  TooltipProvider,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { Body1 } from '@/components/ui/typography';
 import { useOrder } from '@/features/orders/stores/order-store';
 import { formatDistanceText } from '@/features/orders/utils/format-distance-text';
 import { getNormalizedText } from '@/features/orders/utils/get-normallized-text';
@@ -25,7 +30,7 @@ export const LocationList = ({
   if (isLoading) {
     return (
       <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white p-1">
-        <div className="h-[320px] overflow-y-auto">
+        <div className="min-h-24 overflow-y-auto">
           <LocationListSkeleton />
         </div>
       </div>
@@ -35,18 +40,18 @@ export const LocationList = ({
   if (!locations || locations.length === 0) {
     return (
       <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white p-1">
-        <div className="flex h-[320px] items-center justify-center">
-          <Body2 className="text-zinc-500">
+        <div className="flex min-h-24 items-center justify-center">
+          <Body1 className="text-zinc-500">
             Available locations will appear here
-          </Body2>
+          </Body1>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white p-1">
-      <div className="h-[320px] overflow-y-auto scrollbar scrollbar-thumb-zinc-300 [overflow:overlay] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar]:w-2">
+    <div className="overflow-hidden">
+      <div className="min-h-24 overflow-y-auto scrollbar scrollbar-thumb-zinc-300 [overflow:overlay] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar]:w-2">
         <LocationListOptions locations={locations} />
       </div>
     </div>
@@ -105,33 +110,43 @@ const LocationListOption = ({
   };
 
   return (
-    <Label
+    <div
       className={cn(
-        'rounded-lg p-4 text-left transition-all hover:bg-accent flex cursor-pointer items-center gap-4',
-        isSelected ? 'bg-accent' : null,
+        'flex space-x-4 border rounded-2xl px-4 py-5 flex-1 bg-white',
+        isSelected
+          ? 'border-vermillion-900 shadow-lg shadow-vermillion-900/10'
+          : 'border-zinc-200 hover:bg-zinc-50',
       )}
-      onClick={() => updateLocation(option)}
-      htmlFor={`item-${index}`}
+      onClick={() =>
+        isSelected ? updateLocation(null) : updateLocation(option)
+      }
+      role="presentation"
     >
       <RadioGroupItem
         value={formatAddress(option.address)}
         id={`item-${index}`}
+        checked={isSelected}
+        variant="vermillion"
       />
       <div className="flex grow flex-col items-start gap-1">
-        <Body1 className="text-zinc-600">{locationName}</Body1>
-        <Body3 className="text-zinc-400">{locationDetails}</Body3>
+        <Body1>{locationName}</Body1>
+        <Body1 className="text-secondary">{locationDetails}</Body1>
       </div>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="hidden items-center gap-2 rounded-full px-2 py-1 sm:flex"
-        onClick={handleOpenMaps}
-      >
-        <span className="cursor-pointer text-zinc-600 hover:underline">
-          See location
-        </span>
-        <ExternalLink className="size-4 text-zinc-400" />
-      </Button>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="hidden aspect-square items-center gap-2 rounded-md p-1.5 text-zinc-500 hover:bg-zinc-200 hover:text-zinc-900 sm:flex"
+              onClick={handleOpenMaps}
+            >
+              <CornerUpRight className="size-5" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>See location on Google Maps</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
 
       <Button
         variant="ghost"
@@ -141,7 +156,7 @@ const LocationListOption = ({
       >
         <ExternalLink className="size-5 text-zinc-400" />
       </Button>
-    </Label>
+    </div>
   );
 };
 

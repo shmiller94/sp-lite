@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dropdown';
 import { toast } from '@/components/ui/sonner';
 import { useCreateFile } from '@/features/files/api';
-import { useCompleteOrder } from '@/features/orders/api/complete-order';
+import { useCompleteOrder } from '@/features/orders/api';
 import { useAuthorization } from '@/lib/authorization';
 import { cn } from '@/lib/utils';
 import { Order } from '@/types/api';

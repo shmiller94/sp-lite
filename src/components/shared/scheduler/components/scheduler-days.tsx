@@ -38,7 +38,7 @@ export function SchedulerDays(): JSX.Element {
 
   if (slots.length === 0 && !loading) {
     return (
-      <div className="mb-8 flex flex-col items-center justify-center sm:h-[200px]">
+      <div className="mb-8 flex flex-col items-center justify-center">
         <Body1 className="text-center text-zinc-500">
           We were unable to find available slots within the next few months.
           <br />
@@ -50,7 +50,7 @@ export function SchedulerDays(): JSX.Element {
         {service.name === ADVISORY_CALL ? null : (
           <Button
             variant="outline"
-            className="mt-4 w-full md:w-auto"
+            className="mt-4 w-full bg-white md:w-auto"
             onClick={prevStep}
           >
             Pick new location
@@ -61,13 +61,13 @@ export function SchedulerDays(): JSX.Element {
   }
 
   return (
-    <div className="mb-8 flex flex-col justify-start gap-2 sm:h-[200px] sm:flex-row">
+    <div className="mb-8 flex flex-col justify-start gap-2 sm:flex-row">
       {loading &&
         Array(numDays)
           .fill(0)
           .map((_, indx) => (
             <Skeleton
-              className="h-[60px] w-full min-w-fit rounded-2xl sm:h-[200px]"
+              className="h-[134px] w-full min-w-fit rounded-2xl"
               key={indx}
             />
           ))}

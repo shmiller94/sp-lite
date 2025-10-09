@@ -1,10 +1,4 @@
-import {
-  ADVANCED_BLOOD_PANEL,
-  COLLECTION_METHODS,
-  type CollectionOptionType,
-  CUSTOM_BLOOD_PANEL,
-  SUPERPOWER_BLOOD_PANEL,
-} from '@/const';
+import { COLLECTION_METHODS, type CollectionOptionType } from '@/const';
 import { HealthcareService } from '@/types/api';
 
 /**
@@ -18,12 +12,7 @@ import { HealthcareService } from '@/types/api';
 export const getInterpretedAtHomeMethod = (
   service: HealthcareService,
 ): CollectionOptionType => {
-  const isBloodPanel =
-    service.name === SUPERPOWER_BLOOD_PANEL ||
-    service.name === CUSTOM_BLOOD_PANEL ||
-    service.name == ADVANCED_BLOOD_PANEL;
-
-  if (!isBloodPanel) {
+  if (!service.supportsLabOrder) {
     return {
       ...COLLECTION_METHODS.AT_HOME,
       value: 'PHLEBOTOMY_KIT',

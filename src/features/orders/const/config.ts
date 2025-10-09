@@ -1,0 +1,1 @@
+export const HEALTHCARE_SERVICE_DIALOG_CONTAINER_STYLE = 'px-6 md:px-16';

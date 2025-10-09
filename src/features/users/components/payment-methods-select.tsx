@@ -42,7 +42,7 @@ export const PaymentMethodsSelect = ({
       ) : (
         <Label className="text-sm text-zinc-500">Active payment methods</Label>
       )}
-      <div className="rounded-xl border border-zinc-200 bg-white md:bg-transparent">
+      <div className="rounded-xl border border-zinc-200 bg-white">
         {paymentMethods.length > 0 && (
           <div className="p-2">
             {paymentMethods.map((paymentMethod, i) => (

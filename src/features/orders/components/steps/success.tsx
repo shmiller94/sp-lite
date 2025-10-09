@@ -1,29 +1,28 @@
 import React, { useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-import { AddToCalendar } from '@/components/shared/add-to-calendar-button';
+import {
+  AppleCalendarButton,
+  GoogleCalendarButton,
+} from '@/components/shared/add-to-calendar-button';
 import { Button } from '@/components/ui/button';
 import { DialogClose } from '@/components/ui/dialog';
-import { H2 } from '@/components/ui/typography';
-import {
-  GRAIL_GALLERI_MULTI_CANCER_TEST,
-  SUPERPOWER_ADVANCED_BLOOD_PANEL,
-  SUPERPOWER_BLOOD_PANEL,
-} from '@/const';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Body1, Body3, H2 } from '@/components/ui/typography';
 import { HealthcareServiceFooter } from '@/features/orders/components/healthcare-service-footer';
+import { HEALTHCARE_SERVICE_DIALOG_CONTAINER_STYLE } from '@/features/orders/const/config';
 import { useOrder } from '@/features/orders/stores/order-store';
-import { useStepper } from '@/lib/stepper';
+import { useUser } from '@/lib/auth';
+import { cn } from '@/lib/utils';
 import { getServiceTimeline } from '@/utils/service';
 import { AnimatedTimeline } from 'src/components/ui/animated-timeline';
 
 export const Success = () => {
   const { slot, service, collectionMethod, location } = useOrder((s) => s);
-  const { nextStep, activeStep, steps } = useStepper((s) => s);
   const timelineSteps = getServiceTimeline(service, collectionMethod);
   const navigate = useNavigate();
   const { pathname } = useLocation();
-
-  const isLastStep = activeStep === steps.length - 1;
+  const { data: user, isLoading } = useUser();
 
   const handleClose = useCallback(() => {
     if (pathname === '/services') {
@@ -31,7 +30,7 @@ export const Success = () => {
     }
   }, [navigate, pathname]);
 
-  const renderCalendarButton = () => {
+  const renderCalendarButtons = () => {
     if (!location?.address) {
       return null;
     }
@@ -41,47 +40,67 @@ export const Success = () => {
     if (!slot) {
       return null;
     }
-    if (
-      service.name !== SUPERPOWER_BLOOD_PANEL &&
-      service.name !== SUPERPOWER_ADVANCED_BLOOD_PANEL &&
-      service.name !== GRAIL_GALLERI_MULTI_CANCER_TEST
-    ) {
+    if (!service.supportsLabOrder) {
       return null;
     }
 
     return (
-      <AddToCalendar
-        address={location.address}
-        slot={slot}
-        service={service.name}
-        collectionMethod={collectionMethod}
-        className="w-full"
-      />
+      <>
+        <AppleCalendarButton
+          address={location.address}
+          slot={slot}
+          serviceName={service.name}
+          collectionMethod={collectionMethod}
+          className="justify-center border border-zinc-100 bg-white shadow shadow-black/[.02] transition-all duration-200"
+        />
+        <GoogleCalendarButton
+          address={location.address}
+          slot={slot}
+          serviceName={service.name}
+          collectionMethod={collectionMethod}
+          className="justify-center border border-zinc-100 bg-white shadow shadow-black/[.02] transition-all duration-200"
+        />
+      </>
     );
   };
 
   return (
     <>
-      <div className="space-y-8 p-6 md:p-14">
-        <H2 className="text-zinc-900">
-          Thank you, we look forward to seeing you shortly.
-        </H2>
+      <div
+        className={cn('space-y-8', HEALTHCARE_SERVICE_DIALOG_CONTAINER_STYLE)}
+      >
+        <div className="space-y-1">
+          <H2 className="text-zinc-900">
+            Thank you, we look forward to seeing you shortly.
+          </H2>
+          {isLoading ? (
+            <Skeleton className="h-10 w-full" />
+          ) : (
+            <Body1 className="text-secondary">
+              You will receive an email to {user?.email} for additional testing
+              details.
+            </Body1>
+          )}
+        </div>
         <AnimatedTimeline timeline={timelineSteps} />
       </div>
       <HealthcareServiceFooter
-        prevBtn={renderCalendarButton()}
+        prevBtn={null}
         nextBtn={
-          isLastStep ? (
+          <div className="w-full space-y-2">
+            {service.supportsLabOrder ? (
+              <Body3 className="text-zinc-400">
+                Invites are sent automatically. Otherwise add the event to your
+                calendar below.
+              </Body3>
+            ) : null}
+            {renderCalendarButtons()}
             <DialogClose asChild>
-              <Button className="w-full md:w-auto" onClick={handleClose}>
+              <Button className="w-full" onClick={handleClose}>
                 Done
               </Button>
             </DialogClose>
-          ) : (
-            <Button onClick={nextStep} className="w-full md:w-auto">
-              Next
-            </Button>
-          )
+          </div>
         }
       />
     </>

@@ -84,7 +84,7 @@ export const UpsellCheckout = ({
         location: {},
         timestamp: new Date().toISOString(),
         timezone: moment.tz.guess(),
-        method: collectionMethod ? [collectionMethod] : [],
+        method: collectionMethod ?? undefined,
         status: OrderStatus.draft,
       };
 

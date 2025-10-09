@@ -20,10 +20,10 @@ export function SchedulerTimeSlot({
   return (
     <div
       className={cn(
+        'flex flex-col rounded-2xl cursor-pointer ease-in-out duration-200 lowercase px-4 py-5 text-left border bg-white text-primary',
         selected
-          ? 'bg-zinc-50 text-zinc-900'
-          : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900',
-        'col-span-1 flex flex-col rounded-[8px] cursor-pointer ease-in-out duration-200 lowercase p-4 text-left',
+          ? 'border-vermillion-900 shadow-lg shadow-vermillion-900/10'
+          : '',
       )}
       key={timeSlot.start}
       onClick={() => {

@@ -2,6 +2,7 @@ import { Pencil, X } from 'lucide-react';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Body1, Body2 } from '@/components/ui/typography';
 import { usePaymentMethods } from '@/features/settings/api';
 import { PaymentMethodsSelect } from '@/features/users/components/payment-methods-select';
@@ -40,7 +41,7 @@ export const CurrentPaymentMethodCard = ({
     <div className="space-y-2">
       <div
         className={cn(
-          'w-full space-y-3 rounded-2xl border px-8 py-6',
+          'w-full space-y-3 rounded-2xl border px-8 py-6 bg-white',
           error ? 'border-pink-700 bg-pink-50' : 'border-zinc-200',
           className,
         )}
@@ -59,12 +60,16 @@ export const CurrentPaymentMethodCard = ({
           </Button>
         </div>
 
-        <div>
-          <>
+        {defaultPaymentMethod ? (
+          <div>
             <Body1>{capitalize(defaultPaymentMethod?.card.brand ?? '')}</Body1>
             <Body1>****{defaultPaymentMethod?.card.last4}</Body1>
-          </>
-        </div>
+          </div>
+        ) : (
+          <div>
+            <Skeleton className="h-12 w-full" />
+          </div>
+        )}
       </div>
 
       {error ? <Body2 className="text-pink-700">{error}</Body2> : null}

@@ -21,9 +21,8 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { Body1 } from '@/components/ui/typography';
-import { resyncDataAfterCancelOrder } from '@/features/orders/api/cancel-order';
 import { RescheduleDialogMode } from '@/features/orders/types/reschedule-dialog-mode';
-import { StepID } from '@/features/orders/types/step-id';
+import { BookingStepID } from '@/features/orders/utils/get-steps-for-service';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 import { HealthcareService, Order } from '@/types/api';
 
@@ -51,7 +50,7 @@ export const HealthcareServiceRescheduleDialog = ({
   const { width } = useWindowDimensions();
   const queryClient = useQueryClient();
   const [mode, setMode] = useState<RescheduleDialogMode>('default');
-  const [skipStepIds, setSkipStepIds] = useState<StepID[]>([]);
+  const [skipStepIds, setSkipStepIds] = useState<BookingStepID[]>([]);
 
   const title = (() => {
     switch (mode) {
@@ -92,7 +91,7 @@ export const HealthcareServiceRescheduleDialog = ({
           <HealthcareServiceDialog
             healthcareService={healthcareService}
             excludeSteps={skipStepIds}
-            onSubmit={onSubmit}
+            onClose={onSubmit}
           />
         );
       }
@@ -104,7 +103,6 @@ export const HealthcareServiceRescheduleDialog = ({
   const handleClose = useCallback(
     (open: boolean) => {
       if (!open) {
-        resyncDataAfterCancelOrder({ queryClient });
         setMode('default');
         setSkipStepIds([]);
       }

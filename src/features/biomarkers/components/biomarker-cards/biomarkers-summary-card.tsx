@@ -5,10 +5,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { Body1, Body2, H4 } from '@/components/ui/typography';
-import {
-  SUPERPOWER_ADVANCED_BLOOD_PANEL,
-  SUPERPOWER_BLOOD_PANEL,
-} from '@/const';
+import { checkLabOrderSupport } from '@/const';
 import { useBiomarkers } from '@/features/biomarkers/api';
 import { ScoreDialog } from '@/features/biomarkers/components/score-dialog/score-dialog';
 import { biomarkerStatusCount } from '@/features/biomarkers/utils/biomarkers-status-count';
@@ -103,9 +100,7 @@ export const BiomarkersSummaryCard = ({
 
   const orders = getOrdersQuery.data?.orders.filter(
     (o) =>
-      o.status === OrderStatus.completed &&
-      (o.name === SUPERPOWER_BLOOD_PANEL ||
-        o.name === SUPERPOWER_ADVANCED_BLOOD_PANEL),
+      o.status === OrderStatus.completed && checkLabOrderSupport(o.serviceName),
   );
 
   const healthScore = getBiomarkersQuery.data?.biomarkers.find(

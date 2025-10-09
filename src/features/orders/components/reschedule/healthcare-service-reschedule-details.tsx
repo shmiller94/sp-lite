@@ -45,7 +45,7 @@ export function HealthcareServiceRescheduleDetails({
         </div>
         <OrderAppointmentDetails
           serviceName={order.serviceName}
-          collectionMethod={order?.method[0]}
+          collectionMethod={order?.collectionMethod}
           slot={{
             start: order.startTimestamp,
             end: order.endTimestamp,
@@ -53,6 +53,7 @@ export function HealthcareServiceRescheduleDetails({
           timezone={order.timezone}
           location={order.location}
           orderId={order.id}
+          selectedPanels={order.addOnServiceIds}
         />
       </div>
 

@@ -1,10 +1,4 @@
-import {
-  ADVANCED_BLOOD_PANEL,
-  COLLECTION_METHODS,
-  CUSTOM_BLOOD_PANEL,
-  SUPERPOWER_BLOOD_PANEL,
-  type CollectionOptionType,
-} from '@/const';
+import { COLLECTION_METHODS, type CollectionOptionType } from '@/const';
 import { getInterpretedAtHomeMethod } from '@/features/orders/utils/get-interpreted-method';
 import { Address, HealthcareService } from '@/types/api';
 import { formatMoney } from '@/utils/format-money';
@@ -24,31 +18,28 @@ export const getCollectionMethods = (
   isAdmin = false,
   hasAtHomeCredit = false,
 ): CollectionOptionType[] => {
-  const isBloodPanel =
-    service.name === SUPERPOWER_BLOOD_PANEL ||
-    service.name === CUSTOM_BLOOD_PANEL ||
-    service.name === ADVANCED_BLOOD_PANEL;
   const INTERPRETED = getInterpretedAtHomeMethod(service);
 
-  // Helper to compute pricing text with customizable credit label
+  // helper to compute pricing text with customizable credit label
   const getPricingText = (
     option: CollectionOptionType,
     hasCredit: boolean,
     creditText: string,
-  ): string => {
+  ): string | undefined => {
     if (option.disabled) return 'Not available';
+    if (option.price === 0) return undefined;
     if (hasCredit) return creditText;
-    if (option.price === 0) return 'Included';
+
     return `+${formatMoney(option.price)}`;
   };
 
-  // Helper function to create collection method options with proper pricing
+  // helper function to create collection method options with proper pricing
   const createInLabOption = (overrides: Partial<CollectionOptionType> = {}) => {
     const inLabOption = { ...COLLECTION_METHODS.IN_LAB, ...overrides };
     const pricingText = getPricingText(
       inLabOption,
       hasAtHomeCredit,
-      "Included (we'll refund your at-home fee)",
+      'Included',
     );
 
     return {
@@ -57,6 +48,7 @@ export const getCollectionMethods = (
     };
   };
 
+  // helper
   const createInterpretedOption = (
     overrides: Partial<CollectionOptionType> = {},
   ) => {
@@ -106,7 +98,7 @@ export const getCollectionMethods = (
     }
   }
 
-  if (!isBloodPanel) {
+  if (!service.supportsLabOrder) {
     return [
       createInLabOption({
         disabled: true,

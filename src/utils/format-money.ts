@@ -1,4 +1,4 @@
-import { REQUESTABLE_SERVICES } from '@/const';
+import { CUSTOM_BLOOD_PANEL, REQUESTABLE_SERVICES } from '@/const';
 import { HealthcareService } from '@/types/api';
 
 const addThousandSeparators = (value: string): string =>
@@ -17,13 +17,10 @@ export const formatMoney = (amount: number, decimalPlaces?: number): string => {
 export const getHealthcareServicePriceLabel = (
   healthcareService: HealthcareService,
 ) => {
-  const hasItems = healthcareService.items.length > 0;
   const isFreeService = healthcareService.price === 0; // could also mean price was failed to load
   const isRequestable = REQUESTABLE_SERVICES.includes(healthcareService.name);
 
-  if (hasItems) {
-    return 'Price determined at checkout';
-  }
+  if (healthcareService.name === CUSTOM_BLOOD_PANEL) return 'Price at checkout';
 
   if (isFreeService) {
     return isRequestable ? 'Price on request' : 'Price unavailable';

@@ -164,15 +164,17 @@ export type TaskName =
   | 'onboarding-gift';
 
 /* HEALTHCARE SERVICE */
+export type ServiceGroup = 'blood-panel-addon' | 'blood-panel-base';
+
 export type HealthcareService = Entity<{
   name: string;
   description: string | undefined;
-  method: 'at_home_phlebotomy' | 'testkit';
   price: number;
   active: boolean;
   phlebotomy: boolean;
-  items: ServiceItem[];
-  sampleReportLink?: string;
+  supportsLabOrder: boolean;
+  bloodTubeCount: number;
+  group?: ServiceGroup;
 }>;
 
 export type Coupon = {
@@ -339,41 +341,19 @@ export type CollectionMethodType =
   | 'PHLEBOTOMY_KIT'
   | 'EVENT';
 
-export interface InformedConsent {
-  agreedAt: string;
-}
-
-export type Annotation = Entity<{
-  serviceRequestId: string;
-  text: string;
-  authorId: string; // RDN's user ID
-  time: string;
-}>;
-
 export type Order = Entity<{
   serviceId: string;
   serviceName: string;
-  serviceItemIds: string[];
-  name: string;
+  addOnServiceIds?: string[];
   status: OrderStatus;
   location: Location;
   startTimestamp: string;
   endTimestamp: string;
   timezone: string;
-  report: boolean;
-  method: CollectionMethodType[];
+  collectionMethod?: CollectionMethodType;
   createdAt: string;
   externalId?: string;
   fileId?: string;
-  invoiceId?: string;
-  consent?: InformedConsent;
-  note: Annotation[];
-}>;
-
-export type ServiceItem = Entity<{
-  name: string;
-  description: string;
-  price: number;
 }>;
 
 export type Location = {

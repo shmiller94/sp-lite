@@ -12,6 +12,11 @@ export const getOrdersQueryOptions = () => {
   return queryOptions({
     queryKey: ['orders'],
     queryFn: () => getOrders(),
+    // this is on purpose to remove issues with credits / etc
+    // added oct 7, 2025 by NM
+    staleTime: 0,
+    gcTime: 0,
+    refetchOnMount: true,
   });
 };
 

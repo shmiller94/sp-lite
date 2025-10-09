@@ -1,40 +1,26 @@
 import moment from 'moment';
 
-import {
-  ADVANCED_BLOOD_PANEL,
-  CUSTOM_BLOOD_PANEL,
-  SUPERPOWER_ADVANCED_BLOOD_PANEL,
-  SUPERPOWER_BLOOD_PANEL,
-} from '@/const/services';
 import { useOrders } from '@/features/orders/api/get-orders';
-import { OrderStatus } from '@/types/api';
-
-// Blood test service names that should trigger the notification
-const BLOOD_TEST_SERVICES = [
-  SUPERPOWER_BLOOD_PANEL,
-  SUPERPOWER_ADVANCED_BLOOD_PANEL,
-  ADVANCED_BLOOD_PANEL,
-  CUSTOM_BLOOD_PANEL,
-];
+import { HealthcareService, OrderStatus } from '@/types/api';
 
 /**
  * Hook that checks if the user should see a notification about multiple blood test bookings
  * based on existing upcoming, scheduled, or recently completed blood tests.
  *
- * @param serviceName - Name of the service currently being booked (required)
+ * @param service - service currently being booked (required)
  * @returns boolean indicating whether to show the notification
  */
-export const useScheduleGapWarning = (serviceName: string): boolean => {
+export const useScheduleGapWarning = (service: HealthcareService): boolean => {
   const { data: ordersData } = useOrders();
   const orders = ordersData?.orders || [];
 
-  if (!BLOOD_TEST_SERVICES.includes(serviceName)) {
+  if (!service.supportsLabOrder) {
     return false;
   }
 
   // Filter for blood test orders that match the current service being booked
   const currentServiceOrders = orders.filter(
-    (order) => order.name === serviceName,
+    (order) => order.serviceName === service.name,
   );
 
   // Check for upcoming/scheduled orders of the same service

@@ -2,16 +2,14 @@ import { useMemo } from 'react';
 
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Body1, H3 } from '@/components/ui/typography';
-import { isBloodPanel } from '@/const';
-import { useOrders } from '@/features/orders/api';
+import { Body1, Body2 } from '@/components/ui/typography';
+import { useHasCredit } from '@/features/orders/hooks';
 import { useOrder } from '@/features/orders/stores/order-store';
 import { getCollectionMethods } from '@/features/orders/utils/get-collection-methods';
 import { useUser } from '@/lib/auth';
 import { useAuthorization } from '@/lib/authorization';
 import { cn } from '@/lib/utils';
-import { CollectionMethodType, OrderStatus } from '@/types/api';
-import { formatMoney } from '@/utils/format-money';
+import { CollectionMethodType } from '@/types/api';
 
 export const CreateOrderPhlebotomyLocationSelector = () => {
   const {
@@ -23,8 +21,11 @@ export const CreateOrderPhlebotomyLocationSelector = () => {
   } = useOrder((s) => s);
   const { data: user } = useUser();
   const { checkAdminActorAccess } = useAuthorization();
+  const { hasCredit } = useHasCredit({
+    serviceName: service.name,
+    collectionMethod: 'AT_HOME',
+  });
   const isAdmin = checkAdminActorAccess();
-  const { data: ordersData } = useOrders();
 
   const handleOptionClick = (optionValue: CollectionMethodType) => {
     updateCollectionMethod(
@@ -35,40 +36,24 @@ export const CreateOrderPhlebotomyLocationSelector = () => {
   };
 
   // Check if user has an AT_HOME credit from a draft order
-  const hasAtHomeCredit = useMemo(() => {
-    if (!ordersData?.orders) return false;
-
-    return ordersData.orders.some(
-      (order) =>
-        order.status === OrderStatus.draft &&
-        order.method.includes('AT_HOME') &&
-        isBloodPanel(order.name),
-    );
-  }, [ordersData?.orders]);
-
   const options = useMemo(
     () =>
-      getCollectionMethods(
-        service,
-        user?.primaryAddress,
-        isAdmin,
-        hasAtHomeCredit,
-      ),
-    [service, user?.primaryAddress, isAdmin, hasAtHomeCredit],
+      getCollectionMethods(service, user?.primaryAddress, isAdmin, hasCredit),
+    [service, user?.primaryAddress, isAdmin, hasCredit],
   );
 
   return (
     <RadioGroup
       defaultValue={collectionMethod ?? 'AT_HOME'}
-      className="flex flex-col sm:flex-row"
+      className="flex flex-col"
     >
       {options.map((option) => (
         <div
           key={option.value}
           className={cn(
-            'flex space-x-4 border-2 rounded-3xl p-6 flex-1 bg-white',
+            'flex space-x-4 border rounded-2xl px-4 py-5 flex-1 bg-white',
             collectionMethod === option.value
-              ? 'border-zinc-500 bg-zinc-50'
+              ? 'border-vermillion-900 shadow-lg shadow-vermillion-900/10'
               : 'border-zinc-200 hover:bg-zinc-50',
             option.disabled ? 'opacity-50' : null,
           )}
@@ -80,24 +65,18 @@ export const CreateOrderPhlebotomyLocationSelector = () => {
           <RadioGroupItem
             value={option.value}
             checked={collectionMethod === option.value}
-            className="mt-0.5 min-w-5"
             disabled={option.disabled}
+            variant="vermillion"
           />
           <Label htmlFor={option.value} className="w-full">
-            <div className="flex h-[140px] flex-col justify-between sm:h-[172px]">
-              <div className="space-y-2 sm:space-y-3">
-                <H3>{option.name}</H3>
-                <Body1 className="text-sm text-zinc-500 sm:text-base">
-                  {option.description}&nbsp;
-                  {option.cancelationText}
-                </Body1>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Body1>{option.name}</Body1>
+                <Body2 className="text-balance text-zinc-500 sm:text-base">
+                  {option.description}
+                </Body2>
               </div>
-              <Body1 className="text-sm text-zinc-500 sm:text-base">
-                {option.pricingText ??
-                  (option.price === 0
-                    ? 'Included'
-                    : `+${formatMoney(option.price)}`)}
-              </Body1>
+              {option.pricingText ? <Body1>{option.pricingText}</Body1> : null}
             </div>
           </Label>
         </div>
