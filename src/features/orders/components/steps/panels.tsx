@@ -1,4 +1,4 @@
-import { Info } from 'lucide-react';
+import { ChevronDown, Info } from 'lucide-react';
 import React, { useCallback, useMemo } from 'react';
 
 import { Skeleton } from '@/components/ui/skeleton';
@@ -8,13 +8,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { Body1, H3 } from '@/components/ui/typography';
+import { Body1, Body2, H3 } from '@/components/ui/typography';
 import { MAX_TUBE_COUNT, SUPERPOWER_BLOOD_PANEL } from '@/const';
 import { HealthcareServiceFooter } from '@/features/orders/components/healthcare-service-footer';
 import { HEALTHCARE_SERVICE_DIALOG_CONTAINER_STYLE } from '@/features/orders/const/config';
 import { useHasCredit } from '@/features/orders/hooks';
 import { useOrder } from '@/features/orders/stores/order-store';
 import { useServices } from '@/features/services/api';
+import { ServiceFaqs } from '@/features/services/components/service-faqs';
 import { ServiceSelectCard } from '@/features/services/components/service-select-card';
 import { cn } from '@/lib/utils';
 import { HealthcareService } from '@/types/api';
@@ -161,18 +162,18 @@ export const AddOnPanelsSelect = ({
             const disabled = isPurchased || wouldExceed || isLoading;
 
             return (
-              <ServiceSelectCard
+              <PanelInfoCard
+                key={s.id}
                 disabled={disabled}
                 checked={checked}
-                service={s}
                 toggle={toggle}
-                key={s.id}
+                s={s}
               />
             );
           })}
       </div>
 
-      <div className="mt-4 flex justify-between">
+      <div className="mt-4 flex justify-between ">
         {addOnServicesQuery.isLoading ? (
           <Skeleton className="h-6 w-full" />
         ) : (
@@ -224,5 +225,51 @@ const EstimatedTooltip = () => {
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
+  );
+};
+
+const PanelInfoCard = ({
+  s,
+  checked,
+  toggle,
+  disabled,
+}: {
+  s: HealthcareService;
+  disabled: boolean;
+  checked: boolean;
+  toggle: (s: HealthcareService) => void;
+}) => {
+  return (
+    <ServiceSelectCard
+      disabled={disabled}
+      checked={checked}
+      service={s}
+      toggle={toggle}
+      details={({ isExpanded, toggle: toggleDetails }) => ({
+        trigger: (
+          <button
+            type="button"
+            onClick={() => {
+              if (disabled) return;
+              toggleDetails();
+            }}
+            aria-expanded={isExpanded}
+            className={cn(
+              'group inline-flex items-center gap-2 text-secondary transition-colors',
+              'hover:text-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2',
+            )}
+          >
+            <Body2 className="text-current">Learn more</Body2>
+            <ChevronDown
+              className={cn(
+                'size-4 text-zinc-400 transition-transform duration-200',
+                isExpanded && 'rotate-180',
+              )}
+            />
+          </button>
+        ),
+        content: <ServiceFaqs serviceName={s.name} size="small" />,
+      })}
+    />
   );
 };

@@ -65,29 +65,31 @@ export const UpsellServiceCard = ({
       disabled={isDisabled}
       toggle={handleSelectService}
       service={service}
-      learnMore={
-        <HealthcareServiceDialog
-          healthcareService={service}
-          flow="info"
-          infoFlowBtn={() => (
-            <DialogClose asChild>
-              <Button
-                className="w-full"
-                onClick={() => {
-                  if (!isDisabled) handleSelectService();
-                }}
-              >
-                Add
-              </Button>
-            </DialogClose>
-          )}
-        >
-          <div className="flex cursor-pointer items-center gap-2">
-            <Body2 className="line-clamp-2 text-secondary">Learn more</Body2>
-            <InfoIcon className="w-[14px] text-zinc-400" />
-          </div>
-        </HealthcareServiceDialog>
-      }
+      details={() => ({
+        trigger: (
+          <HealthcareServiceDialog
+            healthcareService={service}
+            flow="info"
+            infoFlowBtn={() => (
+              <DialogClose asChild>
+                <Button
+                  className="w-full"
+                  onClick={() => {
+                    if (!isDisabled) handleSelectService();
+                  }}
+                >
+                  Add
+                </Button>
+              </DialogClose>
+            )}
+          >
+            <div className="flex cursor-pointer items-center gap-2">
+              <Body2 className="line-clamp-2 text-secondary">Learn more</Body2>
+              <InfoIcon className="w-[14px] text-zinc-400" />
+            </div>
+          </HealthcareServiceDialog>
+        ),
+      })}
     />
   );
 };

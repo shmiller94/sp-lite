@@ -100,12 +100,12 @@ export const SERVICE_DETAILS: Record<string, ServiceDetails> = {
       {
         question: "Who's this for?",
         answer:
-          'Anyone who wants a fuller picture of heart and vascular health. Especially helpful if you have a family history of heart disease, high cholesterol, diabetes, hypertension, or if you want deeper insight than a standard cholesterol test provides.',
+          'Anyone wanting a fuller picture of heart & vascular health. Especially useful if you have a family history of heart disease, high cholesterol, diabetes, or want more insight than a standard cholesterol test provides.',
       },
       {
         question: "What's included in this panel?",
         answer:
-          '- **Lipoprotein Fractionation (NMR):** Goes beyond basic cholesterol by showing how many cholesterol particles you have, their size, and how they behave.\n\n  - **LDL particles:** Smaller, denser LDL particles are more damaging as they more easily penetrate artery walls and drive plaque buildup.\n  - **HDL particles:** Larger HDL particles are more protective, helping carry cholesterol away from arteries for removal.\n  - **VLDL particles:** Carry triglycerides; larger VLDL particles add strain on metabolism and increase cardiovascular risk.\n\n- **Lipoprotein(a):** A genetically influenced cholesterol particle that can raise heart risk even when other numbers look normal.\n\n- **Cystatin C:** A kidney marker that reflects how well your kidneys support heart and vascular health.\n\n- **ADMA / SDMA:** Molecules that affect blood vessel flexibility and nitric oxide production, giving insight into circulation and blood pressure.\n\n*Note: In NY/NJ, ADMA/SDMA are not available, and VLDL measures are excluded from the NMR panel.*',
+          ' - **Lipoprotein Fractionation (NMR):** Goes beyond basic cholesterol by showing how many cholesterol particles you have, their size, and how they behave.\n\n  - **LDL particles:** Smaller, denser LDL particles are more damaging as they more easily penetrate artery walls and drive plaque buildup.\n  - **HDL particles:** Larger HDL particles are more protective, helping carry cholesterol away from arteries for removal.\n  - **VLDL particles:** Carry triglycerides; larger VLDL particles add strain on metabolism and increase cardiovascular risk.\n\n- **Lipoprotein(a):** A genetically influenced cholesterol particle that can raise heart risk even when other numbers look normal.\n\n- **ADMA / SDMA:** Molecules that affect blood vessel flexibility and nitric oxide production, giving insight into circulation and blood pressure.\n\n*Note: In NY/NJ, ADMA/SDMA are not available, and VLDL measures are excluded from the NMR panel.*',
       },
       {
         question: 'Why is this test important?',
@@ -120,7 +120,7 @@ export const SERVICE_DETAILS: Record<string, ServiceDetails> = {
       {
         question: 'Pre-test considerations',
         answer:
-          'To ensure the most accurate results:\n\n- Fast for 8-12 hours before your blood draw (water is fine).\n- Continue prescription medications unless directed otherwise by your provider. Statins, blood pressure medications, or diabetes drugs may affect results — let us know if youre taking them.\n- Avoid alcohol, smoking, and heavy caffeine for 24 hours before testing.\n- Stay hydrated by drinking water before your appointment.\n- Aim for a morning collection for consistency.',
+          'To ensure the most accurate results:\n\n- Fast for 8-12 hours before your blood draw (water is fine).\n- Continue prescription medications unless directed otherwise by your provider. Statins, blood pressure medications, or diabetes drugs may affect results — let us know if youre taking them.\n- Avoid alcohol, smoking, and heavy caffeine for 24 hours before testing.\n- Stay hydrated by drinking water before your appointment.\n- Morning collection is preferred for consistency.',
       },
     ],
   },
@@ -165,12 +165,12 @@ export const SERVICE_DETAILS: Record<string, ServiceDetails> = {
       {
         question: "What's included in this panel?",
         answer:
-          '- **Homocysteine** — shows how well your body recycles methyl groups.\n- **Methylmalonic Acid (MMA)** — reflects vitamin B12 use.\n- **Folate (RBC)** — long-term folate status, vital for DNA and red blood cells.\n- **Vitamin B6** — supports brain chemistry and homocysteine clearance.\n- **Vitamin B2 (Riboflavin)** — powers enzymes (like MTHFR) to regulate homocysteine.\n- **Vitamin B12 (Cobalamin)** — essential for methylation, energy, and nerve health.',
+          '- **Homocysteine** — shows how well your body recycles methyl groups.\n- **Methylmalonic Acid (MMA)** — reflects vitamin B12 use.\n- **Folate (RBC)** — long-term folate status, vital for DNA and red blood cells.\n- **Vitamin B6** — supports brain chemistry and homocysteine clearance.\n- **Vitamin B12 (Cobalamin)** — essential for methylation, energy, and nerve health.',
       },
       {
         question: 'Why is this test important?',
         answer:
-          "Methylation is one of your body's core pathways for energy, mood, detox, and DNA repair. When it's not working well, the effects can show up across many systems.\n\n**This test may be especially helpful if you have:**\n- Fatigue, low mood, poor focus, or sleep problems\n- High homocysteine, anemia, or low folate/B12 despite supplements\n- Cardiovascular risks (cholesterol, clotting, hypertension)\n- Memory issues or a family history of dementia\n- Sensitivity to alcohol, meds, or chemicals\n- Chronic inflammation, infections, or autoimmunity",
+          'Methylation is one of your body’s core systems for producing energy, balancing mood, detoxifying, and maintaining cellular repair. When it slows down, the effects can appear across many systems.\n\n**This test may be especially helpful if you have:**\n- Fatigue, low mood, poor focus, or sleep problems\n- High homocysteine, anemia, or low folate/B12 despite supplements\n- Cardiovascular risks (cholesterol, clotting, hypertension)\n- Memory issues or a family history of dementia\n- Sensitivity to alcohol, meds, or chemicals\n- Chronic inflammation, infections, or autoimmunity',
       },
       {
         question: 'Test process',
@@ -255,12 +255,12 @@ export const SERVICE_DETAILS: Record<string, ServiceDetails> = {
       {
         question: "What's included in this panel?",
         answer:
-          'Nutrients don’t act in isolation. These panels measure vitamins and minerals in the context of their pathways, cofactors, and interactions — giving you a more accurate picture of true nutritional balance. This bundle includes:\n- **Vitamin A** — vision, skin & immune health\n- **Vitamin E** — antioxidant protection & cell stability\n- **Vitamin K** — bone & heart health, clotting balance\n- **Vitamin C** — immune defense, collagen, iron absorption\n- **Selenium** — thyroid support & antioxidant defense\n- **Magnesium (RBC)** — energy, nerves & muscle function',
+          'Nutrients don’t act in isolation. These panels measure vitamins and minerals in the context of their pathways, cofactors, and interactions - giving you a more accurate picture of true nutritional balance. \n\n This bundle includes:\n- **Vitamin E** — antioxidant protection & cell stability\n- **Vitamin K** — bone & heart health, clotting balance\n- **Vitamin C** — immune defense, collagen, iron absorption\n- **Selenium** — thyroid support & antioxidant defense\n- **Magnesium (RBC)** — energy, nerves & muscle function',
       },
       {
         question: 'Why is this test important?',
         answer:
-          'Nutrient status shapes how well your body produces energy, fights infections, balances hormones, and controls inflammation. Even with a balanced diet, genetics, absorption issues, stress, or lifestyle factors can create gaps.\n\n**This test is especially valuable if you are:**\n- Actively supplementing and want to confirm absorption, utilization, or avoid imbalances.\n- Considering supplements and want clarity on what you truly need before starting.\n- Experiencing symptoms such as fatigue, brain fog, mood changes, skin/hair issues, or slow recovery.\n- Managing thyroid, hormonal, or cardiometabolic concerns (e.g., cholesterol, blood sugar, blood pressure).\n- Living with digestive issues (IBS, IBD, celiac) or other conditions that affect nutrient absorption.\n- Facing increased demands — athletes, people under chronic stress, or recovering from illness.\n- Following a restricted diet (vegan, vegetarian, keto, etc.) or eating pattern that limits nutrient intake.',
+          'Nutrient status shapes how well your body produces energy, supports immune defenses, balances hormones, and controls inflammation. Even with a balanced diet, genetics, absorption issues, stress, or lifestyle factors can create gaps.\n\n**This test is especially valuable if you are:**\n- Actively supplementing and want to confirm absorption, utilization, or avoid imbalances.\n- Considering supplements and want clarity on what you truly need before starting.\n- Feeling tired, foggy, or low in mood, and noticing slower recovery, wound healing, or changes in your skin and hair.\n- Managing thyroid, hormonal, or cardiometabolic concerns (e.g., cholesterol, blood sugar, blood pressure).\n- Living with digestive issues (IBS, IBD, celiac) or other conditions that affect nutrient absorption.\n- Facing increased demands — athletes, people under chronic stress, or recovering from illness.\n- Following a restricted diet (vegan, vegetarian, keto, etc.) or eating pattern that limits nutrient intake.',
       },
       {
         question: 'Test process',

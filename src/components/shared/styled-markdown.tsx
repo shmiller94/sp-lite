@@ -1,20 +1,26 @@
 import ReactMarkdown from 'react-markdown';
 
-import { Body1 } from '@/components/ui/typography';
+import { Body1, Body2 } from '@/components/ui/typography';
+
+type StyledMarkdownVariant = 'default' | 'small';
 
 export const StyledMarkdown = ({
   children,
   className,
+  variant = 'default',
 }: {
   children: string;
   className?: string;
+  variant?: StyledMarkdownVariant;
 }) => {
+  const Paragraph = variant === 'small' ? Body2 : Body1;
+
   return (
     <div className={className}>
       <ReactMarkdown
         components={{
           p: ({ children }) => (
-            <Body1 className="text-zinc-500">{children}</Body1>
+            <Paragraph className="text-zinc-500">{children}</Paragraph>
           ),
           ul: ({ children }) => (
             <ul className="ml-1 space-y-1 [&>li]:relative [&>li]:flex [&>li]:items-start [&>li]:pl-4 [&>li]:before:absolute [&>li]:before:left-0 [&>li]:before:top-1/2 [&>li]:before:size-1 [&>li]:before:shrink-0 [&>li]:before:-translate-y-1/2 [&>li]:before:rounded-full [&>li]:before:bg-zinc-300">
@@ -28,7 +34,7 @@ export const StyledMarkdown = ({
           ),
           li: ({ children }) => (
             <li>
-              <Body1 className="text-zinc-500">{children}</Body1>
+              <Paragraph className="text-zinc-500">{children}</Paragraph>
             </li>
           ),
         }}
