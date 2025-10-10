@@ -33,7 +33,9 @@ export const AtHomeNoticeSection = ({
       {stateName} State has unique rules around blood test billing. To comply
       with these regulations, there is an additional annual fee of&nbsp;
       {formatMoney(ADDITIONAL_LAB_FEES[state.state])}. Blood draws are also done
-      in the comfort of your own home via our at-home testing partners.
+      in the comfort of your own home via our at-home testing partners. An at
+      home draw is an additional {formatMoney(COLLECTION_METHODS.AT_HOME.price)}{' '}
+      which you will pay when scheduling your blood draw in a few steps.
     </Body2>
   );
   const azNotice = (
@@ -41,7 +43,7 @@ export const AtHomeNoticeSection = ({
       Our Lab partner in {stateName} requires blood tests to be done in the
       comfort of your own home. An at home draw is an additional{' '}
       {formatMoney(COLLECTION_METHODS.AT_HOME.price)} which you will pay when
-      scheduling your blood draw in a few steps
+      scheduling your blood draw in a few steps.
     </Body2>
   );
 
