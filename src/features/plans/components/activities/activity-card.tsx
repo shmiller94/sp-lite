@@ -10,6 +10,7 @@ interface ActivityCardProps {
   name: string | ReactNode;
   alt?: string;
   description?: string | ReactNode;
+  link?: string;
   actionBtn?: ReactNode;
 }
 
@@ -19,6 +20,7 @@ export function ActivityCard({
   name,
   alt,
   description,
+  link,
   actionBtn,
 }: ActivityCardProps) {
   return (
@@ -50,7 +52,20 @@ export function ActivityCard({
 
         <div className="flex min-w-0 flex-1 items-center justify-between">
           <div className="flex min-w-0 max-w-full flex-col gap-1 overflow-hidden pr-2">
-            <Body1 className="break-words">{name}</Body1>
+            <Body1 className="break-words">
+              {link ? (
+                <a
+                  href={link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="decoration-transparent underline-offset-4 transition-[text-decoration-color] duration-300 hover:underline hover:decoration-zinc-900/80"
+                >
+                  {name}
+                </a>
+              ) : (
+                name
+              )}
+            </Body1>
             <div className="break-words">{description}</div>
           </div>
           {actionBtn && <div className="mr-3 shrink-0">{actionBtn}</div>}

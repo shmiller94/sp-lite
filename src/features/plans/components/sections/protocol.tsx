@@ -7,7 +7,9 @@ import {
   Pencil,
   PersonStanding,
   TestTube,
+  Stethoscope,
 } from 'lucide-react';
+import { usePostHog } from 'posthog-js/react';
 import React from 'react';
 
 import { IconHighlight } from '@/components/shared/icon-highlight';
@@ -21,6 +23,7 @@ import { Body1, Body2, H2, H4 } from '@/components/ui/typography';
 import { useProducts } from '@/features/shop/api';
 import { useAnalytics } from '@/hooks/use-analytics';
 
+import { CARE_PLAN_ACTIVITY_TYPE_EXTENSION } from '../../api';
 import { useCarePlan } from '../../context/care-plan-context';
 import { useSection } from '../../hooks/use-section';
 import { extractCitationsFromExtensions } from '../../utils/extract-citations';
@@ -60,15 +63,22 @@ export const ProtocolSection = () => {
   const { title, order, total } = useSection('protocol');
   const getProductsQuery = useProducts({});
   const { track } = useAnalytics();
+  const posthog = usePostHog();
   const previousValueRef = React.useRef<string[]>([]);
 
   const activities = plan?.activity ?? [];
+
+  // Check feature flag for prescription recommendations
+  const isPrescriptionRecommendationsEnabled = posthog?.isFeatureEnabled(
+    'aiap-rx-experimental-recommendations',
+  );
 
   const {
     serviceActivities,
     productActivities,
     lifestyleActivities,
     nutritionActivities,
+    prescriptionActivities,
     generalActivities,
     hasCancerService,
     hasToxinService,
@@ -99,11 +109,34 @@ export const ProtocolSection = () => {
       });
     }
 
+    // Track when Prescription Treatments accordion is newly opened
+    if (newlyOpened.includes('group-Prescription Treatments')) {
+      track('aiap_opened_prescriptions_accordion', {
+        accordion_type: 'prescriptions',
+        section: 'protocol',
+      });
+    }
+
     // Update the ref with the new value for next comparison
     previousValueRef.current = value;
   };
 
   const activityGroups: ActivityGroup[] = [
+    // Only show prescription treatments if feature flag is enabled
+    // Undefined / PH failing = not showing
+    ...(isPrescriptionRecommendationsEnabled
+      ? [
+          {
+            activities: prescriptionActivities,
+            icon: Stethoscope,
+            title: 'Prescription Treatments',
+            renderActivity: (activity: CarePlanActivity, index: number) => (
+              <PlanActivity key={`prescription-${index}`} activity={activity} />
+            ),
+            disclaimer: undefined,
+          },
+        ]
+      : []),
     {
       activities: productActivities,
       icon: Pill,
@@ -135,19 +168,6 @@ export const ProtocolSection = () => {
           </Disclaimer>
         ) : undefined,
     },
-    // Decision made by Shaun and Kingsley
-    // not to render this for now
-    // 09-09-2025
-    // {
-    //   activities: prescriptionActivities,
-    //   icon: File,
-    //   title: 'Prescription Treatments',
-    //   titleSubtext:
-    //     'Prescription medications and treatments recommended by your clinician.',
-    //   renderActivity: (activity, index) => (
-    //     <PlanActivity key={`prescription-${index}`} activity={activity} />
-    //   ),
-    // },
     {
       activities: serviceActivities,
       title: 'Diagnostic Tests',
@@ -307,7 +327,16 @@ function categorizePlanActivities(
   activities.forEach((activity) => {
     const { detail } = activity;
 
-    if (detail?.productCodeableConcept?.coding?.[0]) {
+    // Check for activity type extension
+    const activityTypeExtension = detail?.extension?.find(
+      (ext) => ext.url === CARE_PLAN_ACTIVITY_TYPE_EXTENSION,
+    );
+    const activityType = activityTypeExtension?.valueString;
+
+    if (
+      detail?.productCodeableConcept?.coding?.[0] &&
+      activityType !== 'rx-experimental'
+    ) {
       const productCode = detail.productCodeableConcept.coding[0].code;
       const product = products?.find((p) => p.id === productCode);
 
@@ -327,14 +356,6 @@ function categorizePlanActivities(
         hasToxinService = true;
       }
     } else {
-      // Check for activity type extension for non-product activities
-      const activityTypeExtension = detail?.extension?.find(
-        (ext) =>
-          ext.url ===
-          'https://superpower.com/fhir/StructureDefinition/care-plan-activity-type',
-      );
-      const activityType = activityTypeExtension?.valueString;
-
       if (activityType === 'lifestyle') {
         lifestyleActivities.push(activity);
       } else if (activityType === 'nutrition-experimental') {

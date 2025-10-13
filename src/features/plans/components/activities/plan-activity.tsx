@@ -8,6 +8,7 @@ import { useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Body1, H4 } from '@/components/ui/typography';
 import { ADVISORY_CALL } from '@/const';
+import { getRxPricing } from '@/const/rx-pricing';
 import { useOrders } from '@/features/orders/api';
 import { HealthcareServiceDialog } from '@/features/orders/components/healthcare-service-dialog';
 import { useServices } from '@/features/services/api';
@@ -15,6 +16,7 @@ import { useProducts } from '@/features/shop/api';
 import { HealthcareService, Product, OrderStatus } from '@/types/api';
 import { getServiceImage } from '@/utils/service';
 
+import { CARE_PLAN_ACTIVITY_TYPE_EXTENSION } from '../../api';
 import { extractCitations } from '../../utils/extract-citations';
 import { PlanMarkdown } from '../plan-markdown';
 
@@ -135,6 +137,54 @@ const ProductActivity = ({
   );
 };
 
+const PrescriptionActivity = ({
+  productCoding,
+  detail,
+  className,
+}: {
+  productCoding: Coding;
+  detail?: CarePlanActivityDetail;
+  className?: string;
+}) => {
+  const rxName = productCoding.display || 'UnnamedPrescription';
+  const rxDesc = detail?.description || 'Recommended prescription';
+  const rxCode = productCoding.code;
+  const citations = extractCitations(detail);
+  const rxPricing = getRxPricing(rxCode);
+  const rxLink = `https://clinic.superpower.com/products/${rxPricing?.slug}`;
+
+  const rxImage = rxCode ? `/rx/${rxCode}.webp` : undefined;
+
+  return (
+    <div className="mt-8 space-y-2">
+      <H4 className="text-lg">{rxName}</H4>
+      <PlanMarkdown content={rxDesc} citations={citations} boldVermillion />
+      <ActivityCard
+        name={rxName}
+        image={rxImage}
+        link={rxLink}
+        description={
+          rxPricing && (
+            <Body1 className="italic text-zinc-500">
+              Starting at ${rxPricing.price}
+            </Body1>
+          )
+        }
+        className={className}
+        actionBtn={
+          rxPricing ? (
+            <Button size="medium" asChild>
+              <a href={rxLink} target="_blank" rel="noopener noreferrer">
+                Get Started
+              </a>
+            </Button>
+          ) : null
+        }
+      />
+    </div>
+  );
+};
+
 export function PlanActivity({ activity, className }: PlanActivityProps) {
   const { detail } = activity;
   const { data: productsData } = useProducts({});
@@ -143,6 +193,13 @@ export function PlanActivity({ activity, className }: PlanActivityProps) {
   const productCoding = detail?.productCodeableConcept?.coding?.[0];
   const serviceCoding = detail?.code?.coding?.[0];
 
+  // Check if this is a prescription activity
+  const activityTypeExtension = detail?.extension?.find(
+    (ext) => ext.url === CARE_PLAN_ACTIVITY_TYPE_EXTENSION,
+  );
+  const activityType = activityTypeExtension?.valueString;
+  const isPrescription = activityType === 'rx-experimental';
+
   const product = productsData?.products?.find(
     (p) => p.id === productCoding?.code,
   );
@@ -150,6 +207,18 @@ export function PlanActivity({ activity, className }: PlanActivityProps) {
     (s) => s.id === serviceCoding?.code,
   );
 
+  // Handle prescription activities
+  if (productCoding && isPrescription) {
+    return (
+      <PrescriptionActivity
+        productCoding={productCoding}
+        detail={detail}
+        className={className}
+      />
+    );
+  }
+
+  // Handle regular product activities
   if (productCoding) {
     return (
       <ProductActivity
