@@ -12,6 +12,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { toast } from '@/components/ui/sonner';
+import { useCreateConsent } from '@/features/announcements/api/create-consent';
 import { useSendMagicLink } from '@/features/auth/api/send-magic-link';
 import { useCheckoutContext } from '@/features/auth/stores';
 import {
@@ -21,7 +22,7 @@ import {
 } from '@/features/settings/api';
 import { RegisterInput, useRegister, useUser } from '@/lib/auth';
 import { getActiveLogin } from '@/lib/utils';
-import { User } from '@/types/api';
+import { ConsentType, User } from '@/types/api';
 import { getAccessCode } from '@/utils/access-code';
 import { getReferralId } from '@/utils/referral-id';
 import { getUtmData } from '@/utils/utm-middleware';
@@ -94,6 +95,7 @@ export const useCheckout = ({
   const setupIntentMutation = useCreateSetupIntent();
   const registerMutation = useRegister();
   const sendMagicLinkMutation = useSendMagicLink();
+  const createConsentMutation = useCreateConsent();
 
   // register/form context
   const { membership, setProcessing, processing } = useCheckoutContext();
@@ -150,6 +152,48 @@ export const useCheckout = ({
       console.warn(
         'Access token already present for user, skipping registration...',
       );
+    }
+  };
+
+  /**
+   * Create PHI marketing consent based on user's checkbox selection.
+   * This is a non-blocking operation - failures should not prevent checkout.
+   *
+   * @param phiMarketingConsent - Optional boolean from the form (undefined if not checked)
+   */
+  const createPhiMarketingConsent = async (phiMarketingConsent?: boolean) => {
+    try {
+      // Create consent record with accepted = true if checked, false otherwise
+      await createConsentMutation.mutateAsync({
+        data: {
+          agreedAt: new Date().toISOString(),
+          type: ConsentType.PHI_MARKETING,
+          accepted: phiMarketingConsent ?? false,
+        },
+      });
+    } catch (error) {
+      // Log error but don't block checkout
+      console.error('Failed to create PHI marketing consent:', error);
+    }
+  };
+
+  /**
+   * Create membership agreement consent.
+   * This is a non-blocking operation - failures should not prevent checkout.
+   * Always accepted as true since it's a mandatory checkbox to proceed.
+   */
+  const createMembershipAgreementConsent = async () => {
+    try {
+      await createConsentMutation.mutateAsync({
+        data: {
+          agreedAt: new Date().toISOString(),
+          type: ConsentType.MEMBERSHIP_AGREEMENT,
+          accepted: true,
+        },
+      });
+    } catch (error) {
+      // Log error but don't block checkout
+      console.error('Failed to create membership agreement consent:', error);
     }
   };
 
@@ -216,6 +260,10 @@ export const useCheckout = ({
 
       // create user if data was passed
       await createUserIfRequired(data);
+
+      // create consents (fire-and-forget, non-blocking)
+      void createMembershipAgreementConsent();
+      void createPhiMarketingConsent(data?.phiMarketingConsent);
 
       // add payment method to user
       const { success } = await addPaymentMethodMutation.mutateAsync({
@@ -294,6 +342,10 @@ export const useCheckout = ({
       // create user if data was passed
       await createUserIfRequired(data);
 
+      // create consents (fire-and-forget, non-blocking)
+      void createMembershipAgreementConsent();
+      void createPhiMarketingConsent(data?.phiMarketingConsent);
+
       // add payment method to user
       const { success } = await addPaymentMethodMutation.mutateAsync({
         data: { paymentMethodId: paymentMethod },
@@ -338,6 +390,10 @@ export const useCheckout = ({
     try {
       // Create user if data was passed
       await createUserIfRequired(data);
+
+      // create consents (fire-and-forget, non-blocking)
+      void createMembershipAgreementConsent();
+      void createPhiMarketingConsent(data?.phiMarketingConsent);
 
       // Create subscription with HSA/FSA checkout session ID so backend can process accordingly
       await createSubscription('hsa_fsa', checkoutSessionId);

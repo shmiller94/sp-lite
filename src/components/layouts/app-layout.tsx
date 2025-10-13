@@ -5,10 +5,11 @@ import { useLocation } from 'react-router-dom';
 import { FloatingWrapper } from '@/components/shared/floating-wrapper';
 import { NavigationProgress } from '@/components/ui/navigation-progress';
 import { WHITE_BACKGROUND_PATHS } from '@/const/white-background-paths';
+// eslint-disable-next-line import/no-restricted-paths
+import { Announcements } from '@/features/announcements/components/announcements';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
-import { ConsentDialog } from 'src/features/consent/components/consent-dialog';
 
 import { Navbar } from '../shared/navbar';
 
@@ -36,7 +37,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <main className={isWhiteBg ? 'bg-white' : 'bg-zinc-50'}>
       {!hideNavBar && <Navbar />}
-      <ConsentDialog />
       <NavigationProgress />
       <motion.div
         className={cn(
@@ -49,6 +49,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         {children}
       </motion.div>
       <FloatingWrapper />
+      <Announcements />
     </main>
   );
 }

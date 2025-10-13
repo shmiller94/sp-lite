@@ -731,3 +731,16 @@ export interface VerifyEmailOTPResponse {
   redirectTo?: string;
   origin?: string;
 }
+
+/* CONSENT */
+export const ConsentType = {
+  MEMBERSHIP_AGREEMENT: 'platform-tos',
+  PHI_MARKETING: 'phi-marketing',
+} as const;
+
+export type ConsentType = (typeof ConsentType)[keyof typeof ConsentType];
+
+export interface Consent {
+  exists: boolean;
+  accepted?: boolean;
+}

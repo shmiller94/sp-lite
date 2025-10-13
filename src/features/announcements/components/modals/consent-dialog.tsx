@@ -1,5 +1,4 @@
 import React, { ReactNode, useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 
 import { LabeledCheckbox } from '@/components/shared/labeled-checkbox';
 import { Button } from '@/components/ui/button';
@@ -13,9 +12,10 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from '@/components/ui/sonner';
 import { Body1, Body2, H2 } from '@/components/ui/typography';
 import { LEGAL_DESCLAIMERS, LEGAL_LINKS } from '@/const';
-import { useCreateConsent, useGetConsent } from '@/features/consent/api';
 import { useUser } from '@/lib/auth';
-import { useAuthorization } from '@/lib/authorization';
+
+import { useCreateConsent, useGetConsent } from '../../api';
+import { useNeedsMembershipConsent } from '../../hooks/use-needs-membership-consent';
 
 interface ConsentDialogProps {
   isOpen?: boolean;
@@ -30,8 +30,6 @@ export const ConsentDialog = ({
   children,
   initialStep = 0,
 }: ConsentDialogProps) => {
-  const { pathname } = useLocation();
-  const { checkAdminActorAccess } = useAuthorization();
   const [internalOpen, setInternalOpen] = useState(false);
   const [step, setStep] = useState<0 | 1>(initialStep);
   const { data: user } = useUser();
@@ -44,20 +42,15 @@ export const ConsentDialog = ({
   });
 
   const hasConsent = data?.exists === true;
-  const isAdmin = checkAdminActorAccess();
+
+  const { needsConsent: shouldShow } = useNeedsMembershipConsent();
 
   useEffect(() => {
     if (isControlled) return;
     if (!user) return;
     if (isLoading) return;
-    // do not show consent modal for admins
-    if (isAdmin) return;
-
-    if (pathname.includes('onboarding')) return; // should always be disabled in onboarding
-    if (pathname.includes('legacy-checkout')) return; // should always be disabled in legacy checkout
-
-    if (!hasConsent) setInternalOpen(true);
-  }, [isControlled, user, isLoading, hasConsent, isAdmin, pathname]);
+    setInternalOpen(shouldShow);
+  }, [isControlled, user, isLoading, shouldShow]);
 
   const handleClose = (next: boolean) => {
     if (isControlled) return; // parent controls

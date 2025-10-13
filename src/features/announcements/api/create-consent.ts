@@ -3,9 +3,14 @@ import { z } from 'zod';
 
 import { api } from '@/lib/api-client';
 import { MutationConfig } from '@/lib/react-query';
+import { ConsentType } from '@/types/api';
 
 export const createConsentInputSchema = z.object({
   agreedAt: z.string().min(1, 'This is required.'),
+  type: z
+    .enum([ConsentType.MEMBERSHIP_AGREEMENT, ConsentType.PHI_MARKETING])
+    .optional(),
+  accepted: z.boolean().optional(),
   metadata: z.record(z.any()).optional(),
 });
 

@@ -100,6 +100,7 @@ export const registerInputSchema = z.object({
   postalCode: requiredString().min(5, {
     message: 'Please enter a valid zip code.',
   }),
+  phiMarketingConsent: z.boolean().optional(),
 });
 
 export type RegisterInput = z.infer<typeof registerInputSchema>;

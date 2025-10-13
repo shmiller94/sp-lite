@@ -1,52 +1,27 @@
 import moment from 'moment';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Body1, H3 } from '@/components/ui/typography';
-import { usePlans, useCheckActionPlanViewed } from '@/features/plans/api';
+import {
+  AIAP_PUBLISH_CUTOFF_DATE,
+  getLocalStorageViewed,
+  setLocalStorageViewed,
+} from '@/features/announcements/utils/care-plan';
+import { useCheckActionPlanViewed } from '@/features/plans/api';
+import { CarePlanBook } from '@/features/plans/components/care-plan-book';
+import { useLatestCompletedPlan } from '@/features/plans/hooks/use-latest-completed-plan';
 import { useAnalytics } from '@/hooks/use-analytics';
-import { FhirCarePlan } from '@/types/api';
 
-import { CarePlanBook } from './care-plan-book';
-
-const getTimestamp = (plan: FhirCarePlan) =>
-  plan?.period?.start ? new Date(plan.period.start).getTime() : 0;
-
-const STORAGE_KEY_PREFIX = 'care_plan_viewed_';
-
-// Don't show the modal to users that have AIAPs before this date
-// Prevents legacy users from seeing the modal
-const AIAP_PUBLISH_CUTOFF_DATE = new Date('2025-09-01');
-
-const getLocalStorageViewed = (planId: string): string | null => {
-  try {
-    return localStorage.getItem(`${STORAGE_KEY_PREFIX}${planId}`);
-  } catch {
-    return null;
-  }
+type CarePlanDialogProps = {
+  onFinished?: () => void;
 };
 
-const setLocalStorageViewed = (planId: string, timestamp: string) => {
-  try {
-    localStorage.setItem(`${STORAGE_KEY_PREFIX}${planId}`, timestamp);
-  } catch (error) {
-    console.error('Failed to save to localStorage', error);
-  }
-};
-
-export const CarePlanModal = () => {
-  const getPlansQuery = usePlans({});
+export const CarePlanDialog = ({ onFinished }: CarePlanDialogProps) => {
   const navigate = useNavigate();
-
-  // find the latest available plan -> completed, newest start date
-  const latestPlan: FhirCarePlan | undefined = useMemo(() => {
-    const plans = getPlansQuery.data?.actionPlans ?? [];
-    return plans
-      .filter((p: FhirCarePlan) => p.status === 'completed')
-      .sort((a, b) => getTimestamp(b) - getTimestamp(a))?.[0];
-  }, [getPlansQuery.data?.actionPlans]);
+  const { data: latestPlan } = useLatestCompletedPlan();
 
   const startDate = latestPlan?.period?.start;
   const formattedDate = startDate
@@ -109,10 +84,11 @@ export const CarePlanModal = () => {
     (next: boolean) => {
       if (!next && latestPlan?.id) {
         markAsViewed(latestPlan.id);
+        onFinished?.();
       }
       _setOpen(next);
     },
-    [latestPlan?.id, markAsViewed],
+    [latestPlan?.id, markAsViewed, onFinished],
   );
 
   if (!latestPlan) return null;
@@ -123,6 +99,7 @@ export const CarePlanModal = () => {
     track('aiap_opened_from_modal', {
       action_plan_id: latestPlan.id,
     });
+    onFinished?.();
     _setOpen(false);
     navigate(`/plans/${latestPlan.id}`);
   };
@@ -134,6 +111,7 @@ export const CarePlanModal = () => {
       action_plan_id: latestPlan.id,
     });
     _setOpen(false);
+    onFinished?.();
   };
 
   return (
