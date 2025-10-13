@@ -25,7 +25,9 @@ export const FloatingWrapper = () => {
           'opacity-0 pointer-events-none',
       )}
     >
-      {pathname === '/plans' && <DesktopCheckout />}
+      {(pathname === '/plans' || pathname.startsWith('/plans/')) && (
+        <DesktopCheckout />
+      )}
       <AssistantModal />
     </div>
   );
