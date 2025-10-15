@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { toast } from 'sonner';
 
+import { toast } from '@/components/ui/sonner';
 import { RxQuestionnaireName, RX_ASSESSMENTS } from '@/const/questionnaire';
 import { IntakeQuestionnaire } from '@/features/questionnaires/components/intake-questionnaire';
 import { RxQuestionnaire } from '@/features/questionnaires/components/rx-questionnaire';
