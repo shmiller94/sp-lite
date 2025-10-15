@@ -60,8 +60,7 @@ export const ServiceActivity = ({
       (order) =>
         order.serviceId === service.id &&
         (order.status === OrderStatus.upcoming ||
-          order.status === OrderStatus.pending ||
-          order.status === OrderStatus.completed),
+          order.status === OrderStatus.pending),
     );
   }, [ordersData?.orders, service.id]);
 
