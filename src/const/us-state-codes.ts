@@ -99,5 +99,6 @@ export const US_STATES = [
   { value: 'VA', label: 'Virginia' },
   { value: 'VT', label: 'Vermont' },
   { value: 'WA', label: 'Washington' },
+  { value: 'WV', label: 'West Virginia' },
   { value: 'WI', label: 'Wisconsin' },
 ];
