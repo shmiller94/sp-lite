@@ -1,25 +1,22 @@
 import moment from 'moment';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Body1, H3 } from '@/components/ui/typography';
-import {
-  AIAP_PUBLISH_CUTOFF_DATE,
-  getLocalStorageViewed,
-  setLocalStorageViewed,
-} from '@/features/announcements/utils/care-plan';
+import { setLocalStorageViewed } from '@/features/announcements/utils/care-plan';
 import { useCheckActionPlanViewed } from '@/features/plans/api';
 import { CarePlanBook } from '@/features/plans/components/care-plan-book';
 import { useLatestCompletedPlan } from '@/features/plans/hooks/use-latest-completed-plan';
 import { useAnalytics } from '@/hooks/use-analytics';
 
 type CarePlanDialogProps = {
-  onFinished?: () => void;
+  open: boolean;
+  onOpenChange: (next: boolean) => void;
 };
 
-export const CarePlanDialog = ({ onFinished }: CarePlanDialogProps) => {
+export const CarePlanDialog = ({ open, onOpenChange }: CarePlanDialogProps) => {
   const navigate = useNavigate();
   const { data: latestPlan } = useLatestCompletedPlan();
 
@@ -29,7 +26,7 @@ export const CarePlanDialog = ({ onFinished }: CarePlanDialogProps) => {
     : '';
 
   // Check backend for viewed status
-  const viewStatusQuery = useCheckActionPlanViewed({
+  useCheckActionPlanViewed({
     planId: latestPlan?.id ?? '',
     queryConfig: {
       enabled: !!latestPlan?.id,
@@ -38,57 +35,19 @@ export const CarePlanDialog = ({ onFinished }: CarePlanDialogProps) => {
 
   const { track } = useAnalytics();
 
-  const [_open, _setOpen] = useState(false);
-
-  useEffect(() => {
-    if (!latestPlan?.id) {
-      _setOpen(false);
-      return;
-    }
-
-    // Don't show the modal to users that have AIAPs before this date
-    // Prevents legacy users from seeing the modal
-    if (!startDate || moment(startDate).isBefore(AIAP_PUBLISH_CUTOFF_DATE)) {
-      _setOpen(false);
-      return;
-    }
-
-    // First check localStorage for fast response
-    const localViewed = getLocalStorageViewed(latestPlan.id);
-    if (localViewed) {
-      _setOpen(false);
-      return;
-    }
-
-    // Then check backend
-    if (viewStatusQuery.data) {
-      const shouldShow = !viewStatusQuery.data.hasBeenViewed;
-      _setOpen(shouldShow);
-
-      // If backend says it's been viewed, cache it in localStorage
-      if (
-        viewStatusQuery.data.hasBeenViewed &&
-        viewStatusQuery.data.lastViewedAt
-      ) {
-        setLocalStorageViewed(latestPlan.id, viewStatusQuery.data.lastViewedAt);
-      }
-    }
-  }, [latestPlan?.id, viewStatusQuery.data, startDate, track]);
-
   const markAsViewed = useCallback((id: string) => {
     const timestamp = new Date().toISOString();
     setLocalStorageViewed(id, timestamp);
   }, []);
 
-  const onOpenChange = useCallback(
+  const handleOpenChange = useCallback(
     (next: boolean) => {
       if (!next && latestPlan?.id) {
         markAsViewed(latestPlan.id);
-        onFinished?.();
       }
-      _setOpen(next);
+      onOpenChange(next);
     },
-    [latestPlan?.id, markAsViewed, onFinished],
+    [latestPlan?.id, markAsViewed, onOpenChange],
   );
 
   if (!latestPlan) return null;
@@ -99,8 +58,7 @@ export const CarePlanDialog = ({ onFinished }: CarePlanDialogProps) => {
     track('aiap_opened_from_modal', {
       action_plan_id: latestPlan.id,
     });
-    onFinished?.();
-    _setOpen(false);
+    onOpenChange(false);
     navigate(`/plans/${latestPlan.id}`);
   };
 
@@ -110,12 +68,11 @@ export const CarePlanDialog = ({ onFinished }: CarePlanDialogProps) => {
     track('aiap_modal_dismissed', {
       action_plan_id: latestPlan.id,
     });
-    _setOpen(false);
-    onFinished?.();
+    onOpenChange(false);
   };
 
   return (
-    <Dialog open={_open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-[calc(100%-2rem)] space-y-8 px-8 pb-4 pt-12 sm:max-w-md">
         <div className="group mx-auto inline-block -rotate-3">
           <CarePlanBook title="Action Plan" date={formattedDate} />

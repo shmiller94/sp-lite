@@ -23,8 +23,10 @@ export const Announcements = () => {
     needsConsent: needsMembershipConsent,
     isLoading: isMembershipConsentLoading,
   } = useNeedsMembershipConsent();
+
   const { needsAnnouncement: needsCarePlan, isLoading: isCarePlanLoading } =
     useNeedsCarePlanAnnouncement();
+
   const { needsConsent: needsPhiConsent, isLoading: isPhiConsentLoading } =
     useNeedsPhiMarketingConsent();
 
@@ -38,7 +40,15 @@ export const Announcements = () => {
       items.push({
         key: 'consent',
         required: true,
-        render: (advance) => <ConsentDialog isOpen onSubmit={advance} />,
+        render: (advance) => (
+          <ConsentDialog
+            open
+            onOpenChange={() => {
+              /* This modal is required */
+            }}
+            onFinished={advance}
+          />
+        ),
       });
     }
 
@@ -46,7 +56,14 @@ export const Announcements = () => {
       items.push({
         key: 'care-plan',
         required: false,
-        render: (advance) => <CarePlanDialog onFinished={advance} />,
+        render: (advance) => (
+          <CarePlanDialog
+            open
+            onOpenChange={(next) => {
+              if (!next) advance();
+            }}
+          />
+        ),
       });
     }
 
@@ -54,7 +71,14 @@ export const Announcements = () => {
       items.push({
         key: 'phi-consent',
         required: false,
-        render: (advance) => <PhiConsentDialog onFinished={advance} />,
+        render: (advance) => (
+          <PhiConsentDialog
+            open
+            onOpenChange={(next) => {
+              if (!next) advance();
+            }}
+          />
+        ),
       });
     }
 

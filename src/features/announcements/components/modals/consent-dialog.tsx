@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 
 import { LabeledCheckbox } from '@/components/shared/labeled-checkbox';
 import { Button } from '@/components/ui/button';
@@ -15,58 +15,40 @@ import { LEGAL_DESCLAIMERS, LEGAL_LINKS } from '@/const';
 import { useUser } from '@/lib/auth';
 
 import { useCreateConsent, useGetConsent } from '../../api';
-import { useNeedsMembershipConsent } from '../../hooks/use-needs-membership-consent';
 
 interface ConsentDialogProps {
-  isOpen?: boolean;
-  onSubmit?: () => void;
+  open: boolean;
+  onOpenChange: (next: boolean) => void;
+  onFinished?: () => void;
   children?: ReactNode;
   initialStep?: 0 | 1;
 }
 
 export const ConsentDialog = ({
-  isOpen,
-  onSubmit,
+  open,
+  onOpenChange,
+  onFinished,
   children,
   initialStep = 0,
 }: ConsentDialogProps) => {
-  const [internalOpen, setInternalOpen] = useState(false);
   const [step, setStep] = useState<0 | 1>(initialStep);
   const { data: user } = useUser();
 
-  const isControlled = typeof isOpen === 'boolean';
-  const open = isControlled ? (isOpen as boolean) : internalOpen;
-
-  const { isLoading, data } = useGetConsent({
+  const { data } = useGetConsent({
     userId: user?.id || '',
   });
 
   const hasConsent = data?.exists === true;
 
-  const { needsConsent: shouldShow } = useNeedsMembershipConsent();
-
-  useEffect(() => {
-    if (isControlled) return;
-    if (!user) return;
-    if (isLoading) return;
-    setInternalOpen(shouldShow);
-  }, [isControlled, user, isLoading, shouldShow]);
-
-  const handleClose = (next: boolean) => {
-    if (isControlled) return; // parent controls
-    setInternalOpen(next);
-  };
-
   const onConsentSubmit = () => {
-    onSubmit?.();
-    handleClose(false);
+    onFinished?.();
   };
 
   // if consent exists only return trigger
   if (hasConsent) return children;
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       {children ? <DialogTrigger asChild>{children}</DialogTrigger> : null}
       <DialogContent
         className="overflow-scroll px-6 pt-6 md:px-14 md:pt-16"

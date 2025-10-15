@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react';
-
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { toast } from '@/components/ui/sonner';
@@ -8,30 +6,26 @@ import { useUser } from '@/lib/auth';
 import { ConsentType } from '@/types/api';
 
 import { useCreateConsent } from '../../api';
-import { useNeedsPhiMarketingConsent } from '../../hooks/use-needs-phi-marketing-consent';
 
 const SIZE = 10;
 const OFFSET = 12;
 const MAX_NAME_LENGTH = 8;
 
 type PhiConsentDialogProps = {
-  onFinished?: () => void;
+  open: boolean;
+  onOpenChange: (next: boolean) => void;
 };
 
-export const PhiConsentDialog = ({ onFinished }: PhiConsentDialogProps) => {
+export const PhiConsentDialog = ({
+  open,
+  onOpenChange,
+}: PhiConsentDialogProps) => {
   const { data } = useUser();
-
-  const [_open, _setOpen] = useState(false);
-  const { needsConsent: shouldShow } = useNeedsPhiMarketingConsent();
-  useEffect(() => {
-    _setOpen(shouldShow);
-  }, [shouldShow]);
 
   const createConsentMutation = useCreateConsent({
     mutationConfig: {
       onSuccess: () => {
         toast.success('Preferences saved');
-        _setOpen(false);
       },
       onError: () => {
         toast.error('Failed to save preferences');
@@ -47,7 +41,7 @@ export const PhiConsentDialog = ({ onFinished }: PhiConsentDialogProps) => {
         accepted: true,
       },
     });
-    onFinished?.();
+    onOpenChange(false);
   };
 
   const handleClose = async () => {
@@ -59,12 +53,11 @@ export const PhiConsentDialog = ({ onFinished }: PhiConsentDialogProps) => {
         accepted: false,
       },
     });
-    _setOpen(false);
-    onFinished?.();
+    onOpenChange(false);
   };
 
   return (
-    <Dialog open={_open} onOpenChange={_setOpen}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[calc(100%-2rem)] space-y-8 px-8 pb-4 pt-12 sm:max-w-md">
         <div
           className="relative mx-auto h-40 w-full"
