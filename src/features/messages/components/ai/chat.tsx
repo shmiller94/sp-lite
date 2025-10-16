@@ -50,12 +50,13 @@ export function Chat({
     id,
     transport: new DefaultChatTransport({
       api: `${env.API_URL}/chat`,
-      headers: transportHeaders,
-      fetch: (input, init) =>
-        fetch(input, {
-          ...init,
-          credentials: 'include',
-        }),
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${getActiveLogin()?.accessToken}`,
+      },
+      prepareSendMessagesRequest({ messages, id }) {
+        return { body: { message: messages[messages.length - 1], id } };
+      },
     }),
     messages: initialMessages,
     experimental_throttle: 100,

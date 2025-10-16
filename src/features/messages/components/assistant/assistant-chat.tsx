@@ -1,29 +1,38 @@
 import { useChat } from '@ai-sdk/react';
-import { DefaultChatTransport, FileUIPart } from 'ai';
-import { useState } from 'react';
+import { DefaultChatTransport, FileUIPart, type DataUIPart } from 'ai';
+import { useRef, useState } from 'react';
+import { z } from 'zod';
 
 import { env } from '@/config/env';
 import { useHistory } from '@/features/messages/api/get-history';
 import { MultimodalInput } from '@/features/messages/components/ai/multimodal-input';
 import { AssistantMessages } from '@/features/messages/components/assistant/assistant-messages';
+import { useSuggestions } from '@/features/messages/hooks/use-suggestions';
+import { getFollowupString } from '@/features/messages/utils/data-parts';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { cn, getActiveLogin } from '@/lib/utils';
 import { generateUUID } from '@/utils/generate-uiud';
 
-export function AssistantChat({ chatId }: { chatId: string }) {
+import { ChatSuggestion } from '../chat-suggestion';
+
+export function AssistantChat({
+  chatId,
+  isActive = false,
+}: {
+  chatId: string;
+  isActive: boolean;
+}) {
   const { refetch } = useHistory();
   const { track } = useAnalytics();
 
   const [id] = useState<string>(chatId);
 
-  const [lastUserMessageTime, setLastUserMessageTime] = useState<number | null>(
-    null,
-  );
   const [lastSentMessageTime, setLastSentMessageTime] = useState<number | null>(
     null,
   );
   const [input, setInput] = useState('');
   const [attachments, setAttachments] = useState<Array<FileUIPart>>([]);
+  const updateSuggestionsRef = useRef<(s: string | string[]) => void>(() => {});
 
   const transportHeaders: Record<string, string> = {
     Accept: 'application/json',
@@ -37,16 +46,28 @@ export function AssistantChat({ chatId }: { chatId: string }) {
     id,
     transport: new DefaultChatTransport({
       api: `${env.API_URL}/chat`,
-      headers: transportHeaders,
-      fetch: (input, init) =>
-        fetch(input, {
-          ...init,
-          credentials: 'include',
-        }),
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${getActiveLogin()?.accessToken}`,
+      },
+      prepareSendMessagesRequest({ messages, id }) {
+        const hasUserMessage = messages.some((m) => m.role === 'user');
+        return {
+          body: {
+            message: messages[messages.length - 1],
+            id: hasUserMessage ? id : null,
+          },
+        };
+      },
     }),
+    dataPartSchemas: { followup: z.string() },
     messages: [],
     experimental_throttle: 100,
     generateId: generateUUID,
+    onData: (part: DataUIPart<Record<string, unknown>>) => {
+      const s = getFollowupString(part);
+      if (s) updateSuggestionsRef.current(s);
+    },
     onFinish: ({ message }) => {
       refetch();
 
@@ -71,16 +92,19 @@ export function AssistantChat({ chatId }: { chatId: string }) {
           response_time: responseTime,
         });
       }
-
-      const responseTime = lastUserMessageTime
-        ? Date.now() - lastUserMessageTime
-        : null;
-
-      if (responseTime) {
-        // Optional: could persist lightweight stats, skipping for mini chat
-      }
     },
   });
+
+  const { suggestions, updateSuggestions, clearSuggestions } = useSuggestions({
+    enabled: isActive && messages.length === 0,
+    max: 3,
+  });
+  // Keep ref in sync for the onData callback defined above.
+  updateSuggestionsRef.current = updateSuggestions;
+
+  const lastIsAssistant = messages[messages.length - 1]?.role === 'assistant';
+  const visibleSuggestions =
+    messages.length === 0 ? suggestions : lastIsAssistant ? suggestions : [];
 
   return (
     <div
@@ -94,6 +118,17 @@ export function AssistantChat({ chatId }: { chatId: string }) {
           status={status}
         />
       </div>
+      {visibleSuggestions.length > 0 && (
+        <div className="mx-auto mb-2 flex w-full max-w-[592px] flex-col items-end gap-2 px-1">
+          {visibleSuggestions.map((suggestion) => (
+            <ChatSuggestion
+              key={suggestion}
+              onClick={() => setInput(suggestion)}
+              suggestion={suggestion}
+            />
+          ))}
+        </div>
+      )}
       <div className="pt-2">
         <form
           className={cn(
@@ -106,8 +141,8 @@ export function AssistantChat({ chatId }: { chatId: string }) {
             input={input}
             setInput={setInput}
             sendMessage={(message, options) => {
-              setLastUserMessageTime(Date.now());
               setInput('');
+              clearSuggestions();
               return sendMessage(message, options);
             }}
             status={status}

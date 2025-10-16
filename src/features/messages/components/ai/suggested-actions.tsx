@@ -1,52 +1,34 @@
 import { motion } from 'framer-motion';
 import { Dispatch, memo, SetStateAction } from 'react';
 
-import { Button } from '@/components/ui/button';
-import { Body2 } from '@/components/ui/typography';
+import { ChatSuggestion } from '@/features/messages/components/chat-suggestion';
+import { useSuggestions } from '@/features/messages/hooks/use-suggestions';
 
 interface SuggestedActionsProps {
   setInput: Dispatch<SetStateAction<string>>;
 }
 
 function PureSuggestedActions({ setInput }: SuggestedActionsProps) {
-  const suggestedActions = [
-    {
-      title: 'Supplement recommendations',
-      action: 'Recommend me supplements based on my recent biomarker results',
-    },
-    {
-      title: 'Analyse data',
-      action: `Analyze my recent biomarkers`,
-    },
-    {
-      title: 'Help me understand',
-      action: `Help me understand my latest blood panel results`,
-    },
-  ];
+  const { suggestions } = useSuggestions({ enabled: true, max: 3 });
 
   return (
-    <div className="flex w-full flex-wrap items-center gap-2 lg:justify-center">
-      {suggestedActions.map((suggestedAction, index) => (
+    <div className="flex min-h-10 w-full items-start justify-start gap-2">
+      {suggestions.map((s, index) => (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           transition={{ delay: 0.05 * index }}
-          key={`suggested-action-${suggestedAction.title}-${index}`}
-          className={index > 1 ? 'hidden sm:block' : 'block'}
+          key={`suggested-action-${s}-${index}`}
+          className="flex-1"
         >
-          <Button
-            variant="ghost"
+          <ChatSuggestion
+            suggestion={s}
             onClick={(e) => {
               e.preventDefault();
-              setInput(suggestedAction.action);
+              setInput(s);
             }}
-            className="group h-auto w-full flex-1 flex-col items-start justify-start gap-1 rounded-full border px-4 py-2 text-left text-sm transition-all duration-150 hover:bg-zinc-100"
-          >
-            <Body2 className="text-zinc-400 transition-all duration-150 group-hover:text-zinc-700">
-              {suggestedAction.title}
-            </Body2>
-          </Button>
+          />
         </motion.div>
       ))}
     </div>

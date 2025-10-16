@@ -22,8 +22,8 @@ export function AssistantMessages({
     <div className={cn('relative flex min-h-0 flex-1')}>
       <div
         className={cn(
-          'relative flex min-h-0 flex-1 min-w-0 flex-col gap-6 overflow-auto overscroll-contain overflow-x-hidden py-4',
-          'scrollbar scrollbar-thumb-zinc-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar]:w-2',
+          'relative  flex min-h-0 flex-1 min-w-0 flex-col gap-6 overflow-auto overscroll-contain overflow-x-auto py-4',
+          'scrollbar scrollbar-thumb-zinc-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar]:h-2',
         )}
         style={{
           maskImage:
@@ -34,7 +34,6 @@ export function AssistantMessages({
           WebkitMaskRepeat: 'no-repeat',
           maskSize: '100% 100%',
           WebkitMaskSize: '100% 100%',
-          overflowX: 'hidden',
         }}
       >
         {messages.map((message, index) => (

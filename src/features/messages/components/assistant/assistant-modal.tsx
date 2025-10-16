@@ -125,7 +125,7 @@ export const AssistantModal = () => {
           </div>
         </div>
         <div className={cn('min-h-0 w-full flex-1', !isExpanded && 'hidden')}>
-          <AssistantChat chatId={chatId} />
+          <AssistantChat chatId={chatId} isActive={isExpanded} />
         </div>
       </div>
     </Resizable>
