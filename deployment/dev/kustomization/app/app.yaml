@@ -49,6 +49,8 @@ spec:
               value: '{{ .VITE_APP_KLAVIYO_WAITLIST_LIST_ID }}'
             - name: VITE_APP_KLAVIYO_LEADS_LIST_ID
               value: '{{ .VITE_APP_KLAVIYO_LEADS_LIST_ID }}'
+            - name: VITE_APP_GO_RX_URL
+              value: '{{ .VITE_APP_GO_RX_URL }}'
 
 ---
 apiVersion: v1

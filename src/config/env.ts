@@ -44,6 +44,7 @@ const createEnv = () => {
     POSTHOG_UI_HOST: z.string().optional(),
     POSTHOG_KEY: z.string().optional(),
     POSTHOG_DEBUG: z.string().optional(),
+    GO_RX_URL: z.string(),
   });
 
   const envVars = Object.entries(import.meta.env).reduce<
