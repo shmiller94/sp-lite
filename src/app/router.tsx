@@ -93,7 +93,7 @@ export const createRouter = () =>
           },
         },
         {
-          path: 'questionnaire/:type',
+          path: 'questionnaire/:type?',
           lazy: async () => {
             const { QuestionnaireRoute } = await import(
               './routes/app/questionnaire'

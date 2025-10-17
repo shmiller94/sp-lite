@@ -1,5 +1,6 @@
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { NotFoundRoute } from '@/app/routes/not-found';
 import { toast } from '@/components/ui/sonner';
 import { RxQuestionnaireName, RX_ASSESSMENTS } from '@/const/questionnaire';
 import { IntakeQuestionnaire } from '@/features/questionnaires/components/intake-questionnaire';
@@ -20,6 +21,10 @@ export const QuestionnaireRoute = () => {
     );
   }
 
-  // default (covers `/questionnaire` and `/questionnaire/intake`)
-  return <IntakeQuestionnaire showIntro={true} onSubmit={onSubmit} />;
+  // covers `/questionnaire/intake` and `/questionnaire`
+  if (type === 'intake' || type === undefined) {
+    return <IntakeQuestionnaire showIntro={true} onSubmit={onSubmit} />;
+  }
+
+  return <NotFoundRoute />;
 };
