@@ -75,8 +75,9 @@ const checklistItem = {
 
 // forcing all fields to be present here
 const REQUIRED_MSG = 'This is required.';
-// regex allows English letters and spaces
-const NAME_REGEX = /^[A-Za-z ]+$/;
+// Regex taken from Junction API docs - https://docs.junction.com/lab/workflow/order-requirements#patient-name-validation
+const NAME_REGEX =
+  /^([a-zA-Z0-9]{1})([a-zA-Z0-9-.,']*(\s[a-zA-Z0-9-.,']+)*[a-zA-Z0-9-.,']?)$/;
 export const updateUserInputSchema = z.object({
   firstName: z
     .string({ required_error: REQUIRED_MSG })
