@@ -73,10 +73,13 @@ export const registerInputSchema = z.object({
       if (!isValidPhoneNumber(value)) return false;
 
       const phoneNumber = parsePhoneNumber(value);
-      return phoneNumber && phoneNumber.country === 'US';
+      return (
+        phoneNumber &&
+        (phoneNumber.country === 'US' || phoneNumber.country === 'CA')
+      );
     },
     {
-      message: 'Please enter a valid US phone number.',
+      message: 'Please enter a valid US or Canadian phone number.',
     },
   ),
   dateOfBirth: z.date({ required_error: REQUIRED_MSG }).refine((data) => {
