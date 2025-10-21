@@ -13,7 +13,7 @@ import {
   InputOTPSlot,
 } from '@/components/ui/input-otp';
 import { Spinner } from '@/components/ui/spinner';
-import { Body1, H1 } from '@/components/ui/typography';
+import { Body1, H1, H3 } from '@/components/ui/typography';
 import { useSendMagicLink } from '@/features/auth/api/send-magic-link';
 import { useVerifyEmailOTP } from '@/features/auth/api/verify-email-otp';
 import { VerifyEmailOTPResponse } from '@/types/api';
@@ -31,7 +31,9 @@ export const CheckEmailScreen = ({
   onOtpSuccess,
   isLoading = false,
 }: CheckEmailScreenProps) => {
-  const [cooldownSeconds, setCooldownSeconds] = useState(20);
+  const [cooldownSeconds, setCooldownSeconds] = useState(
+    origin === 'expired-link' ? 0 : 20,
+  );
   const [otpCode, setOtpCode] = useState('');
   const lastSubmittedCodeRef = useRef<string | null>(null);
 
@@ -58,16 +60,6 @@ export const CheckEmailScreen = ({
       },
     },
   });
-
-  useEffect(() => {
-    if (origin === 'expired-link') {
-      // If user arrived from an expired magic link, proactively resend a fresh
-      // email (which also issues a new OTP) and start the cooldown.
-      sendMagicLinkMutation.mutate({
-        data: { email },
-      });
-    }
-  }, []);
 
   // Countdown timer for resend button cooldown
   // This prevents users from spamming the resend email button by enforcing
@@ -139,13 +131,19 @@ export const CheckEmailScreen = ({
           <div className="space-y-4">
             <Body1 className="text-white">
               {origin === 'expired-link'
-                ? `That link expired, so we've sent a fresh magic link to ${email}.`
-                : `We've sent a magic link to ${email}.`}
+                ? `That link expired. Click the button below to send a new link to ${email}.`
+                : `We've sent a link to ${email}.`}
             </Body1>
 
             <Body1 className="text-white">
               Follow the link in your email or input the code here.
             </Body1>
+
+            {process.env.NODE_ENV === 'development' ? (
+              <H3 className="text-white">
+                DEBUG: Use 000000 to bypass OTP verification
+              </H3>
+            ) : null}
           </div>
 
           {/* OTP Input */}
