@@ -73,8 +73,8 @@ export const AuthLayout = ({ children, title, progress }: LayoutProps) => {
           </div>
         </div>
 
-        <div className="relative z-20 order-2 flex w-full flex-col md:h-dvh md:py-12">
-          <div className="mx-auto flex size-full flex-col justify-between gap-6 overflow-auto rounded-t-3xl bg-white p-8 md:max-w-3xl md:gap-5 md:rounded-3xl md:p-16">
+        <div className="relative z-20 order-2 flex w-full flex-col justify-center md:h-dvh md:py-12">
+          <div className="mx-auto flex size-full max-h-[1150px] flex-col justify-between gap-6 overflow-auto rounded-t-3xl bg-white p-8 md:max-w-3xl md:gap-5 md:rounded-3xl md:p-16">
             <div className="hidden items-center justify-between md:flex">
               <SuperpowerLogo width={122} />
               {progress ? (

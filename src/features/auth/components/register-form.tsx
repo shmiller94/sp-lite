@@ -155,10 +155,11 @@ const Step1 = ({ onNext }: { onNext: () => void }) => {
             </FormItem>
           )}
         />
+        <Button type="button" onClick={handleNext} className="w-full">
+          Get Started
+        </Button>
       </div>
-      <Button type="button" onClick={handleNext}>
-        Get Started
-      </Button>
+
       <div>
         <Card className="space-y-4 border border-zinc-200 bg-white p-6 shadow-md">
           {REGISTER_FEATURES.map((feature, i) => (
