@@ -110,14 +110,14 @@ export const LoginForm = ({
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
           <div className="space-y-4">
             <FormField
               control={form.control}
               name="email"
               render={({ field, fieldState }) => (
                 <FormItem>
-                  <Body2 className="text-secondary mb-2">Email</Body2>
+                  <Body2 className="mb-2 text-secondary">Email</Body2>
                   <FormControl>
                     <AuthInput
                       variant={fieldState.error ? 'error' : 'individual'}
@@ -138,7 +138,7 @@ export const LoginForm = ({
                 name="password"
                 render={({ field, fieldState }) => (
                   <FormItem>
-                    <Body2 className="text-secondary mb-2">Password</Body2>
+                    <Body2 className="mb-2 text-secondary">Password</Body2>
                     <FormControl>
                       <AuthInput
                         variant={fieldState.error ? 'error' : 'individual'}
@@ -162,13 +162,10 @@ export const LoginForm = ({
             <div>
               {loginMode === 'magic-link' ? (
                 <>
-                  <Body2 className="text-secondary">
-                    We&apos;ll email you a magic link for password-free sign in.
-                  </Body2>
                   <button
                     type="button"
                     onClick={() => setLoginMode('password')}
-                    className="text-vermillion-900 text-sm font-normal hover:underline"
+                    className="text-sm font-normal text-vermillion-900 hover:underline"
                   >
                     Sign in with password instead.
                   </button>
@@ -189,7 +186,7 @@ export const LoginForm = ({
                   <button
                     type="button"
                     onClick={() => setLoginMode('magic-link')}
-                    className="text-vermillion-900 text-sm font-normal hover:underline"
+                    className="text-sm font-normal text-vermillion-900 hover:underline"
                   >
                     Sign in with magic link.
                   </button>
