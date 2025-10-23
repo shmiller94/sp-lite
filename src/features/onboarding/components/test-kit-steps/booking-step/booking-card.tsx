@@ -6,12 +6,12 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Body1, Body2 } from '@/components/ui/typography';
 import { GRAIL_GALLERI_MULTI_CANCER_TEST_ID } from '@/const';
-import { ServiceWithMetadata } from '@/features/onboarding/hooks/use-upsell-services';
+import { ServiceWithMetadata } from '@/features/onboarding/hooks/use-test-kits';
 import { HealthcareServiceDialog } from '@/features/orders/components/healthcare-service-dialog';
 import { BookingStepID } from '@/features/orders/utils/get-steps-for-service';
 import { HealthcareService, OrderStatus } from '@/types/api';
 
-import { ItemPreview } from '../item-preview';
+import { ItemPreview } from '../../shared/item-preview';
 
 const StatusAction = ({
   service,
@@ -43,7 +43,11 @@ const StatusAction = ({
   );
 };
 
-export const BookingCard = ({ service }: { service: ServiceWithMetadata }) => {
+export const TestKitBookingCard = ({
+  service,
+}: {
+  service: ServiceWithMetadata;
+}) => {
   // we might expand this in the future
   const isScheduledService = service?.id === GRAIL_GALLERI_MULTI_CANCER_TEST_ID;
 

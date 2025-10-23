@@ -3,45 +3,36 @@ import { motion } from 'framer-motion';
 import { CircleCheckBig } from 'lucide-react';
 import moment from 'moment';
 import { useCallback, useMemo, useState } from 'react';
-import { toast } from 'sonner';
 
+import { SplitScreenLayout } from '@/components/layouts/split-screen-layout';
 import { TestimonialCarousel } from '@/components/shared/testimonials/components/testimonial-carousel';
 import { Button } from '@/components/ui/button';
 import { TextShimmer } from '@/components/ui/text-shimmer';
 import { H3, H4 } from '@/components/ui/typography';
-import { ServiceWithMetadata } from '@/features/onboarding/hooks/use-upsell-services';
+import { useTestKitServices } from '@/features/onboarding/hooks/use-test-kits';
 import { useCreateBulkOrders } from '@/features/orders/api/create-bulk-orders';
 import { CreateOrderInput } from '@/features/orders/api/create-order';
 import { getDefaultCollectionMethod } from '@/features/orders/utils/get-default-collection-method';
 import { usePaymentMethodSelection } from '@/features/settings/hooks';
-import { useUpdateTask } from '@/features/tasks/api/update-task';
 import { CurrentPaymentMethodCard } from '@/features/users/components/current-payment-method-card';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useUser } from '@/lib/auth';
-import { useStepper } from '@/lib/stepper';
 import { OrderStatus } from '@/types/api';
 
-import { ItemPreviews } from '../item-previews';
+import { useOnboardingStepper } from '../onboarding-steps/onboarding-stepper';
+import { ItemPreviews } from '../shared/item-previews';
+import { UpsellServiceCard } from '../shared/upsell-service-card';
 
-import { UpsellServiceCard } from './upsell-service-card';
+import { TestKitStepper } from './test-kit-stepper';
 
-export const UpsellCheckout = ({
-  services,
-  selectedServices,
-  toggleService,
-}: {
-  services: ServiceWithMetadata[];
-  selectedServices: ServiceWithMetadata[];
-  toggleService: (service: ServiceWithMetadata) => void;
-}) => {
+const CheckoutStepContent = () => {
+  const { services, selectedServices, selectService } = useTestKitServices();
   const { data: user } = useUser();
   const { mutateAsync, isPending, error } = useCreateBulkOrders();
   const { track } = useAnalytics();
+  const { next: nextTestKitStep } = TestKitStepper.useStepper();
+  const { next: nextOnboardingStep } = useOnboardingStepper();
 
-  const { nextStep, activeStep } = useStepper((s) => s);
-  const { mutateAsync: updateTaskProgress, isError } = useUpdateTask();
-
-  const { jump, getStepIndexById } = useStepper((s) => s);
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<
     string | undefined
   >();
@@ -59,28 +50,6 @@ export const UpsellCheckout = ({
   const totalPrice = useMemo(() => {
     return selectedServices.reduce((acc, service) => acc + service.price, 0);
   }, [selectedServices]);
-
-  const updateStep = useCallback(async () => {
-    await updateTaskProgress({
-      taskName: 'onboarding',
-      data: { progress: activeStep },
-    });
-    if (!isError) nextStep();
-  }, [activeStep, isError, nextStep, updateTaskProgress]);
-
-  const skipStep = async () => {
-    const stepToJump = getStepIndexById('booking');
-    if (stepToJump === -1) {
-      toast.error("Something went wrong. Can't skip this step.");
-    }
-
-    await updateTaskProgress({
-      taskName: 'onboarding',
-      data: { progress: stepToJump },
-    });
-
-    if (!isError) jump('booking');
-  };
 
   const createBulkOrdersFromServices = useCallback(async () => {
     if (!user) return;
@@ -109,15 +78,16 @@ export const UpsellCheckout = ({
       payment_provider: activePaymentMethod?.paymentProvider.toLowerCase(),
     });
 
-    return updateStep();
+    return nextTestKitStep();
   }, [
     user,
-    mutateAsync,
     selectedServices,
-    updateStep,
-    totalPrice,
+    mutateAsync,
     track,
-    activePaymentMethod,
+    totalPrice,
+    activePaymentMethod?.paymentProvider,
+    activePaymentMethod?.externalPaymentMethodId,
+    nextTestKitStep,
   ]);
 
   const existingOrders = useMemo(() => {
@@ -126,11 +96,11 @@ export const UpsellCheckout = ({
 
   const handleBooking = async () => {
     if (existingOrders && !selectedServices?.length) {
-      return updateStep();
+      return nextTestKitStep();
     }
 
     if (!selectedServices?.length) {
-      return skipStep();
+      return nextOnboardingStep();
     }
 
     await createBulkOrdersFromServices();
@@ -199,7 +169,7 @@ export const UpsellCheckout = ({
                   service={service}
                   services={services}
                   selectedServices={selectedServices}
-                  toggleService={toggleService}
+                  toggleService={selectService}
                 />
               </motion.div>
             );
@@ -288,3 +258,9 @@ export const UpsellCheckout = ({
     </>
   );
 };
+
+export const CheckoutStep = () => (
+  <SplitScreenLayout title="Checkout" className="bg-zinc-50">
+    <CheckoutStepContent />
+  </SplitScreenLayout>
+);

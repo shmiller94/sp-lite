@@ -18,21 +18,17 @@ import { Body1, Body2, H2, H3, H4 } from '@/components/ui/typography';
 import { UPGRADE_INFO } from '@/const';
 import { useUpgradeOrder } from '@/features/orders/api/upgrade-order';
 import { usePaymentMethodSelection } from '@/features/settings/hooks';
-import { useUpdateTask } from '@/features/tasks/api/update-task';
 import { CurrentPaymentMethodCard } from '@/features/users/components/current-payment-method-card';
 import { useUser } from '@/lib/auth';
-import { useStepper } from '@/lib/stepper';
 import { cn } from '@/lib/utils';
 import { formatMoney } from '@/utils/format-money';
 import { getUpgradePrice } from '@/utils/get-upgrade-price';
 
-const AdvancedUpgrade = () => {
-  const { activeStep, nextStep } = useStepper((s) => s);
-  const {
-    mutateAsync: updateTaskProgress,
-    isError,
-    isPending: isTaskUpdating,
-  } = useUpdateTask();
+import { useOnboardingStepper } from './onboarding-stepper';
+
+const AdvancedPanelUpgradeContent = () => {
+  const { next } = useOnboardingStepper();
+
   const upgradeOrderMutation = useUpgradeOrder();
   const { data: user } = useUser();
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<
@@ -51,14 +47,6 @@ const AdvancedUpgrade = () => {
 
   const price = getUpgradePrice(user);
 
-  const goToNextStep = async () => {
-    await updateTaskProgress({
-      taskName: 'onboarding',
-      data: { progress: activeStep + 1 },
-    });
-    if (!isError) nextStep();
-  };
-
   const upgradeOrder = async () => {
     await upgradeOrderMutation.mutateAsync({
       data: {
@@ -66,7 +54,7 @@ const AdvancedUpgrade = () => {
         paymentMethodId: activePaymentMethod?.externalPaymentMethodId,
       },
     });
-    await goToNextStep();
+    next();
   };
 
   return (
@@ -125,7 +113,7 @@ const AdvancedUpgrade = () => {
         </div>
         <div className="flex flex-col gap-2">
           <Button
-            disabled={isTaskUpdating || upgradeOrderMutation.isPending}
+            disabled={upgradeOrderMutation.isPending}
             onClick={upgradeOrder}
           >
             {upgradeOrderMutation.isPending ? (
@@ -153,8 +141,8 @@ const AdvancedUpgrade = () => {
           <Button
             variant={selectedPaymentMethodId ? 'outline' : 'white'}
             className="bg-white"
-            onClick={goToNextStep}
-            disabled={isTaskUpdating || upgradeOrderMutation.isPending}
+            onClick={next}
+            disabled={upgradeOrderMutation.isPending}
           >
             No thanks
           </Button>
@@ -267,8 +255,8 @@ const TotalInfo = ({ price }: { price: number }) => {
   );
 };
 
-export const AdvancedUpgradeStep = () => (
+export const AdvancedPanelUpgradeStep = () => (
   <SplitScreenLayout title="Upgrade" className="bg-zinc-50">
-    <AdvancedUpgrade />
+    <AdvancedPanelUpgradeContent />
   </SplitScreenLayout>
 );

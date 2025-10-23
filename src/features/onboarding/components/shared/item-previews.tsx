@@ -1,7 +1,7 @@
 import { Body1, Body2 } from '@/components/ui/typography';
 import { cn } from '@/lib/utils';
 
-import { ServiceWithMetadata } from '../../hooks/use-upsell-services';
+import { ServiceWithMetadata } from '../../hooks/use-test-kits';
 
 import { ItemPreview } from './item-preview';
 

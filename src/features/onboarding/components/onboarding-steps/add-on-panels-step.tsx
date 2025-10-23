@@ -2,6 +2,7 @@ import { CircleCheckBig } from 'lucide-react';
 import { useState } from 'react';
 
 import { SuperpowerLogo } from '@/components/icons/superpower-logo';
+import { SplitScreenLayout } from '@/components/layouts/split-screen-layout';
 import { PaymentDetails } from '@/components/shared/payment-details';
 import { Button } from '@/components/ui/button';
 import { TransactionSpinner } from '@/components/ui/spinner/transaction-spinner';
@@ -13,7 +14,10 @@ import { useHasCredit } from '@/features/orders/hooks';
 import { usePaymentMethodSelection } from '@/features/settings/hooks';
 import { CurrentPaymentMethodCard } from '@/features/users/components/current-payment-method-card';
 
-export const UpsellAddOn = ({ goToNext }: { goToNext: () => void }) => {
+import { useOnboardingStepper } from './onboarding-stepper';
+
+const AddOnPanelsContent = () => {
+  const { next } = useOnboardingStepper();
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<
     string | undefined
@@ -43,7 +47,7 @@ export const UpsellAddOn = ({ goToNext }: { goToNext: () => void }) => {
         paymentMethodId: activePaymentMethod?.externalPaymentMethodId,
       },
     });
-    goToNext();
+    next();
   };
 
   return (
@@ -107,7 +111,7 @@ export const UpsellAddOn = ({ goToNext }: { goToNext: () => void }) => {
             variant={selectedPaymentMethodId ? 'outline' : 'white'}
             className="bg-white"
             disabled={upgradeOrderMutation.isPending}
-            onClick={goToNext}
+            onClick={next}
           >
             No thanks
           </Button>
@@ -134,3 +138,9 @@ export const UpsellAddOn = ({ goToNext }: { goToNext: () => void }) => {
     </>
   );
 };
+
+export const AddOnPanelsStep = () => (
+  <SplitScreenLayout title="Add-on lab tests" className="bg-zinc-50">
+    <AddOnPanelsContent />
+  </SplitScreenLayout>
+);

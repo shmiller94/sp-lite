@@ -1,16 +1,11 @@
-import { ChevronLeft } from 'lucide-react';
-import * as React from 'react';
-
 import { SuperpowerLogo } from '@/components/icons/superpower-logo';
 import { Head } from '@/components/seo';
 import {
   Accordion,
+  AccordionContent,
   AccordionItem,
   AccordionTrigger,
-  AccordionContent,
 } from '@/components/ui/accordion';
-import { Button } from '@/components/ui/button';
-import { useStepper } from '@/lib/stepper';
 import { cn } from '@/lib/utils';
 
 type Props = {
@@ -24,13 +19,6 @@ type Props = {
 export const OnboardingLayout = (props: Props) => {
   const { title, children, className, showAvailableStates = false } = props;
 
-  let { blockBackButton = false } = props;
-  const { prevStep, activeStep, steps } = useStepper((s) => s);
-
-  if (['mission'].includes(steps[activeStep].id)) {
-    blockBackButton = true;
-  }
-
   return (
     <>
       <Head title={title} />
@@ -43,19 +31,7 @@ export const OnboardingLayout = (props: Props) => {
         />
         <div className="z-10 flex w-full flex-1 flex-col justify-between">
           <div className="flex w-full items-center justify-between">
-            {activeStep !== 0 && !blockBackButton ? (
-              <Button
-                variant="glass"
-                className="size-12 rounded-full p-0"
-                onClick={() => {
-                  prevStep();
-                }}
-              >
-                <ChevronLeft className="size-4" />
-              </Button>
-            ) : (
-              <div className="size-12" />
-            )}
+            <div className="size-12" />
             <SuperpowerLogo fill="white" />
             <div className="size-12" />
           </div>

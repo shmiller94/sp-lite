@@ -1,11 +1,9 @@
-import { AnimatePresence } from 'framer-motion';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Spinner } from '@/components/ui/spinner';
-import { steps } from '@/features/onboarding/components/steps';
+import { OnboardingSteps } from '@/features/onboarding/components/onboarding-steps/onboarding-steps';
 import { useTask } from '@/features/tasks/api/get-task';
-import { StepperStoreProvider, useStepper } from '@/lib/stepper';
 import { preloadImage } from '@/utils/preload-image';
 
 export const onboardingLoader = () => async () => {
@@ -63,21 +61,5 @@ export const OnboardingRoute = () => {
     return null;
   }
 
-  const initialStep = onboardingTask.data.task.progress ?? 0;
-
-  return (
-    <AnimatePresence>
-      <StepperStoreProvider steps={steps} initialStep={initialStep}>
-        <Step />
-      </StepperStoreProvider>
-    </AnimatePresence>
-  );
-};
-
-const Step = () => {
-  const { steps, activeStep } = useStepper((s) => s);
-
-  const currentStep = steps[activeStep];
-
-  return currentStep?.content ?? null;
+  return <OnboardingSteps />;
 };

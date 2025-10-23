@@ -34,17 +34,17 @@ import {
 } from '@/components/ui/select';
 import { TransactionSpinner } from '@/components/ui/spinner/transaction-spinner';
 import { Body2, H3, H4 } from '@/components/ui/typography';
-import { ADVANCED_BLOOD_PANEL, US_STATES } from '@/const';
+import { US_STATES } from '@/const';
 import { useCheckout } from '@/features/auth/hooks/use-checkout';
-import { OnboardingCard } from '@/features/onboarding/components/onboarding-membership-card';
-import { useHasCredit } from '@/features/orders/hooks';
-import { useUpdateTask } from '@/features/tasks/api/update-task';
 import { useCreateAddress, useEditAddress } from '@/features/users/api';
 import { useUpdateUser } from '@/features/users/api/update-user';
 import { useUser } from '@/lib/auth';
-import { useStepper } from '@/lib/stepper';
 import { cn } from '@/lib/utils';
 import { AddressInput, formAddressInputSchema } from '@/types/address';
+
+import { useOnboardingStepper } from '../onboarding-stepper';
+
+import { OnboardingCard } from './onboarding-membership-card';
 
 const FEATURES = [
   '100+ biomarkers',
@@ -95,12 +95,9 @@ export const updateUserInputSchema = z.object({
 
 export type UpdateUserInput = z.infer<typeof updateUserInputSchema>;
 
-export const UpdateInfo = () => {
+const UpdateInfoContent = () => {
   const { data: user } = useUser();
-  const { credit: advancedDrawCredit } = useHasCredit({
-    serviceName: ADVANCED_BLOOD_PANEL,
-  });
-  const { jump, getStepIndexById } = useStepper((s) => s);
+  const { next } = useOnboardingStepper();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { needsBackup } = useNeedsBackupPaymentMethod();
   const {
@@ -137,7 +134,6 @@ export const UpdateInfo = () => {
   const updateUserMutation = useUpdateUser();
   const addAddressMutation = useCreateAddress();
   const editAddressMutation = useEditAddress();
-  const updateTaskMutation = useUpdateTask();
 
   const onSubmit = async (data: UpdateUserInput) => {
     if (!data.address) return;
@@ -183,24 +179,13 @@ export const UpdateInfo = () => {
       },
     });
 
-    const nextStepIndex = advancedDrawCredit
-      ? getStepIndexById('intake')
-      : getStepIndexById('advanced-upgrade');
-
-    await updateTaskMutation.mutateAsync({
-      taskName: 'onboarding',
-      data: { progress: nextStepIndex },
-    });
     setIsSubmitting(false);
 
-    const nextStepId = advancedDrawCredit ? 'intake' : 'advanced-upgrade';
-
-    jump(nextStepId);
+    next();
   };
 
   const isLoading =
     addAddressMutation.isPending ||
-    updateTaskMutation.isPending ||
     updateUserMutation.isPending ||
     isMutationPending ||
     isSubmitting;
@@ -505,6 +490,6 @@ function FullPrimaryAddressForm() {
 
 export const UpdateInfoStep = () => (
   <SplitScreenLayout title="Update Info" className="bg-zinc-50">
-    <UpdateInfo />
+    <UpdateInfoContent />
   </SplitScreenLayout>
 );

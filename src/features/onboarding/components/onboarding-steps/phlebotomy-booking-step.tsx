@@ -10,20 +10,12 @@ import {
 import { HealthcareServiceDialog } from '@/features/orders/components/healthcare-service-dialog';
 import { useGroupedOrders } from '@/features/orders/hooks/use-grouped-orders';
 import { BookingStepID } from '@/features/orders/utils/get-steps-for-service';
-import { useUpdateTask } from '@/features/tasks/api/update-task';
-import { useStepper } from '@/lib/stepper';
 import { HealthcareService } from '@/types/api';
 
-const Booking = ({ bloodPanel }: { bloodPanel?: HealthcareService }) => {
-  const { mutateAsync: updateTaskProgress } = useUpdateTask();
-  const { activeStep, nextStep } = useStepper((s) => s);
+import { useOnboardingStepper } from './onboarding-stepper';
 
-  const updateStep = async () => {
-    await updateTaskProgress({
-      taskName: 'onboarding',
-      data: { progress: activeStep + 1 },
-    });
-  };
+const BookingContent = ({ bloodPanel }: { bloodPanel?: HealthcareService }) => {
+  const { next } = useOnboardingStepper();
 
   if (!bloodPanel) {
     return null;
@@ -39,11 +31,8 @@ const Booking = ({ bloodPanel }: { bloodPanel?: HealthcareService }) => {
     <HealthcareServiceDialog
       healthcareService={bloodPanel}
       excludeSteps={excludeSteps}
-      // this just updates it on server just in case
-      // this is also guard in case they just close the app right after booking
-      onSuccess={updateStep}
       // let user manually click next step inside the onboarding
-      onClose={nextStep}
+      onClose={next}
     />
   );
 };
@@ -56,7 +45,7 @@ const Loader = () => {
   );
 };
 
-export const BookingStep = () => {
+export const PhlebotomyBookingStep = () => {
   const { buckets, groupedOrdersLoading } = useGroupedOrders();
 
   // this is going to be replaced in custom panels v1 but right now we need to assume
@@ -82,7 +71,7 @@ export const BookingStep = () => {
       {groupedOrdersLoading ? (
         <Loader />
       ) : stableService ? (
-        <Booking bloodPanel={stableService} />
+        <BookingContent bloodPanel={stableService} />
       ) : (
         <div className="p-6 md:p-14">
           <Body1 className="text-pink-700">

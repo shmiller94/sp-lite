@@ -13,10 +13,10 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Body1, Body2, H3 } from '@/components/ui/typography';
 import { HEARD_ABOUT_US_CATEGORIES } from '@/features/onboarding/const/heard-about-us';
-import { useUpdateTask } from '@/features/tasks/api/update-task';
 import { useAnalytics } from '@/hooks/use-analytics';
-import { useStepper } from '@/lib/stepper';
 import { cn } from '@/lib/utils';
+
+import { useOnboardingStepper } from './onboarding-stepper';
 
 type SelectedOption = {
   category: string;
@@ -30,27 +30,9 @@ export const HeardAboutUsStep = () => {
   const [openCategoryId, setOpenCategoryId] = useState<string | null>(null);
 
   const { track } = useAnalytics();
-  const { nextStep, activeStep } = useStepper((s) => s);
-  const {
-    mutateAsync: updateTaskProgress,
-    isError,
-    isPending: isTaskUpdating,
-  } = useUpdateTask();
+  const { next } = useOnboardingStepper();
 
-  const updateStep = async () => {
-    await updateTaskProgress({
-      taskName: 'onboarding',
-      data: {
-        progress: activeStep + 1,
-      },
-    });
-
-    if (!isError) {
-      nextStep();
-    }
-  };
-
-  const handleNext = async () => {
+  const handleNext = () => {
     if (!selectedOption) return;
 
     track('answered_survey_hdyhau', {
@@ -62,17 +44,17 @@ export const HeardAboutUsStep = () => {
       },
     });
 
-    await updateStep();
+    next();
   };
 
-  const handleSkip = async () => {
+  const handleSkip = () => {
     track('answered_survey_hdyhau', {
       skipped: true,
       category: null,
       option: null,
     });
 
-    await updateStep();
+    next();
   };
 
   const handleSelectOption = (categoryTitle: string, optionLabel: string) => {
@@ -123,17 +105,13 @@ export const HeardAboutUsStep = () => {
               ))}
             </RadioGroup>
             <div className="flex w-full flex-col gap-2">
-              <Button
-                disabled={isTaskUpdating || !selectedOption}
-                onClick={handleNext}
-              >
+              <Button disabled={!selectedOption} onClick={handleNext}>
                 Next
               </Button>
               <Button
                 variant="outline"
                 className="bg-white"
                 onClick={handleSkip}
-                disabled={isTaskUpdating}
               >
                 Skip
               </Button>

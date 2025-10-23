@@ -10,7 +10,7 @@ import {
   MYCOTOXINS_TEST_ID,
   TOTAL_TOXIN_TEST_ID,
 } from '@/const/services';
-import { ServiceWithMetadata } from '@/features/onboarding/hooks/use-upsell-services';
+import { ServiceWithMetadata } from '@/features/onboarding/hooks/use-test-kits';
 import { HealthcareServiceDialog } from '@/features/orders/components/healthcare-service-dialog';
 import { ServiceSelectCard } from '@/features/services/components/service-select-card';
 

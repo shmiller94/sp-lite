@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 import { useMemo } from 'react';
 
+import { SplitScreenLayout } from '@/components/layouts/split-screen-layout';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/sonner';
 import { Body1, H3, H4 } from '@/components/ui/typography';
@@ -10,36 +11,37 @@ import {
   ENVIRONMENTAL_TOXIN_TEST_ID,
   HEAVY_METALS_TEST_ID,
   MYCOTOXINS_TEST_ID,
-  TOTAL_TOXIN_TEST_ID,
 } from '@/const/services';
-import { ServiceWithMetadata } from '@/features/onboarding/hooks/use-upsell-services';
+import { useTestKitServices } from '@/features/onboarding/hooks/use-test-kits';
 
-import { ItemPreviews } from '../item-previews';
+import { ItemPreviews } from '../shared/item-previews';
+import { UpsellServiceCard } from '../shared/upsell-service-card';
 
-import { UpsellServiceCard } from './upsell-service-card';
+import { TestKitStepper } from './test-kit-stepper';
 
-export const UpsellDetailToxins = ({
-  services,
-  selectedServices,
-  toggleService,
-  goToNext,
-}: {
-  services: ServiceWithMetadata[];
-  selectedServices: ServiceWithMetadata[];
-  toggleService: (item: ServiceWithMetadata) => void;
-  goToNext: () => void;
-}) => {
+const SelectToxinsStepContent = () => {
+  const { next } = TestKitStepper.useStepper();
+  const { services, selectedServices, selectService } = useTestKitServices();
   const onAddToCart = () => {
     toast.success(
       `${selectedServices.length} ${selectedServices.length === 1 ? 'service' : 'services'} added`,
     );
-    goToNext();
+    next();
   };
+
+  const toxinServices = useMemo(() => {
+    return services.filter((service) =>
+      [
+        MYCOTOXINS_TEST_ID,
+        HEAVY_METALS_TEST_ID,
+        ENVIRONMENTAL_TOXIN_TEST_ID,
+      ].includes(service.id),
+    );
+  }, [services]);
 
   const selectedToxServices = useMemo(() => {
     return selectedServices.filter((service) =>
       [
-        TOTAL_TOXIN_TEST_ID,
         MYCOTOXINS_TEST_ID,
         HEAVY_METALS_TEST_ID,
         ENVIRONMENTAL_TOXIN_TEST_ID,
@@ -62,15 +64,14 @@ export const UpsellDetailToxins = ({
 
         {/* Services */}
         <div className="space-y-2">
-          {services.map((service, index) => (
+          {toxinServices.map((service) => (
             <div key={service.id}>
               <UpsellServiceCard
                 service={service}
                 services={services}
                 selectedServices={selectedServices}
-                toggleService={toggleService}
+                toggleService={selectService}
               />
-              {index === 0 && <div className="my-4 h-px bg-zinc-200" />}
             </div>
           ))}
         </div>
@@ -163,7 +164,7 @@ export const UpsellDetailToxins = ({
             }}
           >
             <Button
-              onClick={goToNext}
+              onClick={next}
               variant="ghost"
               className="group h-12 w-full flex-1 border border-zinc-100 bg-white text-base text-zinc-500 shadow-sm hover:text-zinc-600 disabled:bg-white/75 disabled:text-zinc-300 disabled:opacity-100 disabled:backdrop-blur-md md:border-transparent md:bg-transparent md:shadow-none"
             >
@@ -181,3 +182,9 @@ export const UpsellDetailToxins = ({
     </>
   );
 };
+
+export const SelectToxinsStep = () => (
+  <SplitScreenLayout title="Select Toxins" className="bg-zinc-50">
+    <SelectToxinsStepContent />
+  </SplitScreenLayout>
+);

@@ -3310,6 +3310,18 @@
   resolved "https://registry.yarnpkg.com/@standard-schema/spec/-/spec-1.0.0.tgz#f193b73dc316c4170f2e82a881da0f550d551b9c"
   integrity sha512-m2bOd0f2RT9k8QJx1JN85cZYyH1RqFBdlwtkSlf4tBDYLCiiZnv1fIIwacK6cqwXavOydf0NPToMQgpKq+dVlA==
 
+"@stepperize/core@1.2.7":
+  version "1.2.7"
+  resolved "https://registry.yarnpkg.com/@stepperize/core/-/core-1.2.7.tgz#b26d07787c44468be823eb7d3684d2e1812efeb1"
+  integrity sha512-XiUwLZ0XRAfaDK6AzWVgqvI/BcrylyplhUXKO8vzgRw0FTmyMKHAAbQLDvU//ZJAqnmG2cSLZDSkcwLxU5zSYA==
+
+"@stepperize/react@5.1.9":
+  version "5.1.9"
+  resolved "https://registry.yarnpkg.com/@stepperize/react/-/react-5.1.9.tgz#373833084fb3af97d3e42d1d1b51cfe19172d71f"
+  integrity sha512-yBgw1I5Tx6/qZB4xTdVBaPGfTqH5aYS1WFB5vtR8+fwPeqd3YNuOnQ1pJM6w/xV/gvryuy31hbFw080lZc+/hw==
+  dependencies:
+    "@stepperize/core" "1.2.7"
+
 "@storybook/addon-a11y@^8.0.10":
   version "8.0.10"
   resolved "https://registry.npmjs.org/@storybook/addon-a11y/-/addon-a11y-8.0.10.tgz"

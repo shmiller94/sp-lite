@@ -1,11 +1,13 @@
 import { ChevronRight } from 'lucide-react';
 
+import { SplitScreenLayout } from '@/components/layouts/split-screen-layout';
 import { StyledMarkdown } from '@/components/shared/styled-markdown';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/sonner';
 import { Body1, H3, H4 } from '@/components/ui/typography';
-import { ServiceWithMetadata } from '@/features/onboarding/hooks/use-upsell-services';
+import { GUT_MICROBIOME_ANALYSIS_ID } from '@/const/services';
+import { useTestKitServices } from '@/features/onboarding/hooks/use-test-kits';
 import { useScrollDetection } from '@/hooks/use-scroll-detection';
 import { cn } from '@/lib/utils';
 import { formatMoney } from '@/utils/format-money';
@@ -14,32 +16,36 @@ import {
   getSampleReportLinkForService,
 } from '@/utils/service';
 
-import { ItemPreview } from '../item-preview';
+import { ItemPreview } from '../shared/item-preview';
+import { UpsellSampleReportDialog } from '../shared/upsell-sample-report';
 
-import { UpsellSampleReportDialog } from './upsell-sample-report';
+import { TestKitStepper } from './test-kit-stepper';
 
-export const UpsellDetailGut = ({
-  service,
-  toggleService,
-  goToNext,
-}: {
-  service: ServiceWithMetadata;
-  toggleService: (item: ServiceWithMetadata) => void;
-  goToNext: () => void;
-}) => {
-  const serviceDetails = getDetailsForService(service.name);
-
-  const sampleReportLink = getSampleReportLinkForService(service.name);
+const SelectGutStepContent = () => {
+  const { next } = TestKitStepper.useStepper();
+  const { services, selectService } = useTestKitServices();
 
   const { isScrolled } = useScrollDetection({
     threshold: 180,
     bottomOffset: 10,
   });
 
+  const gutService = services.find(
+    (service) => service.id === GUT_MICROBIOME_ANALYSIS_ID,
+  );
+
+  if (!gutService) {
+    return null;
+  }
+
+  const serviceDetails = getDetailsForService(gutService.name);
+
+  const sampleReportLink = getSampleReportLinkForService(gutService.name);
+
   const onAddToCart = () => {
-    toggleService(service);
-    toast.success(`${service.name} added`);
-    goToNext();
+    selectService(gutService);
+    toast.success(`${gutService.name} added`);
+    next();
   };
 
   return (
@@ -63,13 +69,13 @@ export const UpsellDetailGut = ({
         >
           <div className="flex w-full flex-1 items-center justify-between gap-4">
             <H3 className="m-0 mb-1 leading-none text-primary">
-              {service.name}
+              {gutService.name}
             </H3>
           </div>
-          <H4 className="m-0 text-primary">{formatMoney(service.price)}</H4>
+          <H4 className="m-0 text-primary">{formatMoney(gutService.price)}</H4>
         </div>
         <Body1 className="mb-8 text-zinc-500 md:order-none">
-          {service.description}
+          {gutService.description}
         </Body1>
 
         <div className="w-full pb-64 lg:pb-0">
@@ -118,7 +124,7 @@ export const UpsellDetailGut = ({
             Add to cart
           </Button>
           <Button
-            onClick={goToNext}
+            onClick={next}
             variant="ghost"
             size="icon"
             className="group h-12 w-full flex-1 border border-zinc-100 bg-white text-base text-zinc-500 shadow-sm hover:text-zinc-600 disabled:bg-white/75 disabled:text-zinc-300 disabled:opacity-100 disabled:backdrop-blur-md md:border-transparent md:bg-transparent md:shadow-none"
@@ -148,7 +154,7 @@ export const UpsellDetailGut = ({
               isScrolled ? 'w-20 lg:w-full' : 'w-full',
             )}
           >
-            <ItemPreview image={service?.image_shadow ?? ''} />
+            <ItemPreview image={gutService.image_shadow} />
           </div>
           <div
             className={cn(
@@ -158,9 +164,9 @@ export const UpsellDetailGut = ({
                 : 'max-w-0 translate-x-10 opacity-0',
             )}
           >
-            <Body1>{service.displayName}</Body1>
+            <Body1>{gutService.displayName}</Body1>
             <Body1 className="text-secondary">
-              {formatMoney(service.price)}
+              {formatMoney(gutService.price)}
             </Body1>
           </div>
         </div>
@@ -168,3 +174,9 @@ export const UpsellDetailGut = ({
     </>
   );
 };
+
+export const SelectGutStep = () => (
+  <SplitScreenLayout title="Select Gut" className="bg-zinc-50">
+    <SelectGutStepContent />
+  </SplitScreenLayout>
+);

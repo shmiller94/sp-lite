@@ -6,9 +6,10 @@ import { useEffect, useRef, useState } from 'react';
 import { SuperpowerLogo } from '@/components/icons/superpower-logo';
 import { Button } from '@/components/ui/button';
 import { H1, H2, H3 } from '@/components/ui/typography';
-import { Collage } from '@/features/onboarding/components/you-are-in/collage';
 import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
+
+import { Collage } from './collage';
 
 export const Activation = ({
   sequence,

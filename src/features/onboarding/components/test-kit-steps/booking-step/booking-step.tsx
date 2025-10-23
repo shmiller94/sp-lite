@@ -1,33 +1,21 @@
 import { motion } from 'framer-motion';
 import { useMemo } from 'react';
 
+import { SplitScreenLayout } from '@/components/layouts/split-screen-layout';
 import { Button } from '@/components/ui/button';
 import { Body1, H3 } from '@/components/ui/typography';
-import { useUpdateTask } from '@/features/tasks/api/update-task';
 import { useUser } from '@/lib/auth';
-import { useStepper } from '@/lib/stepper';
 
-import { useUpsellServices } from '../../../hooks/use-upsell-services';
-import { ItemPreviews } from '../item-previews';
+import { useTestKitServices } from '../../../hooks/use-test-kits';
+import { useOnboardingStepper } from '../../onboarding-steps/onboarding-stepper';
+import { ItemPreviews } from '../../shared/item-previews';
 
-import { BookingCard } from './upsell-booking-card';
+import { TestKitBookingCard } from './booking-card';
 
-export const UpsellBooking = () => {
+const BookingStepContent = () => {
   const { data: user } = useUser();
-  const { nextStep, activeStep } = useStepper((s) => s);
-  const { mutateAsync: updateTaskProgress, isError } = useUpdateTask();
-  const { services } = useUpsellServices();
-
-  const updateStep = async () => {
-    await updateTaskProgress({
-      taskName: 'onboarding',
-      data: { progress: activeStep + 1 },
-    });
-
-    if (!isError) {
-      nextStep();
-    }
-  };
+  const { next } = useOnboardingStepper();
+  const { services } = useTestKitServices();
 
   const servicesWithOrders = useMemo(() => {
     return services.filter((service) => service.order) ?? [];
@@ -87,7 +75,7 @@ export const UpsellBooking = () => {
                 ease: 'easeOut',
               }}
             >
-              <BookingCard service={s} />
+              <TestKitBookingCard service={s} />
             </motion.div>
           ))}
         </motion.div>
@@ -99,7 +87,7 @@ export const UpsellBooking = () => {
           transition={{ duration: 0.4, delay: 0.4, ease: 'easeOut' }}
         >
           {allOrdersConfirmed && (
-            <Button onClick={updateStep} className="w-full">
+            <Button onClick={next} className="w-full">
               Next
             </Button>
           )}
@@ -109,3 +97,9 @@ export const UpsellBooking = () => {
     </>
   );
 };
+
+export const BookingStep = () => (
+  <SplitScreenLayout title="Book additional services" className="bg-zinc-50">
+    <BookingStepContent />
+  </SplitScreenLayout>
+);

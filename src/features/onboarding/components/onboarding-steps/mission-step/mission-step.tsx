@@ -3,12 +3,12 @@ import { useEffect, useState } from 'react';
 
 import { OnboardingLayout } from '@/components/layouts/onboarding-layout';
 import { Button } from '@/components/ui/button';
-import { Spinner } from '@/components/ui/spinner';
 import { H1, H3, H4 } from '@/components/ui/typography';
 import { useUpdateTask } from '@/features/tasks/api/update-task';
-import { useStepper } from '@/lib/stepper';
 
-import { Activation } from '../you-are-in/animation';
+import { useOnboardingStepper } from '../onboarding-stepper';
+
+import { Activation } from './animation';
 
 const MISSION_CONTENT = [
   'Healthcare is broken. From poor food quality, to inescapable environmental toxins, to a modern lifestyle at odds with our biology, it has never been harder to be healthy.',
@@ -19,22 +19,16 @@ const MISSION_CONTENT = [
 ];
 
 export const Mission = () => {
-  const { nextStep, activeStep } = useStepper((s) => s);
-  const {
-    mutateAsync: updateTaskProgress,
-    isError,
-    isPending,
-  } = useUpdateTask();
+  const { next } = useOnboardingStepper();
 
-  const updateStep = async () => {
+  const { mutateAsync: updateTaskProgress } = useUpdateTask();
+
+  const handleNext = async () => {
     await updateTaskProgress({
       taskName: 'onboarding',
-      data: { progress: activeStep + 1 },
+      data: { status: 'completed' },
     });
-
-    if (!isError) {
-      nextStep();
-    }
+    next();
   };
 
   return (
@@ -55,17 +49,12 @@ export const Mission = () => {
           </H3>
         ))}
         <Button
-          onClick={updateStep}
-          disabled={isPending}
+          onClick={handleNext}
           type="submit"
           className="w-full"
           variant="white"
         >
-          {isPending ? (
-            <Spinner variant="primary" />
-          ) : (
-            "I'm ready to commit to my health"
-          )}
+          I&apos;m ready to commit to my health
         </Button>
       </div>
     </section>

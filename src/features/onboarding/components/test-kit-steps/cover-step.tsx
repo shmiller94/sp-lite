@@ -1,9 +1,28 @@
 import { motion } from 'framer-motion';
+import { useCallback } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { H1, H4 } from '@/components/ui/typography';
+import { GUT_MICROBIOME_ANALYSIS_ID } from '@/const';
+import { useHasCredit } from '@/features/orders/hooks';
 
-export const UpsellCover = ({ goToNext }: { goToNext: () => void }) => {
+import { TEST_KIT_STEPS, TestKitStepper } from './test-kit-stepper';
+
+export const CoverStep = () => {
+  const { next, goTo } = TestKitStepper.useStepper();
+  const { hasCredit: hasGutCredit } = useHasCredit({
+    serviceName: GUT_MICROBIOME_ANALYSIS_ID,
+  });
+
+  // if user has gut credit, go to select toxins step
+  const nextStep = useCallback(() => {
+    if (hasGutCredit) {
+      goTo(TEST_KIT_STEPS.SELECT_TOXINS);
+    } else {
+      next();
+    }
+  }, [goTo, hasGutCredit, next]);
+
   return (
     <div
       className="absolute left-1/2 top-1/2 col-span-2 h-dvh w-screen -translate-x-1/2 -translate-y-1/2 overflow-hidden bg-[url('/onboarding/upsell/upsell-cover-main.webp')] bg-cover bg-center"
@@ -43,7 +62,7 @@ export const UpsellCover = ({ goToNext }: { goToNext: () => void }) => {
         <Button
           variant="white"
           className="absolute bottom-4 w-full max-w-[calc(100%-32px)] md:static md:max-w-xs"
-          onClick={goToNext}
+          onClick={nextStep}
         >
           Continue
         </Button>
