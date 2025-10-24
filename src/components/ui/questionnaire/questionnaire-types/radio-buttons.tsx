@@ -70,6 +70,17 @@ export function RadioButtons({
     [nextStep],
   );
 
+  const handleSelect = useCallback(
+    (optionName: string, optionValue: TypedValue) => {
+      if (!optionValue?.type) return;
+      const propertyName = 'value' + capitalize(optionValue.type);
+      onChangeAnswer({ [propertyName]: optionValue.value });
+      setSelectedAnswer(optionValue.value as string);
+      autoAdvance();
+    },
+    [autoAdvance, onChangeAnswer],
+  );
+
   return (
     <QuestionnaireErrorWrapper isError={isError}>
       <RadioGroup
@@ -81,12 +92,7 @@ export function RadioButtons({
           );
           if (option) {
             const optionValue = option[1];
-            const propertyName = 'value' + capitalize(optionValue.type);
-            onChangeAnswer({ [propertyName]: optionValue.value });
-
-            setSelectedAnswer(optionValue.value);
-
-            autoAdvance();
+            handleSelect(newValue, optionValue);
           }
         }}
         name={item.linkId}
@@ -100,7 +106,14 @@ export function RadioButtons({
             data-radio-group={item.linkId}
             key={index}
             role="radio"
+            tabIndex={0}
             aria-checked={optionName === answerLinkId}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleSelect(optionName, optionValue);
+              }
+            }}
           >
             <RadioGroupItem
               key={optionName}
