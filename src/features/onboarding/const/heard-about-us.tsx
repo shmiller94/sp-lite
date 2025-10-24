@@ -5,7 +5,6 @@ import {
   Users,
   Briefcase,
   HeartPulse,
-  Podcast,
   Mail,
 } from 'lucide-react';
 
@@ -18,8 +17,6 @@ import {
   InstagramIcon,
   LinkedInIcon,
   PerplexityIcon,
-  RedditIcon,
-  SnapchatIcon,
   TikTokIcon,
   YouTubeIcon,
 } from '@/components/icons/marketing';
@@ -40,13 +37,13 @@ export type HeardAboutUsOption = {
 export type HeardAboutUsCategory = {
   id: string;
   title: string;
-  options: HeardAboutUsOption[];
+  options?: HeardAboutUsOption[];
 };
 
 export const HEARD_ABOUT_US_CATEGORIES: HeardAboutUsCategory[] = [
   {
     id: 'social-media',
-    title: 'Social Media',
+    title: 'Social Media or Ad',
     options: [
       { value: 'tiktok', label: 'TikTok', icon: TikTokIcon },
       { value: 'instagram', label: 'Instagram', icon: InstagramIcon },
@@ -70,10 +67,10 @@ export const HEARD_ABOUT_US_CATEGORIES: HeardAboutUsCategory[] = [
   {
     id: 'podcast',
     title: 'Podcast',
-    options: [
-      { value: 'tbd', label: 'TBD', icon: Podcast },
-      { value: 'other', label: 'Other', icon: MoreHorizontal },
-    ],
+  },
+  {
+    id: 'creator',
+    title: 'Creator',
   },
   {
     id: 'web-search',
@@ -84,18 +81,6 @@ export const HEARD_ABOUT_US_CATEGORIES: HeardAboutUsCategory[] = [
       { value: 'chatgpt', label: 'ChatGPT', icon: ChatGPTIcon },
       { value: 'perplexity', label: 'Perplexity', icon: PerplexityIcon },
       { value: 'claude', label: 'Claude', icon: ClaudeIcon },
-      { value: 'other', label: 'Other', icon: MoreHorizontal },
-    ],
-  },
-  {
-    id: 'ad',
-    title: 'Ad',
-    options: [
-      { value: 'facebook', label: 'Facebook', icon: FacebookIcon },
-      { value: 'instagram', label: 'Instagram', icon: InstagramIcon },
-      { value: 'tiktok', label: 'TikTok', icon: TikTokIcon },
-      { value: 'snapchat', label: 'Snapchat', icon: SnapchatIcon },
-      { value: 'reddit', label: 'Reddit', icon: RedditIcon },
       { value: 'other', label: 'Other', icon: MoreHorizontal },
     ],
   },
