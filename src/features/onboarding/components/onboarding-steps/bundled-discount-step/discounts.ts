@@ -3,7 +3,7 @@ import { User } from '@/types/api';
 const BUNDLED_DISCOUNTS = [
   {
     id: 'add-1-test',
-    title: 'Add 1 test',
+    title: 'Add a follow-up test',
     quantity: 1,
     pricing: {
       GET_LABS: {
@@ -23,7 +23,7 @@ const BUNDLED_DISCOUNTS = [
   },
   {
     id: 'add-3-tests',
-    title: 'Add 3 tests',
+    title: 'Test quarterly (+3 tests)',
     quantity: 3,
     pricing: {
       GET_LABS: {
