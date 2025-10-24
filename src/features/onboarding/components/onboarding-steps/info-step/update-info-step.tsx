@@ -64,7 +64,7 @@ const checklistContainer = {
 } as const;
 
 const checklistItem = {
-  hidden: { opacity: 0, y: 6, filter: 'blur(4px)' },
+  hidden: { opacity: 0, y: 6, filter: 'blur(1px)' },
   show: {
     opacity: 1,
     y: 0,
