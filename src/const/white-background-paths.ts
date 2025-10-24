@@ -1,1 +1,1 @@
-export const WHITE_BACKGROUND_PATHS = ['services', 'invite'];
+export const WHITE_BACKGROUND_PATHS = ['services', 'invite', 'marketplace'];

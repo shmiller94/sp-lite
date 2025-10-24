@@ -2,7 +2,7 @@ import React from 'react';
 
 import { usePlans } from '@/features/plans/api';
 import { parseProductRequests } from '@/features/plans/utils/parse-product-requests';
-import { useProducts } from '@/features/shop/api';
+import { useProducts } from '@/features/supplements/api';
 import { Product } from '@/types/api';
 
 /**

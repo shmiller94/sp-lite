@@ -68,6 +68,15 @@ export const LAB_ORDER_SUPPORTED_SERVICES = [
   NUTRIENT_AND_ANTIOXIDANT_PANEL,
 ];
 
+export const RECOMMENDED_SERVICES = [
+  SUPERPOWER_BLOOD_PANEL,
+  ADVANCED_BLOOD_PANEL,
+  CUSTOM_BLOOD_PANEL,
+  GUT_MICROBIOME_ANALYSIS,
+  ENVIRONMENTAL_TOXIN_TEST,
+  MYCOTOXINS_TEST,
+];
+
 // we assume those services can be ordered through the lab
 export const checkLabOrderSupport = (serviceName: string) => {
   return LAB_ORDER_SUPPORTED_SERVICES.includes(serviceName);

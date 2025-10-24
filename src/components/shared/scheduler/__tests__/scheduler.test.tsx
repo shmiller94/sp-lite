@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import { renderApp, screen } from '@/testing/test-utils';
 
 import { Scheduler } from '../scheduler';
@@ -14,6 +12,7 @@ test('One slot', async () => {
           'Build your own blood panel and choose from dozens of laboratory tests covering hundreds of biomarkers.',
         price: 0,
         active: false,
+        additionalClassification: [],
         phlebotomy: true,
         supportsLabOrder: true,
         bloodTubeCount: 6,

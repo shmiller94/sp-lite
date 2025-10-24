@@ -9,12 +9,12 @@ export const FinishScheduleList = () => {
 
   if (groupedOrdersLoading) {
     return (
-      <div className="grid grid-cols-1 gap-1 sm:gap-x-3 sm:gap-y-9 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {Array(9)
+      <div className="grid grid-cols-2 gap-2 sm:gap-x-8 sm:gap-y-6 lg:grid-cols-3">
+        {Array(3)
           .fill(0)
           .map((_, i) => (
             <Skeleton
-              className="h-[76px] w-full rounded-[20px] md:h-[386px] md:rounded-3xl"
+              className="h-[100px] w-full rounded-[20px] md:h-[445px] md:rounded-3xl"
               key={i}
             />
           ))}
@@ -32,7 +32,7 @@ export const FinishScheduleList = () => {
     );
 
   return (
-    <div className="grid grid-cols-1 gap-1 sm:gap-x-3 sm:gap-y-9 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div className="grid grid-cols-2 gap-2 sm:gap-x-8 sm:gap-y-6 lg:grid-cols-3">
       {buckets.drafts.map((draft) => {
         if (!draft.service) {
           return null;

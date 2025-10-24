@@ -11,7 +11,7 @@ module.exports = {
     'generators/*',
   ],
   extends: ['eslint:recommended'],
-  plugins: ['check-file'],
+  plugins: ['check-file', 'unused-imports'],
   overrides: [
     {
       files: ['**/*.ts', '**/*.tsx'],
@@ -43,6 +43,17 @@ module.exports = {
         'plugin:vitest/legacy-recommended',
       ],
       rules: {
+        'unused-imports/no-unused-imports': 'error',
+        'unused-imports/no-unused-vars': [
+          'error',
+          {
+            vars: 'all',
+            varsIgnorePattern: '^_',
+            args: 'after-used',
+            argsIgnorePattern: '^_',
+          },
+        ],
+        '@typescript-eslint/no-unused-vars': 'off',
         'import/no-restricted-paths': [
           'error',
           {
@@ -110,7 +121,6 @@ module.exports = {
         'import/no-named-as-default': 'off',
         'react/react-in-jsx-scope': 'off',
         'jsx-a11y/anchor-is-valid': 'off',
-        '@typescript-eslint/no-unused-vars': ['error'],
         '@typescript-eslint/explicit-function-return-type': ['off'],
         '@typescript-eslint/explicit-module-boundary-types': ['off'],
         '@typescript-eslint/no-empty-function': ['off'],

@@ -1,6 +1,6 @@
 import { useCarePlan } from '@/features/plans/context/care-plan-context';
 import { parseProductRequests } from '@/features/plans/utils/parse-product-requests';
-import { useProducts } from '@/features/shop/api';
+import { useProducts } from '@/features/supplements/api';
 import { Product } from '@/types/api';
 
 interface ProductAvailabilityResult {

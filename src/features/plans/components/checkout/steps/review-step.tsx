@@ -9,7 +9,7 @@ import { Body1, H2 } from '@/components/ui/typography';
 import { useProductAvailability } from '@/features/plans/hooks/use-product-availability';
 import { useSortedProducts } from '@/features/plans/hooks/use-sorted-products';
 import { useCarePlanCart } from '@/features/plans/stores/care-plan-cart-store';
-import { useCreateCheckoutUrl } from '@/features/shop/api';
+import { useCreateCheckoutUrl } from '@/features/supplements/api';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { cn } from '@/lib/utils';
 import { Product } from '@/types/api';

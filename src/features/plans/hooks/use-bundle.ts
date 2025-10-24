@@ -2,7 +2,7 @@ import { CarePlanActivity } from '@medplum/fhirtypes';
 import { useMemo } from 'react';
 
 import { CARE_PLAN_ACTIVITY_TYPE_EXTENSION } from '@/features/plans/const/extension-types';
-import { useProducts } from '@/features/shop/api';
+import { useProducts } from '@/features/supplements/api';
 import { Product } from '@/types/api';
 
 import { calculateTotals } from '../utils/calculate-totals';

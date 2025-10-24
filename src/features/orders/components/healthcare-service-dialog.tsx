@@ -189,7 +189,7 @@ const HealthcareServiceDialogConsumer = ({
       <Sheet onOpenChange={handleOpenChange}>
         <SheetTrigger asChild>{children}</SheetTrigger>
         <SheetContent className="flex flex-col overflow-hidden rounded-t-2xl bg-white">
-          <SheetHeader className="sticky top-0 z-50 flex flex-col gap-4 px-6 pb-4 backdrop-blur-sm">
+          <SheetHeader className="sticky top-0 z-50 flex flex-col gap-4 px-6 pb-4 pt-8 backdrop-blur-sm">
             {steps.length > 1 ? (
               <div className="flex justify-center">
                 <Progress

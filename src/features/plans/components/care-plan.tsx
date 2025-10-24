@@ -4,7 +4,7 @@ import { MainErrorFallback } from '@/components/errors/main';
 import { Spinner } from '@/components/ui/spinner';
 import { useBiomarkers } from '@/features/biomarkers/api/get-biomarkers';
 import { usePlan } from '@/features/plans/api/get-plan';
-import { useProducts } from '@/features/shop/api';
+import { useProducts } from '@/features/supplements/api';
 
 import { CarePlanProvider } from '../context/care-plan-context';
 

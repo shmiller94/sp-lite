@@ -169,6 +169,7 @@ export type HealthcareService = Entity<{
   description: string | undefined;
   price: number;
   active: boolean;
+  additionalClassification: string[];
   phlebotomy: boolean;
   supportsLabOrder: boolean;
   bloodTubeCount: number;
@@ -525,7 +526,47 @@ export type Product = {
   discount: number;
   type?: string;
   inventoryQuantity?: number;
+  additionalClassification?: string[];
+  vendor?: string;
 };
+
+/* MARKETPLACE */
+
+export type Marketplace = {
+  id: string;
+  name: string;
+  image?: string | null;
+  price?: number | null;
+  url?: string | null;
+  discount?: number | null;
+  type?: string | null;
+  vendor?: string | null;
+  source?: string | null;
+  active?: boolean | null;
+  description?: string | null;
+  additionalClassification?: string[] | null;
+  phlebotomy?: boolean | null;
+  supportsLabOrder?: boolean | null;
+  bloodTubeCount?: number | null;
+};
+
+export type MarketplaceResponse<
+  TSupplements = Marketplace,
+  TPrescriptions = Marketplace,
+  TServices = Marketplace,
+> = {
+  supplements: TSupplements[];
+  prescriptions: TPrescriptions[];
+  services: TServices[];
+};
+
+export type MarketplaceApiResponse = MarketplaceResponse;
+
+export type MarketplaceData = MarketplaceResponse<
+  Product,
+  Product,
+  HealthcareService
+>;
 
 export type PaginationInfo = {
   page: number;

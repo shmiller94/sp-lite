@@ -3,7 +3,7 @@ import { CarePlanActivity } from '@medplum/fhirtypes';
 import { SuperpowerSignature } from '@/components/shared/superpower-signature';
 import { Button } from '@/components/ui/button';
 import { Body1, Body3, H2, H3, Mono } from '@/components/ui/typography';
-import { useProducts } from '@/features/shop/api';
+import { useProducts } from '@/features/supplements/api';
 
 import { useCarePlan } from '../../context/care-plan-context';
 import { useSection } from '../../hooks/use-section';

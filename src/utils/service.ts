@@ -159,28 +159,29 @@ export const getDefaultAgreementCopyForService = (
 };
 
 const serviceImages: Record<string, string> = {
-  SuperpowerBloodPanel: '/services/superpower_blood_panel.png',
-  AdvancedBloodPanel: '/services/advanced_blood_panel.png',
+  SuperpowerBloodPanel: '/services/transparent/baseline_blood_panel.png',
+  AdvancedBloodPanel: '/services/transparent/advanced_blood_panel.png',
   OneOnOneAdvisory: '/services/1-1_advisory_call.png',
   ComprehensiveGeneticsPanel: '/services/comprehensive_genetics_panel.png',
   ContinuousGlucoseMonitor: '/services/continuous_glucose_monitor.png',
-  CustomBloodPanel: '/services/custom_blood_panel.png',
+  CustomBloodPanel: '/services/transparent/custom_blood_panel.png',
   DexaScan: '/services/dexa_scan.png',
-  EnvironmentToxin: '/services/environmental_toxin.png',
+  EnvironmentToxin: '/services/transparent/environmental_toxin_test.png',
   EnvironmentToxins: '/services/environmental_toxins.png',
   FoodAndEnvAllergyTesting:
     '/services/food_and_environmental_allergy_testing.png',
   FullBodyMri: '/services/full_body_mri.png',
   FullGeneticSequencing: '/services/full_genetic_sequencing.png',
-  GrailGalleriMultiCancer: '/services/grail_galleri_multi_cancer_test.png',
-  GutMicrobiome: '/services/gut_microbiome_analysis.png',
+  GrailGalleriMultiCancer:
+    '/services/transparent/grail_galleri_multi_cancer_test.png',
+  GutMicrobiome: '/services/transparent/gut_microbiome_analysis.png',
   HeartCalcScan: '/services/heart_calcium_scan.png',
-  HeavyMetals: '/services/heavy_metals.png',
+  HeavyMetals: '/services/transparent/heavy_metal_toxins_test.png',
   IntestinalPermeability: '/services/intestinal_permeability_panel.png',
   IVDrip: '/services/iv_drip.png',
-  MyCotoxins: '/services/mycotoxins.png',
+  MyCotoxins: '/services/transparent/mycotoxins.png',
   PfasChemicals: '/services/pfas_chemicals.png',
-  TotalToxins: '/services/total_toxins.png',
+  TotalToxins: '/services/transparent/total_toxins_test.png',
   Vo2Max: '/services/vo2_max_test.png',
   AutoimmunityBundle: '/services/autoimmunity.png',
   CardiometabolicBundle: '/services/cardiovascular.png',
@@ -275,5 +276,21 @@ export const getServiceImage = (name: string): string => {
 
     default:
       return serviceImages.SuperpowerBloodPanel;
+  }
+};
+
+export const BEST_VALUE_SERVICES = [SUPERPOWER_BLOOD_PANEL, TOTAL_TOXIN_TEST];
+export const BEST_SELLER_SERVICES = [GUT_MICROBIOME_ANALYSIS];
+
+export const getServiceBadge = (serviceName: string): string | null => {
+  switch (true) {
+    case BEST_VALUE_SERVICES.includes(serviceName):
+      return 'Best value';
+
+    case BEST_SELLER_SERVICES.includes(serviceName):
+      return 'Best seller';
+
+    default:
+      return null;
   }
 };

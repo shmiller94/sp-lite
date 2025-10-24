@@ -78,14 +78,6 @@ export const createRouter = () =>
           },
         },
         {
-          path: 'services',
-          lazy: async () => {
-            const { ServicesRoute } = await import('./routes/app/services');
-            return { Component: ServicesRoute };
-          },
-          errorElement: <MainErrorFallback />,
-        },
-        {
           path: 'invite',
           lazy: async () => {
             const { AffiliateRoute } = await import('./routes/app/affiliate');
@@ -123,21 +115,12 @@ export const createRouter = () =>
           },
         },
         {
-          path: 'prescriptions',
-          lazy: async () => {
-            const { PrescriptionsMarketplaceRoute } = await import(
-              './routes/app/prescriptions-marketplace'
-            );
-            return { Component: PrescriptionsMarketplaceRoute };
-          },
-        },
-        {
           path: 'marketplace',
           lazy: async () => {
-            const { SupplementsMarketplaceRoute } = await import(
-              './routes/app/supplements-marketplace'
+            const { MarketplaceRoute } = await import(
+              './routes/app/marketplace'
             );
-            return { Component: SupplementsMarketplaceRoute };
+            return { Component: MarketplaceRoute };
           },
         },
         {

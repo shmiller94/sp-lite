@@ -1,40 +1,98 @@
-import { Skeleton } from '@/components/ui/skeleton';
-import { ADVISORY_CALL } from '@/const';
+import { MarketplaceFilter } from '@/features/marketplace/components/marketplace-filters';
+import { MarketplaceSkeleton } from '@/features/marketplace/components/marketplace-skeleton';
+import { getMarketplaceSearchMeta } from '@/features/marketplace/helper/get-marketplace-search-meta';
+import { matchesMarketplaceQuery } from '@/features/marketplace/utils/matches-marketplace-query';
+import { getRecommendedServices } from '@/features/services/utils/get-recommended-services';
+import { isAdvisoryCall } from '@/features/services/utils/is-advisory-call';
+import { HealthcareService } from '@/types/api';
 
-import { useServices } from '../api/get-services';
+import { ServiceCategory } from './service-category';
 
-import { ServiceCard } from './service-card';
+type ServicesListProps = {
+  services?: HealthcareService[];
+  isLoading?: boolean;
+  filter?: MarketplaceFilter;
+  query?: string;
+};
 
-export const ServicesList = () => {
-  const servicesQuery = useServices();
+export const ServicesList = ({
+  services,
+  isLoading,
+  filter = 'all',
+  query = '',
+}: ServicesListProps) => {
+  if (isLoading) return <MarketplaceSkeleton />;
+  if (!services) return null;
 
-  if (servicesQuery.isLoading) {
-    return (
-      <div className="grid grid-cols-1 gap-1 sm:gap-x-3 sm:gap-y-9 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {Array(9)
-          .fill(0)
-          .map((_, i) => (
-            <Skeleton
-              className="h-[76px] w-full rounded-[20px] md:h-[386px] md:rounded-3xl"
-              key={i}
-            />
-          ))}
-      </div>
+  const {
+    normalizedQuery,
+    isFiltered,
+    isSearching,
+    filterTitle,
+    titleOverride,
+    subtitleOverride,
+  } = getMarketplaceSearchMeta(query, filter);
+
+  const filteredServices = services
+    .filter((service) =>
+      matchesMarketplaceQuery(service, filter, normalizedQuery),
+    )
+    .filter((service) => {
+      if (!isSearching) return true;
+
+      return !isAdvisoryCall(service);
+    });
+
+  let sections: {
+    title: string;
+    subtitle?: string;
+    services: HealthcareService[];
+  }[] = [];
+
+  if (isFiltered || isSearching) {
+    if (filteredServices.length) {
+      sections = [
+        {
+          title: titleOverride ?? filterTitle,
+          subtitle: subtitleOverride,
+          services: filteredServices,
+        },
+      ];
+    }
+  } else {
+    const recommended = getRecommendedServices(filteredServices);
+    const items = filteredServices.filter(
+      (service) => !isAdvisoryCall(service),
     );
+
+    sections = [
+      {
+        title: 'Top tests for you',
+        subtitle: 'Most recommended',
+        services: recommended,
+      },
+      {
+        title: 'Blood test',
+        services: items.filter((service) => service.phlebotomy),
+      },
+      {
+        title: 'Other tests',
+        services: items.filter((service) => !service.phlebotomy),
+      },
+    ].filter(({ services }) => services.length > 0);
   }
 
-  if (!servicesQuery.data) return null;
-
-  const excluded = new Set([ADVISORY_CALL]);
-
-  const filteredServices = servicesQuery.data.services
-    .filter((s) => !excluded.has(s.name))
-    .toSorted((a, b) => Number(b.active) - Number(a.active));
+  if (!filteredServices.length || !sections.length) return null;
 
   return (
-    <div className="grid grid-cols-1 gap-1 sm:gap-x-3 sm:gap-y-9 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      {filteredServices.map((service) => (
-        <ServiceCard key={service.id} service={service} />
+    <div className="flex flex-col gap-14">
+      {sections.map(({ title, subtitle, services }) => (
+        <ServiceCategory
+          key={title}
+          title={title}
+          subtitle={subtitle}
+          services={services}
+        />
       ))}
     </div>
   );

@@ -5,7 +5,7 @@ import { Body2 } from '@/components/ui/typography';
 import { usePlan } from '@/features/plans/api/get-plan';
 import { useCarePlanCart } from '@/features/plans/stores/care-plan-cart-store';
 import { parseProductRequests } from '@/features/plans/utils/parse-product-requests';
-import { useProducts } from '@/features/shop/api';
+import { useProducts } from '@/features/supplements/api';
 import { useScrollThreshold } from '@/hooks/use-scroll-threshold';
 import { cn } from '@/lib/utils';
 

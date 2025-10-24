@@ -3,19 +3,17 @@ import {
   Ellipsis,
   LogOut,
   LucideIcon,
-  ShoppingBag,
-  Pill,
+  Package,
 } from 'lucide-react';
-import React, { FC, SVGProps, useEffect, useMemo, useState } from 'react';
+import { FC, SVGProps, useEffect, useMemo, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 
 import {
   DataIcon,
   HomeIcon,
   LockIcon,
-  MarketplaceIcon,
   MessageIcon,
-  ServicesIcon,
+  MarketplaceIcon,
 } from '@/components/icons';
 import { PresentIcon } from '@/components/icons/present-icon';
 import { SettingsIcon } from '@/components/icons/settings-icon';
@@ -27,7 +25,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown';
-import { useAnalytics } from '@/hooks/use-analytics';
 import { useScrollThreshold } from '@/hooks/use-scroll-threshold';
 import { ROLES, useAuthorization } from '@/lib/authorization';
 import { cn } from '@/lib/utils';
@@ -43,7 +40,7 @@ const baseLinks: Link[] = [
   { icon: HomeIcon, name: 'Home', to: './' },
   { icon: DataIcon, name: 'Data', to: './data' },
   { icon: MessageIcon, name: 'Concierge', to: './concierge' },
-  { icon: ServicesIcon, name: 'Services', to: './services' },
+  { icon: MarketplaceIcon, name: 'Marketplace', to: './marketplace' },
 ];
 
 const profileDropdownItems = [
@@ -57,21 +54,6 @@ const profileDropdownItems = [
     to: '/logout',
     icon: LogOut,
     testid: 'logout-btn-desktop',
-  },
-];
-
-const marketplaceDropdownItems = [
-  {
-    name: 'Supplements',
-    to: '/marketplace',
-    icon: ShoppingBag,
-    testid: 'supplements-icon-desktop',
-  },
-  {
-    name: 'Prescriptions',
-    to: '/prescriptions',
-    icon: Pill,
-    testid: 'prescriptions-icon-desktop',
   },
 ];
 
@@ -99,8 +81,9 @@ const blurThresholds: Record<string, number> = {
 export const DesktopNavbar = () => {
   const { checkAccess } = useAuthorization();
   const { pathname } = useLocation();
-  const { track } = useAnalytics();
+
   const isLight = lightNavPaths.includes(pathname);
+  const isMarketplace = pathname.startsWith('/marketplace');
   const isBlurred = useScrollThreshold({
     thresholdPx: blurThresholds[pathname] || 10,
   });
@@ -118,10 +101,25 @@ export const DesktopNavbar = () => {
     [protectedLinks],
   );
 
+  /* This is a hack because the sizes differ on different routes
+     This should be refactored asap */
+
+  const hasOnlyBaseLinks = allLinks.length <= baseLinks.length;
+  let maxWidthClass = 'max-w-[1600px]';
+
+  if (hasOnlyBaseLinks) {
+    maxWidthClass = 'max-w-6xl';
+  }
+
+  if (isMarketplace) {
+    maxWidthClass = 'max-w-[1325px]';
+  }
+
   return (
     <nav
       className={cn(
-        'sticky top-0 z-[49] hidden w-full px-4 lg:block transition-colors duration-200',
+        'sticky top-0 z-[49] hidden w-full lg:block transition-colors duration-200 px-4',
+        isMarketplace && 'px-16',
         isBlurred
           ? 'bg-opacity-10 bg-white backdrop-blur-sm rounded-b-2xl'
           : null,
@@ -130,7 +128,7 @@ export const DesktopNavbar = () => {
       <div
         className={cn(
           'mx-auto flex w-full items-center justify-between gap-2 lg:gap-8 py-3',
-          allLinks.length <= baseLinks.length ? 'max-w-6xl' : 'max-w-[1600px]',
+          maxWidthClass,
         )}
       >
         <div className="flex flex-1">
@@ -171,7 +169,7 @@ export const DesktopNavbar = () => {
           </div>
         </div>
         <div className="h-10 flex-1">
-          <div className="flex items-center justify-end gap-4">
+          <div className="flex items-center justify-end">
             <NavLink
               to="./invite"
               className={({ isActive }) =>
@@ -179,64 +177,17 @@ export const DesktopNavbar = () => {
                   'group relative z-10 truncate px-4 py-1.5 transition-all duration-150',
                   isLight
                     ? isBlurred
-                      ? 'text-secondary hover:text-black'
+                      ? 'hover:text-secondary text-black'
                       : 'text-white'
                     : isActive
                       ? 'text-black hover:text-secondary'
-                      : 'text-secondary hover:text-black',
+                      : 'hover:text-secondary text-black',
                 )
               }
             >
               <span className="truncate">Invite Friend</span>
             </NavLink>
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                asChild
-                onClick={() => {
-                  track('click_marketplaces_btn');
-                }}
-                className="group rounded-full outline outline-1 outline-transparent transition-all duration-150 data-[state=open]:outline-2"
-              >
-                <button
-                  className={cn(
-                    'border-0 bg-transparent p-0 focus:outline-none flex items-center gap-1.5',
-                    isLight
-                      ? isBlurred
-                        ? 'text-secondary hover:text-black'
-                        : 'text-white'
-                      : 'text-secondary hover:text-black',
-                  )}
-                  data-testid="marketplaces-btn"
-                >
-                  <MarketplaceIcon className="mb-1 w-[18px]" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="rounded-2xl"
-                align="end"
-                sideOffset={5}
-              >
-                {marketplaceDropdownItems.map((link, i) => (
-                  <NavLink
-                    key={i}
-                    to={link.to}
-                    state={{ from: pathname }}
-                    data-testid={link.testid}
-                    className={({ isActive }) =>
-                      cn(
-                        'flex cursor-pointer items-center gap-3 transition duration-200 ease-in-out rounded-[18px]',
-                        isActive && 'bg-accent',
-                      )
-                    }
-                  >
-                    <DropdownMenuItem className="w-full gap-3 rounded-[18px] p-4">
-                      <link.icon width={14} height={14} />
-                      <p className="text-sm">{link.name}</p>
-                    </DropdownMenuItem>
-                  </NavLink>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+
             <DropdownMenu>
               <DropdownMenuTrigger
                 asChild
@@ -247,9 +198,9 @@ export const DesktopNavbar = () => {
                     'border-0 bg-transparent px-4 focus:outline-none flex items-center gap-1.5',
                     isLight
                       ? isBlurred
-                        ? 'text-secondary hover:text-black'
+                        ? 'hover:text-secondary text-black'
                         : 'text-white'
-                      : 'text-secondary hover:text-black',
+                      : 'hover:text-secondary text-black',
                   )}
                   data-testid="navbar-more-btn"
                 >
@@ -292,7 +243,10 @@ export const DesktopNavbar = () => {
 export const MobileNavbar = () => {
   const { checkAccess } = useAuthorization();
   const [open, setOpen] = useState(false);
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
+  const searchParams = useMemo(() => new URLSearchParams(search), [search]);
+  const isMarketplaceOrdersActive =
+    pathname === '/marketplace' && searchParams.get('tab') === 'orders';
 
   const protectedLinks: Link[] = [
     checkAccess({ allowedRoles: [ROLES.SUPER_ADMIN] }) && {
@@ -310,14 +264,9 @@ export const MobileNavbar = () => {
 
   const additionalMobileLinks: Link[] = [
     {
-      icon: Pill,
-      name: 'Prescriptions',
-      to: '/prescriptions',
-    },
-    {
-      icon: ShoppingBag,
-      name: 'Supplements',
-      to: '/marketplace',
+      icon: Package,
+      name: 'Your Orders',
+      to: '/marketplace?tab=orders',
     },
     {
       icon: SettingsIcon,
@@ -394,12 +343,17 @@ export const MobileNavbar = () => {
                   onClick={() => {
                     setOpen(false);
                   }}
-                  className={({ isActive }) =>
-                    cn(
+                  className={({ isActive }) => {
+                    const isOrdersLink = link.to === '/marketplace?tab=orders';
+                    const shouldBeActive = isOrdersLink
+                      ? isMarketplaceOrdersActive
+                      : isActive;
+
+                    return cn(
                       'flex cursor-pointer items-center gap-3 rounded-[18px] p-4 transition duration-200 ease-in-out hover:bg-[#252525]',
-                      isActive && 'bg-[#252525]',
-                    )
-                  }
+                      shouldBeActive && 'bg-[#252525]',
+                    );
+                  }}
                 >
                   <link.icon width={12} height={12} color="white" />
                   <p className="text-sm text-white">{link.name}</p>

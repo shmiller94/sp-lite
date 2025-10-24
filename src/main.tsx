@@ -31,7 +31,8 @@ if (!root) throw new Error('No root element found');
  *
  * For session replay rates, adjust manually
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
+// eslint-disable-next-line unused-imports/no-unused-vars
 const options = {
   init: {
     session_replay: {

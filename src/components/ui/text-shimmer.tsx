@@ -26,7 +26,6 @@ export function TextShimmer({
 
   return (
     <MotionComponent
-      // @ts-expect-error className, TODO: improve types here
       className={cn(
         'relative inline-block bg-[length:250%_100%,auto] bg-clip-text',
         'text-transparent [--base-color:#a1a1aa] [--base-gradient-color:#000]',

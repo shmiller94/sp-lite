@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Body2, H4 } from '@/components/ui/typography';
 import { getRxPricing } from '@/const/rx-pricing';
 import { useServices } from '@/features/services/api';
-import { useProducts } from '@/features/shop/api';
+import { useProducts } from '@/features/supplements/api';
 import { HealthcareService, Product } from '@/types/api';
 
 import { CARE_PLAN_ACTIVITY_TYPE_EXTENSION } from '../../const/extension-types';

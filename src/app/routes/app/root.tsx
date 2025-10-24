@@ -1,5 +1,4 @@
 import { Suspense } from 'react';
-import * as React from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Outlet, useLocation } from 'react-router-dom';
 

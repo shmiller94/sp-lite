@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/tooltip';
 import { Body1, Body2, H3, H4 } from '@/components/ui/typography';
 import { getRxPricing } from '@/const/rx-pricing';
-import { useProducts } from '@/features/shop/api';
+import { useProducts } from '@/features/supplements/api';
 import { cn } from '@/lib/utils';
 
 import {
