@@ -172,7 +172,7 @@ export function MultipleChoice({
                 </Label>
                 <AnimatedCheckbox
                   tabIndex={-1}
-                  className="absolute right-6 top-1/2 -translate-y-1/2 text-white transition-all"
+                  className="absolute right-6 data-[state=checked]:bg-transparent top-1/2 -translate-y-1/2 text-white transition-all"
                   id={`${item.linkId}-${idx}`}
                   checked={isSelected}
                   disabled={isDisabled}
