@@ -18,9 +18,11 @@ import { ChatSuggestion } from '../chat-suggestion';
 export function AssistantChat({
   chatId,
   isActive = false,
+  isResizing = false,
 }: {
   chatId: string;
   isActive: boolean;
+  isResizing?: boolean;
 }) {
   const { refetch } = useHistory();
   const { track } = useAnalytics();
@@ -110,16 +112,17 @@ export function AssistantChat({
     <div
       className={cn('flex h-full w-full flex-col justify-end overflow-hidden')}
     >
-      <div className="mx-auto flex min-h-0 w-full min-w-0 flex-1 flex-col pr-1">
+      <div className="mx-auto flex min-h-0 w-full min-w-0 max-w-3xl flex-1 flex-col pr-1">
         <AssistantMessages
           chatId={id}
           messages={messages}
           setMessages={setMessages}
           status={status}
+          disableLayoutAnimation={isResizing}
         />
       </div>
       {visibleSuggestions.length > 0 && (
-        <div className="mx-auto mb-2 flex w-full max-w-[592px] flex-col items-end gap-2 px-1">
+        <div className="mb-2 ml-auto flex w-full flex-col items-end gap-2 px-1">
           {visibleSuggestions.map((suggestion) => (
             <ChatSuggestion
               key={suggestion}

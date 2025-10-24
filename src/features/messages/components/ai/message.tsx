@@ -17,11 +17,13 @@ const PurePreviewMessage = ({
   chatId,
   message,
   isLoading,
+  disableLayoutAnimation = false,
 }: {
   chatId: string;
   message: UIMessage;
   isLoading: boolean;
   setMessages: UseChatHelpers<UIMessage>['setMessages'];
+  disableLayoutAnimation?: boolean;
 }) => {
   const [mode] = useState<'view' | 'edit'>('view');
 
@@ -47,8 +49,11 @@ const PurePreviewMessage = ({
         className="group/message mx-auto w-full max-w-3xl px-0.5"
         initial={{ y: 5, opacity: 1 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.3, ease: 'easeOut' }}
-        layout="position"
+        transition={{
+          duration: disableLayoutAnimation ? 0 : 0.3,
+          ease: 'easeOut',
+        }}
+        layout={disableLayoutAnimation ? false : 'position'}
         layoutId={message.id}
         data-role={message.role}
       >

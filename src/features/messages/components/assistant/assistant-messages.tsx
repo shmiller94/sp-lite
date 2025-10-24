@@ -10,6 +10,7 @@ interface AssistantMessagesProps {
   status: UseChatHelpers<UIMessage>['status'];
   messages: UseChatHelpers<UIMessage>['messages'];
   setMessages: UseChatHelpers<UIMessage>['setMessages'];
+  disableLayoutAnimation?: boolean;
 }
 
 export function AssistantMessages({
@@ -17,6 +18,7 @@ export function AssistantMessages({
   status,
   messages,
   setMessages,
+  disableLayoutAnimation = false,
 }: AssistantMessagesProps) {
   return (
     <div className={cn('relative flex min-h-0 flex-1')}>
@@ -39,7 +41,10 @@ export function AssistantMessages({
         {messages.map((message, index) => (
           <div
             key={message.id}
-            className="transition-all duration-200 ease-in-out"
+            className={cn(
+              'ease-in-out',
+              disableLayoutAnimation ? '' : 'transition-all duration-200',
+            )}
           >
             <PreviewMessage
               chatId={chatId}
@@ -48,6 +53,7 @@ export function AssistantMessages({
                 status === 'streaming' && messages.length - 1 === index
               }
               setMessages={setMessages}
+              disableLayoutAnimation={disableLayoutAnimation}
             />
           </div>
         ))}

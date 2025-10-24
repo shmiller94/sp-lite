@@ -1,5 +1,5 @@
 import { ChevronsDownUp, PictureInPicture } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type Ref } from 'react';
 import { Resizable } from 'react-resizable';
 import 'react-resizable/css/styles.css';
 import { useNavigate } from 'react-router-dom';
@@ -12,6 +12,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { AnimatedIcon } from '@/features/messages/components/ai/animated-icon';
+import { useResizeAssistant } from '@/features/messages/hooks/use-resize-assistant';
 import { cn } from '@/lib/utils';
 import { generateUUID } from '@/utils/generate-uiud';
 
@@ -19,46 +20,59 @@ import { AssistantChat } from './assistant-chat';
 
 export const AssistantModal = () => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [height, setHeight] = useState<number>(() =>
-    typeof window !== 'undefined'
-      ? Math.max(320, Math.round(window.innerHeight * 0.5))
-      : 512,
-  );
+  const { width, height, setSize, minConstraints, maxConstraints } =
+    useResizeAssistant();
   const [isResizing, setIsResizing] = useState(false);
   const collapsedHeight = 48; // equals Tailwind h-12
   const navigate = useNavigate();
   const chatId = useMemo(() => generateUUID(), []);
   const boxHeight = isExpanded ? height : collapsedHeight;
+  const boxWidth = isExpanded ? width : undefined;
 
   return (
-    /* We use the following as an interactive div with the role of a button when not expanded for accessibility */
-    /* eslint-disable-next-line jsx-a11y/click-events-have-key-events */
     <Resizable
-      width={100}
+      width={isExpanded ? width : 100}
       height={boxHeight}
-      axis={isExpanded ? 'y' : 'none'}
-      resizeHandles={isExpanded ? ['n'] : []}
-      handle={(axis, ref) =>
-        // we define a slightly bigger handle for better accessibility
-        axis === 'n' ? (
-          <div
-            ref={ref as any}
-            className="absolute inset-x-0 -top-1 h-6 w-full cursor-ns-resize bg-transparent"
-          />
-        ) : null
-      }
+      axis={isExpanded ? 'both' : 'none'}
+      resizeHandles={isExpanded ? ['n', 'w', 'nw'] : []}
+      handle={(axis, ref) => {
+        // slightly bigger handles for better accessibility
+        if (axis === 'n') {
+          return (
+            <div
+              // top ghost element to resize
+              ref={ref as unknown as Ref<HTMLDivElement>}
+              className="absolute inset-x-0 -top-1 h-6 w-full cursor-ns-resize bg-transparent"
+            />
+          );
+        }
+        if (axis === 'w') {
+          return (
+            <div
+              // left direction ghost element to resize
+              ref={ref as unknown as Ref<HTMLDivElement>}
+              className="absolute inset-y-0 -left-1 h-full w-3 cursor-ew-resize bg-transparent"
+            />
+          );
+        }
+        if (axis === 'nw') {
+          return (
+            <div
+              // top left ghost element to resize
+              ref={ref as unknown as Ref<HTMLDivElement>}
+              className="absolute -left-1 -top-1 size-4 cursor-nwse-resize bg-transparent"
+            />
+          );
+        }
+        return null;
+      }}
       handleSize={[10, 12]}
-      minConstraints={[0, 240]}
-      maxConstraints={[
-        Infinity,
-        typeof window !== 'undefined'
-          ? Math.round(window.innerHeight * 0.9)
-          : 1024,
-      ]}
+      minConstraints={[minConstraints[0], minConstraints[1]]}
+      maxConstraints={[maxConstraints[0], maxConstraints[1]]}
       draggableOpts={{ enableUserSelectHack: true }}
       onResizeStart={() => setIsResizing(true)}
       onResizeStop={() => setIsResizing(false)}
-      onResize={(_e, { size }) => setHeight(size.height)}
+      onResize={(_e, { size }) => setSize(size)}
     >
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events */}
       <div
@@ -71,12 +85,14 @@ export const AssistantModal = () => {
         className={cn(
           'relative flex gap-2 flex-col border border-zinc-200 bg-white px-4 py-3 shadow-lg shadow-black/[.07] transition-all ease-out duration-200',
           isExpanded
-            ? 'lg:w-96 pb-2 rounded-3xl w-[calc(100vw-2rem)] items-start cursor-default'
+            ? 'pb-2 rounded-3xl items-start cursor-default'
             : 'items-center rounded-xl justify-center w-52 cursor-pointer hover:bg-zinc-50',
-          isResizing && 'select-none',
+          isResizing &&
+            'select-none border-vermillion-900/50 ring-2 ring-vermillion-900/5',
         )}
         style={{
           height: boxHeight,
+          width: boxWidth,
           transitionProperty: isResizing
             ? 'background-color,border-color,color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter'
             : undefined,
@@ -125,7 +141,11 @@ export const AssistantModal = () => {
           </div>
         </div>
         <div className={cn('min-h-0 w-full flex-1', !isExpanded && 'hidden')}>
-          <AssistantChat chatId={chatId} isActive={isExpanded} />
+          <AssistantChat
+            chatId={chatId}
+            isActive={isExpanded}
+            isResizing={isResizing}
+          />
         </div>
       </div>
     </Resizable>
