@@ -118,7 +118,7 @@ const MobileCard = ({
           <img
             src={FALLBACK_SUPPLEMENT_IMAGE}
             alt={product.name}
-            className="h-[300px] w-full rounded-[20px] bg-zinc-50 object-contain"
+            className="aspect-square w-full rounded-[20px] bg-zinc-50 object-contain"
           />
         )}
       </div>
