@@ -1,5 +1,9 @@
 import { useMemo } from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+} from 'react-router-dom';
 
 import { MainErrorFallback } from '@/components/errors/main';
 import { ConciergeLayout } from '@/features/messages/layouts/concierge-layout';
@@ -76,6 +80,10 @@ export const createRouter = () =>
             const { HomeRoute } = await import('./routes/app/home');
             return { Component: HomeRoute };
           },
+        },
+        {
+          path: 'services',
+          element: <Navigate to="/marketplace" replace />,
         },
         {
           path: 'services/:id',
