@@ -13,7 +13,7 @@ export function useVisibleOrders() {
 
   // 1) filter out drafts
   const filtered = isAdmin
-    ? orders
+    ? orders.filter((order) => ![OrderStatus.draft].includes(order.status))
     : orders.filter(
         (order) =>
           ![OrderStatus.draft, OrderStatus.cancelled].includes(order.status),
