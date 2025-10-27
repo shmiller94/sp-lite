@@ -287,11 +287,15 @@ export const QuestionnaireFormItem = ({
             id={name}
             name={name}
             required={item.required}
+            // eslint-disable-next-line jsx-a11y/no-autofocus
+            autoFocus={!nested}
             defaultValue={defaultValue?.value}
             onChange={(e) => {
               const newValue = e.currentTarget.value;
               onChangeAnswer({ valueString: newValue });
             }}
+            rows={4}
+            className="scroll-py-4"
           />
         </QuestionnaireErrorWrapper>
       );
