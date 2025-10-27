@@ -98,7 +98,6 @@ export type UpdateUserInput = z.infer<typeof updateUserInputSchema>;
 const UpdateInfoContent = () => {
   const { data: user } = useUser();
   const { next } = useOnboardingStepper();
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const { needsBackup } = useNeedsBackupPaymentMethod();
   const {
     handleAddPaymentMethod,
@@ -137,13 +136,11 @@ const UpdateInfoContent = () => {
 
   const onSubmit = async (data: UpdateUserInput) => {
     if (!data.address) return;
-    setIsSubmitting(true);
 
     // If user needs backup payment method, add it first
     if (needsBackup) {
       const paymentMethodAdded = await handleAddPaymentMethod();
       if (!paymentMethodAdded) {
-        setIsSubmitting(false);
         return;
       }
     }
@@ -179,16 +176,13 @@ const UpdateInfoContent = () => {
       },
     });
 
-    setIsSubmitting(false);
-
     next();
   };
 
   const isLoading =
     addAddressMutation.isPending ||
     updateUserMutation.isPending ||
-    isMutationPending ||
-    isSubmitting;
+    isMutationPending;
 
   return (
     <>
