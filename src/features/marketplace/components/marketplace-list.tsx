@@ -145,7 +145,7 @@ const MarketplaceFilteredCategory = ({
         {subtitle && <H2 className="text-secondary">{subtitle}</H2>}
       </div>
 
-      <div className="grid grid-cols-2 gap-2 sm:gap-x-8 sm:gap-y-6 lg:grid-cols-3">
+      <div className="grid grid-cols-2 gap-2 sm:gap-x-8 sm:gap-y-6 lg:grid-cols-4">
         {items.map(({ id, node, type }) => (
           <div key={`${type}-${id}`} className="flex flex-col">
             {node}

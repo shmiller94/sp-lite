@@ -42,18 +42,18 @@ const DesktopCard = ({
       target="_blank"
       rel="noreferrer"
     >
-      <div className="relative flex aspect-[456/501] items-center justify-center rounded-[20px] bg-zinc-50">
+      <div className="relative flex aspect-square items-center justify-center rounded-[20px] bg-zinc-50">
         {product.image && showImage ? (
           <ProgressiveImage
             src={product.image}
             alt={product.name}
-            className="h-[300px] w-full rounded-[20px] bg-zinc-50 object-contain"
+            className="h-[240px] w-full rounded-[20px] bg-zinc-50 object-contain"
           />
         ) : (
           <img
             src={FALLBACK_SUPPLEMENT_IMAGE}
             alt={product.name}
-            className="h-[300px] w-full rounded-[20px] bg-zinc-50 object-contain"
+            className="h-[240px] w-full rounded-[20px] bg-zinc-50 object-contain"
           />
         )}
         <div className="pointer-events-none absolute inset-x-4 bottom-4 translate-y-2 opacity-0 blur-sm transition-all duration-200 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 group-hover:blur-0">

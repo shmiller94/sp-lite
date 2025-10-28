@@ -32,7 +32,7 @@ export const ServiceRoute = () => {
   }
 
   return (
-    <div className="mx-auto py-9">
+    <div className="mx-auto w-full max-w-3xl py-9">
       <ServiceBreadcrumb className="px-6 md:px-16" service={service.name} />
       <HealthcareServiceDialog
         healthcareService={service}

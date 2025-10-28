@@ -8,7 +8,7 @@ import { Body1, Body2, Body3, H4 } from '@/components/ui/typography';
 import { HealthcareService, Order } from '@/types/api';
 import { customDisplayNameForService } from '@/utils/display-name-for-service';
 import { formatMoney } from '@/utils/format-money';
-import { getServiceImage, getServiceBadge } from '@/utils/service';
+import { getServiceBadge, getServiceImage } from '@/utils/service';
 
 export const ServiceCard = ({
   service,
@@ -71,7 +71,7 @@ const DesktopCard = ({
         </Badge>
       ) : null}
 
-      <div className="relative flex aspect-[456/501] items-center rounded-[20px] bg-zinc-50">
+      <div className="relative flex aspect-square items-center rounded-[20px] bg-zinc-50">
         {/* The bg-zinc-50 helps prevent strobing on transparent images; see comment in progressive-image.tsx */}
         <ProgressiveImage
           src={getServiceImage(service.name)}
