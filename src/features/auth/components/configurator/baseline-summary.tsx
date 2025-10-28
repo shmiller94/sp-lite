@@ -89,10 +89,7 @@ export const CardInfo = ({ className }: { className?: string }) => {
             </CollapsibleTrigger>
           </div>
           <CollapsibleContent className="space-y-2">
-            <Body1 className="text-zinc-500">
-              {description}
-              team.
-            </Body1>
+            <Body1 className="text-zinc-500">{description}</Body1>
             <TotalInfo />
           </CollapsibleContent>
         </Collapsible>
