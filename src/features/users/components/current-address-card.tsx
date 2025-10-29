@@ -73,13 +73,15 @@ export const CurrentAddressCard = ({
       ) : (
         <div>
           <Body1 className="text-primary">
-            Primary address not found,&nbsp;
-            <span>
-              add in&nbsp;
-              <a className="text-vermillion-900 underline" href="/settings">
-                settings
-              </a>
-            </span>
+            Primary address not found
+            {disableEdit && (
+              <span>
+                ,&nbsp; add in&nbsp;
+                <a className="text-vermillion-900 underline" href="/settings">
+                  settings
+                </a>
+              </span>
+            )}
           </Body1>
         </div>
       )}

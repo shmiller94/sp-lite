@@ -22,8 +22,8 @@ export const AddressSelect = ({ closeBtn }: { closeBtn?: ReactNode }) => {
 
   if (!addresses.length) {
     return (
-      <div className="space-y-2">
-        <Label className="text-sm text-zinc-500">Active addresses</Label>
+      <div className="w-full space-y-2">
+        <AddressHeader closeBtn={closeBtn} />
         <div className="rounded-xl border border-zinc-200 bg-white p-6">
           <p className="mb-4 text-center text-zinc-500">No addresses found.</p>
           <AddNewAddressButton />
@@ -33,7 +33,7 @@ export const AddressSelect = ({ closeBtn }: { closeBtn?: ReactNode }) => {
   }
 
   return (
-    <div className="space-y-2">
+    <div className="w-full space-y-2">
       <AddressHeader closeBtn={closeBtn} />
 
       <div className="rounded-[20px] border border-zinc-200 bg-white">

@@ -31,9 +31,11 @@ import { getState } from '@/utils/verify-state-from-postal';
 export const useCheckout = ({
   postalCode,
   onSuccess,
+  skipEmailRedirect = false,
 }: {
   postalCode: string;
   onSuccess?: () => Promise<void>;
+  skipEmailRedirect?: boolean;
 }) => {
   const elements = useElements();
   const stripe = useStripe();
@@ -62,12 +64,17 @@ export const useCheckout = ({
          */
         queryClient.setQueryData<User | undefined>(
           ['authenticated-user'],
-          (old) => (old ? { ...old, subscribed: true } : old),
+          (old) => {
+            console.warn(old);
+            if (old) return { ...old, subscribed: true };
+
+            return old;
+          },
         );
 
         await onSuccess?.();
 
-        if (user?.email) {
+        if (user?.email && !skipEmailRedirect) {
           // Send magic link
           await sendMagicLinkMutation.mutateAsync({
             data: {

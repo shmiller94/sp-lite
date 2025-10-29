@@ -25,6 +25,7 @@ import { useCheckout } from '@/features/auth/hooks/use-checkout';
 import { useCheckoutContext } from '@/features/auth/stores';
 import { useAvailableSubscriptions } from '@/features/settings/api';
 import { useTask } from '@/features/tasks/api/get-task';
+import { CurrentAddressCard } from '@/features/users/components/current-address-card';
 import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 import { getState } from '@/utils/verify-state-from-postal';
@@ -82,20 +83,15 @@ export const LegacyCheckoutRoute = () => {
     }
   }, [onboardingTask.data, navigate]);
 
-  // all legacy users should have primary address
-  if (!user?.primaryAddress?.postalCode)
-    return (
-      <Body1 className="text-pink-700">
-        No primary address found for legacy user. Please contact support:
-        concierge@superpower.com
-      </Body1>
-    );
-
   return (
     <SplitScreenLayout title="Checkout" className="bg-zinc-50">
       <>
-        <BillingInfo postalCode={user.primaryAddress.postalCode} />
-        <BaselineSummary postalCode={user.primaryAddress.postalCode} />
+        {user?.primaryAddress?.postalCode ? (
+          <BillingInfo postalCode={user.primaryAddress.postalCode} />
+        ) : (
+          <CurrentAddressCard className="h-fit w-full" />
+        )}
+        <BaselineSummary postalCode={user?.primaryAddress?.postalCode ?? ''} />
       </>
     </SplitScreenLayout>
   );
@@ -114,7 +110,10 @@ export const BillingInfo = ({ postalCode }: { postalCode: string }) => {
     stripeError,
     setStripeError,
     isMutationPending,
-  } = useCheckout({ postalCode });
+  } = useCheckout({
+    postalCode,
+    skipEmailRedirect: true,
+  });
 
   return (
     <div className="space-y-8 px-4 md:px-8">
