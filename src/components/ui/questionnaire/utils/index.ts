@@ -4,6 +4,7 @@ export {
   getNewMultiSelectValues,
   formatReferenceString,
   getNumberOfPages,
+  getNumericBounds,
 } from './questionnaire-utils';
 
 export { isQuestionEnabled } from './questionnaire-enablement';

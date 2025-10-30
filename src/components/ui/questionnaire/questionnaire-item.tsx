@@ -21,7 +21,11 @@ import {
 import { MultipleChoice } from './questionnaire-types/multiple-choice';
 import { RadioButtons } from './questionnaire-types/radio-buttons';
 import { RatingScale } from './questionnaire-types/rating-scale';
-import { isMultipleChoice, QuestionnaireItemType } from './utils';
+import {
+  getNumericBounds,
+  isMultipleChoice,
+  QuestionnaireItemType,
+} from './utils';
 
 export interface QuestionnaireFormItemProps {
   item: QuestionnaireItem;
@@ -43,6 +47,7 @@ export const QuestionnaireFormItem = ({
   nested,
 }: QuestionnaireFormItemProps) => {
   const [localError, setLocalError] = useState(isError);
+  const [rangeError, setRangeError] = useState<string | null>(null);
 
   function onChangeAnswer(
     newResponseAnswer:
@@ -163,9 +168,30 @@ export const QuestionnaireFormItem = ({
         </QuestionnaireErrorWrapper>
       );
     // Decimal item type, used for numeric questions
-    case QuestionnaireItemType.decimal:
+    case QuestionnaireItemType.decimal: {
+      const { min: decimalMin, max: decimalMax } = getNumericBounds(item);
+      const getDecimalErrorMessage = (value: number) => {
+        if (
+          decimalMin !== undefined &&
+          decimalMax !== undefined &&
+          (value < decimalMin || value > decimalMax)
+        ) {
+          return `Please enter a value between ${decimalMin} and ${decimalMax}.`;
+        }
+        if (decimalMin !== undefined && value < decimalMin) {
+          return `Please enter a value greater than or equal to ${decimalMin}.`;
+        }
+        if (decimalMax !== undefined && value > decimalMax) {
+          return `Please enter a value less than or equal to ${decimalMax}.`;
+        }
+        return null;
+      };
+
       return (
-        <QuestionnaireErrorWrapper isError={localError}>
+        <QuestionnaireErrorWrapper
+          isError={localError || !!rangeError}
+          message={rangeError ?? undefined}
+        >
           <Input
             placeholder="Tell us here..."
             type="number"
@@ -177,19 +203,62 @@ export const QuestionnaireFormItem = ({
             name={name}
             required={item.required}
             defaultValue={defaultValue?.value}
+            min={decimalMin}
+            max={decimalMax}
             onChange={(e) => {
+              const value = e.currentTarget.valueAsNumber;
+              if (Number.isNaN(value)) {
+                setRangeError(null);
+                setLocalError(false);
+                onChangeAnswer({
+                  valueDecimal: value,
+                });
+                return;
+              }
+
+              const errorMessage = getDecimalErrorMessage(value);
+              if (errorMessage) {
+                setRangeError(errorMessage);
+                setLocalError(true);
+                return;
+              }
+
+              setRangeError(null);
+              setLocalError(false);
               onChangeAnswer({
-                valueDecimal: e.currentTarget.valueAsNumber,
+                valueDecimal: value,
               });
             }}
             onKeyDown={onKeyDown}
           />
         </QuestionnaireErrorWrapper>
       );
+    }
     // Integer item type, used for numeric questions
-    case QuestionnaireItemType.integer:
+    case QuestionnaireItemType.integer: {
+      const { min: integerMin, max: integerMax } = getNumericBounds(item);
+      const getIntegerErrorMessage = (value: number) => {
+        if (
+          integerMin !== undefined &&
+          integerMax !== undefined &&
+          (value < integerMin || value > integerMax)
+        ) {
+          return `Please enter a value between ${integerMin} and ${integerMax}.`;
+        }
+        if (integerMin !== undefined && value < integerMin) {
+          return `Please enter a value greater than or equal to ${integerMin}.`;
+        }
+        if (integerMax !== undefined && value > integerMax) {
+          return `Please enter a value less than or equal to ${integerMax}.`;
+        }
+        return null;
+      };
+
       return (
-        <QuestionnaireErrorWrapper isError={localError}>
+        <QuestionnaireErrorWrapper
+          isError={localError || !!rangeError}
+          message={rangeError ?? undefined}
+        >
           <Input
             placeholder="Tell us here..."
             type="number"
@@ -202,9 +271,30 @@ export const QuestionnaireFormItem = ({
             name={name}
             required={item.required}
             defaultValue={defaultValue?.value}
+            min={integerMin}
+            max={integerMax}
             onChange={(e) => {
+              const value = e.currentTarget.valueAsNumber;
+              if (Number.isNaN(value)) {
+                setRangeError(null);
+                setLocalError(false);
+                onChangeAnswer({
+                  valueInteger: value,
+                });
+                return;
+              }
+
+              const errorMessage = getIntegerErrorMessage(value);
+              if (errorMessage) {
+                setRangeError(errorMessage);
+                setLocalError(true);
+                return;
+              }
+
+              setRangeError(null);
+              setLocalError(false);
               onChangeAnswer({
-                valueInteger: e.currentTarget.valueAsNumber,
+                valueInteger: value,
               });
             }}
             onKeyDown={(e) => {
@@ -216,6 +306,7 @@ export const QuestionnaireFormItem = ({
           />
         </QuestionnaireErrorWrapper>
       );
+    }
     // Date item type, used for date questions
     case QuestionnaireItemType.date:
       return (

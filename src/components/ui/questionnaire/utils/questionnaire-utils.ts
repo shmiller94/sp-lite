@@ -104,3 +104,43 @@ export function getNumberOfPages(questionnaire: Questionnaire): number {
   }
   return 1;
 }
+
+function getNumericExtensionValue(extension: any): number | undefined {
+  if (!extension) {
+    return undefined;
+  }
+  if (typeof extension.valueDecimal === 'number') {
+    return extension.valueDecimal;
+  }
+  if (typeof extension.valueInteger === 'number') {
+    return extension.valueInteger;
+  }
+  if (typeof extension.valueQuantity?.value === 'number') {
+    return extension.valueQuantity.value;
+  }
+  return undefined;
+}
+
+export function getNumericBounds(item: QuestionnaireItem): {
+  min?: number;
+  max?: number;
+} {
+  const extensions = item.extension ?? [];
+
+  const minExtension = extensions.find(
+    (extension) =>
+      extension.url === 'http://hl7.org/fhir/StructureDefinition/minValue',
+  );
+  const maxExtension = extensions.find(
+    (extension) =>
+      extension.url === 'http://hl7.org/fhir/StructureDefinition/maxValue',
+  );
+
+  const min = getNumericExtensionValue(minExtension);
+  const max = getNumericExtensionValue(maxExtension);
+
+  return {
+    ...(min !== undefined ? { min } : null),
+    ...(max !== undefined ? { max } : null),
+  };
+}
