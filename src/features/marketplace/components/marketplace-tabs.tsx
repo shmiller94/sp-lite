@@ -40,7 +40,7 @@ type MarketplaceTab = {
 
 export const MarketplaceTabs = () => {
   const { data, isLoading } = useMarketplace();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const rawTab = searchParams.get('tab');
   const activeTab: MarketplaceTabValue =
     rawTab === 'tests' ||
@@ -57,6 +57,17 @@ export const MarketplaceTabs = () => {
     isSearching,
   } = useMarketplaceSearch();
 
+  const ensureAllTabActive = useCallback(() => {
+    setSearchParams((params) => {
+      if (!params.has('tab')) {
+        return params;
+      }
+
+      params.delete('tab');
+      return params;
+    });
+  }, [setSearchParams]);
+
   useEffect(() => {
     if (activeTab === 'prescriptions' && filter !== 'all') {
       setFilter('all');
@@ -65,7 +76,16 @@ export const MarketplaceTabs = () => {
 
   const handleClearSearch = useCallback(() => {
     setSearchQuery('');
-  }, [setSearchQuery]);
+    ensureAllTabActive();
+  }, [ensureAllTabActive, setSearchQuery]);
+
+  const handleSearchChange = useCallback(
+    (value: string) => {
+      setSearchQuery(value);
+      ensureAllTabActive();
+    },
+    [ensureAllTabActive, setSearchQuery],
+  );
 
   const tabs = useMemo<MarketplaceTab[]>(() => {
     const render = () => (
@@ -94,20 +114,14 @@ export const MarketplaceTabs = () => {
         label: 'Tests',
         icon: Tests,
         contentTitle: searchTitle,
-        render: () => {
-          if (isSearching) {
-            return render();
-          }
-
-          return (
-            <ServicesList
-              services={data?.services}
-              isLoading={isLoading}
-              filter={filter}
-              query={query}
-            />
-          );
-        },
+        render: () => (
+          <ServicesList
+            services={data?.services}
+            isLoading={isLoading}
+            filter={filter}
+            query={query}
+          />
+        ),
       },
       /* SUPPLEMENTS */
       {
@@ -115,20 +129,14 @@ export const MarketplaceTabs = () => {
         label: 'Supplements',
         icon: Supplements,
         contentTitle: searchTitle,
-        render: () => {
-          if (isSearching) {
-            return render();
-          }
-
-          return (
-            <SupplementsList
-              products={data?.supplements}
-              isLoading={isLoading}
-              filter={filter}
-              query={query}
-            />
-          );
-        },
+        render: () => (
+          <SupplementsList
+            products={data?.supplements}
+            isLoading={isLoading}
+            filter={filter}
+            query={query}
+          />
+        ),
       },
       /* PRESCRIPTIONS */
       {
@@ -136,20 +144,14 @@ export const MarketplaceTabs = () => {
         label: 'Prescriptions',
         icon: Prescriptions,
         contentTitle: searchTitle,
-        render: () => {
-          if (isSearching) {
-            return render();
-          }
-
-          return (
-            <PrescriptionsList
-              prescriptions={data?.prescriptions}
-              isLoading={isLoading}
-              filter={filter}
-              query={query}
-            />
-          );
-        },
+        render: () => (
+          <PrescriptionsList
+            prescriptions={data?.prescriptions}
+            isLoading={isLoading}
+            filter={filter}
+            query={query}
+          />
+        ),
       },
       /* ORDERS - Hidden */
       {
@@ -158,15 +160,7 @@ export const MarketplaceTabs = () => {
         render: () => <MarketplaceOrdersTab />,
       },
     ];
-  }, [
-    data,
-    filter,
-    handleClearSearch,
-    isLoading,
-    isSearching,
-    query,
-    searchTitle,
-  ]);
+  }, [data, filter, handleClearSearch, isLoading, query, searchTitle]);
 
   const showFilters = activeTab !== 'orders' && activeTab !== 'prescriptions';
 
@@ -182,11 +176,15 @@ export const MarketplaceTabs = () => {
               .filter((tab) => tab.value !== 'orders')
               .map((tab) => {
                 const Icon = tab.icon;
+                const isDisabled = isSearching && tab.value !== 'all';
+
                 return (
                   <TabsTrigger
                     key={tab.value}
                     value={tab.value}
                     aria-label={tab.label}
+                    disabled={isDisabled}
+                    aria-disabled={isDisabled}
                   >
                     <>
                       {Icon ? <Icon className="size-5" /> : null}
@@ -202,7 +200,7 @@ export const MarketplaceTabs = () => {
           {activeTab !== 'orders' && (
             <MarketplaceSearch
               value={query}
-              onChange={setSearchQuery}
+              onChange={handleSearchChange}
               className="w-full md:w-72"
             />
           )}

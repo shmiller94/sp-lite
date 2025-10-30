@@ -2,10 +2,10 @@ import { MarketplaceFilter } from '@/features/marketplace/components/marketplace
 import { MarketplaceSkeleton } from '@/features/marketplace/components/marketplace-skeleton';
 import { getMarketplaceSearchMeta } from '@/features/marketplace/helper/get-marketplace-search-meta';
 import { matchesMarketplaceQuery } from '@/features/marketplace/utils/matches-marketplace-query';
+import { useProgressiveReveal } from '@/hooks/use-progressive-reveal';
 import { Product } from '@/types/api';
 import { isMobile } from '@/utils/browser-detection';
 
-import { useProgressiveReveal } from '../hooks/use-progressive-reveal';
 import { getRecomendedSupplements } from '../utils/get-recommended-supplements';
 import {
   SupplementsCategory,

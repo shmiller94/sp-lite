@@ -13,7 +13,10 @@ import { getRecommendedServices } from '@/features/services/utils/get-recommende
 import { SupplementCard } from '@/features/supplements/components/supplement-card';
 import { SupplementCategory } from '@/features/supplements/components/supplement-category';
 import { getRecomendedSupplements } from '@/features/supplements/utils/get-recommended-supplements';
+import { useProgressiveReveal } from '@/hooks/use-progressive-reveal';
 import { HealthcareService, Product, Rx } from '@/types/api';
+
+const SEARCH_PAGE_SIZE = 12;
 
 type MarketplaceListProps = {
   services?: HealthcareService[];
@@ -90,6 +93,7 @@ export const MarketplaceList = ({
         products={filteredSupplements}
         services={filteredServices}
         prescriptions={filteredPrescriptions}
+        resetKey={`${filter}-${trimmedQuery}`}
       />
     );
   }
@@ -136,6 +140,7 @@ type MarketplaceFilteredCategoryProps = {
   products: Product[];
   services: HealthcareService[];
   prescriptions: Rx[];
+  resetKey?: string;
 };
 
 const MarketplaceFilteredCategory = ({
@@ -144,6 +149,7 @@ const MarketplaceFilteredCategory = ({
   products,
   services,
   prescriptions,
+  resetKey,
 }: MarketplaceFilteredCategoryProps) => {
   const items = [
     ...services.map((service) => ({
@@ -163,6 +169,14 @@ const MarketplaceFilteredCategory = ({
     })),
   ];
 
+  const { visibleCount, hasMore, sentinelRef } = useProgressiveReveal({
+    totalCount: items.length,
+    pageSize: SEARCH_PAGE_SIZE,
+    resetDeps: [resetKey, items.length],
+  });
+
+  const visibleItems = items.slice(0, visibleCount);
+
   return (
     <section className="flex flex-col gap-6">
       <div className="flex flex-col">
@@ -171,12 +185,14 @@ const MarketplaceFilteredCategory = ({
       </div>
 
       <div className="grid grid-cols-2 gap-2 sm:gap-x-8 sm:gap-y-6 lg:grid-cols-4">
-        {items.map(({ id, node, type }) => (
+        {visibleItems.map(({ id, node, type }) => (
           <div key={`${type}-${id}`} className="flex flex-col">
             {node}
           </div>
         ))}
       </div>
+
+      {hasMore ? <div ref={sentinelRef} className="h-1" /> : null}
     </section>
   );
 };

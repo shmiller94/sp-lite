@@ -1,12 +1,12 @@
 import * as TabsPrimitive from '@radix-ui/react-tabs';
 import {
-  forwardRef,
-  useState,
-  useRef,
-  useLayoutEffect,
-  useCallback,
-  ElementRef,
   ComponentPropsWithoutRef,
+  ElementRef,
+  forwardRef,
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
 } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
@@ -212,8 +212,10 @@ const TabsTrigger = forwardRef<
   <TabsPrimitive.Trigger
     ref={ref}
     className={cn(
-      'relative z-10 inline-flex items-center justify-center whitespace-nowrap rounded-full px-4 py-1.5 text-base font-medium transition-colors duration-200',
+      'relative z-10 inline-flex items-center justify-center whitespace-nowrap rounded-full px-4 py-1.5 text-base font-medium transition-all duration-200',
       'gap-2 text-secondary hover:text-primary data-[state=active]:text-primary',
+      'disabled:pointer-events-none disabled:text-secondary/60 disabled:hover:text-secondary/60 disabled:opacity-70',
+      'data-[disabled]:pointer-events-none data-[disabled]:text-secondary/60 data-[disabled]:hover:text-secondary/60 data-[disabled]:opacity-70',
       className,
     )}
     {...props}
