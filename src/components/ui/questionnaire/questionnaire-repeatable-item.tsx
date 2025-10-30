@@ -17,6 +17,7 @@ interface QuestionnaireFormRepeatableItemProps {
   nested?: boolean;
   isError?: boolean;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  onValidationChange?: (linkId: string, hasError: boolean) => void;
 }
 
 /**
@@ -31,6 +32,7 @@ export const QuestionnaireFormRepeatableItem = ({
   nested,
   isError = false,
   onKeyDown,
+  onValidationChange,
 }: QuestionnaireFormRepeatableItemProps) => {
   const checkForQuestionEnabled = useQuestionnaireStore(
     (s) => s.checkForQuestionEnabled,
@@ -72,6 +74,7 @@ export const QuestionnaireFormRepeatableItem = ({
         index={0}
         isError={isError}
         onKeyDown={onKeyDown}
+        onValidationChange={onValidationChange}
       />
     );
   }
@@ -111,6 +114,7 @@ export const QuestionnaireFormRepeatableItem = ({
           isError={isError}
           onKeyDown={onKeyDown}
           nested={nested}
+          onValidationChange={onValidationChange}
         />
       ))}
     </div>

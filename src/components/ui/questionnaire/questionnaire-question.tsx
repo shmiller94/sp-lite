@@ -3,7 +3,7 @@ import {
   QuestionnaireResponseItem,
 } from '@medplum/fhirtypes';
 import { ArrowLeftIcon, SmileIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { SuperpowerLogo } from '@/components/icons/superpower-logo';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -38,6 +38,9 @@ export const QuestionnaireQuestion = ({
   onSave,
 }: QuestionnaireQuestionProps) => {
   const [localErrors, setLocalErrors] = useState<string[]>([]);
+  const [validationErrors, setValidationErrors] = useState<Set<string>>(
+    () => new Set(),
+  );
   const checkForQuestionEnabled = useQuestionnaireStore(
     (s) => s.checkForQuestionEnabled,
   );
@@ -48,6 +51,32 @@ export const QuestionnaireQuestion = ({
   const showBackButton = activeStep > 0;
   const lastQuestion = getLastQuestion();
   const isLastQuestion = lastQuestion?.linkId === item.linkId;
+  const hasValidationErrors = validationErrors.size > 0;
+
+  const handleValidationChange = useCallback(
+    (linkId: string, hasError: boolean) => {
+      if (!linkId) {
+        return;
+      }
+      setValidationErrors((prev) => {
+        const alreadyErrored = prev.has(linkId);
+        if (hasError && alreadyErrored) {
+          return prev;
+        }
+        if (!hasError && !alreadyErrored) {
+          return prev;
+        }
+        const next = new Set(prev);
+        if (hasError) {
+          next.add(linkId);
+        } else {
+          next.delete(linkId);
+        }
+        return next;
+      });
+    },
+    [],
+  );
 
   // If https://superpower.com/fhir/StructureDefinition/questionnaire-description is available in the extension array, use it as the description
   const description = item.extension?.find(
@@ -57,6 +86,11 @@ export const QuestionnaireQuestion = ({
   )?.valueString;
 
   const handleNextStep = () => {
+    if (hasValidationErrors) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
     ensureNestedResponseItems(item, response, onChange);
 
     if (currentResponse.item) {
@@ -189,6 +223,7 @@ export const QuestionnaireQuestion = ({
                 onChange([response]);
               }}
               onKeyDown={handleKeyDown}
+              onValidationChange={handleValidationChange}
             />
           ))}
         </div>
@@ -206,56 +241,66 @@ export const QuestionnaireQuestion = ({
     </div>
   );
 
-  const renderNavigationButtons = () => (
-    <div className="mt-12 flex flex-col gap-2 md:mt-0">
-      {showBackButton && (
-        <button
-          tabIndex={-1}
-          type="button"
-          className="absolute -left-12 top-1 hidden text-zinc-400 transition-all hover:text-zinc-500 md:block"
-          onClick={prevStep}
-        >
-          <ArrowLeftIcon />
-        </button>
-      )}
-      {isLastQuestion ? (
-        <Button type="submit" className="ml-auto w-full md:w-[108px]">
-          Submit
-        </Button>
-      ) : (
-        <div
-          className={cn(
-            'ml-auto flex w-full flex-col-reverse gap-4 md:w-auto md:flex-row',
-            item.type === QuestionnaireItemType.display && 'md:w-full',
-          )}
-        >
-          {!item.required &&
-            item.type !== QuestionnaireItemType.group &&
-            item.type !== QuestionnaireItemType.display && (
-              <Button
-                type="button"
-                variant="outline"
-                className="ml-auto w-full bg-white hover:bg-white/75 md:w-[108px]"
-                onClick={handleNextStep}
-              >
-                Skip
-              </Button>
-            )}
-          <Button
+  const renderNavigationButtons = () => {
+    const disableAdvance =
+      Boolean(isResponseEmpty(item, response, checkForQuestionEnabled)) ||
+      hasValidationErrors;
+
+    return (
+      <div className="mt-12 flex flex-col gap-2 md:mt-0">
+        {showBackButton && (
+          <button
+            tabIndex={-1}
             type="button"
+            className="absolute -left-12 top-1 hidden text-zinc-400 transition-all hover:text-zinc-500 md:block"
+            onClick={prevStep}
+          >
+            <ArrowLeftIcon />
+          </button>
+        )}
+        {isLastQuestion ? (
+          <Button
+            type="submit"
+            className="ml-auto w-full md:w-[108px]"
+            disabled={disableAdvance}
+          >
+            Submit
+          </Button>
+        ) : (
+          <div
             className={cn(
-              'ml-auto w-full md:w-[108px]',
+              'ml-auto flex w-full flex-col-reverse gap-4 md:w-auto md:flex-row',
               item.type === QuestionnaireItemType.display && 'md:w-full',
             )}
-            onClick={handleNextStep}
-            disabled={isResponseEmpty(item, response, checkForQuestionEnabled)}
           >
-            {item.linkId === 'intro' ? 'I Understand' : 'Next'}
-          </Button>
-        </div>
-      )}
-    </div>
-  );
+            {!item.required &&
+              item.type !== QuestionnaireItemType.group &&
+              item.type !== QuestionnaireItemType.display && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="ml-auto w-full bg-white hover:bg-white/75 md:w-[108px]"
+                  onClick={handleNextStep}
+                >
+                  Skip
+                </Button>
+              )}
+            <Button
+              type="button"
+              className={cn(
+                'ml-auto w-full md:w-[108px]',
+                item.type === QuestionnaireItemType.display && 'md:w-full',
+              )}
+              onClick={handleNextStep}
+              disabled={disableAdvance}
+            >
+              {item.linkId === 'intro' ? 'I Understand' : 'Next'}
+            </Button>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   if (!checkForQuestionEnabled(item)) {
     return renderDisabledQuestion();
@@ -290,6 +335,7 @@ export const QuestionnaireQuestion = ({
             onChange={onChange}
             isError={localErrors.includes(item.linkId)}
             onKeyDown={handleKeyDown}
+            onValidationChange={handleValidationChange}
           />
         )}
         {renderNavigationButtons()}

@@ -4,7 +4,7 @@ import {
   QuestionnaireResponseItem,
   QuestionnaireResponseItemAnswer,
 } from '@medplum/fhirtypes';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -35,6 +35,7 @@ export interface QuestionnaireFormItemProps {
   isError?: boolean;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   nested?: boolean;
+  onValidationChange?: (linkId: string, hasError: boolean) => void;
 }
 
 export const QuestionnaireFormItem = ({
@@ -45,9 +46,19 @@ export const QuestionnaireFormItem = ({
   isError = false,
   onKeyDown,
   nested,
+  onValidationChange,
 }: QuestionnaireFormItemProps) => {
   const [localError, setLocalError] = useState(isError);
   const [rangeError, setRangeError] = useState<string | null>(null);
+
+  // Ensure parent state is reset if the component unmounts (e.g. when navigating away)
+  useEffect(() => {
+    return () => {
+      if (item.linkId) {
+        onValidationChange?.(item.linkId, false);
+      }
+    };
+  }, [item.linkId, onValidationChange]);
 
   function onChangeAnswer(
     newResponseAnswer:
@@ -68,31 +79,44 @@ export const QuestionnaireFormItem = ({
     }
 
     // Note: Medplum does not accept empty strings or NaN values, so we remove them
-    updatedAnswers = updatedAnswers.map((answer) => {
-      const cleanedAnswer = { ...answer };
-      if (
-        cleanedAnswer.valueString === '' ||
-        cleanedAnswer.valueString === undefined ||
-        (typeof cleanedAnswer.valueString === 'string' &&
-          cleanedAnswer.valueString.trim() === '')
-      ) {
-        delete cleanedAnswer.valueString;
-      }
-      if (Number.isNaN(cleanedAnswer.valueInteger)) {
-        delete cleanedAnswer.valueInteger;
-      }
-      if (Number.isNaN(cleanedAnswer.valueDecimal)) {
-        delete cleanedAnswer.valueDecimal;
-      }
-      return cleanedAnswer;
-    });
+    updatedAnswers = updatedAnswers
+      .map((answer) => {
+        const cleanedAnswer = { ...answer };
+        if (
+          cleanedAnswer.valueString === '' ||
+          cleanedAnswer.valueString === undefined ||
+          (typeof cleanedAnswer.valueString === 'string' &&
+            cleanedAnswer.valueString.trim() === '')
+        ) {
+          delete cleanedAnswer.valueString;
+        }
+        if (Number.isNaN(cleanedAnswer.valueInteger)) {
+          delete cleanedAnswer.valueInteger;
+        }
+        if (Number.isNaN(cleanedAnswer.valueDecimal)) {
+          delete cleanedAnswer.valueDecimal;
+        }
+        return cleanedAnswer;
+      })
+      .filter((answer) =>
+        Object.keys(answer).some((key) => key.startsWith('value')),
+      );
 
-    const updatedResponse = {
-      id: response?.id,
-      linkId: response?.linkId,
-      text: item.text,
-      answer: updatedAnswers,
-    };
+    const { answer: _previousAnswer, ...restResponse } = response;
+
+    const updatedResponse: QuestionnaireResponseItem =
+      updatedAnswers.length > 0
+        ? {
+            ...restResponse,
+            linkId: response?.linkId ?? item.linkId,
+            text: item.text,
+            answer: updatedAnswers,
+          }
+        : {
+            ...restResponse,
+            linkId: response?.linkId ?? item.linkId,
+            text: item.text,
+          };
 
     onChange(updatedResponse);
   }
@@ -210,6 +234,9 @@ export const QuestionnaireFormItem = ({
               if (Number.isNaN(value)) {
                 setRangeError(null);
                 setLocalError(false);
+                if (item.linkId) {
+                  onValidationChange?.(item.linkId, false);
+                }
                 onChangeAnswer({
                   valueDecimal: value,
                 });
@@ -220,11 +247,17 @@ export const QuestionnaireFormItem = ({
               if (errorMessage) {
                 setRangeError(errorMessage);
                 setLocalError(true);
+                if (item.linkId) {
+                  onValidationChange?.(item.linkId, true);
+                }
                 return;
               }
 
               setRangeError(null);
               setLocalError(false);
+              if (item.linkId) {
+                onValidationChange?.(item.linkId, false);
+              }
               onChangeAnswer({
                 valueDecimal: value,
               });
@@ -278,6 +311,9 @@ export const QuestionnaireFormItem = ({
               if (Number.isNaN(value)) {
                 setRangeError(null);
                 setLocalError(false);
+                if (item.linkId) {
+                  onValidationChange?.(item.linkId, false);
+                }
                 onChangeAnswer({
                   valueInteger: value,
                 });
@@ -288,11 +324,17 @@ export const QuestionnaireFormItem = ({
               if (errorMessage) {
                 setRangeError(errorMessage);
                 setLocalError(true);
+                if (item.linkId) {
+                  onValidationChange?.(item.linkId, true);
+                }
                 return;
               }
 
               setRangeError(null);
               setLocalError(false);
+              if (item.linkId) {
+                onValidationChange?.(item.linkId, false);
+              }
               onChangeAnswer({
                 valueInteger: value,
               });
