@@ -83,7 +83,9 @@ const BadgesDisplay = ({ order }: { order: Order }) => {
 
   return (
     <>
-      {isPastAppointment && order.serviceName !== ADVISORY_CALL ? (
+      {isPastAppointment &&
+      order.status !== OrderStatus.completed &&
+      order.serviceName !== ADVISORY_CALL ? (
         <Pill
           Icon={Clock4Icon}
           bg="bg-vermillion-100"
