@@ -14,10 +14,15 @@ const isFlexPaymentProvider = (provider?: string) =>
  */
 export function usePaymentMethodSelection(selectedPaymentMethodId?: string) {
   const paymentMethodsQuery = usePaymentMethods();
-  const paymentMethods = paymentMethodsQuery.data?.paymentMethods ?? [];
+  const paymentMethods = useMemo(
+    () => paymentMethodsQuery.data?.paymentMethods ?? [],
+    [paymentMethodsQuery.data?.paymentMethods],
+  );
 
   const defaultPaymentMethod = useMemo(
-    () => paymentMethods.find((pm) => pm.default),
+    () =>
+      paymentMethods.find((pm) => pm.default) ??
+      (paymentMethods.length > 0 ? paymentMethods[0] : undefined),
     [paymentMethods],
   );
 

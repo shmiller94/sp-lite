@@ -9,7 +9,7 @@ export const Billing = () => {
   return (
     <div className="md:space-y-8">
       <Card className="p-4 md:bg-white md:p-10">
-        <H3 className="mb-4 hidden md:block">Credit Card</H3>
+        <H3 className="mb-4 hidden md:block">Payment Methods</H3>
         <PaymentMethodList />
         <div className="mt-3 flex md:mt-12 md:justify-end">
           <CreatePaymentMethodDialog>

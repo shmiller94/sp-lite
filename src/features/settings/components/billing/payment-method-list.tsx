@@ -65,7 +65,7 @@ export function PaymentMethodCard({
   paymentMethod: PaymentMethod;
   defaultMethod: boolean;
 }): JSX.Element {
-  const isFlexCard = paymentMethod.paymentProvider.toLowerCase() === 'flex';
+  const isFlexCard = paymentMethod.paymentProvider?.toLowerCase() === 'flex';
   return (
     <div
       className={cn(
@@ -73,12 +73,25 @@ export function PaymentMethodCard({
         defaultMethod ? 'border-zinc-900' : 'border-zinc-200',
       )}
     >
-      <div className="flex w-full flex-col justify-between gap-3">
+      <div className="flex w-full flex-col justify-center">
         <div className="flex items-center justify-between">
-          <div className="flex items-baseline gap-2">
-            <h4 className="text-2xl text-primary">
-              {capitalize(paymentMethod.card?.brand ?? '')} ****
-              {paymentMethod.card?.last4}
+          <div className="flex items-center gap-3">
+            {paymentMethod.type === 'klarna' && (
+              <img
+                src="/settings/membership/klarna.webp"
+                alt="Klarna"
+                className="h-10 w-auto object-contain"
+              />
+            )}
+            <h4 className="text-2xl leading-none text-primary">
+              {paymentMethod.type === 'card' && paymentMethod.card ? (
+                <>
+                  {capitalize(paymentMethod.card.brand)} ****
+                  {paymentMethod.card.last4}
+                </>
+              ) : paymentMethod.type === 'klarna' ? (
+                'Pay with Klarna'
+              ) : null}
             </h4>
             {isFlexCard && (
               <div className="flex items-center gap-1 rounded-full border px-2 py-1">
@@ -111,10 +124,12 @@ export function PaymentMethodCard({
           )}
         </div>
         <div>
-          <p className="leading-normal text-zinc-500">
-            Expires on {paymentMethod.card.exp_month}/
-            {paymentMethod.card.exp_year}
-          </p>
+          {paymentMethod.type === 'card' && paymentMethod.card && (
+            <p className="leading-normal text-zinc-500">
+              Expires on {paymentMethod.card.exp_month}/
+              {paymentMethod.card.exp_year}
+            </p>
+          )}
           <p className="hidden leading-normal text-zinc-500">
             Zip code - {paymentMethod?.billing_details?.postal_code}
           </p>

@@ -85,15 +85,25 @@ export const PaymentMethodsSelect = ({
                 >
                   <div>
                     <div className="flex items-center gap-2">
-                      <Body1 className="text-zinc-600">
-                        {capitalize(paymentMethod.card.brand ?? '')} ****
-                        {paymentMethod.card.last4}
-                      </Body1>
+                      {paymentMethod.type === 'card' && paymentMethod.card ? (
+                        <Body1 className="text-zinc-600">
+                          {capitalize(paymentMethod.card.brand)} ****
+                          {paymentMethod.card.last4}
+                        </Body1>
+                      ) : paymentMethod.type === 'klarna' ? (
+                        <>
+                          <img
+                            src="/settings/membership/klarna.webp"
+                            alt="Klarna"
+                            className="h-6 w-auto object-contain"
+                          />
+                        </>
+                      ) : null}
                       <div className="flex items-center gap-1.5">
                         {paymentMethod.default && (
                           <>
-                            <DotIcon className="text-zinc-500" />
-                            <Body3 className="text-zinc-500">
+                            <DotIcon className="leading-none text-zinc-500" />
+                            <Body3 className="leading-none text-zinc-500">
                               Default method
                             </Body3>
                           </>
@@ -114,10 +124,12 @@ export const PaymentMethodsSelect = ({
                         )}
                       </div>
                     </div>
-                    <Body3 className="text-zinc-400">
-                      Expires on {paymentMethod.card.exp_month}/
-                      {paymentMethod.card.exp_year}
-                    </Body3>
+                    {paymentMethod.type === 'card' && paymentMethod.card && (
+                      <Body3 className="text-zinc-400">
+                        Expires on {paymentMethod.card.exp_month}/
+                        {paymentMethod.card.exp_year}
+                      </Body3>
+                    )}
                   </div>
                   {!isFlexCard && !paymentMethod.default && (
                     <DropdownMenu>

@@ -22,7 +22,16 @@ export const getPaymentMethodsQueryOptions = ({
 }: { page?: number } = {}) => {
   return queryOptions({
     queryKey: page ? ['paymentMethods', { page }] : ['paymentMethods'],
-    queryFn: () => getPaymentMethods(page),
+    queryFn: async () => {
+      const response = await getPaymentMethods(page);
+      return {
+        ...response,
+        paymentMethods: response.paymentMethods.map((pm: PaymentMethod) => ({
+          ...pm,
+          type: (pm.type ?? 'card') as 'card' | 'klarna',
+        })),
+      };
+    },
   });
 };
 

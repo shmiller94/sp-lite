@@ -460,13 +460,15 @@ export type PaymentMethod = {
   billing_details: {
     postal_code: string | null;
   } | null;
-  card: {
+  type?: 'card' | 'klarna';
+  card?: {
     brand: string;
     country: string | null;
     exp_month: number;
     exp_year: number;
     last4: string;
   };
+  klarna?: Record<string, never>;
   created: number;
   default: boolean;
   paymentProvider: PaymentProvider;

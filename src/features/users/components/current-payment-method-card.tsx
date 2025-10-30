@@ -71,8 +71,22 @@ export const CurrentPaymentMethodCard = ({
 
         <div>
           <div className="flex items-center gap-2">
-            <Body1>{capitalize(activePaymentMethod?.card.brand ?? '')}</Body1>
-            <Body1>****{activePaymentMethod?.card.last4}</Body1>
+            {activePaymentMethod?.type === 'card' &&
+            activePaymentMethod.card ? (
+              <>
+                <Body1>{capitalize(activePaymentMethod.card.brand)}</Body1>
+                <Body1>****{activePaymentMethod.card.last4}</Body1>
+              </>
+            ) : activePaymentMethod?.type === 'klarna' ? (
+              <>
+                <img
+                  src="/settings/membership/klarna.webp"
+                  alt="Klarna"
+                  className="h-6 w-auto rounded-md object-contain"
+                />
+                <Body1 className="text-primary">Pay with Klarna</Body1>
+              </>
+            ) : null}
             {isFlexSelected && (
               <div className="flex items-center gap-1 rounded-full border px-1.5 py-1">
                 <CircleCheckBig
