@@ -1,11 +1,14 @@
 import { UseChatHelpers } from '@ai-sdk/react';
 import { UIMessage } from 'ai';
-import { useEffect } from 'react';
+import { ArrowDown } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 import { useHistory } from '../../api/get-history';
+import { scrollToBottom } from '../../utils/scroll-to-bottom';
 
 import { PreviewMessage, ThinkingMessage } from './message';
 
@@ -47,6 +50,7 @@ function PureMessages({
       )}
     >
       <div
+        id="ai-chat-scroll-container"
         className="relative flex max-h-[calc(100vh-20.5rem)] min-h-32 min-w-0 flex-col gap-6 overflow-y-scroll py-4 transition-all duration-200 ease-in-out md:max-h-full lg:pb-0"
         style={{
           maskImage:
@@ -83,6 +87,8 @@ function PureMessages({
             </div>
           )}
 
+        <ScrollDownButton messagesLength={messages.length} />
+
         <div className="min-h-[24px] min-w-[24px] shrink-0" />
       </div>
     </div>
@@ -90,6 +96,56 @@ function PureMessages({
 }
 
 export const Messages = PureMessages;
+
+function ScrollDownButton({ messagesLength }: { messagesLength: number }) {
+  const [show, setShow] = useState(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  // effect checking if the user scrolled to bottom or not
+  useEffect(() => {
+    containerRef.current = document.getElementById(
+      'ai-chat-scroll-container',
+    ) as HTMLDivElement | null;
+
+    const el = containerRef.current;
+    if (!el) return;
+
+    const threshold = 24; // px tolerance from bottom
+    const update = () => {
+      const atBottom =
+        el.scrollHeight - el.scrollTop - el.clientHeight <= threshold;
+      setShow(!atBottom);
+    };
+
+    update();
+    el.addEventListener('scroll', update, { passive: true });
+    return () => {
+      el.removeEventListener('scroll', update);
+    };
+  }, [messagesLength]);
+
+  return (
+    <div
+      className={cn(
+        'sticky bottom-5 z-30 mx-auto transition-all duration-300 ease-out pr-2',
+        !show && 'opacity-0 bottom-0 blur-[1px]',
+      )}
+    >
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        className={cn(
+          'rounded-full border bg-white mx-auto p-2 text-zinc-500 shadow-sm hover:bg-zinc-50 hover:text-black active:scale-[.98]',
+          show ? 'pointer-events-auto' : 'pointer-events-none',
+        )}
+        onClick={() => scrollToBottom({ immediate: true })}
+      >
+        <ArrowDown size={16} />
+      </Button>
+    </div>
+  );
+}
 
 // FIXME(Kenta): memoization condition is incorrect causing unfired rerenders
 //  when text is streamed in. To be fixed.

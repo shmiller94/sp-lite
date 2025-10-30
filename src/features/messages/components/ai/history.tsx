@@ -33,6 +33,8 @@ import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 import { cn } from '@/lib/utils';
 import { Chat } from '@/types/api';
 
+import { scrollToBottom } from '../../utils/scroll-to-bottom';
+
 type GroupedChats = {
   today: Chat[];
   yesterday: Chat[];
@@ -63,6 +65,9 @@ const ChatItem = ({ chat, isActive }: { chat: Chat; isActive: boolean }) => {
         'group flex w-full justify-between gap-2 rounded-xl border px-4 py-2.5',
         isActive ? 'border-zinc-100 bg-white shadow-sm' : 'border-transparent',
       )}
+      onClick={() => {
+        scrollToBottom();
+      }}
     >
       <span
         className={cn(

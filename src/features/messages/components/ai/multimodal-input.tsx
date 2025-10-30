@@ -26,6 +26,8 @@ import { useAnalytics } from '@/hooks/use-analytics';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 import { cn } from '@/lib/utils';
 
+import { scrollToBottom } from '../../utils/scroll-to-bottom';
+
 import { PreviewAttachment } from './preview-attachment';
 import { SuggestedActions } from './suggested-actions';
 
@@ -132,6 +134,8 @@ function PureMultimodalInput({
 
     setAttachments([]);
     resetHeight();
+
+    scrollToBottom();
 
     if (width && width > 768) {
       textareaRef.current?.focus();
