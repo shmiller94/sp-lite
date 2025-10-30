@@ -1,6 +1,6 @@
 import { useOrders } from '@/features/orders/api';
 import { useAuthorization } from '@/lib/authorization';
-import { OrderStatus, Order } from '@/types/api';
+import { Order, OrderStatus } from '@/types/api';
 
 const DEFAULT_VISIBLE = 12;
 
@@ -35,11 +35,25 @@ export function useVisibleOrders() {
     const priB = statusPriority[b.status];
     if (priA !== priB) return priA - priB;
 
-    // if same status, soonest start first
-    return (
-      (a.startTimestamp ? new Date(a.startTimestamp).getTime() : Infinity) -
-      (b.startTimestamp ? new Date(b.startTimestamp).getTime() : Infinity)
-    );
+    const timeA = getOrderTimestamp(a);
+    const timeB = getOrderTimestamp(b);
+
+    if (a.status === OrderStatus.completed) {
+      return compareTimes(timeA, timeB, 'desc');
+    }
+
+    if (a.status === OrderStatus.upcoming || a.status === OrderStatus.pending) {
+      const isWalkInA = isWalkInOrder(a);
+      const isWalkInB = isWalkInOrder(b);
+
+      if (isWalkInA !== isWalkInB) {
+        return isWalkInA ? -1 : 1;
+      }
+
+      return compareTimes(timeA, timeB, 'desc');
+    }
+
+    return compareTimes(timeA, timeB, 'asc');
   });
 
   // 4) split into visible + rest
@@ -53,4 +67,37 @@ export function useVisibleOrders() {
     isLoading: isLoading,
     defaultVisible: DEFAULT_VISIBLE,
   };
+}
+
+// helpers for sorting via timestamp
+function getOrderTimestamp(order: Order): number | undefined {
+  const { status, endTimestamp, startTimestamp, createdAt } = order;
+
+  if (status === OrderStatus.completed) {
+    return (
+      getTime(endTimestamp) ?? getTime(startTimestamp) ?? getTime(createdAt)
+    );
+  }
+
+  return getTime(startTimestamp) ?? getTime(endTimestamp) ?? getTime(createdAt);
+}
+
+function compareTimes(
+  timeA: number | undefined,
+  timeB: number | undefined,
+  direction: 'asc' | 'desc',
+): number {
+  if (timeA === undefined && timeB === undefined) return 0;
+  if (timeA === undefined) return direction === 'asc' ? 1 : -1;
+  if (timeB === undefined) return direction === 'asc' ? -1 : 1;
+
+  return direction === 'asc' ? timeA - timeB : timeB - timeA;
+}
+
+function getTime(timestamp?: string): number | undefined {
+  return timestamp ? new Date(timestamp).getTime() : undefined;
+}
+
+function isWalkInOrder(order: Order): boolean {
+  return order.appointmentType === 'UNSCHEDULED';
 }

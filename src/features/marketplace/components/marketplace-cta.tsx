@@ -19,8 +19,8 @@ export const MarketplaceCta = () => {
   if (groupedOrdersLoading)
     return (
       <div className="flex items-center gap-4">
-        <Skeleton className="inline-flex h-8 w-40 rounded-full" />
-        <Skeleton className="inline-flex h-8 w-24 rounded-full" />
+        <Skeleton className="inline-flex h-5 w-48 rounded-full" />
+        <Skeleton className="inline-flex h-5 w-28 rounded-full" />
       </div>
     );
 
