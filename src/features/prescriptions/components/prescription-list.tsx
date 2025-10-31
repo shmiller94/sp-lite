@@ -21,6 +21,13 @@ export const PrescriptionsList = ({
 }: PrescriptionsListProps) => {
   if (isLoading) return <MarketplaceSkeleton />;
   if (!prescriptions) return null;
+  if (prescriptions.length === 0) {
+    return (
+      <div className="flex flex-col items-center space-y-4 rounded-2xl border border-dashed border-zinc-200 px-6 py-10 text-center text-sm text-secondary">
+        <p>Prescriptions are not available in your state yet.</p>
+      </div>
+    );
+  }
 
   const {
     normalizedQuery,
@@ -31,7 +38,7 @@ export const PrescriptionsList = ({
     subtitleOverride,
   } = getMarketplaceSearchMeta(query, filter);
 
-  const filteredPrescriptions = (prescriptions ?? []).filter((prescription) =>
+  const filteredPrescriptions = prescriptions.filter((prescription) =>
     matchesMarketplaceQuery(prescription, filter, normalizedQuery),
   );
 
