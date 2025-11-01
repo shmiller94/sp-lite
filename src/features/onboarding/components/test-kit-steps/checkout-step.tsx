@@ -1,7 +1,6 @@
 // Animations removed for simplicity
 import NumberFlow from '@number-flow/react';
 import { CircleCheckBig } from 'lucide-react';
-import moment from 'moment';
 import { useCallback, useMemo, useState } from 'react';
 
 import { SplitScreenLayout } from '@/components/layouts/split-screen-layout';
@@ -57,8 +56,6 @@ const CheckoutStepContent = () => {
       return {
         serviceId: service.id,
         location: {},
-        timestamp: new Date().toISOString(),
-        timezone: moment.tz.guess(),
         status: OrderStatus.draft,
         paymentMethodId: activePaymentMethod?.externalPaymentMethodId,
       };

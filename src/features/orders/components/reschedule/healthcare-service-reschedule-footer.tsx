@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/sonner';
 import { TransactionSpinner } from '@/components/ui/spinner/transaction-spinner';
-import { GRAIL_GALLERI_MULTI_CANCER_TEST } from '@/const';
 import { useCancelOrder } from '@/features/orders/api';
 import { RescheduleDialogMode } from '@/features/orders/types/reschedule-dialog-mode';
 import { BookingStepID } from '@/features/orders/utils/get-steps-for-service';
@@ -38,8 +37,9 @@ export const HealthcareServiceRescheduleFooter = ({
   const isPastAppointment = order.startTimestamp
     ? new Date(order.startTimestamp) < new Date()
     : false;
-  const canReschedule =
-    healthcareService?.name !== GRAIL_GALLERI_MULTI_CANCER_TEST;
+
+  const canReschedule = !!order.performer;
+
   const isCancelledOrCompleted = [
     OrderStatus.cancelled,
     OrderStatus.completed,
@@ -49,7 +49,8 @@ export const HealthcareServiceRescheduleFooter = ({
   const isAdminActor = checkAdminActorAccess();
 
   const showDefaultActions =
-    (!isPastAppointment && !isCancelledOrCompleted) || isAdminActor;
+    (!isPastAppointment && !isCancelledOrCompleted && canReschedule) ||
+    isAdminActor;
 
   const handleConfirm = async () => {
     await cancelOrderMutation.mutateAsync({ orderId: order.id });
@@ -87,7 +88,7 @@ export const HealthcareServiceRescheduleFooter = ({
           >
             Cancel appointment
           </Button>
-          {healthcareService && canReschedule ? (
+          {healthcareService ? (
             <Button
               className="w-full md:w-auto"
               onClick={() => setMode('reschedule')}
