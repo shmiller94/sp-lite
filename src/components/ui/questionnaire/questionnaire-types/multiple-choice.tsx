@@ -58,9 +58,21 @@ export function MultipleChoice({
   const activeStep = useQuestionnaireStore((s) => s.activeStep);
   const questionnaire = useQuestionnaireStore((s) => s.questionnaire);
   const getNumberOfPages = useQuestionnaireStore((s) => s.getNumberOfPages);
+  const currentQuestion = useQuestionnaireStore((s) => s.currentQuestion);
   const isLastQuestion = activeStep === getNumberOfPages() - 1;
 
   const autoAdvance = () => {
+    // Check if the current question/page is a group type with multiple questions/items
+    const isGroupPage =
+      currentQuestion?.type === 'group' &&
+      currentQuestion.item &&
+      currentQuestion.item.length > 1;
+
+    // Don't auto-advance if we're on a group page with multiple _questions_
+    // The member must complete all questions in the group to advance to the next page
+    if (isGroupPage) {
+      return;
+    }
     const currentPage = questionnaire.item?.[activeStep];
 
     // Case 1: Check if this is the only question in a group
@@ -172,7 +184,7 @@ export function MultipleChoice({
                 </Label>
                 <AnimatedCheckbox
                   tabIndex={-1}
-                  className="absolute right-6 data-[state=checked]:bg-transparent top-1/2 -translate-y-1/2 text-white transition-all"
+                  className="absolute right-6 top-1/2 -translate-y-1/2 text-white transition-all data-[state=checked]:bg-transparent"
                   id={`${item.linkId}-${idx}`}
                   checked={isSelected}
                   disabled={isDisabled}

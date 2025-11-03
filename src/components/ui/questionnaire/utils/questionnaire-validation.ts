@@ -47,9 +47,28 @@ export function isResponseEmpty(
   return item.item?.some((nestedItem) => {
     const isRequired =
       nestedItem.required && checkForQuestionEnabled(nestedItem);
-    const hasAnswer = response.item?.find(
+
+    // Find the nested response item
+    const nestedResponse = response.item?.find(
       (r) => r.linkId === nestedItem.linkId,
-    )?.answer;
+    );
+
+    // If nested item is a group, recursively validate it
+    if (nestedItem.type === QuestionnaireItemType.group) {
+      if (!nestedResponse) {
+        return isRequired;
+      }
+      // Recursively check if the nested group is empty
+      const isEmpty = isResponseEmpty(
+        nestedItem,
+        nestedResponse,
+        checkForQuestionEnabled,
+      );
+      return isRequired && isEmpty;
+    }
+
+    // For non-group items, check for answer as before
+    const hasAnswer = nestedResponse?.answer;
 
     if (!hasAnswer || hasAnswer.length === 0) {
       return isRequired;
@@ -141,6 +160,26 @@ export function validateRequiredFields(
       nestedResponse = findNestedResponseItem(nestedItem.linkId, response.item);
     }
 
+    // If nested item is a group, recursively validate it
+    if (nestedItem.type === QuestionnaireItemType.group) {
+      if (!nestedResponse) {
+        missingFields.push(nestedItem.linkId);
+        return;
+      }
+      // Recursively validate the nested group
+      const nestedMissingFields = validateRequiredFields(
+        nestedItem,
+        nestedResponse,
+        checkForQuestionEnabled,
+      );
+      if (nestedMissingFields) {
+        // Add the missing fields from the nested group
+        missingFields.push(...nestedMissingFields);
+      }
+      return;
+    }
+
+    // For non-group items, check for answer as before
     if (
       !nestedResponse ||
       !nestedResponse.answer ||

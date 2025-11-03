@@ -58,16 +58,29 @@ export function RadioButtons({
   const answerLinkId = getCurrentRadioAnswer(formattedOptions, currentAnswer);
 
   const nextStep = useQuestionnaireStore((s) => s.nextStep);
+  const currentQuestion = useQuestionnaireStore((s) => s.currentQuestion);
 
   const autoAdvance = useCallback(
     (timeout = 0) => {
+      // Check if the current question/page is a group type with multiple questions/items
+      const isGroupPage =
+        currentQuestion?.type === 'group' &&
+        currentQuestion.item &&
+        currentQuestion.item.length > 1;
+
+      // Don't auto-advance if we're on a group page with multiple _questions_
+      // The member must complete all questions in the group to advance to the next page
+      if (isGroupPage) {
+        return;
+      }
+
       setTimeout(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
         nextStep();
         setSelectedAnswer(null);
       }, timeout);
     },
-    [nextStep],
+    [nextStep, currentQuestion],
   );
 
   const handleSelect = useCallback(
