@@ -218,7 +218,7 @@ export const QuestionnaireFormPageSequence = ({
                     className="absolute inset-0 h-full rounded-full bg-vermillion-900 transition-all duration-300"
                   />
                 </div>
-                <SuperpowerLogo className="hidden size-32 md:block" />
+                <SuperpowerLogo className="my-10 hidden md:block" />
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={`question-${currentQuestion.item.linkId}`}

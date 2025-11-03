@@ -84,6 +84,7 @@ export const QuestionnaireQuestion = ({
       e.url ===
       'https://superpower.com/fhir/StructureDefinition/questionnaire-description',
   )?.valueString;
+  const isRxSafetyIntroQuestion = item.linkId === 'safety.intro';
 
   const handleNextStep = () => {
     if (hasValidationErrors) {
@@ -232,9 +233,23 @@ export const QuestionnaireQuestion = ({
   };
 
   const renderDisplayQuestion = () => (
-    <div className="space-y-4">
-      <Body1 className="text-2xl">{item.prefix}</Body1>
-      <Body1 className="mb-8 text-sm text-zinc-500">{item.text}</Body1>
+    <div className="space-y-6">
+      <Body1
+        className={cn('text-2xl', isRxSafetyIntroQuestion && 'lg:text-3xl')}
+      >
+        {item.prefix}
+      </Body1>
+      <Body1
+        className={cn(
+          'mb-8 text-sm text-zinc-500',
+          isRxSafetyIntroQuestion && 'text-base text-primary',
+        )}
+      >
+        {item.text}
+      </Body1>
+      {isRxSafetyIntroQuestion && (
+        <img src="/onboarding/rx.webp" alt="Superpower experience preview" />
+      )}
       {description && (
         <Body2 className="mb-10 text-secondary">{description}</Body2>
       )}
@@ -247,7 +262,12 @@ export const QuestionnaireQuestion = ({
       hasValidationErrors;
 
     return (
-      <div className="mt-12 flex flex-col gap-2 md:mt-0">
+      <div
+        className={cn(
+          'flex flex-col gap-2',
+          isRxSafetyIntroQuestion ? 'mt-auto' : 'mt-12 md:mt-0',
+        )}
+      >
         {showBackButton && (
           <button
             tabIndex={-1}
@@ -294,7 +314,11 @@ export const QuestionnaireQuestion = ({
               onClick={handleNextStep}
               disabled={disableAdvance}
             >
-              {item.linkId === 'intro' ? 'I Understand' : 'Next'}
+              {isRxSafetyIntroQuestion
+                ? 'Start'
+                : item.linkId === 'intro'
+                  ? 'I Understand'
+                  : 'Next'}
             </Button>
           </div>
         )}
@@ -322,7 +346,12 @@ export const QuestionnaireQuestion = ({
         </button>
       )}
       <SuperpowerLogo className="size-32 h-12 md:hidden" />
-      <div className="flex h-full flex-1 flex-col justify-between gap-6 md:translate-y-0 md:justify-start">
+      <div
+        className={cn(
+          'flex h-full flex-1 flex-col justify-between gap-6 md:translate-y-0',
+          isRxSafetyIntroQuestion ? 'md:justify-between' : 'md:justify-start',
+        )}
+      >
         {item.type === QuestionnaireItemType.group ? (
           renderGroupQuestion()
         ) : item.type === QuestionnaireItemType.display ? (
