@@ -3,6 +3,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { useQuestionnaire } from '@/features/questionnaires/api/get-questionnaire';
 import { useQuestionnaireResponse } from '@/features/questionnaires/api/get-questionnaire-response';
 import { useUpdateQuestionnaireResponse } from '@/features/questionnaires/api/update-questionnaire-response';
+import { useUser } from '@/lib/auth';
 import { QuestionnaireName } from '@/types/api';
 
 export const RxQuestionnaire = ({
@@ -15,7 +16,7 @@ export const RxQuestionnaire = ({
   onSubmit?: () => void;
 }) => {
   const updateQuestionnaireResponseMutation = useUpdateQuestionnaireResponse();
-
+  const { data: user } = useUser();
   const getQuestionnaireQuery = useQuestionnaire({
     questionnaireName: name,
   });
@@ -60,6 +61,7 @@ export const RxQuestionnaire = ({
         onSubmit && onSubmit();
       }}
       showIntro={showIntro}
+      user={user}
       className="space-y-6"
     />
   );
