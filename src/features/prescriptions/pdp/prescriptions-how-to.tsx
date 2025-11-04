@@ -16,8 +16,9 @@ const HOW_TO_STEPS = [
     imageAlt: 'Person completing questionnaire',
   },
   {
-    title: '2. Doctor consultation',
-    description: 'Video call with specialists who understand male metabolism.',
+    title: '2. Clinical Review',
+    description:
+      'Your Superpower clinical team (licensed physician) will review and approve.',
     imageSrc: '/rx/consultation.webp',
     imageAlt: 'Doctor during a virtual consultation',
   },

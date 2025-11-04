@@ -30,11 +30,6 @@ export const NAD_INTRANASAL = {
       answer:
         'NAD+ nasal spray supplements the essential coenzyme NAD+, crucial for energy metabolism, DNA repair, and cellular health. Intranasal administration enhances these cellular processes, potentially improving energy, focus, and well-being.',
     },
-    {
-      question: 'Active Ingredients?',
-      answer:
-        'The primary active ingredient is nicotinamide adenine dinucleotide (NAD+), supported by a saline carrier and stabilizing components for safe and efficient nasal delivery.',
-    },
   ],
   faq: [
     {
@@ -116,11 +111,6 @@ export const SERMORELIN_INJECTION = {
       answer:
         'Sermorelin acts as a GHRH analog, stimulating the pituitary gland to release growth hormone in a pulsatile manner. This, in turn, has downstream effects on IGF-1 production and various physiological processes related to growth and metabolism. It is often used in medical settings to address growth hormone deficiency and related conditions.',
     },
-    {
-      question: 'Active Ingredients?',
-      answer:
-        'Sermorelin is a synthetic peptide made up of a chain of amino acids, specifically 29 amino acids. The primary ingredient in sermorelin is the peptide itself, which mimics the effects of natural growth hormone-releasing hormone (GHRH) produced by the hypothalamus in the brain. Additionally, the formulation may include other compounds necessary for stability and administration, such as bacteriostatic water or other solvents used for reconstitution. ',
-    },
   ],
   faq: [
     {
@@ -200,11 +190,6 @@ export const VIP_NASAL_SPRAY = {
       question: 'How does it work?',
       answer:
         'VIP (Vasoactive Intestinal Peptide), a naturally occurring neuropeptide, plays a critical role in cellular communication and homeostasis. It binds to specific receptors to regulate inflammatory pathways, enhance immune function, and support vascular and respiratory health. By modulating cytokine production and promoting anti-inflammatory effects, VIP contributes to cellular repair and resilience. Current research explores its potential in treating conditions linked to chronic inflammation and immune dysregulation, as well as its broader applications in promoting overall vitality and well-being.',
-    },
-    {
-      question: 'Active Ingredients?',
-      answer:
-        'Vasoactive Intestinal Peptide (VIP): The active peptide, typically at a concentration prescribed by the physician (e.g., 50 mcg/mL or 100 mcg/mL).Sterile Water: Acts as the primary solvent for the peptide.Sodium Chloride (NaCl): Often included to make the solution isotonic and more comfortable for nasal administration.Benzyl Alcohol or Preservative: Sometimes used to maintain sterility and stability of the solution.Buffering Agents: Ingredients like sodium phosphate may be added to maintain a stable pH, ensuring the peptide remains effective.',
     },
   ],
   faq: [
@@ -290,11 +275,6 @@ export const SEMAGLUTIDE = {
       question: 'How does it work?',
       answer:
         'Semaglutide is designed to mimic a GLP-1, a hormone that we naturally produce when we eat to help control blood sugar levels. By mimicking this hormone, Semaglutide can help stimulate insulin production, suppress the release of glucagon, delay the rate at which your stomach empties & reduce your appetite.',
-    },
-    {
-      question: 'Active Ingredients?',
-      answer:
-        'Semaglutide is the primary active ingredient, which is the same as in commercial products like Ozempic® and Wegovy®. It’s a GLP-1 receptor agonist used to manage blood sugar levels and promote weight loss. Additional excipients, stabilizers and solvents are added to help with absorption.',
     },
   ],
   faq: [
@@ -407,10 +387,6 @@ Modern Evolution: Today; Gonadorelin is leveraged by forward-thinking men’s he
       question: 'How does it work?',
       answer: `Stimulates LH & FSH: Gonadorelin binds to GnRH receptors in your pituitary gland, prompting the release of Luteinizing Hormone (LH) and Follicle-Stimulating Hormone (FSH). These two key hormones drive testosterone production and support healthy sperm development.Physiological Pulses: Unlike simply substituting hormones (like hCG does), Gonadorelin coaxes your body to produce them naturally, potentially preserving or enhancing fertility and normal testicular function.Synergy with Testosterone: By naturally boosting LH, Gonadorelin supports your body’s own testosterone synthesis, helping balance energy, mood, and libido.`,
     },
-    {
-      question: 'Active Ingredients?',
-      answer: `Active Ingredient: Gonadorelin acetate (a synthetic version of the naturally occurring Gonadotropin-Releasing Hormone). Inactive Ingredients: May include sterile water, mannitol, or other stabilizers depending on the formulation.`,
-    },
   ],
   faq: [
     {
@@ -519,12 +495,6 @@ Tadalafil
 
 When combined, these three agents aim to address several aspects of sexual function—desire, arousal, and, in men, erectile function—by affecting both the central nervous system (hormonal/neurological pathways) and peripheral blood flow.`,
     },
-    {
-      question: 'Active Ingredients?',
-      answer: `- Oxytocin (40 IU)
-- Bremelanotide (2 mg)
-* Tadalafil (20 mg)`,
-    },
   ],
   faq: [
     {
@@ -613,10 +583,6 @@ export const TADALAFIL = {
       question: 'How does it work?',
       answer: `Tadalafil, a phosphodiesterase type 5 (PDE5) inhibitor, works by enhancing the effects of nitric oxide, a chemical that relaxes smooth muscles in the blood vessels. This relaxation increases blood flow to specific areas of the body, primarily assisting in the treatment of erectile dysfunction.`,
     },
-    {
-      question: 'Active Ingredients?',
-      answer: `Tadalafil, the active ingredient in Tadalafil medications, is a phosphodiesterase type 5 (PDE5) inhibitor. Inactive ingredients in Tadalafil tablets may include lactose monohydrate, hydroxypropyl cellulose, croscarmellose sodium, magnesium stearate, hypromellose, iron oxide, titanium dioxide, and triacetin.`,
-    },
   ],
   faq: [
     {
@@ -682,10 +648,6 @@ export const METFORMIN = {
     {
       question: 'How does it work?',
       answer: `Metformin, originally designed for diabetes management, is being explored for its potential in longevity and anti-aging. By improving insulin sensitivity and activating AMPK, it regulates glucose metabolism and cellular energy, contributing to potential anti-aging effects. Ongoing research focuses on understanding Metformin's impact on cellular processes and its role in promoting longevity.`,
-    },
-    {
-      question: 'Active Ingredients?',
-      answer: `The active ingredient in metformin is metformin hydrochloride. In addition to the active ingredient, metformin tablets may also contain inactive ingredients such as microcrystalline cellulose, magnesium stearate, hypromellose, and polyethylene glycol. These inactive ingredients serve various purposes, including as binders, lubricants, and fillers to form the tablet and aid in its dissolution.`,
     },
   ],
   faq: [
@@ -758,10 +720,6 @@ export const TRETINOIN = {
       question: 'How does it work?',
       answer: `Tretinoin, a derivative of vitamin A, works by modulating gene expression and protein synthesis via the activation of nuclear retinoic acid receptors. This process leads to increased epidermal turnover, comedolysis, modulation of keratinocyte differentiation, and stimulation of collagen production. As a result, tretinoin helps to clear pores, reduce inflammation, and improve the appearance of the skin.`,
     },
-    {
-      question: 'Active Ingredients?',
-      answer: `The primary active ingredient, Tretinoin, is a potent derivative of vitamin A. This promotes cellular renewal and collagen synthesis for visibly smoother, more refined skin. The formulation is balanced with Aloe Vera to calm and hydrate, helping reduce redness and irritation. A PracaSil-Plus base supports barrier repair and optimal absorption, while emollients and stabilizers ensure a silky, restorative finish.`,
-    },
   ],
   faq: [
     {
@@ -827,10 +785,6 @@ export const HCG = {
     {
       question: 'How does it work?',
       answer: `Human Chorionic Gonadotropin (HCG) operates by mimicking luteinizing hormone (LH) in the body. Structurally similar to LH, HCG stimulates the gonads—testes in males and ovaries in females—to produce sex hormones such as testosterone and estrogen. This mimicking action can help address hormonal imbalances and support fertility, making HCG a valuable tool in reproductive health.`,
-    },
-    {
-      question: 'Active Ingredients?',
-      answer: `The primary ingredient in HCG, or human chorionic gonadotropin, is a hormone produced during pregnancy. It is typically derived from the urine of pregnant women or produced synthetically. HCG products may also contain other inactive ingredients such as preservatives, stabilizers, and solvents to maintain the stability and effectiveness of the hormone.`,
     },
   ],
   faq: [
@@ -899,10 +853,6 @@ export const LOW_DOSE_NALTREXONE = {
     {
       question: 'How does it work?',
       answer: `Low Dose Naltrexone (LDN) operates by binding to and temporarily blocking opioid receptors, a mechanism typically associated with higher doses of the medication. At lower doses, approximately ranging from 1 to 5 mg, LDN is believed to stimulate the production of endorphins, the body's natural opioids. This unique modulation of endorphin levels contributes to its potential in immune modulation, anti-inflammatory effects, and influencing cellular processes for overall well-being.`,
-    },
-    {
-      question: 'Active Ingredients?',
-      answer: `The active ingredient in low dose naltrexone (LDN) is naltrexone hydrochloride, typically administered in very low doses ranging from 1.5 to 4.5 milligrams. In addition to the active ingredient, LDN formulations may contain inactive ingredients such as fillers, binders, and coating agents to facilitate proper dosage form and administration.`,
     },
   ],
   faq: [
@@ -1007,10 +957,6 @@ export const VITAMIN_B12_INJECTION = {
       question: 'How does it work?',
       answer: `B12 injections primarily function by delivering a concentrated dose of vitamin B12 directly into the bloodstream. Vitamin B12, also known as cobalamin, plays a crucial role in various physiological processes within the body. Once administered, B12 is readily absorbed and utilized in cellular metabolism, particularly in the synthesis of DNA, red blood cells, and the maintenance of the nervous system. This injection method ensures swift absorption, making it an effective strategy for addressing B12 deficiency and supporting overall health.`,
     },
-    {
-      question: 'Active Ingredients?',
-      answer: `B12 injections contain cyanocobalamin, a synthetic form of vitamin B12, along with sterile water and sometimes other additives for preservation. These injections provide a direct and efficient way to deliver a concentrated dose of vitamin B12, bypassing the digestive system for maximum absorption and effectiveness.`,
-    },
   ],
   faq: [
     {
@@ -1094,10 +1040,6 @@ export const GHK_CU_CREAM = {
       question: 'How does it work?',
       answer: `GHK-Cu (Glycyl-L-Histidyl-L-Lysine Copper), a naturally occurring tripeptide, plays a pivotal role in skin repair and regeneration. It binds to copper ions, activating processes that stimulate collagen production, enhance tissue remodeling, and reduce inflammation. By promoting antioxidant activity and supporting cellular communication, GHK-Cu strengthens the skin barrier, improves elasticity, and accelerates healing. Current research highlights its potential in addressing signs of aging, hyperpigmentation, and scarring, while its broader applications in skin rejuvenation and overall health continue to inspire innovation in dermatological care.`,
     },
-    {
-      question: 'Active Ingredients?',
-      answer: `GHK-Cu (Copper Tripeptide-1) – 0.5%: The primary active ingredient known for stimulating collagen production, enhancing skin repair, and improving elasticity. Purified Water (Aqua): Serves as the base solvent for the cream, ensuring proper consistency and hydration. Glycerin: A humectant that attracts moisture to the skin, enhancing hydration and smoothness.`,
-    },
   ],
   faq: [
     {
@@ -1157,10 +1099,6 @@ export const NAD_INJECTION = {
     {
       question: 'How does it work?',
       answer: `NAD+ injection functions by supplementing the cellular coenzyme nicotinamide adenine dinucleotide (NAD+), a crucial player in various metabolic processes. As cells metabolize nutrients, NAD+ plays a vital role in facilitating energy production, DNA repair, and cellular resilience. Administering NAD+ through injections aims to enhance these cellular processes, supporting overall cellular health, energy metabolism, and potentially contributing to improved well-being.`,
-    },
-    {
-      question: 'Active Ingredients?',
-      answer: `NAD+ injections typically contain Nicotinamide Adenine Dinucleotide (NAD+), a coenzyme naturally produced in the body that plays a crucial role in cellular energy production and DNA repair.`,
     },
   ],
   faq: [
@@ -1258,10 +1196,6 @@ export const ENCLOMIPHENE = {
       question: 'How does it work?',
       answer: `Enclomiphene, a selective estrogen receptor modulator (SERM), operates by binding to estrogen receptors in the hypothalamus, a region of the brain that plays a crucial role in regulating hormonal balance. By doing so, enclomiphene blocks the negative feedback effects of estrogen, leading to an increase in the secretion of gonadotropin-releasing hormone (GnRH). This heightened GnRH production subsequently stimulates the release of follicle-stimulating hormone (FSH) and luteinizing hormone (LH), ultimately leading to the stimulation of testosterone production in men.`,
     },
-    {
-      question: 'Active Ingredients?',
-      answer: `Enclomiphene citrate, the active pharmaceutical ingredient, is the primary component of enclomiphene. It's formulated with inactive ingredients like microcrystalline cellulose, lactose monohydrate, magnesium stearate, and colloidal silicon dioxide to form tablets for oral administration.`,
-    },
   ],
   faq: [
     {
@@ -1354,10 +1288,6 @@ export const SERMORELIN_TROCHES = {
     {
       question: 'How does it work?',
       answer: `Sermorelin acts as a GHRH analog, stimulating the pituitary gland to release growth hormone in a pulsatile manner. This, in turn, has downstream effects on IGF-1 production and various physiological processes related to growth and metabolism. It is often used in medical settings to address growth hormone deficiency and related conditions.`,
-    },
-    {
-      question: 'Active Ingredients?',
-      answer: `Sermorelin is a synthetic peptide made up of a chain of amino acids, specifically 29 amino acids. The primary ingredient in sermorelin is the peptide itself, which mimics the effects of natural growth hormone-releasing hormone (GHRH) produced by the hypothalamus in the brain. Additionally, the formulation may include other compounds necessary for stability and administration, such as bacteriostatic water or other solvents used for reconstitution. `,
     },
   ],
   faq: [
