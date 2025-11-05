@@ -165,6 +165,14 @@ aws s3 cp dist/ "s3://${APP_BUCKET}/" \
   --exclude "*" \
   --include "*.riv"
 
+
+aws s3 cp dist/ "s3://${APP_BUCKET}/" \
+  --recursive \
+  --content-type "model/gltf-binary" \
+  --cache-control "public, max-age=31536000" \
+  --exclude "*" \
+  --include "*.glb"
+
 aws s3 cp dist/.well-known/apple-app-site-association "s3://${APP_BUCKET}/.well-known/apple-app-site-association" \
   --content-type "application/json" \
   --cache-control "public, max-age=31536000"
