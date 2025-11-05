@@ -34,7 +34,7 @@ export const MarketplaceSearch = ({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
-        className="h-10 rounded-full border-none bg-zinc-100 px-12 font-normal text-primary caret-primary shadow-none placeholder:text-zinc-400 focus-visible:bg-zinc-100 focus-visible:ring-0 focus-visible:ring-transparent focus-visible:ring-offset-0 md:h-11"
+        className="h-10 rounded-full border-none bg-zinc-100 px-12 font-normal text-primary caret-primary shadow-none transition-none placeholder:text-zinc-400 focus:outline-none focus:ring-0 focus:ring-transparent focus:ring-offset-0 focus:transition-none focus-visible:bg-zinc-100 focus-visible:ring-0 focus-visible:ring-transparent focus-visible:ring-offset-0 md:h-11"
       />
       {showClearButton ? (
         <button
