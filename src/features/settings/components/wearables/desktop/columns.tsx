@@ -30,7 +30,7 @@ export const columns: ColumnDef<Wearable>[] = [
     },
     cell: ({ row }) => {
       return (
-        <div className="flex items-center gap-x-2 md:max-w-[280px] lg:max-w-[400px]">
+        <div className="flex w-full items-center gap-x-2 md:max-w-[280px] lg:max-w-[400px] xl:max-w-none">
           <img
             src={row.original.logo}
             alt={row.original.provider}

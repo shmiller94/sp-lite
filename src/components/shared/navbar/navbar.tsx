@@ -73,7 +73,6 @@ export const Navbar = () => {
 };
 
 const lightNavPaths = ['/', '/invite'];
-const marketplace = ['/marketplace', '/prescriptions'];
 const blurThresholds: Record<string, number> = {
   '/': 621,
   '/invite': 500,
@@ -84,9 +83,6 @@ export const DesktopNavbar = () => {
   const { pathname } = useLocation();
 
   const isLight = lightNavPaths.includes(pathname);
-  const isMarketplace = marketplace.some((prefix) =>
-    pathname.startsWith(prefix),
-  );
   const isBlurred = useScrollThreshold({
     thresholdPx: blurThresholds[pathname] || 10,
   });
@@ -107,33 +103,16 @@ export const DesktopNavbar = () => {
   /* This is a hack because the sizes differ on different routes
      This should be refactored asap */
 
-  const hasOnlyBaseLinks = allLinks.length <= baseLinks.length;
-  let maxWidthClass = 'max-w-[1600px]';
-
-  if (hasOnlyBaseLinks) {
-    maxWidthClass = 'max-w-6xl';
-  }
-
-  if (isMarketplace) {
-    maxWidthClass = 'max-w-[1325px]';
-  }
-
   return (
     <nav
       className={cn(
-        'sticky top-0 z-[49] hidden w-full lg:block transition-colors duration-200 px-4',
-        isMarketplace && 'px-16',
+        'sticky top-0 z-[49] hidden w-full lg:block transition-colors duration-200 px-16',
         isBlurred
           ? 'bg-opacity-10 bg-white backdrop-blur-sm rounded-b-2xl'
           : null,
       )}
     >
-      <div
-        className={cn(
-          'mx-auto flex w-full items-center justify-between gap-2 lg:gap-8 py-3',
-          maxWidthClass,
-        )}
-      >
+      <div className="mx-auto flex w-full max-w-[1600px] items-center justify-between gap-2 px-16 py-3 lg:gap-8">
         <div className="flex flex-1">
           <NavLink
             to="/"

@@ -147,7 +147,7 @@ export function Chat({
     <>
       <div
         className={cn(
-          'mx-auto flex w-full min-w-0 max-w-[592px] flex-1 flex-col',
+          'mx-auto flex w-full min-w-0 max-w-3xl flex-1 flex-col',
           messages.length > 0 ? 'justify-start' : 'justify-between',
         )}
       >

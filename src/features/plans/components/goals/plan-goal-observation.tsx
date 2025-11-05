@@ -1,5 +1,6 @@
 import { Circle } from 'lucide-react';
 
+import { SparklineChart } from '@/components/ui/charts/sparkline-chart/sparkline-chart';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   Tooltip,
@@ -9,11 +10,10 @@ import {
 } from '@/components/ui/tooltip';
 import { Body2 } from '@/components/ui/typography';
 import { STATUS_TO_COLOR } from '@/const/status-to-color';
-import { useBiomarkers } from '@/features/biomarkers/api';
-import { BiomarkerTableDialogRow } from '@/features/biomarkers/components/biomarkers-data-table/biomarker-table-dialog-row';
-import { BiomarkerSparklineChart } from '@/features/biomarkers/components/charts/biomarker-sparkline-chart';
-import { BiomarkerRange } from '@/features/biomarkers/components/range';
-import { BiomarkerValueUnit } from '@/features/biomarkers/components/value-unit';
+import { useBiomarkers } from '@/features/data/api';
+import { BiomarkerDialog } from '@/features/data/components/dialogs/biomarker-dialog';
+import { BiomarkerRange } from '@/features/data/components/range';
+import { BiomarkerValueUnit } from '@/features/data/components/value-unit';
 import { cn } from '@/lib/utils';
 
 export type PlanObservationProps = {
@@ -39,7 +39,7 @@ export function PlanGoalObservation({ id, className }: PlanObservationProps) {
   const { status, name } = biomarker;
 
   return (
-    <BiomarkerTableDialogRow biomarker={biomarker}>
+    <BiomarkerDialog biomarker={biomarker}>
       <div
         className={cn(
           'flex bg-white h-20 transition-all hover:bg-zinc-50 grow items-center justify-between rounded-2xl border border-zinc-200 shadow shadow-black/[0.025] py-2.5 pl-6 pr-3 hover:cursor-pointer',
@@ -89,15 +89,9 @@ export function PlanGoalObservation({ id, className }: PlanObservationProps) {
               </Tooltip>
             </div>
           </TooltipProvider>
-          <BiomarkerSparklineChart
-            biomarker={biomarker}
-            className="h-full sm:ml-0"
-            height={44}
-            markerRadius={8}
-            markerLineWidth={1}
-          />
+          <SparklineChart biomarker={biomarker} />
         </div>
       </div>
-    </BiomarkerTableDialogRow>
+    </BiomarkerDialog>
   );
 }

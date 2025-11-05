@@ -2,7 +2,7 @@ import { CarePlan as FhirCarePlan } from '@medplum/fhirtypes';
 
 import { MainErrorFallback } from '@/components/errors/main';
 import { Spinner } from '@/components/ui/spinner';
-import { useBiomarkers } from '@/features/biomarkers/api/get-biomarkers';
+import { useBiomarkers } from '@/features/data/api';
 import { usePlan } from '@/features/plans/api/get-plan';
 import { useProducts } from '@/features/supplements/api';
 
@@ -64,9 +64,9 @@ export function CarePlan({ id }: { id: string }) {
   return (
     <div className="mt-6 w-full bg-zinc-50">
       <CarePlanProvider plan={actionPlan} isAnnualReport={isAnnualReport}>
-        <div className="relative mx-auto flex size-full h-full max-w-6xl flex-col px-6 lg:flex-row lg:gap-10 lg:px-0">
+        <div className="relative mx-auto flex size-full h-full max-w-[1600px] flex-col px-6 lg:flex-row lg:gap-10 lg:px-16">
           <CarePlanSidebar />
-          <div className="flex flex-1 flex-col pt-10">
+          <div className="mx-auto flex max-w-3xl flex-1 flex-col pt-10">
             <CarePlanContent />
           </div>
           <div className="hidden w-full max-w-48 shrink-0 lg:block" />

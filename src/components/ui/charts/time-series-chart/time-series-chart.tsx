@@ -495,7 +495,7 @@ export const TimeSeriesChart = ({
                   </div>
                   <Button
                     onClick={() => {
-                      navigate('/services');
+                      navigate('/marketplace');
                     }}
                     size="small"
                     className="w-full rounded-md"

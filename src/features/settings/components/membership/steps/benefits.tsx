@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
-import { useBiomarkers } from '@/features/biomarkers/api/get-biomarkers';
+import { useBiomarkers } from '@/features/data/api';
 import { MEMBERSHIP_BENEFITS } from '@/features/settings/const/membership-benefits';
 import { useMembership } from '@/features/settings/stores/membership-store';
 import { useUser } from '@/lib/auth';

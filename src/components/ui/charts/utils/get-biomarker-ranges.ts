@@ -3,7 +3,7 @@ import { Biomarker, Lab, Range } from '@/types/api';
 export interface BiomarkerRangeInfo {
   ranges: Range[];
   lastValue: Biomarker['value'][0] | null;
-  lastValueSource: string;
+  lastValueSource: Lab;
   sortedValues: Biomarker['value'];
 }
 
@@ -21,7 +21,7 @@ export const getBiomarkerRanges = (
   );
 
   const lastValue = sortedValues[0] || null;
-  const lastValueSource = lastValue?.source || 'quest';
+  let lastValueSource = lastValue?.source || 'quest';
 
   // Read the last value source
   let ranges =
@@ -39,6 +39,7 @@ export const getBiomarkerRanges = (
         biomarker.ranges[source]?.length
       ) {
         ranges = biomarker.ranges[source] || [];
+        lastValueSource = source;
         break;
       }
     }

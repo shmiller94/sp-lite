@@ -2,7 +2,7 @@ import { LockIcon } from '@/components/icons';
 import { ArrowTopRight } from '@/components/icons/arrow-top-right-icon';
 import NumberFlow from '@/components/shared/number-flow';
 import { Body2, H4 } from '@/components/ui/typography';
-import { useBiologicalAge } from '@/features/biomarkers/hooks/use-biological-age';
+import { useBiologicalAge } from '@/features/data/hooks/use-biological-age';
 import { ShareableCardsModal } from '@/features/shareables/components/shareable-cards-modal';
 
 import { GreetingCard } from './greeting-card';

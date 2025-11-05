@@ -13,12 +13,12 @@ export const ChatSuggestion = ({
   return (
     <button
       className={cn(
-        'group rounded-full border border-zinc-200 px-4 py-2 text-left transition-all duration-200 animate-in fade-in slide-in-from-bottom-2 hover:bg-zinc-50',
+        'group rounded-2xl border border-zinc-200 px-4 py-2 text-left transition-all duration-200 animate-in fade-in slide-in-from-bottom-2 hover:bg-zinc-50',
         className,
       )}
       onClick={onClick}
     >
-      <Body2 className="line-clamp-1 text-zinc-400 transition-all duration-200 group-hover:text-zinc-700">
+      <Body2 className="text-zinc-400 transition-all duration-200 group-hover:text-zinc-700">
         {suggestion}
       </Body2>
     </button>

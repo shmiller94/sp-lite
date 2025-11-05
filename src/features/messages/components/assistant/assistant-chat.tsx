@@ -1,6 +1,7 @@
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport, FileUIPart, type DataUIPart } from 'ai';
 import { useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { z } from 'zod';
 
 import { env } from '@/config/env';
@@ -8,6 +9,7 @@ import { useHistory } from '@/features/messages/api/get-history';
 import { MultimodalInput } from '@/features/messages/components/ai/multimodal-input';
 import { AssistantMessages } from '@/features/messages/components/assistant/assistant-messages';
 import { useSuggestions } from '@/features/messages/hooks/use-suggestions';
+import { useAssistantStore } from '@/features/messages/stores/assistant-store';
 import { getFollowupString } from '@/features/messages/utils/data-parts';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { cn, getActiveLogin } from '@/lib/utils';
@@ -26,13 +28,16 @@ export function AssistantChat({
 }) {
   const { refetch } = useHistory();
   const { track } = useAnalytics();
+  const { pathname } = useLocation();
 
   const [id] = useState<string>(chatId);
 
   const [lastSentMessageTime, setLastSentMessageTime] = useState<number | null>(
     null,
   );
-  const [input, setInput] = useState('');
+  // input is handled by custom store to avoid additional effects to sync preset inputs
+  const input = useAssistantStore((s) => s.input);
+  const setInput = useAssistantStore((s) => s.setInput);
   const [attachments, setAttachments] = useState<Array<FileUIPart>>([]);
   const updateSuggestionsRef = useRef<(s: string | string[]) => void>(() => {});
 
@@ -100,6 +105,7 @@ export function AssistantChat({
   const { suggestions, updateSuggestions, clearSuggestions } = useSuggestions({
     enabled: isActive && messages.length === 0,
     max: 3,
+    context: `I'm currently visiting ${pathname} in the Superpower app, please give me some suggestions based on this.`,
   });
   // Keep ref in sync for the onData callback defined above.
   updateSuggestionsRef.current = updateSuggestions;

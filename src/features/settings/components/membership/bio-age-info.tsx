@@ -1,6 +1,6 @@
 import { Body1, H2 } from '@/components/ui/typography';
-import { useBiomarkers } from '@/features/biomarkers/api';
-import { mostRecent } from '@/features/biomarkers/utils/most-recent-biomarker';
+import { useBiomarkers } from '@/features/data/api';
+import { mostRecent } from '@/features/data/utils/most-recent-biomarker';
 
 export const BIO_AGE = 'Biological Age';
 

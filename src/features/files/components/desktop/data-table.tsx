@@ -17,12 +17,6 @@ import {
   TableBody,
   TableCell,
 } from '@/components/ui/table';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 
 interface DataTableProps<TData, TValue> {
@@ -58,59 +52,40 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <Card className="hidden md:block">
-      <TooltipProvider>
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow
-                key={headerGroup.id}
-                className="text-base hover:bg-transparent [&>*:first-child]:pl-12 [&>*:last-child]:pr-12"
-              >
-                {headerGroup.headers.map((header) => {
-                  const tooltipContent = (
-                    header.column.columnDef.meta as { tooltip?: string }
-                  )?.tooltip;
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder ? null : tooltipContent ? (
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div className="relative inline-block cursor-pointer">
-                              <div>
-                                {flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext(),
-                                )}
-                              </div>
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent className="max-w-[250px]">
-                            {tooltipContent}
-                          </TooltipContent>
-                        </Tooltip>
-                      ) : (
-                        flexRender(
+    <Card className="hidden pb-4 md:block">
+      <Table className="duration-500 animate-in fade-in">
+        <TableHeader>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow
+              key={headerGroup.id}
+              className="text-sm hover:bg-transparent [&>*:first-child]:pl-12 [&>*:last-child]:pr-12"
+            >
+              {headerGroup.headers.map((header) => {
+                return (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
                           header.column.columnDef.header,
                           header.getContext(),
-                        )
-                      )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+                        )}
+                  </TableHead>
+                );
+              })}
+            </TableRow>
+          ))}
+        </TableHeader>
+        <TableBody className="[&_tr:first-child_td]:pt-6">
+          {table.getRowModel().rows?.length ? (
+            table.getRowModel().rows.map((row, index) => (
+              <>
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className="group p-6 text-base text-zinc-500 [&>*:first-child]:pl-12 [&>*:last-child]:pr-12"
+                  className="group relative rounded-lg border-none p-6 text-base after:absolute after:inset-x-4 after:bottom-0 after:z-0 after:h-14 after:rounded-xl after:opacity-0 after:transition-colors after:duration-500 after:ease-out after:content-[''] hover:bg-transparent hover:after:bg-zinc-100 hover:after:opacity-100 [&>*:first-child]:pl-12 [&>*:last-child]:pr-12"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="relative z-10">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),
@@ -118,13 +93,18 @@ export function DataTable<TData, TValue>({
                     </TableCell>
                   ))}
                 </TableRow>
-              ))
-            ) : (
-              <></>
-            )}
-          </TableBody>
-        </Table>
-      </TooltipProvider>
+                {index !== table.getRowModel().rows.length - 1 && (
+                  <div className="my-2 w-full px-12">
+                    <div className="absolute left-1/2 -mt-1 h-px w-[calc(100%-2rem)] -translate-x-1/2 bg-zinc-100" />
+                  </div>
+                )}
+              </>
+            ))
+          ) : (
+            <></>
+          )}
+        </TableBody>
+      </Table>
     </Card>
   );
 }

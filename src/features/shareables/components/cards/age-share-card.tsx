@@ -1,8 +1,8 @@
 import { Hover3D } from '@/components/ui/hover-3d';
 import { Switch } from '@/components/ui/switch';
 import { Body1, Body2, H4 } from '@/components/ui/typography';
-import { useBiomarkers } from '@/features/biomarkers/api';
-import { mostRecent } from '@/features/biomarkers/utils/most-recent-biomarker';
+import { useBiomarkers } from '@/features/data/api';
+import { mostRecent } from '@/features/data/utils/most-recent-biomarker';
 import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 import { yearsSinceDate } from '@/utils/format';
@@ -74,7 +74,7 @@ export const AgeShareCard = ({
                 </H4>
                 <span
                   className={cn(
-                    'mr-2 mt-1 text-3xl transition-all text-white overflow-hidden text-ellipsis',
+                    'mr-1 text-3xl transition-all text-white overflow-hidden text-ellipsis',
                     !showAge
                       ? 'max-w-0 opacity-0 -mr-4'
                       : 'max-w-16 opacity-100',

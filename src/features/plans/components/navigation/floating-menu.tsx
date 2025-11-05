@@ -4,7 +4,7 @@ import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 
 import { Body1 } from '@/components/ui/typography';
-import { useBiomarkers } from '@/features/biomarkers/api';
+import { useBiomarkers } from '@/features/data/api';
 import { useProducts } from '@/features/supplements/api';
 import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';

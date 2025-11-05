@@ -92,7 +92,11 @@ module.exports = {
                 // exception here to import useTask to check onboarding state in auth.tsx
                 // exception 2 here to import AddressDialog in app layout
                 // exception 3 here to import ConsentModal in app layout
-                except: ['./tasks/api/get-task.ts', './users/components/dialogs/address-dialog.tsx', './consent/components/consent-dialog']
+                except: [
+                  './tasks/api/get-task.ts',
+                  './users/components/dialogs/address-dialog.tsx',
+                  './consent/components/consent-dialog',
+                ],
               },
             ],
           },
@@ -135,6 +139,12 @@ module.exports = {
             ignoreMiddleExtensions: true,
           },
         ],
+      },
+    },
+    {
+      files: ['src/features/digital-twin/**/*.{js,jsx,ts,tsx}'],
+      rules: {
+        'react/no-unknown-property': 'off',
       },
     },
     {

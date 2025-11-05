@@ -7,7 +7,7 @@ export const MarketplaceRoute = () => {
   return (
     <ContentLayout
       title="Marketplace"
-      className="max-w-[1453px] py-0 md:space-y-6"
+      className="max-w-[1600px] py-0 md:space-y-6"
     >
       <Header
         title="Marketplace"

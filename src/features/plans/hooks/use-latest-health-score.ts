@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 
 import { HEALTH_OPTIMIZATION } from '@/const/health-score';
-import { useBiomarkers } from '@/features/biomarkers/api';
-import { mostRecent } from '@/features/biomarkers/utils/most-recent-biomarker';
+import { useBiomarkers } from '@/features/data/api';
+import { mostRecent } from '@/features/data/utils/most-recent-biomarker';
 import { Biomarker, BiomarkerComponent, BiomarkerResult } from '@/types/api';
 
 interface UseLatestHealthScoreReturn {

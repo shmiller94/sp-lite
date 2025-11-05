@@ -10,9 +10,11 @@ import { getActiveLogin } from '@/lib/utils';
 export function useSuggestions({
   enabled,
   max = 3,
+  context,
 }: {
   enabled: boolean;
   max: number;
+  context?: string;
 }) {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const startedRef = useRef(false);
@@ -32,7 +34,7 @@ export function useSuggestions({
     setSuggestions([]);
   };
 
-  const { sendMessage, stop } = useChat({
+  const { sendMessage, stop, status } = useChat({
     transport: new DefaultChatTransport({
       api: `${env.API_URL}/chat`,
       headers: {
@@ -65,13 +67,13 @@ export function useSuggestions({
     if (startedRef.current) return;
     startedRef.current = true;
 
-    // seed empty user message
+    // seed user message (optional context)
     sendMessage({
       role: 'user',
       parts: [
         {
           type: 'text',
-          text: '',
+          text: context ?? '',
         },
       ],
     });
@@ -80,7 +82,9 @@ export function useSuggestions({
       stop();
       startedRef.current = false;
     };
-  }, [enabled, max, sendMessage, stop]);
+  }, [enabled, max, sendMessage, stop, context]);
 
-  return { suggestions, updateSuggestions, clearSuggestions };
+  const isLoading = status === 'submitted' || status === 'streaming';
+
+  return { suggestions, updateSuggestions, clearSuggestions, isLoading };
 }

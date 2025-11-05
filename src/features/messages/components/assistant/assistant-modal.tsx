@@ -13,15 +13,19 @@ import {
 } from '@/components/ui/tooltip';
 import { AnimatedIcon } from '@/features/messages/components/ai/animated-icon';
 import { useResizeAssistant } from '@/features/messages/hooks/use-resize-assistant';
+import { useAssistantStore } from '@/features/messages/stores/assistant-store';
 import { cn } from '@/lib/utils';
 import { generateUUID } from '@/utils/generate-uiud';
 
 import { AssistantChat } from './assistant-chat';
 
 export const AssistantModal = () => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const isExpanded = useAssistantStore((s) => s.isExpanded);
+  const open = useAssistantStore((s) => s.open);
+  const close = useAssistantStore((s) => s.close);
   const { width, height, setSize, minConstraints, maxConstraints } =
     useResizeAssistant();
+
   const [isResizing, setIsResizing] = useState(false);
   const collapsedHeight = 48; // equals Tailwind h-12
   const navigate = useNavigate();
@@ -80,7 +84,7 @@ export const AssistantModal = () => {
         tabIndex={!isExpanded ? 0 : -1}
         aria-expanded={isExpanded}
         onClick={() => {
-          if (!isExpanded) setIsExpanded(true);
+          if (!isExpanded) open();
         }}
         className={cn(
           'relative flex gap-2 flex-col border border-zinc-200 bg-white px-4 py-3 shadow-lg shadow-black/[.07] transition-all ease-out duration-200',
@@ -115,7 +119,7 @@ export const AssistantModal = () => {
                   <Button
                     onClick={() => {
                       navigate(`/concierge/${chatId}`);
-                      setIsExpanded(false);
+                      close();
                     }}
                     variant="white"
                     className="aspect-square rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-primary"
@@ -128,7 +132,7 @@ export const AssistantModal = () => {
               <Tooltip>
                 <TooltipTrigger>
                   <Button
-                    onClick={() => setIsExpanded(false)}
+                    onClick={() => close()}
                     variant="white"
                     className="aspect-square rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-primary"
                   >

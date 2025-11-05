@@ -33,5 +33,13 @@ export default defineConfig({
       include: ['src/**'],
     },
   },
-  optimizeDeps: { exclude: ['fsevents'] },
+  optimizeDeps: {
+    include: [
+      'three',
+      '@react-three/fiber',
+      '@react-three/drei',
+      'three-stdlib',
+    ],
+    exclude: ['fsevents'],
+  },
 });

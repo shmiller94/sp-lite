@@ -187,6 +187,15 @@ export type Lab = 'quest' | 'labcorp' | 'bioref' | 'custom'; // custom is e.g. f
 
 export type LabRanges = Record<Lab, Range[]>;
 
+/* CATEGORIES */
+export type CategoryValue = 'A' | 'B' | 'C' | '-';
+
+export interface Category {
+  category: string;
+  value: CategoryValue;
+  relatedBiomarkers?: string[];
+}
+
 /* BIOMARKERS */
 export type Biomarker = Entity<{
   id?: string;
@@ -627,7 +636,7 @@ export type FileProcessingStatus =
 export type File = {
   id: string;
   name: string;
-  contentType: FileContentType;
+  contentType: FileContentType | 'test';
   uploadedAt: string;
   status: string;
   processingStatus: FileProcessingStatus;
@@ -636,6 +645,7 @@ export type File = {
   orderId?: string;
   deletable: boolean;
   presignedUrl?: string;
+  image?: string;
 };
 
 export type UploadFileFailedResult = {

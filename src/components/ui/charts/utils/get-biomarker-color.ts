@@ -1,7 +1,5 @@
 import { STATUS_TO_COLOR } from '@/const/status-to-color';
-import { BiomarkerStatus } from '@/types/api';
-
-import { CategoryValue } from '../types/categories';
+import { BiomarkerStatus, CategoryValue } from '@/types/api';
 
 export const getBiomarkerColor = (
   value: CategoryValue | BiomarkerStatus,

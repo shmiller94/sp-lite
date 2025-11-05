@@ -4,12 +4,12 @@ import Autoplay, { AutoplayOptionsType } from 'embla-carousel-autoplay';
 import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronRightIcon } from 'lucide-react';
 import React, {
+  createContext,
   forwardRef,
   useCallback,
   useContext,
   useEffect,
   useState,
-  createContext,
 } from 'react';
 
 /**
@@ -451,12 +451,12 @@ CarouselNext.displayName = 'CarouselNext';
 
 export {
   Carousel,
+  CarouselIndicator,
   CarouselMainContainer,
+  CarouselNext,
+  CarouselPrevious,
   CarouselThumbsContainer,
   SliderMainItem,
   SliderThumbItem,
-  CarouselIndicator,
-  CarouselPrevious,
-  CarouselNext,
   useCarousel,
 };

@@ -1,7 +1,7 @@
 import { Body2, H4 } from '@/components/ui/typography';
 import { STATUS_TO_COLOR } from '@/const/status-to-color';
-import { useBiomarkers } from '@/features/biomarkers/api';
-import { biomarkerStatusCount } from '@/features/biomarkers/utils/biomarkers-status-count';
+import { useBiomarkers } from '@/features/data/api';
+import { biomarkerStatusCount } from '@/features/data/utils/biomarkers-status-count';
 
 export const BiomarkerDistributionBar = () => {
   const { data: biomarkersData } = useBiomarkers();

@@ -4,8 +4,8 @@ import NumberFlow from '@/components/shared/number-flow';
 import { SuperpowerScoreLogo } from '@/components/shared/score-logo';
 import { Body2 } from '@/components/ui/typography';
 import { SCORE_MESSAGES } from '@/const/score-messages';
-import { useBiomarkers } from '@/features/biomarkers/api';
-import { mostRecent } from '@/features/biomarkers/utils/most-recent-biomarker';
+import { useBiomarkers } from '@/features/data/api';
+import { mostRecent } from '@/features/data/utils/most-recent-biomarker';
 import { ShareableCardsModal } from '@/features/shareables/components/shareable-cards-modal';
 
 import { GreetingCard } from './greeting-card';

@@ -2,8 +2,8 @@ import { SuperpowerScoreLogo } from '@/components/shared/score-logo';
 import { Hover3D } from '@/components/ui/hover-3d';
 import { Body1, Body2 } from '@/components/ui/typography';
 import { SCORE_MESSAGES } from '@/const/score-messages';
-import { useBiomarkers } from '@/features/biomarkers/api';
-import { mostRecent } from '@/features/biomarkers/utils/most-recent-biomarker';
+import { useBiomarkers } from '@/features/data/api';
+import { mostRecent } from '@/features/data/utils/most-recent-biomarker';
 import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 

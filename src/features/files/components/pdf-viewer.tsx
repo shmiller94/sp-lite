@@ -2,6 +2,7 @@ import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 
 import { useResizeObserver } from '@wojtekmaj/react-hooks';
+import { format } from 'date-fns';
 import { Download, Trash2, X } from 'lucide-react';
 import type { PDFDocumentProxy } from 'pdfjs-dist';
 import { useCallback, useEffect, useState } from 'react';
@@ -14,10 +15,10 @@ import {
 } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Body1 } from '@/components/ui/typography';
+import { Body1, Body2 } from '@/components/ui/typography';
 import { useDownloadFile } from '@/features/files/api/download-file';
 import { useGetFileUrl } from '@/features/files/api/get-file-url';
-import { ConfirmDelete } from '@/features/files/components/confirm-delete';
+import { ConfirmDelete } from '@/features/files/components/file-dialogs/confirm-delete';
 import { downloadBlob } from '@/features/files/utils/download-blob';
 
 interface PdfViewerProps {
@@ -90,31 +91,40 @@ export const PdfViewer = ({ id, name }: PdfViewerProps) => {
   return (
     <div
       ref={setContainerRef}
-      className="relative gap-0 overflow-y-scroll scrollbar scrollbar-track-vermillion-300 scrollbar-thumb-vermillion-700"
+      className="relative gap-0 overflow-y-scroll p-4 pt-0 scrollbar scrollbar-track-transparent scrollbar-thumb-zinc-300"
     >
-      <div className="ml-auto flex items-start gap-2">
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <div className="cursor-pointer rounded-sm p-3 opacity-70 ring-offset-background transition-opacity data-[state=open]:bg-accent data-[state=open]:text-muted-foreground hover:opacity-100 focus:outline-none disabled:pointer-events-none">
-              <Trash2 className="size-5 md:size-6" color="#B90090" />
-            </div>
-          </AlertDialogTrigger>
-          <ConfirmDelete fileId={id} />
-        </AlertDialog>
-        <div
-          role="presentation"
-          onClick={onDownload}
-          className="cursor-pointer rounded-sm p-3 opacity-70 ring-offset-background transition-opacity data-[state=open]:bg-accent data-[state=open]:text-muted-foreground hover:opacity-100 focus:outline-none disabled:pointer-events-none"
-        >
-          <Download className="size-5 md:size-6" />
+      <div className="sticky top-0 z-20 ml-auto flex items-center justify-between gap-4 bg-background/80 backdrop-blur-lg">
+        <Body2 className="truncate">{data?.file.name}</Body2>
+        <div className="ml-auto flex items-center justify-end gap-0">
+          {data?.file && (
+            <Body2 className="mr-4 text-zinc-500">
+              {format(data.file.uploadedAt, 'MMM d, yyyy')}
+            </Body2>
+          )}
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <div className="cursor-pointer rounded-sm p-3 opacity-70 ring-offset-background transition-opacity data-[state=open]:bg-accent data-[state=open]:text-muted-foreground hover:opacity-100 focus:outline-none disabled:pointer-events-none">
+                <Trash2 className="size-5 md:size-5" />
+              </div>
+            </AlertDialogTrigger>
+            <ConfirmDelete fileId={id} />
+          </AlertDialog>
+          <div
+            role="presentation"
+            onClick={onDownload}
+            className="cursor-pointer rounded-sm p-3 opacity-70 ring-offset-background transition-opacity data-[state=open]:bg-accent data-[state=open]:text-muted-foreground hover:opacity-100 focus:outline-none disabled:pointer-events-none"
+          >
+            <Download className="size-5 md:size-5" />
+          </div>
+          <DialogClose className="rounded-sm p-3 opacity-70 ring-offset-background transition-opacity data-[state=open]:bg-accent data-[state=open]:text-muted-foreground hover:opacity-100 focus:outline-none disabled:pointer-events-none">
+            <X className="size-5 md:size-5" />
+            <span className="sr-only">Close</span>
+          </DialogClose>
         </div>
-        <DialogClose className="rounded-sm p-3 opacity-70 ring-offset-background transition-opacity data-[state=open]:bg-accent data-[state=open]:text-muted-foreground hover:opacity-100 focus:outline-none disabled:pointer-events-none">
-          <X className="size-5 md:size-6" />
-          <span className="sr-only">Close</span>
-        </DialogClose>
       </div>
       {numPages && <hr />}
       <Document
+        className="rounded-lg border border-zinc-200"
         file={file}
         onLoadSuccess={onDocumentLoadSuccess}
         onLoadError={(error) => {
@@ -148,7 +158,7 @@ export const PdfViewer = ({ id, name }: PdfViewerProps) => {
 const Loader = (): JSX.Element => {
   return (
     <div className="flex items-center justify-center">
-      <Skeleton className="h-screen w-full" />
+      <Skeleton className="h-screen w-full" variant="shimmer" />
     </div>
   );
 };

@@ -1,14 +1,13 @@
 import { ReactNode, useMemo } from 'react';
 
 import { MiniScoreChart } from '@/components/ui/charts/mini-donut-chart/mini-donut-chart';
-import { CategoryValue } from '@/components/ui/charts/types/categories';
 import { Spinner } from '@/components/ui/spinner';
 import { Body1, Body2, H4 } from '@/components/ui/typography';
 import { Body4 } from '@/components/ui/typography/body4/body4';
 import { useBiomarkerCategoriesWithUpsells } from '@/features/plans/hooks/use-biomarker-categories-with-upsells';
 import { useLatestHealthScore } from '@/features/plans/hooks/use-latest-health-score';
 import { cn } from '@/lib/utils';
-import { BiomarkerComponent } from '@/types/api';
+import { BiomarkerComponent, CategoryValue } from '@/types/api';
 
 import { COMPONENT_DESCRIPTIONS } from './component-descriptions';
 

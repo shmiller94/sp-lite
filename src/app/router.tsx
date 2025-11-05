@@ -3,6 +3,7 @@ import {
   createBrowserRouter,
   RouterProvider,
   Navigate,
+  redirect,
 } from 'react-router-dom';
 
 import { MainErrorFallback } from '@/components/errors/main';
@@ -115,8 +116,15 @@ export const createRouter = () =>
             return { Component: QuestionnaireRoute };
           },
         },
+        // Vault is the old name for records and will redirect legacy users to the new route
         {
           path: 'vault',
+          loader: async () => {
+            return redirect('/data/records');
+          },
+        },
+        {
+          path: 'data/records',
           lazy: async () => {
             const { FilesRoute } = await import('./routes/app/files');
             return { Component: FilesRoute };
