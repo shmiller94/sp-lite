@@ -149,7 +149,7 @@ const PureDataSidebar = () => {
 
   return (
     <aside className="col-span-1 flex flex-col">
-      <div className="relative z-10 mb-5 flex gap-4 lg:sticky lg:top-20 lg:mb-0">
+      <div className="relative z-30 mb-4 flex gap-4 bg-zinc-50/20 backdrop-blur-lg lg:sticky lg:top-16 lg:mb-0">
         <Link to="/data">
           <H3>Twin</H3>
         </Link>
@@ -202,7 +202,7 @@ const PureDataSidebar = () => {
           'flex items-center px-4 transition-all z-[51]',
           'fixed inset-0 top-20',
           // On desktop ensure the sidebar can overflow and sit above neighbors
-          'lg:sticky lg:inset-auto lg:top-32 lg:px-0 lg:pt-0 lg:z-20 lg:my-4 lg:max-w-none lg:-translate-y-3',
+          'lg:sticky lg:inset-auto lg:top-28 lg:px-0 lg:pt-0 lg:z-20 lg:my-4 lg:max-w-none lg:-translate-y-3',
           isOpen
             ? 'top-0 w-screen h-screen bg-white/80 backdrop-blur-sm lg:block lg:backdrop-blur-none lg:bg-none'
             : 'opacity-0 pointer-events-none lg:opacity-100 lg:pointer-events-auto lg:h-auto lg:bg-none',

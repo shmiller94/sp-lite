@@ -27,9 +27,6 @@ export const DataSearch = ({
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       onChange?.(e);
-
-      // make sure to scroll the user to the top
-      window.scrollTo({ top: 300, behavior: 'smooth' });
     },
     [onChange],
   );

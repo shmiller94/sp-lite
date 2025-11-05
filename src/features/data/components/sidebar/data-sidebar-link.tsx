@@ -27,6 +27,9 @@ export const DataSidebarLink = ({
   return (
     <Link
       to={link}
+      onClick={() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }}
       id={`selector-${category.category.toLowerCase()}`}
       key={category.category}
       className={cn(
