@@ -215,6 +215,7 @@ export type BiomarkerComponent = {
   category?: string;
   title: string;
   value: string;
+  relatedObservations: string[];
 };
 
 export type BiomarkerResult = Entity<{

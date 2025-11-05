@@ -14,8 +14,6 @@ import {
 import { dialogVariants } from '@/components/ui/dialog/utils/dialog-variants';
 import { SimpleTabs, SimpleTabsContent } from '@/components/ui/simple-tabs';
 import { Body1, H3 } from '@/components/ui/typography';
-import { HEALTH_OPTIMIZATION } from '@/const/health-score';
-import { useCategories } from '@/features/data/api/get-categories';
 import { BiomarkerContentTabs } from '@/features/data/components/dialogs/biomarker-content-tabs';
 import { ScoreShareCard } from '@/features/shareables/components/cards/score-share-card';
 import { SharingOptionsModal } from '@/features/shareables/components/sharing-options-modal';
@@ -46,7 +44,6 @@ export const SuperpowerScoreDialog = ({
   const [open, setOpen] = useState(false);
   const [sharingOptionsOpen, setSharingOptionsOpen] = useState(false);
   const { data: biomarkersData } = useBiomarkers();
-  const { data: categoriesData } = useCategories();
   const superpowerScoreMarker = biomarkersData?.biomarkers.find(
     (b) => b.name == 'Health Score',
   );
@@ -55,28 +52,18 @@ export const SuperpowerScoreDialog = ({
     useState<(typeof tabs)[number]['value']>('chart');
 
   const latestScore = mostRecent(superpowerScoreMarker?.value ?? []);
-  const healthScoreCategories = latestScore?.component.filter(
-    (c) => c.category === HEALTH_OPTIMIZATION,
-  );
 
   // get biomarker IDs from categories (ignore labels for now)
   const relatedBiomarkerIds = new Set(
-    (categoriesData?.categories ?? [])
-      .flatMap((c) => c.relatedBiomarkers ?? [])
+    latestScore?.component
+      .flatMap((c) => c.relatedObservations ?? [])
       .filter(Boolean),
   );
 
-  // if we have category biomarker IDs, filter by those; otherwise fallback
+  // if we have category biomarker IDs, filter by those
   const categoryBiomarkers = biomarkersData?.biomarkers.filter((b) =>
-    b.id ? relatedBiomarkerIds.has(b.id) : false,
+    b.value?.some((v) => v.id && relatedBiomarkerIds.has(v.id)),
   );
-
-  const healthScoreBiomarkers =
-    categoryBiomarkers && categoryBiomarkers.length > 0
-      ? categoryBiomarkers
-      : biomarkersData?.biomarkers.filter((b) =>
-          healthScoreCategories?.some((c) => c.title === b.category),
-        );
 
   return (
     <>
@@ -146,7 +133,7 @@ export const SuperpowerScoreDialog = ({
                 Which biomarkers influence your Health Score?
               </H3>
               <BiomarkersDataTable
-                biomarkers={healthScoreBiomarkers ?? []}
+                biomarkers={categoryBiomarkers ?? []}
                 hideHeader
                 hiddenColumns={['value', 'optimalRange']}
               />
