@@ -33,9 +33,11 @@ const hasAnswers = (item: QuestionnaireResponseItem): boolean => {
 // Component that renders the questionnaire form page in sequence
 export const QuestionnaireFormPageSequence = ({
   showIntro,
+  needsIdentityVerification,
   onSave,
 }: {
   showIntro: boolean;
+  needsIdentityVerification?: boolean;
   onSave: (item: QuestionnaireResponseItem[]) => void;
 }) => {
   const [_showIntro, setShowIntro] = useState(showIntro);
@@ -232,6 +234,7 @@ export const QuestionnaireFormPageSequence = ({
                     <QuestionnaireQuestion
                       item={currentQuestion.item}
                       response={currentQuestion.response}
+                      needsIdentityVerification={needsIdentityVerification}
                       onChange={setItems}
                       onSave={onSave}
                     />

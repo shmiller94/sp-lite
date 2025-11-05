@@ -28,6 +28,7 @@ export const QuestionnaireForm = ({
   className,
   showIntro = true,
   user,
+  needsIdentityVerification,
 }: {
   questionnaire: Questionnaire;
   response?: QuestionnaireResponse;
@@ -36,6 +37,7 @@ export const QuestionnaireForm = ({
   className?: string;
   showIntro?: boolean;
   user?: User;
+  needsIdentityVerification?: boolean;
 }) => {
   // Process the questionnaire to include both initial values and any existing responses
   const mergedQuestionnaire = {
@@ -56,6 +58,7 @@ export const QuestionnaireForm = ({
         onSubmit={onSubmit}
         className={className}
         showIntro={showIntro}
+        needsIdentityVerification={needsIdentityVerification}
       />
     </QuestionnaireStoreProvider>
   );
@@ -66,9 +69,11 @@ const QuestionnaireFormConsumer = ({
   onSubmit,
   className,
   showIntro,
+  needsIdentityVerification,
 }: {
   onSave: (item: QuestionnaireResponseItem[]) => void;
   onSubmit: (item: QuestionnaireResponseItem[]) => void;
+  needsIdentityVerification?: boolean;
   className?: string;
   showIntro: boolean;
 }) => {
@@ -117,7 +122,11 @@ const QuestionnaireFormConsumer = ({
         handleSubmit();
       }}
     >
-      <QuestionnaireFormPageSequence onSave={onSave} showIntro={showIntro} />
+      <QuestionnaireFormPageSequence
+        onSave={onSave}
+        showIntro={showIntro}
+        needsIdentityVerification={needsIdentityVerification}
+      />
     </form>
   );
 };

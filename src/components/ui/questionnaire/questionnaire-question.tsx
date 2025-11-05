@@ -35,6 +35,7 @@ interface QuestionnaireQuestionProps {
   response: QuestionnaireResponseItem;
   onChange: (response: QuestionnaireResponseItem[]) => void;
   onSave: (response: QuestionnaireResponseItem[]) => void;
+  needsIdentityVerification?: boolean;
 }
 
 /**
@@ -46,6 +47,7 @@ export const QuestionnaireQuestion = ({
   response,
   onChange,
   onSave,
+  needsIdentityVerification,
 }: QuestionnaireQuestionProps) => {
   const [localErrors, setLocalErrors] = useState<string[]>([]);
   const [validationErrors, setValidationErrors] = useState<Set<string>>(
@@ -242,6 +244,7 @@ export const QuestionnaireQuestion = ({
               }}
               onKeyDown={handleKeyDown}
               onValidationChange={handleValidationChange}
+              needsIdentityVerification={needsIdentityVerification}
             />
           ))}
         </div>
@@ -392,6 +395,7 @@ export const QuestionnaireQuestion = ({
             isError={localErrors.includes(item.linkId)}
             onKeyDown={handleKeyDown}
             onValidationChange={handleValidationChange}
+            needsIdentityVerification={needsIdentityVerification}
           />
         )}
         {renderNavigationButtons()}

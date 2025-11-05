@@ -61,6 +61,8 @@ export interface User extends BaseUser {
   userIdentity?: UserIdentity;
   role: UserRole[];
   rdn?: Rdn;
+  identityUpdatedTime?: string;
+  identityVerificationStatus?: string;
 }
 
 export type AdminActor = Entity<{
