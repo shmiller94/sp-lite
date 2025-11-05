@@ -1,6 +1,8 @@
 export {
   QuestionnaireItemType,
   isMultipleChoice,
+  isRxQuestionnaire,
+  shouldSkipGenderQuestion,
   getNewMultiSelectValues,
   formatReferenceString,
   getNumberOfPages,

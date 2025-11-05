@@ -12,6 +12,7 @@ import { User } from '@/types/api';
 import {
   buildInitialResponse,
   isQuestionEnabled,
+  shouldSkipGenderQuestion,
   QuestionnaireItemType,
 } from '../utils';
 
@@ -71,12 +72,22 @@ export const questionnaireStoreCreator = (
           }
 
           item.item.forEach((subItem) => {
+            // Skip gender question for Rx questionnaires (should be autofilled)
+            if (shouldSkipGenderQuestion(subItem, questionnaire, user)) {
+              return;
+            }
             if (isQuestionEnabled(subItem, response?.item ?? [], user)) {
               result.push({ question: subItem, group: item });
             }
           });
-        } else if (isQuestionEnabled(item, response?.item ?? [], user)) {
-          result.push({ question: item, group: null });
+        } else {
+          // Skip gender question for Rx questionnaires (should be autofilled)
+          if (shouldSkipGenderQuestion(item, questionnaire, user)) {
+            return;
+          }
+          if (isQuestionEnabled(item, response?.item ?? [], user)) {
+            result.push({ question: item, group: null });
+          }
         }
       });
 
@@ -178,6 +189,15 @@ export const questionnaireStoreCreator = (
 
             item.item.forEach((subItem) => {
               if (
+                shouldSkipGenderQuestion(
+                  subItem,
+                  initProps.questionnaire,
+                  initProps.user,
+                )
+              ) {
+                return;
+              }
+              if (
                 isQuestionEnabled(
                   subItem,
                   initialResponse?.item ?? [],
@@ -187,10 +207,25 @@ export const questionnaireStoreCreator = (
                 acc.push({ question: subItem, group: item });
               }
             });
-          } else if (
-            isQuestionEnabled(item, initialResponse?.item ?? [], initProps.user)
-          ) {
-            acc.push({ question: item, group: null });
+          } else {
+            if (
+              shouldSkipGenderQuestion(
+                item,
+                initProps.questionnaire,
+                initProps.user,
+              )
+            ) {
+              return acc;
+            }
+            if (
+              isQuestionEnabled(
+                item,
+                initialResponse?.item ?? [],
+                initProps.user,
+              )
+            ) {
+              acc.push({ question: item, group: null });
+            }
           }
           return acc;
         }, []) || [];
@@ -242,6 +277,15 @@ export const questionnaireStoreCreator = (
 
           item.item.forEach((subItem) => {
             if (
+              shouldSkipGenderQuestion(
+                subItem,
+                initProps.questionnaire,
+                initProps.user,
+              )
+            ) {
+              return;
+            }
+            if (
               isQuestionEnabled(
                 subItem,
                 initialResponse?.item ?? [],
@@ -251,10 +295,21 @@ export const questionnaireStoreCreator = (
               acc.push({ question: subItem, group: item });
             }
           });
-        } else if (
-          isQuestionEnabled(item, initialResponse?.item ?? [], initProps.user)
-        ) {
-          acc.push({ question: item, group: null });
+        } else {
+          if (
+            shouldSkipGenderQuestion(
+              item,
+              initProps.questionnaire,
+              initProps.user,
+            )
+          ) {
+            return acc;
+          }
+          if (
+            isQuestionEnabled(item, initialResponse?.item ?? [], initProps.user)
+          ) {
+            acc.push({ question: item, group: null });
+          }
         }
         return acc;
       }, []) || [];

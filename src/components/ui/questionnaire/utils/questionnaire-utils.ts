@@ -12,6 +12,14 @@ import {
   QuestionnaireResponseItemAnswer,
 } from '@medplum/fhirtypes';
 
+import { User } from '@/types/api';
+
+import {
+  RX_ASSESSMENTS,
+  RxQuestionnaireName,
+} from '../../../../const/questionnaire';
+import { RX_SEX_ASSIGNED_AT_BIRTH_LINKID } from '../const/special-linkids';
+
 export enum QuestionnaireItemType {
   group = 'group',
   display = 'display',
@@ -30,6 +38,29 @@ export enum QuestionnaireItemType {
   attachment = 'attachment',
   reference = 'reference',
   quantity = 'quantity',
+}
+
+/**
+ * Checks if a questionnaire is an Rx questionnaire by verifying if its name exists in the RX_ASSESSMENTS list.
+ */
+export function isRxQuestionnaire(questionnaire: Questionnaire): boolean {
+  return RX_ASSESSMENTS.includes(questionnaire.name as RxQuestionnaireName);
+}
+
+/**
+ * Checks if a question should be skipped because it's the gender question in an Rx questionnaire.
+ * For Rx questionnaires, the gender question is autofilled, so it should not be shown to the user.
+ */
+export function shouldSkipGenderQuestion(
+  item: QuestionnaireItem,
+  questionnaire: Questionnaire,
+  user?: User,
+): boolean {
+  return (
+    isRxQuestionnaire(questionnaire) &&
+    item.linkId === RX_SEX_ASSIGNED_AT_BIRTH_LINKID &&
+    !!user?.gender
+  );
 }
 
 export function isMultipleChoice(item: QuestionnaireItem): boolean {

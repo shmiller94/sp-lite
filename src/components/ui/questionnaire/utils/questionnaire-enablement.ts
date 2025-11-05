@@ -12,6 +12,8 @@ import {
 
 import { User } from '@/types/api';
 
+import { RX_SEX_ASSIGNED_AT_BIRTH_LINKID } from '../const/special-linkids';
+
 export function isQuestionEnabled(
   item: QuestionnaireItem,
   responseItems: QuestionnaireResponseItem[],
@@ -30,7 +32,10 @@ export function isQuestionEnabled(
         return acc;
       }
 
-      if (enableWhen.question === 'sex-assigned-at-birth' && user?.gender) {
+      if (
+        enableWhen.question === RX_SEX_ASSIGNED_AT_BIRTH_LINKID &&
+        user?.gender
+      ) {
         if (typeof enableWhen.answerString !== 'string') {
           return acc;
         }

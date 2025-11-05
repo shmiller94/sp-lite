@@ -10,6 +10,8 @@ import {
 
 import { User } from '@/types/api';
 
+import { RX_SEX_ASSIGNED_AT_BIRTH_LINKID } from '../const/special-linkids';
+
 // This function is used to build the initial response with the initial values.
 export function buildInitialResponse(
   questionnaire: Questionnaire,
@@ -38,11 +40,17 @@ export function buildInitialResponseItem(
 ): QuestionnaireResponseItem {
   let initialAnswer = item.initial?.map(buildInitialResponseAnswer) || [];
 
-  // Pre-populate sex-assigned-at-birth for screening questionnaire
-  if (item.linkId === 'sex-assigned-at-birth' && user?.gender) {
-    initialAnswer = [
-      { valueString: user.gender === 'MALE' ? 'Male' : 'Female' },
-    ];
+  // Pre-populate sex-assigned-at-birth for all questionnaires (works recursively for nested items)
+  // This ensures the gender question is autofilled even when hidden in Rx questionnaires
+  // Only prefill if gender is MALE or FEMALE, as OTHER and UNKNOWN are not valid questionnaire values
+  if (item.linkId === RX_SEX_ASSIGNED_AT_BIRTH_LINKID && user?.gender) {
+    const normalizedGender = user.gender.toUpperCase();
+    if (normalizedGender === 'MALE') {
+      initialAnswer = [{ valueString: 'Male' }];
+    } else if (normalizedGender === 'FEMALE') {
+      initialAnswer = [{ valueString: 'Female' }];
+    }
+    // For 'OTHER' or 'UNKNOWN', don't prefill - let user answer if question is shown
   }
 
   return {

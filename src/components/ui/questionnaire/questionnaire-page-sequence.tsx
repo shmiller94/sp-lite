@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils';
 import { IntakeQuestionnaireCover } from './covers/intake-questionnaire-cover';
 import { QuestionnaireQuestion } from './questionnaire-question';
 import { useQuestionnaireStore } from './stores/questionnaire-store';
-import { QuestionnaireItemType } from './utils';
+import { QuestionnaireItemType, shouldSkipGenderQuestion } from './utils';
 
 const hasAnswers = (item: QuestionnaireResponseItem): boolean => {
   if (item.answer && item.answer.length > 0) {
@@ -51,6 +51,7 @@ export const QuestionnaireFormPageSequence = ({
     checkForQuestionEnabled,
     nextStep,
     initialResponse,
+    user,
   } = useQuestionnaireStore((s) => s);
 
   const items = useMemo(() => questionnaire.item ?? [], [questionnaire.item]);
@@ -83,6 +84,10 @@ export const QuestionnaireFormPageSequence = ({
         }
 
         item.item.forEach((subItem) => {
+          // Skip gender question for Rx questionnaires (should be autofilled)
+          if (shouldSkipGenderQuestion(subItem, questionnaire, user)) {
+            return;
+          }
           if (checkForQuestionEnabled(subItem)) {
             const groupResponseItem = response?.item?.find(
               (i) => i.linkId === item.linkId,
@@ -101,22 +106,28 @@ export const QuestionnaireFormPageSequence = ({
             });
           }
         });
-      } else if (checkForQuestionEnabled(item)) {
-        const responseItem = response?.item?.find(
-          (i) => i.linkId === item.linkId,
-        ) || { linkId: item.linkId };
+      } else {
+        // Skip gender question for Rx questionnaires (should be autofilled)
+        if (shouldSkipGenderQuestion(item, questionnaire, user)) {
+          return;
+        }
+        if (checkForQuestionEnabled(item)) {
+          const responseItem = response?.item?.find(
+            (i) => i.linkId === item.linkId,
+          ) || { linkId: item.linkId };
 
-        result.push({
-          item,
-          response: responseItem,
-          group: null,
-          isAnswered: hasAnswers(responseItem),
-        });
+          result.push({
+            item,
+            response: responseItem,
+            group: null,
+            isAnswered: hasAnswers(responseItem),
+          });
+        }
       }
     });
 
     return result;
-  }, [items, response, checkForQuestionEnabled]);
+  }, [items, response, checkForQuestionEnabled, questionnaire, user]);
 
   const uniqueGroups = useMemo(() => {
     const groups = new Set(
