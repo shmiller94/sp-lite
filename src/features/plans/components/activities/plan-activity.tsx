@@ -6,13 +6,15 @@ import {
 
 import { Button } from '@/components/ui/button';
 import { Body2, H4 } from '@/components/ui/typography';
-import { getRxPricing } from '@/const/rx-pricing';
+import { useMarketplace } from '@/features/marketplace/api/get-marketplace';
 import { useServices } from '@/features/services/api';
 import { useProducts } from '@/features/supplements/api';
 import { HealthcareService, Product } from '@/types/api';
+import { getPrescriptionImage } from '@/utils/prescription';
 
 import { CARE_PLAN_ACTIVITY_TYPE_EXTENSION } from '../../const/extension-types';
 import { extractCitations } from '../../utils/extract-citations';
+import { normalizeRxCode } from '../../utils/normalize-rx-code';
 import { PlanMarkdown } from '../plan-markdown';
 
 import { ActivityCard } from './activity-card';
@@ -99,39 +101,58 @@ const PrescriptionActivity = ({
   detail?: CarePlanActivityDetail;
   className?: string;
 }) => {
-  const rxName = productCoding.display || 'UnnamedPrescription';
   const rxDesc = detail?.description || 'Recommended prescription';
   const rxCode = productCoding.code;
-  const citations = extractCitations(detail);
-  const rxPricing = getRxPricing(rxCode);
-  const rxLink = `https://clinic.superpower.com/products/${rxPricing?.slug}`;
 
-  const rxImage = rxCode ? `/rx/${rxCode}.webp` : undefined;
+  // todo: hack because the AIAP doesn't have the rx- prefix
+  const formattedRxCode = normalizeRxCode(rxCode);
+
+  const { data: marketplaceData, isError, isLoading } = useMarketplace();
+  const prescription = marketplaceData?.prescriptions?.find(
+    (item) => item.id === formattedRxCode,
+  );
+  const citations = extractCitations(detail);
+
+  // I will replace this with a Zod schema in the real AIAP
+  if (
+    isLoading ||
+    isError ||
+    !prescription ||
+    !prescription.url ||
+    !prescription.price
+  ) {
+    // todo: add loader
+    // This is getting changed within ~3 days so using at temp hack for now
+    return null;
+  }
+
+  const rxImage = getPrescriptionImage(prescription?.name);
+  const rxPdpUrl = `/prescriptions/${formattedRxCode}`;
 
   return (
     <div className="mt-8 space-y-2">
-      <H4 className="text-lg">{rxName}</H4>
+      <H4 className="text-lg">{prescription.name}</H4>
       <PlanMarkdown content={rxDesc} citations={citations} boldVermillion />
       <ActivityCard
-        name={rxName}
+        name={prescription.name}
         image={rxImage}
-        link={rxLink}
+        link={rxPdpUrl}
         description={
-          rxPricing && (
-            <Body2 className="italic text-zinc-500">
-              Starting at ${rxPricing.price}
-            </Body2>
-          )
+          <Body2 className="italic text-zinc-500">
+            Starting at ${prescription.price}
+          </Body2>
         }
         className={className}
         actionBtn={
-          rxPricing ? (
-            <Button size="medium" asChild className="w-full flex-1 lg:w-auto">
-              <a href={rxLink} target="_blank" rel="noopener noreferrer">
-                Get Started
-              </a>
-            </Button>
-          ) : null
+          <Button size="medium" asChild className="w-full flex-1 lg:w-auto">
+            <a
+              href={prescription.url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Get Started
+            </a>
+          </Button>
         }
       />
     </div>

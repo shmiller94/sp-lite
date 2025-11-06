@@ -9,7 +9,6 @@ import {
   TestTube,
   Stethoscope,
 } from 'lucide-react';
-import { usePostHog } from 'posthog-js/react';
 import React from 'react';
 
 import { IconHighlight } from '@/components/shared/icon-highlight';
@@ -22,7 +21,6 @@ import {
 import { Body1, Body2, H2, H4 } from '@/components/ui/typography';
 import { useProducts } from '@/features/supplements/api';
 import { useAnalytics } from '@/hooks/use-analytics';
-import { FeatureFlags } from '@/lib/posthog';
 
 import { CARE_PLAN_ACTIVITY_TYPE_EXTENSION } from '../../const/extension-types';
 import { useCarePlan } from '../../context/care-plan-context';
@@ -64,15 +62,9 @@ export const ProtocolSection = () => {
   const { title, order, total } = useSection('protocol');
   const getProductsQuery = useProducts({});
   const { track } = useAnalytics();
-  const posthog = usePostHog();
   const previousValueRef = React.useRef<string[]>([]);
 
   const activities = plan?.activity ?? [];
-
-  // Check feature flag for prescription recommendations
-  const isPrescriptionRecommendationsEnabled = posthog?.isFeatureEnabled(
-    FeatureFlags.AIAP_RX_EXPERIMENTAL_RECOMMENDATIONS,
-  );
 
   const {
     serviceActivities,
@@ -123,21 +115,15 @@ export const ProtocolSection = () => {
   };
 
   const activityGroups: ActivityGroup[] = [
-    // Only show prescription treatments if feature flag is enabled
-    // Undefined / PH failing = not showing
-    ...(isPrescriptionRecommendationsEnabled
-      ? [
-          {
-            activities: prescriptionActivities,
-            icon: Stethoscope,
-            title: 'Prescription Treatments',
-            renderActivity: (activity: CarePlanActivity, index: number) => (
-              <PlanActivity key={`prescription-${index}`} activity={activity} />
-            ),
-            disclaimer: undefined,
-          },
-        ]
-      : []),
+    {
+      activities: prescriptionActivities,
+      icon: Stethoscope,
+      title: 'Prescription Treatments',
+      renderActivity: (activity: CarePlanActivity, index: number) => (
+        <PlanActivity key={`prescription-${index}`} activity={activity} />
+      ),
+      disclaimer: undefined,
+    },
     {
       activities: productActivities,
       icon: Pill,

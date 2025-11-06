@@ -16,8 +16,6 @@ export const NAD_INJECTION = 'NAD+ Injection';
 export const ENCLOMIPHENE = 'Enclomiphene';
 export const SERMORELIN_TROCHES = 'Sermorelin Troches';
 
-export const CLINIC_PRODUCT_BASE_URL = 'https://clinic.superpower.com/products';
-
 export const PRESCRIPTION_SLUGS: Record<string, string> = {
   [SERMORELIN_INJECTION]: 'sermorelin-injection',
   [VIP_NASAL_SPRAY]: 'vip-nasal-spray',

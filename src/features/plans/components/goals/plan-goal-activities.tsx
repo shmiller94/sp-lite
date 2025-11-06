@@ -1,5 +1,4 @@
 import { CarePlanActivity, Goal } from '@medplum/fhirtypes';
-import { usePostHog } from 'posthog-js/react';
 import React, { useMemo, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
@@ -12,10 +11,10 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { Body1, Body2, H3, H4 } from '@/components/ui/typography';
-import { getRxPricing } from '@/const/rx-pricing';
+import { useMarketplace } from '@/features/marketplace/api/get-marketplace';
 import { useProducts } from '@/features/supplements/api';
-import { FeatureFlags } from '@/lib/posthog';
 import { cn } from '@/lib/utils';
+import { getPrescriptionImage } from '@/utils/prescription';
 
 import {
   CARE_PLAN_ACTIVITY_BRIEF_EXTENSION,
@@ -24,6 +23,7 @@ import {
 import { useCarePlan } from '../../context/care-plan-context';
 import { useBundle } from '../../hooks/use-bundle';
 import { useCarePlanCart } from '../../stores/care-plan-cart-store';
+import { normalizeRxCode } from '../../utils/normalize-rx-code';
 import { ActivityCard } from '../activities/activity-card';
 import { ProductCard } from '../activities/product-card';
 import { ServiceCard } from '../activities/service-card';
@@ -37,13 +37,8 @@ export function PlanGoalActivities({ goal }: PlanGoalActivitiesProps) {
   const { addAllProducts, isProductSelected } = useCarePlanCart();
   const { plan } = useCarePlan();
   const activities = plan?.activity ?? [];
-  const posthog = usePostHog();
   const { data: productsData } = useProducts({});
-
-  // Feature flag to control prescription recommendations visibility
-  const isPrescriptionRecommendationsEnabled = posthog?.isFeatureEnabled(
-    FeatureFlags.AIAP_RX_EXPERIMENTAL_RECOMMENDATIONS,
-  );
+  const { data: marketplaceData } = useMarketplace();
 
   const goalId = goal.id;
 
@@ -54,18 +49,6 @@ export function PlanGoalActivities({ goal }: PlanGoalActivitiesProps) {
       : false;
 
     if (!isLinked) return false;
-
-    // Respect feature flag: hide prescriptions unless enabled
-    const activityType = activity.detail?.extension?.find(
-      (ext) => ext.url === CARE_PLAN_ACTIVITY_TYPE_EXTENSION,
-    )?.valueString;
-
-    if (
-      activityType === 'rx-experimental' &&
-      !isPrescriptionRecommendationsEnabled
-    ) {
-      return false;
-    }
 
     return true;
   });
@@ -173,14 +156,20 @@ export function PlanGoalActivities({ goal }: PlanGoalActivitiesProps) {
             if (!productCoding) return null;
 
             if (activityType === 'rx-experimental') {
-              if (!isPrescriptionRecommendationsEnabled) return null;
-              const rxName = productCoding.display || 'Prescription';
               const rxCode = productCoding.code;
-              const rxPricing = rxCode ? getRxPricing(rxCode) : undefined;
-              const rxLink = rxPricing?.slug
-                ? `https://clinic.superpower.com/products/${rxPricing.slug}`
-                : undefined;
-              const rxImage = rxCode ? `/rx/${rxCode}.webp` : undefined;
+              const formattedRxCode = normalizeRxCode(rxCode);
+
+              const prescription = marketplaceData?.prescriptions?.find(
+                (item) => item.id === formattedRxCode,
+              );
+
+              // Early return if prescription data not available
+              if (!prescription || !prescription.url || !prescription.price) {
+                return null;
+              }
+
+              const rxImage = getPrescriptionImage(prescription.name);
+              const rxPdpUrl = `/prescriptions/${formattedRxCode}`;
               const serviceBrief = activity.detail?.extension?.find(
                 (e) => e.url === CARE_PLAN_ACTIVITY_BRIEF_EXTENSION,
               )?.valueString;
@@ -189,35 +178,33 @@ export function PlanGoalActivities({ goal }: PlanGoalActivitiesProps) {
                 <>
                   <ActivityCard
                     key={`goal-${goalId}-rx-${index}`}
-                    name={rxName}
+                    name={prescription.name}
                     image={rxImage}
-                    link={rxLink}
+                    link={rxPdpUrl}
                     description={
                       serviceBrief ? (
                         <Body2 className="text-secondary">{serviceBrief}</Body2>
-                      ) : rxPricing ? (
-                        <Body2 className="italic text-secondary">
-                          Starting at ${rxPricing.price}
+                      ) : (
+                        <Body2 className="italic text-zinc-500">
+                          Starting at ${prescription.price}
                         </Body2>
-                      ) : undefined
+                      )
                     }
                     className={cn(isBundle && 'rounded-none border-none')}
                     actionBtn={
-                      rxLink ? (
-                        <Button
-                          size="medium"
-                          asChild
-                          variant={isBundle ? 'outline' : 'default'}
+                      <Button
+                        size="medium"
+                        asChild
+                        variant={isBundle ? 'outline' : 'default'}
+                      >
+                        <a
+                          href={prescription.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
                         >
-                          <a
-                            href={rxLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            Learn more
-                          </a>
-                        </Button>
-                      ) : undefined
+                          Get Started
+                        </a>
+                      </Button>
                     }
                   />
                   {isBundle &&
