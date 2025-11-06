@@ -18,7 +18,7 @@ const steps: IconListItem[] = [
   {
     title: 'Give $50 to your friends',
     description:
-      'When your friends join Superpower, they get $50 to spend in the Marketplace.',
+      'When your friends join Superpower, they get $50 to spend in the Superpower Supplement Marketplace.',
     icon: DollarSignIcon,
   },
   {
@@ -29,8 +29,7 @@ const steps: IconListItem[] = [
   },
   {
     title: 'Redeem your credits',
-    description:
-      'Use your credits in the Superpower Marketplace on health products, supplements, and more.',
+    description: 'Use your credits in the Superpower Supplement Marketplace.',
     icon: ShoppingBagIcon,
   },
 ];

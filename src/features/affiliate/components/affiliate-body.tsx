@@ -13,8 +13,8 @@ export const AffiliateBody = () => {
           <H3>Refer your friends and earn $50</H3>
           <Body1 className="text-secondary">
             Share your unique referral link with friends and family. When they
-            sign up, you&apos;ll each receive $50 to spend at Superpower on
-            health products, supplements and more.
+            sign up, you&apos;ll each receive $50 to spend in the Superpower
+            Supplement Marketplace.
           </Body1>
         </div>
         <AffiliateLink className="mt-6" />

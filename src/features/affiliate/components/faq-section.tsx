@@ -18,7 +18,7 @@ const faqs: {
   {
     question: 'How do I use the credit?',
     answer:
-      'You will receive a gift card code by email for the Superpower marketplace.',
+      'You will receive a gift card code by email for the Superpower Supplement Marketplace.',
   },
   {
     question: 'Who’s eligible?',

@@ -5,33 +5,28 @@ import {
   CarouselThumbsContainer,
   SliderMainItem,
 } from '@/components/ui/carousel';
-import { Body3, H2, H4 } from '@/components/ui/typography';
+import { H2, H4 } from '@/components/ui/typography';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 
 const PRODUCTS: {
   title: string;
   image: string;
-  description: string;
 }[] = [
   {
     title: 'Magnesium Glycinate',
     image: '/affiliate/magnesium-glycinate.webp',
-    description: 'Invite 1 friend',
   },
   {
-    title: 'Classic Night Swannies',
-    image: '/affiliate/classic-night-swannies.webp',
-    description: 'Invite 3 friends',
+    title: 'NAD+ Gold',
+    image: '/affiliate/nad-gold.webp',
   },
   {
-    title: 'Theragun Mini',
-    image: '/affiliate/theragun-mini.webp',
-    description: 'Invite 4 friends',
+    title: 'Creatine',
+    image: '/affiliate/creatine.webp',
   },
   {
-    title: 'Venom 2 Back',
-    image: '/affiliate/venom-2-back.webp',
-    description: 'Invite 4 friends',
+    title: 'One Omega',
+    image: '/affiliate/one-omega.webp',
   },
 ];
 
@@ -43,7 +38,7 @@ export const AffiliateHero = () => {
       <div className="relative z-10 py-16">
         <H2 className="text-white">
           Refer your friends <br />
-          <span className="text-white/75">Earn Rewards</span>
+          <span className="text-white/75">Earn rewards on supplements</span>
         </H2>
 
         <div className="mt-8">
@@ -55,11 +50,7 @@ export const AffiliateHero = () => {
                     key={index}
                     className={index > 0 ? 'px-4' : ''}
                   >
-                    <ProductCard
-                      title={card.title}
-                      image={card.image}
-                      description={card.description}
-                    />
+                    <ProductCard title={card.title} image={card.image} />
                   </SliderMainItem>
                 ))}
               </CarouselMainContainer>
@@ -77,11 +68,7 @@ export const AffiliateHero = () => {
             <div className="grid w-full grid-cols-4 gap-4">
               {PRODUCTS.map((card, index) => (
                 <div key={index}>
-                  <ProductCard
-                    title={card.title}
-                    image={card.image}
-                    description={card.description}
-                  />
+                  <ProductCard title={card.title} image={card.image} />
                 </div>
               ))}
             </div>
@@ -92,27 +79,17 @@ export const AffiliateHero = () => {
   );
 };
 
-const ProductCard = ({
-  title,
-  image,
-  description,
-}: {
-  title: string;
-  image: string;
-  description: string;
-}) => {
+const ProductCard = ({ title, image }: { title: string; image: string }) => {
   return (
-    <div className="relative mx-auto h-56 w-full max-w-sm rounded-2xl border border-white/10 bg-zinc-400/15 p-4 backdrop-blur-xl">
+    <div className="mx-auto flex h-56 w-full max-w-sm flex-col justify-between rounded-2xl border border-white/10 bg-zinc-200/10 p-6 text-white backdrop-blur-xl">
+      <H4 className="text-white">{title}</H4>
+
       <img
         src={image}
         alt={title}
-        className="absolute inset-0 size-full select-none object-contain pt-6 lg:pt-0"
+        className="max-h-32 select-none object-contain drop-shadow-[0_12px_30px_rgba(0,0,0,0.35)]"
+        draggable={false}
       />
-      <div className="relative flex size-full h-48 flex-col">
-        <H4 className="text-white">{title}</H4>
-        <div className="flex-1"></div>
-        <Body3 className="text-white">{description}</Body3>
-      </div>
     </div>
   );
 };
