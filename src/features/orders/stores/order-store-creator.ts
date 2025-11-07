@@ -16,10 +16,10 @@ import {
 export interface OrderStoreProps {
   service: HealthcareService;
   flow: 'full' | 'info';
+  initialAddOnIds?: string[];
 
   onSuccess?: () => void;
   infoFlowBtn?: () => ReactNode;
-  preselectedAddOnIds?: string[];
 }
 
 export interface OrderStore extends OrderStoreProps {
@@ -76,7 +76,7 @@ export const orderStoreCreator = (initProps: OrderStoreProps) => {
         ...initProps,
         ...initialState,
         collectionMethod: getInitialCollectionMethod(),
-        addOnIds: new Set(initProps.preselectedAddOnIds ?? []),
+        addOnIds: new Set(initProps.initialAddOnIds ?? []),
         updateCollectionMethod: (collectionMethod) => set({ collectionMethod }),
         updateLocation: (location) => set({ location }),
         updateTz: (tz) => set({ tz }),

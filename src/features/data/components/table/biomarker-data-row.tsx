@@ -3,6 +3,7 @@ import { cva } from 'class-variance-authority';
 import type { CSSProperties } from 'react';
 
 import { TableCell, TableRow } from '@/components/ui/table';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { cn } from '@/lib/utils';
 import { Biomarker } from '@/types/api';
 
@@ -69,27 +70,35 @@ function BiomarkerRowCell({
 export const BiomarkerDataRow = ({
   row,
   screenSize,
-  selectedOrderId,
-  selectedOrderDate,
   hideDialog = false,
 }: {
   row: Row<Biomarker>;
   screenSize: ScreenSize;
-  selectedOrderId?: string;
-  selectedOrderDate?: Date | undefined | null;
   hideDialog?: boolean;
 }) => {
-  if (row.original.status === 'PENDING' || row.original.status === 'UNKNOWN') {
-    return null;
-  }
-
+  const { track } = useAnalytics();
   const cells = row.getVisibleCells();
   const lastIndex = cells.length - 1;
 
+  const trackRecommendedClick = () => {
+    track('clicked_empty_biomarker', {
+      biomarkerName: row.original.name,
+      biomarkerId: row.original.id,
+    });
+  };
+
   const tableRowContent = (
     <TableRow
+      onClick={() =>
+        row.original.status === 'RECOMMENDED'
+          ? trackRecommendedClick()
+          : undefined
+      }
       className={cn(
-        'h-24 rounded-xl border-transparent bg-white shadow-sm outline outline-1 -outline-offset-1 outline-zinc-100 transition-all hover:bg-white hover:outline-zinc-200',
+        'h-24 cursor-pointer rounded-xl border-transparent',
+        row.original.status === 'RECOMMENDED'
+          ? 'bg-zinc-100'
+          : 'bg-white shadow-sm outline outline-1 -outline-offset-1 outline-zinc-100 transition-all hover:bg-white hover:outline-zinc-200',
         !hideDialog && 'cursor-pointer',
       )}
     >
@@ -110,22 +119,8 @@ export const BiomarkerDataRow = ({
   }
 
   return (
-    <BiomarkerDialog
-      biomarker={row.original}
-      selectedOrderId={selectedOrderId}
-      selectedOrderDate={selectedOrderDate}
-    >
-      <TableRow className="h-24 cursor-pointer rounded-xl border-transparent bg-white shadow-sm outline outline-1 -outline-offset-1 outline-zinc-100 transition-all hover:bg-white hover:outline-zinc-200">
-        {cells.map((cell, index) => (
-          <BiomarkerRowCell
-            key={cell.id}
-            screenSize={screenSize}
-            index={index}
-            lastIndex={lastIndex}
-            cell={cell}
-          />
-        ))}
-      </TableRow>
+    <BiomarkerDialog biomarker={row.original}>
+      {tableRowContent}
     </BiomarkerDialog>
   );
 };

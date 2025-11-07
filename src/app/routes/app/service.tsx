@@ -1,4 +1,4 @@
-import { NavLink, useNavigate, useParams } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { NotFoundRoute } from '@/app/routes/not-found';
 import {
@@ -10,11 +10,19 @@ import {
 } from '@/components/ui/breadcrumb';
 import { Spinner } from '@/components/ui/spinner';
 import { HealthcareServiceDialog } from '@/features/orders/components/healthcare-service-dialog';
+import { BookingStepID } from '@/features/orders/utils/get-steps-for-service';
 import { useServices } from '@/features/services/api';
+import { getArrayParam } from '@/utils/format';
 
 export const ServiceRoute = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { search } = useLocation();
+
+  const params = new URLSearchParams(search);
+
+  const initialAddOnIds = getArrayParam(params, 'initialAddOnIds');
+  const excludeSteps = getArrayParam(params, 'excludeSteps');
 
   const { data, isError, isLoading } = useServices();
   const service = data?.services?.find((s) => s.id === id);
@@ -37,6 +45,8 @@ export const ServiceRoute = () => {
       <HealthcareServiceDialog
         healthcareService={service}
         onClose={() => navigate('/marketplace?tab=orders')}
+        initialAddOnIds={initialAddOnIds}
+        excludeSteps={excludeSteps as BookingStepID[]}
       />
     </div>
   );

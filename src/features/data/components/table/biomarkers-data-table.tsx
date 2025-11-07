@@ -11,7 +11,7 @@ import {
   Row,
   useReactTable,
 } from '@tanstack/react-table';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Lock } from 'lucide-react';
 import {
   memo,
   useCallback,
@@ -34,57 +34,31 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Body1, Body2, H4 } from '@/components/ui/typography';
-import { selectResultForOrder } from '@/features/data/utils/select-result-for-order';
-import { useOrders } from '@/features/orders/api';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 import { cn } from '@/lib/utils';
 import { Biomarker } from '@/types/api';
 
 import { STATUS_TO_COLOR } from '../../../../const/status-to-color';
-import { useDataFilterStore } from '../../stores/data-filter-store';
 
 import { BiomarkerDataRow } from './biomarker-data-row';
 import { BiomarkerSkeletonRow } from './biomarker-skeleton-row';
 
 const BiomarkersTableBodyContent = ({
   rows,
-  visibleRows,
   isFiltering,
   isLoading,
   skeletonColSpan,
   screenSize,
   hideDialog = false,
-  selectedOrderId,
-  selectedOrderDate,
 }: {
   rows: Row<Biomarker>[];
-  visibleRows: Row<Biomarker>[];
   isFiltering: boolean;
   isLoading?: boolean;
   skeletonColSpan: number;
   screenSize: 'mobile' | 'tablet' | 'desktop' | 'widescreen';
   hideDialog?: boolean;
-  selectedOrderId?: string;
-  selectedOrderDate?: Date | null;
 }) => {
   if (isFiltering || isLoading) {
-    if (visibleRows.length > 0) {
-      return (
-        <>
-          {visibleRows.map((row) => (
-            <TableRow
-              key={`skeleton-${row.id}`}
-              className="border-none bg-transparent shadow-none outline-none hover:bg-transparent"
-            >
-              <TableCell colSpan={row.getVisibleCells().length} className="p-0">
-                <BiomarkerSkeletonRow />
-              </TableCell>
-            </TableRow>
-          ))}
-        </>
-      );
-    }
-
     return (
       <>
         {Array.from({ length: 8 }).map((_, idx) => (
@@ -109,8 +83,6 @@ const BiomarkersTableBodyContent = ({
           row={row}
           screenSize={screenSize}
           hideDialog={hideDialog}
-          selectedOrderId={selectedOrderId}
-          selectedOrderDate={selectedOrderDate}
         />
       ))}
     </>
@@ -140,8 +112,6 @@ const LazySparklineChart = memo(function LazySparklineChart({
 const getColumns = (
   screenSize: 'mobile' | 'tablet' | 'desktop' | 'widescreen' = 'desktop',
   hiddenColumns: string[] = [],
-  selectedOrderId?: string,
-  selectedOrderDate?: Date | null,
 ): ColumnDef<Biomarker>[] => {
   const isDesktop = screenSize === 'desktop' || screenSize === 'widescreen';
   const allColumns = [
@@ -200,6 +170,18 @@ const getColumns = (
             biomarker.status.toLowerCase() as keyof typeof STATUS_TO_COLOR
           ] || STATUS_TO_COLOR.pending;
 
+        if (row.original.status === 'RECOMMENDED')
+          return (
+            <Body2
+              className={cn(
+                'text-zinc-500 whitespace-nowrap',
+                !isDesktop && 'text-sm',
+              )}
+            >
+              Unlock this insight
+            </Body2>
+          );
+
         return (
           <div className="flex items-center gap-2">
             <div
@@ -226,9 +208,8 @@ const getColumns = (
       header: () => <span className="text-sm text-zinc-400">Value</span>,
       cell: ({ row }: { row: Row<Biomarker> }) => {
         const biomarker = row.original;
-        const currentValue =
-          selectResultForOrder(biomarker, selectedOrderId, selectedOrderDate) ||
-          biomarker.value?.[0];
+        // should always return latest because we sort on backend
+        const currentValue = biomarker.value?.[0];
 
         const formatCurrentValue = () => {
           if (!currentValue?.quantity) return 'No value';
@@ -243,6 +224,8 @@ const getColumns = (
             </span>
           );
         };
+
+        if (row.original.status === 'RECOMMENDED') return null;
 
         return (
           <Body2 className={cn('text-zinc-600', !isDesktop && 'text-sm')}>
@@ -277,6 +260,8 @@ const getColumns = (
           return 'Range not specified';
         };
 
+        if (row.original.status === 'RECOMMENDED') return null;
+
         return (
           <Body2
             className={cn(
@@ -297,6 +282,21 @@ const getColumns = (
       ),
       cell: ({ row }: { row: Row<Biomarker> }) => {
         const biomarker = row.original;
+
+        if (row.original.status === 'RECOMMENDED') {
+          return (
+            <div className="flex w-full items-end">
+              <Button
+                size="small"
+                variant="outline"
+                className="ml-auto items-center gap-1 bg-white"
+              >
+                <Lock className="size-4 text-zinc-400" />
+                Unlock
+              </Button>
+            </div>
+          );
+        }
 
         if (biomarker.status === 'PENDING' || biomarker.status === 'UNKNOWN') {
           return <div className="h-16" />;
@@ -340,6 +340,7 @@ const BiomarkersDataTableComponent = ({
   biomarkers,
   hideHeader = false,
   hiddenColumns = [],
+  displayPending = false,
   isLoading,
   hideDialog = false,
 }: {
@@ -347,6 +348,7 @@ const BiomarkersDataTableComponent = ({
   hideHeader?: boolean;
   hiddenColumns?: string[];
   isLoading?: boolean;
+  displayPending?: boolean;
   hideDialog?: boolean;
 }) => {
   const [isFiltering, setIsFiltering] = useState(false);
@@ -363,19 +365,9 @@ const BiomarkersDataTableComponent = ({
   };
   const screenSize = getScreenSize();
 
-  const { selectedOrderId } = useDataFilterStore();
-  const { data: orders } = useOrders();
-
-  const selectedOrderDate = useMemo(() => {
-    if (!selectedOrderId || !orders) return null;
-    const order = orders.orders.find((o) => o.id === selectedOrderId);
-    return order?.endTimestamp ? new Date(order.endTimestamp) : null;
-  }, [orders, selectedOrderId]);
-
   const columns = useMemo(
-    () =>
-      getColumns(screenSize, hiddenColumns, selectedOrderId, selectedOrderDate),
-    [screenSize, hiddenColumns, selectedOrderId, selectedOrderDate],
+    () => getColumns(screenSize, hiddenColumns),
+    [screenSize, hiddenColumns],
   );
 
   /**
@@ -458,9 +450,12 @@ const BiomarkersDataTableComponent = ({
 
   const rows = table.getRowModel().rows;
   const skeletonColSpan = table.getVisibleLeafColumns().length || 1;
-  const visibleRows = rows.filter(
-    (r) => r.original.status !== 'PENDING' && r.original.status !== 'UNKNOWN',
-  );
+  const visibleRows = displayPending
+    ? rows
+    : rows.filter(
+        (r) =>
+          r.original.status !== 'PENDING' && r.original.status !== 'UNKNOWN',
+      );
 
   return (
     <div
@@ -534,15 +529,12 @@ const BiomarkersDataTableComponent = ({
           )}
         >
           <BiomarkersTableBodyContent
-            rows={rows}
-            visibleRows={visibleRows}
+            rows={visibleRows}
             isFiltering={isFiltering}
             isLoading={isLoading}
             skeletonColSpan={skeletonColSpan}
             screenSize={screenSize}
             hideDialog={hideDialog}
-            selectedOrderId={selectedOrderId}
-            selectedOrderDate={selectedOrderDate}
           />
         </TableBody>
       </Table>

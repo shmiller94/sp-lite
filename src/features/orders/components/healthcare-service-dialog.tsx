@@ -62,7 +62,7 @@ type HealthcareServiceDialogProps = {
   children?: ReactNode;
   flow?: 'full' | 'info';
   infoFlowBtn?: () => ReactNode;
-  initialAddOnIds?: undefined | string[];
+  initialAddOnIds?: string[];
 };
 
 export const HealthcareServiceDialog: React.FC<
@@ -106,7 +106,7 @@ export const HealthcareServiceDialog: React.FC<
         onSuccess={onSuccess}
         flow={flow}
         infoFlowBtn={infoFlowBtn}
-        preselectedAddOnIds={initialAddOnIds}
+        initialAddOnIds={initialAddOnIds}
       >
         <HealthcareServiceDialogConsumer onClose={onClose}>
           {children}

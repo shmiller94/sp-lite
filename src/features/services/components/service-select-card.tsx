@@ -22,20 +22,24 @@ type ServiceSelectCardDetailsRenderResult = {
 
 type ServiceSelectCardProps = {
   service: HealthcareService;
-  disabled: boolean;
-  checked: boolean;
   toggle: (s: HealthcareService) => void;
+  disabled?: boolean;
+  checked?: boolean;
   details?: (
     options: ServiceSelectCardDetailsRenderOptions,
   ) => ServiceSelectCardDetailsRenderResult | undefined;
+  displayPrice?: boolean;
+  trigger?: ReactNode;
 };
 
 export const ServiceSelectCard = ({
   service,
-  disabled,
+  disabled = false,
+  displayPrice = true,
   checked,
   toggle,
   details,
+  trigger,
 }: ServiceSelectCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -59,7 +63,7 @@ export const ServiceSelectCard = ({
       )}
     >
       <div
-        className="flex w-full items-center gap-4 p-4 focus-visible:outline-zinc-500 focus-visible:outline-2 outline-0 -outline-offset-1 transition-all duration-150 rounded-[20px]"
+        className="flex w-full items-center gap-4 rounded-[20px] p-4 outline-0 -outline-offset-1 transition-all duration-150 focus-visible:outline-2 focus-visible:outline-zinc-500"
         role="button"
         tabIndex={disabled ? -1 : 0}
         aria-disabled={disabled}
@@ -74,15 +78,17 @@ export const ServiceSelectCard = ({
           }
         }}
       >
-        <AnimatedCheckbox
-          className="size-5 border border-zinc-200 bg-white data-[state='checked']:border-transparent"
-          checked={checked}
-          disabled={disabled}
-          onClick={(e) => {
-            e.stopPropagation();
-            if (!disabled) toggle(service);
-          }}
-        />
+        {checked !== undefined ? (
+          <AnimatedCheckbox
+            className="size-5 border border-zinc-200 bg-white data-[state='checked']:border-transparent"
+            checked={checked}
+            disabled={disabled}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (!disabled) toggle(service);
+            }}
+          />
+        ) : null}
         <img
           src={getServiceImage(service.name)}
           className="size-16 rounded-lg object-cover"
@@ -94,7 +100,7 @@ export const ServiceSelectCard = ({
             <Body1 className="md:hidden">{formatMoney(service.price)}</Body1>
           )}
           {service.description && (
-            <Body2 className="line-clamp-2 text-secondary text-balance">
+            <Body2 className="line-clamp-2 text-balance text-secondary">
               {service.description}
             </Body2>
           )}
@@ -116,11 +122,12 @@ export const ServiceSelectCard = ({
             </div>
           ) : null}
         </div>
-        {service.price > 0 && !disabled && (
+        {displayPrice && service.price > 0 && !disabled && (
           <Body1 className="hidden md:block">
             {formatMoney(service.price)}
           </Body1>
         )}
+        {trigger && trigger}
       </div>
 
       {detailsResult?.content ? (

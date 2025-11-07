@@ -1,6 +1,7 @@
 import { Description } from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import NumberFlow from '@/components/shared/number-flow';
 import { Button } from '@/components/ui/button';
@@ -14,8 +15,12 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { dialogVariants } from '@/components/ui/dialog/utils/dialog-variants';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Body1, Body2, Body3, H4 } from '@/components/ui/typography';
-import { selectResultForOrder } from '@/features/data/utils/select-result-for-order';
+import { CUSTOM_BLOOD_PANEL_ID } from '@/const';
+import { BookingStepID } from '@/features/orders/utils/get-steps-for-service';
+import { useService } from '@/features/services/api';
+import { ServiceSelectCard } from '@/features/services/components/service-select-card';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { cn } from '@/lib/utils';
 import { Biomarker } from '@/types/api';
@@ -28,14 +33,10 @@ export const BiomarkerDialog = ({
   children,
   biomarker,
   disabled = false,
-  selectedOrderId,
-  selectedOrderDate,
 }: {
   children: React.ReactNode;
   biomarker: Biomarker;
   disabled?: boolean;
-  selectedOrderId?: string;
-  selectedOrderDate?: Date | null;
 }) => {
   const [open, setOpen] = useState(false);
   const { lastValueSource } = getBiomarkerRanges(biomarker);
@@ -67,13 +68,6 @@ export const BiomarkerDialog = ({
     );
   }, [biomarker.ranges, lastValueSource]);
 
-  const computedSelectedResult = useMemo(() => {
-    return (
-      selectResultForOrder(biomarker, selectedOrderId, selectedOrderDate) ||
-      biomarker.value?.[0]
-    );
-  }, [biomarker, selectedOrderId, selectedOrderDate]);
-
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger
@@ -97,26 +91,28 @@ export const BiomarkerDialog = ({
             </Body1>
           </DialogTitle>
           <div className="-mr-3 flex items-center gap-2">
-            <div
-              style={{ backgroundColor: statusColorLight }}
-              className="flex items-center gap-1.5 rounded-full px-2 py-1"
-            >
+            {biomarker.status !== 'RECOMMENDED' ? (
               <div
-                style={{
-                  backgroundColor: statusColor,
-                }}
-                className="size-1.5 shrink-0 rounded-full"
-              />
-              <Body2
-                style={{
-                  color: statusColor,
-                  backgroundColor: statusColorLight,
-                }}
-                className="capitalize"
+                style={{ backgroundColor: statusColorLight }}
+                className="flex items-center gap-1.5 rounded-full px-2 py-1"
               >
-                {biomarker.status.toLowerCase()}
-              </Body2>
-            </div>
+                <div
+                  style={{
+                    backgroundColor: statusColor,
+                  }}
+                  className="size-1.5 shrink-0 rounded-full"
+                />
+                <Body2
+                  style={{
+                    color: statusColor,
+                    backgroundColor: statusColorLight,
+                  }}
+                  className="capitalize"
+                >
+                  {biomarker.status.toLowerCase()}
+                </Body2>
+              </div>
+            ) : null}
             <DialogClose asChild>
               <Button variant="ghost" className="text-zinc-400">
                 <X strokeWidth={2.5} className="size-4" />
@@ -126,49 +122,89 @@ export const BiomarkerDialog = ({
         </div>
         <div className="flex flex-col gap-4">
           <TimeSeriesChart biomarker={biomarker} />
-          <div className="mb-4 grid gap-2 min-[375px]:grid-cols-2">
-            <div className="flex flex-col gap-1 rounded-2xl border border-zinc-100 px-3 py-2 shadow-sm">
-              <Body3 className="text-secondary">Latest result</Body3>
-              <H4
-                className="truncate"
-                style={{
-                  color: statusColor,
-                }}
-              >
-                <NumberFlow
-                  value={
-                    computedSelectedResult?.quantity.value ??
-                    biomarker.value[0]?.quantity.value ??
-                    0
-                  }
-                />{' '}
-                <Body1 className="inline-block text-zinc-500">
-                  {computedSelectedResult?.quantity.unit || biomarker.unit}
-                </Body1>
-              </H4>
+          {biomarker.status === 'RECOMMENDED' && biomarker.recommendedTest ? (
+            <BiomarkerServiceSelectCard
+              recommendedTest={biomarker.recommendedTest}
+            />
+          ) : null}
+          {biomarker.status !== 'RECOMMENDED' ? (
+            <div className="mb-4 grid gap-2 min-[375px]:grid-cols-2">
+              <div className="flex flex-col gap-1 rounded-2xl border border-zinc-100 px-3 py-2 shadow-sm">
+                <Body3 className="text-secondary">Latest result</Body3>
+                <H4
+                  className="truncate"
+                  style={{
+                    color: statusColor,
+                  }}
+                >
+                  <NumberFlow value={biomarker.value[0]?.quantity.value || 0} />{' '}
+                  <Body1 className="inline-block text-zinc-500">
+                    {biomarker.unit}
+                  </Body1>
+                </H4>
+              </div>
+              <div className="flex flex-col gap-1 rounded-2xl border border-zinc-100 px-3 py-2 shadow-sm">
+                <Body3 className="text-secondary">Optimal range</Body3>
+                <H4
+                  className="truncate"
+                  style={{
+                    color: STATUS_TO_COLOR.optimal,
+                  }}
+                >
+                  <NumberFlow value={optimalRange?.low?.value || 0} />
+                  -
+                  <NumberFlow value={optimalRange?.high?.value || 0} />{' '}
+                  <Body1 className="inline-block text-zinc-500">
+                    {biomarker.unit}
+                  </Body1>
+                </H4>
+              </div>
             </div>
-            <div className="flex flex-col gap-1 rounded-2xl border border-zinc-100 px-3 py-2 shadow-sm">
-              <Body3 className="text-secondary">Optimal range</Body3>
-              <H4
-                className="truncate"
-                style={{
-                  color: STATUS_TO_COLOR.optimal,
-                }}
-              >
-                <NumberFlow value={optimalRange?.low?.value || 0} />
-                -
-                <NumberFlow value={optimalRange?.high?.value || 0} />{' '}
-                <Body1 className="inline-block text-zinc-500">
-                  {biomarker.unit}
-                </Body1>
-              </H4>
-            </div>
-          </div>
+          ) : null}
 
           <BiomarkerContentTabs biomarker={biomarker} className="min-h-96" />
         </div>
         <Description hidden>Insights about {biomarker.name}</Description>
       </DialogContent>
     </Dialog>
+  );
+};
+
+const BiomarkerServiceSelectCard = ({
+  recommendedTest,
+}: {
+  recommendedTest: string;
+}) => {
+  const navigate = useNavigate();
+
+  const getServiceQuery = useService({
+    serviceId: recommendedTest,
+    method: 'IN_LAB',
+  });
+
+  if (getServiceQuery.isLoading) {
+    return <Skeleton className="h-[106px] w-full rounded-[20px]" />;
+  }
+
+  const service = getServiceQuery.data?.service;
+
+  if (!service) {
+    return null;
+  }
+
+  return (
+    <ServiceSelectCard
+      service={service}
+      displayPrice={false}
+      toggle={() => {
+        const params = new URLSearchParams({
+          initialAddOnIds: `${service.id}`,
+          excludeSteps: `${BookingStepID.INFO}, ${BookingStepID.RECOMMENDATIONS}`,
+        });
+
+        navigate(`/services/${CUSTOM_BLOOD_PANEL_ID}?${params.toString()}`);
+      }}
+      trigger={<Button size="small">Test now</Button>}
+    />
   );
 };

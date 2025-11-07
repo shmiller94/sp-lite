@@ -9,6 +9,7 @@ export const sortBiomarkers = (biomarkers: Biomarker[]): Biomarker[] => {
       OPTIMAL: 3,
       PENDING: 4,
       UNKNOWN: 5,
+      RECOMMENDED: 5,
     };
 
     const aOrder = statusOrder[a.status] || 4;

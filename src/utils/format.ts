@@ -108,3 +108,13 @@ export function toTitleCase(text: string): string {
     })
     .join(' ');
 }
+
+export function getArrayParam(params: URLSearchParams, key: string): string[] {
+  return (
+    params
+      .get(key)
+      ?.split(',')
+      .map((s) => s.trim())
+      .filter(Boolean) ?? []
+  );
+}

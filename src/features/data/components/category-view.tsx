@@ -15,22 +15,31 @@ export const CategoryView = () => {
   const [searchParams] = useSearchParams();
   const activeCategory = searchParams.get('category');
 
-  const { data: categories, isLoading: isCategoriesLoading } = useCategories();
-  const activeCategoryData = categories?.categories.find(
+  const { data: categoriesData, isLoading: isCategoriesLoading } =
+    useCategories();
+  const activeCategoryData = categoriesData?.categories.find(
     (category) =>
       encodeCategory(category.category) ===
       encodeCategory(activeCategory ?? ''),
   );
 
-  const { data: biomarkers, isLoading: isBiomarkersLoading } = useBiomarkers({
-    category: activeCategoryData?.category,
-  });
+  const { data: biomarkersData, isLoading: isBiomarkersLoading } =
+    useBiomarkers({
+      category: activeCategoryData?.category,
+    });
 
   const isLoading = isCategoriesLoading || isBiomarkersLoading;
 
   if (!activeCategoryData) {
     return null;
   }
+
+  const relatedBiomarkerIds = new Set(activeCategoryData.relatedBiomarkers);
+
+  const categoryBiomarkers =
+    biomarkersData?.biomarkers.filter((b) =>
+      b.value?.some((v) => v.id && relatedBiomarkerIds.has(v.id)),
+    ) ?? [];
 
   return (
     <div className="w-full space-y-4">
@@ -43,7 +52,7 @@ export const CategoryView = () => {
             </div>
           ) : (
             <ScoreChart
-              biomarkers={biomarkers?.biomarkers ?? []}
+              biomarkers={categoryBiomarkers ?? []}
               value={activeCategoryData?.value}
             />
           )}
@@ -56,7 +65,7 @@ export const CategoryView = () => {
           ))}
         </div>
       ) : (
-        <div className="w-full">
+        <div className="w-full space-y-3">
           <CategoryDataTable category={activeCategoryData} />
         </div>
       )}

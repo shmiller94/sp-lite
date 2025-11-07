@@ -53,7 +53,9 @@ export function BiomarkerContentTabs({
   return (
     <div className={className}>
       <div className="flex flex-col gap-2">
-        <BiomarkerAiSuggestions name={name} />
+        {biomarker.status !== 'RECOMMENDED' ? (
+          <BiomarkerAiSuggestions name={name} />
+        ) : null}
 
         {metadata.map((item, idx) => (
           <div key={idx} className="flex flex-col gap-2">

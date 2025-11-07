@@ -211,6 +211,7 @@ export type Biomarker = Entity<{
   ranges: LabRanges;
   value: BiomarkerResult[];
   metadata: BiomarkerMetadata;
+  recommendedTest?: string;
 }>;
 
 export type BiomarkerComponent = {
@@ -251,7 +252,8 @@ export type BiomarkerStatus =
   | 'NORMAL'
   | 'OPTIMAL'
   | 'UNKNOWN'
-  | 'PENDING';
+  | 'PENDING'
+  | 'RECOMMENDED';
 
 export interface Range {
   low?: {
@@ -846,3 +848,26 @@ export interface Consent {
   exists: boolean;
   accepted?: boolean;
 }
+
+export const SuperpowerCategory = {
+  HEART_AND_VASCULAR: 'Heart & Vascular Health',
+  LIVER: 'Liver Health',
+  KIDNEY: 'Kidney Health',
+  METABOLIC: 'Metabolic Health',
+  INFLAMMATION: 'Inflammation',
+  NUTRIENTS: 'Nutrients',
+  ENERGY: 'Energy',
+  IMMUNE_SYSTEM: 'Immune System',
+  DNA_HEALTH: 'DNA Health',
+  BRAIN_HEALTH: 'Brain Health',
+  THYROID_HEALTH: 'Thyroid Health',
+  SEX_HORMONES: 'Sex Hormones',
+  GUT_HEALTH: 'Gut Health',
+  TOXIN_EXPOSURE: 'Toxin Exposure',
+  SKIN_AND_HAIR: 'Skin & Hair Health',
+  SLEEP: 'Sleep Health',
+  BODY_COMPOSITION: 'Body Composition',
+} as const;
+
+export type SuperpowerCategory =
+  (typeof SuperpowerCategory)[keyof typeof SuperpowerCategory];
