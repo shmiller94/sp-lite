@@ -2,7 +2,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { NotFoundRoute } from '@/app/routes/not-found';
 import { toast } from '@/components/ui/sonner';
-import { RxQuestionnaireName, RX_ASSESSMENTS } from '@/const/questionnaire';
+import { Spinner } from '@/components/ui/spinner';
+import {
+  RxQuestionnaireName,
+  RX_ASSESSMENTS,
+  isSymptomTracker,
+} from '@/const/questionnaire';
+import { useSubscriptionActive } from '@/features/questionnaires/api/subscription-active';
 import { IntakeQuestionnaire } from '@/features/questionnaires/components/intake-questionnaire';
 import { RxQuestionnaire } from '@/features/questionnaires/components/rx-questionnaire';
 
@@ -14,6 +20,31 @@ export const QuestionnaireRoute = () => {
     toast.success('Thanks for submission!');
     navigate('/');
   };
+
+  const isSymptomTrackerQuestionnaire = isSymptomTracker(type);
+
+  const subscriptionActiveQuery = useSubscriptionActive({
+    questionnaireName: type as RxQuestionnaireName,
+    queryConfig: {
+      enabled: isSymptomTrackerQuestionnaire,
+    },
+  });
+
+  if (isSymptomTrackerQuestionnaire && subscriptionActiveQuery.isLoading) {
+    return (
+      <div className="flex h-dvh w-full items-center justify-center">
+        <Spinner variant="primary" size="md" />
+      </div>
+    );
+  }
+
+  if (
+    isSymptomTrackerQuestionnaire &&
+    (subscriptionActiveQuery.isError ||
+      subscriptionActiveQuery.data?.active === false)
+  ) {
+    return <NotFoundRoute />;
+  }
 
   if (RX_ASSESSMENTS.includes(type as RxQuestionnaireName)) {
     return (
