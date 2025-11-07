@@ -2,6 +2,7 @@ import { MarketplaceFilter } from '@/features/marketplace/components/marketplace
 import { MarketplaceSkeleton } from '@/features/marketplace/components/marketplace-skeleton';
 import { getMarketplaceSearchMeta } from '@/features/marketplace/helper/get-marketplace-search-meta';
 import { matchesMarketplaceQuery } from '@/features/marketplace/utils/matches-marketplace-query';
+import { useUser } from '@/lib/auth';
 import { Rx } from '@/types/api';
 
 import { PrescriptionsCategory } from './prescriptions-category';
@@ -19,8 +20,21 @@ export const PrescriptionsList = ({
   filter = 'all',
   query = '',
 }: PrescriptionsListProps) => {
+  const { data: user } = useUser();
+
+  const primaryAddress = user?.primaryAddress;
+
   if (isLoading) return <MarketplaceSkeleton />;
   if (!prescriptions) return null;
+
+  if (!primaryAddress) {
+    return (
+      <div className="flex flex-col items-center space-y-4 rounded-2xl border border-dashed border-zinc-200 px-6 py-10 text-center text-sm text-secondary">
+        Please set a primary address to view available prescriptions.
+      </div>
+    );
+  }
+
   if (prescriptions.length === 0) {
     return (
       <div className="flex flex-col items-center space-y-4 rounded-2xl border border-dashed border-zinc-200 px-6 py-10 text-center text-sm text-secondary">
