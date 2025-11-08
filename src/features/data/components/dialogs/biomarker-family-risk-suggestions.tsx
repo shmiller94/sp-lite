@@ -3,6 +3,7 @@ import { ArrowRight } from 'lucide-react';
 import { AIIcon } from '@/components/icons/ai-icon';
 import { Button } from '@/components/ui/button';
 import { Body2 } from '@/components/ui/typography';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { Biomarker } from '@/types/api';
 import { handleShare } from '@/utils/share';
 
@@ -11,7 +12,16 @@ export const BiomarkerFamilyRiskSuggestions = ({
 }: {
   biomarker: Biomarker;
 }) => {
+  const { track } = useAnalytics();
+
   if (!biomarker.familyRisk) return;
+
+  const shareInsight = () => {
+    if (!biomarker.familyRisk) return;
+
+    track('shared_OOR_biomarker');
+    handleShare(biomarker.familyRisk.sms);
+  };
 
   return (
     <div className="flex gap-3 rounded-2xl border p-4 shadow-sm">
@@ -27,11 +37,7 @@ export const BiomarkerFamilyRiskSuggestions = ({
           variant="ghost"
           size="icon"
           className="flex items-center gap-1 text-zinc-500"
-          onClick={() =>
-            biomarker.familyRisk
-              ? handleShare(biomarker.familyRisk.sms)
-              : undefined
-          }
+          onClick={shareInsight}
         >
           Share this with your family
           <ArrowRight size={12} />

@@ -8,7 +8,9 @@ import { Dialog, DialogTrigger, DialogContent } from '@/components/ui/dialog';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 import { Body2, H3 } from '@/components/ui/typography';
 import { useQuestionnaireInsights } from '@/features/questionnaires/api/get-questionnaire-insights';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
+import { QuestionnaireInsights } from '@/types/api';
 import { handleShare } from '@/utils/share';
 
 // TODO: god damn it we should standarize fonts across the app
@@ -46,6 +48,7 @@ const FamilyInsightsDialog = ({ children }: { children: ReactNode }) => {
   const { data } = useQuestionnaireInsights({
     questionnaireName: 'onboarding-intake',
   });
+  const { track } = useAnalytics();
 
   const onNextInsight = () => {
     setCurrent((prev) => prev + 1);
@@ -53,6 +56,11 @@ const FamilyInsightsDialog = ({ children }: { children: ReactNode }) => {
 
   const onPrevInsight = () => {
     setCurrent((prev) => prev - 1);
+  };
+
+  const shareInsight = (insight: QuestionnaireInsights) => {
+    track('shared_intake_risk_card');
+    handleShare(insight.sms);
   };
 
   if (!data || data.insights.length === 0) return null;
@@ -123,7 +131,7 @@ const FamilyInsightsDialog = ({ children }: { children: ReactNode }) => {
           size={width < 1024 ? 'medium' : 'small'}
           variant={width < 1024 ? 'outline' : 'default'}
           className="w-full lg:w-fit"
-          onClick={() => handleShare(insight.sms)}
+          onClick={() => shareInsight(insight)}
         >
           Share this with your family
         </Button>
@@ -134,7 +142,9 @@ const FamilyInsightsDialog = ({ children }: { children: ReactNode }) => {
   if (width < 1024) {
     return (
       <Sheet>
-        <SheetTrigger asChild>{children}</SheetTrigger>
+        <SheetTrigger asChild onClick={() => track('clicked_family_CTA')}>
+          {children}
+        </SheetTrigger>
         <SheetContent className="flex max-h-full flex-col rounded-t-[10px] border-none">
           {content}
         </SheetContent>
@@ -144,7 +154,9 @@ const FamilyInsightsDialog = ({ children }: { children: ReactNode }) => {
 
   return (
     <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogTrigger asChild onClick={() => track('clicked_family_CTA')}>
+        {children}
+      </DialogTrigger>
       <DialogContent className="max-w-[1000px] overflow-y-auto">
         {content}
       </DialogContent>
