@@ -4,12 +4,12 @@ import { api } from '@/lib/api-client';
 import { AdminUser } from '@/types/api';
 
 interface UpdateUserRequest {
-  email: string;
-  phone: string;
-  firstName: string;
-  lastName: string;
-  dateOfBirth: string;
-  gender: string;
+  email?: string;
+  phone?: string;
+  firstName?: string;
+  lastName?: string;
+  dateOfBirth?: string;
+  gender?: string;
 }
 
 interface UpdateUserResponse {
@@ -20,7 +20,7 @@ export const updateUser = (
   id: string,
   data: UpdateUserRequest,
 ): Promise<UpdateUserResponse> => {
-  return api.put(`/admin/users/${id}`, data);
+  return api.patch(`/admin/users/${id}`, data);
 };
 
 export const useUpdateUser = () => {
