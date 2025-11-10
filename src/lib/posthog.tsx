@@ -51,6 +51,4 @@ export function PHProvider({
   return <PostHogProvider client={phClient}>{children}</PostHogProvider>;
 }
 
-export const FeatureFlags = {
-  RX_V0: 'rx-v0',
-};
+export const FeatureFlags = {};
