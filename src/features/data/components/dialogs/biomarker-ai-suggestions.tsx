@@ -43,7 +43,7 @@ export const BiomarkerAiSuggestions = ({ name }: { name: string }) => {
         }}
       >
         <AnimatedIcon state="idle" className="size-5 shrink-0" />
-        <span className="line-clamp-2 w-full min-w-0 flex-1 self-start whitespace-normal break-words text-left">
+        <span className="w-full min-w-0 flex-1 self-start whitespace-normal break-words text-left text-sm lg:text-base">
           {suggestion}
         </span>
         <ArrowRight className="size-4 shrink-0 text-zinc-500 transition-all duration-200 ease-out group-hover:translate-x-1 group-hover:text-zinc-600" />
