@@ -480,7 +480,7 @@ export type PaymentMethod = {
   billing_details: {
     postal_code: string | null;
   } | null;
-  type?: 'card' | 'klarna';
+  type?: 'card' | 'klarna' | 'link';
   card?: {
     brand: string;
     country: string | null;
@@ -489,6 +489,7 @@ export type PaymentMethod = {
     last4: string;
   };
   klarna?: Record<string, never>;
+  link?: Record<string, never>;
   created: number;
   default: boolean;
   paymentProvider: PaymentProvider;

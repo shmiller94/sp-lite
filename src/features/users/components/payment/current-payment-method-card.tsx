@@ -65,6 +65,17 @@ export const CurrentPaymentMethodCard = ({
                 />
                 <Body1 className="text-primary">Pay with Klarna</Body1>
               </>
+            ) : activePaymentMethod?.type === 'link' ? (
+              <>
+                <img
+                  src="/settings/membership/link.png"
+                  alt="Link"
+                  className="h-4 w-auto"
+                />
+                <Body1 className="leading-none text-primary">
+                  Pay with Link
+                </Body1>
+              </>
             ) : null}
             {isFlexSelected && (
               <div className="flex items-center gap-1 rounded-full border px-1.5 py-1">

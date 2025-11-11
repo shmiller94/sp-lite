@@ -73,6 +73,15 @@ export const PaymentMethodsSelect = () => {
                             className="h-6 w-auto object-contain"
                           />
                         </>
+                      ) : paymentMethod.type === 'link' ? (
+                        <>
+                          <img
+                            src="/settings/membership/link.png"
+                            alt="Link"
+                            className="h-4 w-auto object-contain"
+                            style={{ display: 'block' }}
+                          />
+                        </>
                       ) : null}
                       <div className="flex items-center gap-1.5">
                         {paymentMethod.default && (

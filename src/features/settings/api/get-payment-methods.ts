@@ -28,7 +28,7 @@ export const getPaymentMethodsQueryOptions = ({
         ...response,
         paymentMethods: response.paymentMethods.map((pm: PaymentMethod) => ({
           ...pm,
-          type: (pm.type ?? 'card') as 'card' | 'klarna',
+          type: (pm.type ?? 'card') as 'card' | 'klarna' | 'link',
         })),
       };
     },

@@ -83,6 +83,13 @@ export function PaymentMethodCard({
                 className="h-10 w-auto object-contain"
               />
             )}
+            {paymentMethod.type === 'link' && (
+              <img
+                src="/settings/membership/link.png"
+                alt="Link"
+                className="h-8 w-auto object-contain"
+              />
+            )}
             <h4 className="text-2xl leading-none text-primary">
               {paymentMethod.type === 'card' && paymentMethod.card ? (
                 <>
@@ -91,6 +98,8 @@ export function PaymentMethodCard({
                 </>
               ) : paymentMethod.type === 'klarna' ? (
                 'Pay with Klarna'
+              ) : paymentMethod.type === 'link' ? (
+                'Pay with Link'
               ) : null}
             </h4>
             {isFlexCard && (
