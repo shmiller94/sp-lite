@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 
 import { SuperpowerLogo } from '@/components/icons/superpower-logo';
+import { Button } from '@/components/ui/button';
 import { H1, H2, H3 } from '@/components/ui/typography';
 import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
@@ -22,113 +23,32 @@ export const Activation = ({
   const [scrollInSection, setScrollInSection] = useState(0);
   const width = useWindowWidth();
   const isMobile = width ? width < 768 : false;
-  const hasStartedScrolling = useRef(false);
 
   const birthDate = parseISO(user?.dateOfBirth ?? '');
   const today = new Date();
   const age = differenceInYears(today, birthDate);
 
-  // Auto-scroll AKA the most legendary piece of code in this entire project.
-  // the greatest useEffect ever to live.
   useEffect(() => {
-    if (sequence >= 1 && !hasStartedScrolling.current) {
-      let animationFrameId: number | null = null;
-      let retryTimeout: NodeJS.Timeout | null = null;
+    const handleScroll = () => {
+      if (scrollableSectionRef.current && sequence > 0) {
+        const scrollTop = window.scrollY;
+        const windowHeight = window.innerHeight;
+        const scrollPercent = Math.round(
+          (scrollTop /
+            (scrollableSectionRef.current.scrollHeight - windowHeight)) *
+            100,
+        );
 
-      // Wait a bit for the ref to be available
-      const startAutoScroll = () => {
-        if (!scrollableSectionRef.current) {
-          retryTimeout = setTimeout(startAutoScroll, 100);
-          return;
-        }
+        setScrollInSection(scrollPercent);
+      }
+    };
 
-        hasStartedScrolling.current = true;
+    window.addEventListener('scroll', handleScroll);
 
-        // Scroll to top first... no peeking.
-        window.scrollTo({ top: 0, behavior: 'auto' });
-
-        // Wait for section to be fully rendered, then start scrolling like its your job.
-        const checkAndStartScroll = () => {
-          if (!scrollableSectionRef.current) {
-            setTimeout(checkAndStartScroll, 50);
-            return;
-          }
-
-          const section = scrollableSectionRef.current;
-          const windowHeight = window.innerHeight;
-          const sectionHeight = section.scrollHeight;
-          const sectionTop = section.offsetTop;
-
-          // Voodoo magic to ensure the section is at least 500vh when sequence >= 1
-          if (sectionHeight < windowHeight * 4) {
-            setTimeout(checkAndStartScroll, 50);
-            return;
-          }
-
-          const scrollableHeight = sectionHeight - windowHeight;
-          const totalScrollDistance = scrollableHeight;
-          const scrollDuration = 18000; // Make em wait
-
-          // Scroll to section top first
-          window.scrollTo({ top: sectionTop, behavior: 'auto' });
-
-          // Start auto-scrolling immediately
-          const startTime = Date.now();
-
-          const animateScroll = () => {
-            if (!scrollableSectionRef.current) return;
-
-            const currentTime = Date.now();
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / scrollDuration, 1);
-
-            // Dont fkn ask me how this works, it works. Trust me. They call it an easing function.
-            const easeInOut = (t: number) =>
-              t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-
-            const easedProgress = easeInOut(progress);
-            const currentScroll =
-              sectionTop + totalScrollDistance * easedProgress;
-
-            window.scrollTo({
-              top: currentScroll,
-              behavior: 'auto',
-            });
-
-            const scrollTop = window.scrollY;
-            const sectionScrollTop = scrollTop - sectionTop;
-
-            if (scrollableHeight > 0) {
-              const scrollPercent = Math.round(
-                (sectionScrollTop / scrollableHeight) * 100,
-              );
-              setScrollInSection(Math.min(100, Math.max(0, scrollPercent)));
-            }
-
-            if (progress < 1) {
-              animationFrameId = requestAnimationFrame(animateScroll);
-            }
-          };
-
-          // Delay this thing a bit to ensure scroll completes
-          setTimeout(() => {
-            animationFrameId = requestAnimationFrame(animateScroll);
-          }, 100);
-        };
-        setTimeout(checkAndStartScroll, 500);
-      };
-
-      startAutoScroll();
-
-      // Clean up all this biz so the ops dont come after us...
-      return () => {
-        if (retryTimeout) clearTimeout(retryTimeout);
-        if (animationFrameId !== null) {
-          cancelAnimationFrame(animationFrameId);
-        }
-      };
-    }
-  }, [sequence]);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [sequence, setSequence]);
 
   const variants = {
     initial: {
@@ -239,6 +159,18 @@ export const Activation = ({
               <H1 className="mb-10 text-center text-4xl text-white md:!text-6xl">
                 Let&apos;s activate your membership
               </H1>
+              <Button
+                onClick={() => {
+                  setSequence(1);
+                  setTimeout(() => {
+                    setSequence(2);
+                  }, 1000);
+                }}
+                variant="white"
+                className="w-full max-w-sm rounded-full"
+              >
+                Activate
+              </Button>
             </div>
             <div />
           </div>
@@ -247,6 +179,14 @@ export const Activation = ({
 
       {sequence >= 1 && (
         <div className="h-full flex-1">
+          <p
+            className={cn(
+              'absolute left-1/2 mx-auto -ml-10 -mt-16 -translate-x-1/2 transition-opacity duration-500 ease-out animate-bounce text-center text-sm text-zinc-400',
+              scrollInSection < 1 ? 'opacity-100' : 'opacity-0',
+            )}
+          >
+            Scroll down
+          </p>
           <motion.div
             animate={{
               opacity: scrollInSection > 5 && scrollInSection < 20 ? 1 : 0,
