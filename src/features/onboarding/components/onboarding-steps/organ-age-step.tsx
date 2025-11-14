@@ -25,7 +25,7 @@ const OrganAgeContent = () => {
   const upgradeOrderMutation = useUpgradeOrder({
     mutationConfig: {
       onSuccess: () => {
-        toast.success(`One-time Organ Age upgrade successful!`);
+        toast.success(`One-time OrganAge upgrade successful!`);
       },
     },
   });
@@ -74,7 +74,7 @@ const OrganAgeContent = () => {
         <ProductInfo />
         <TotalInfo className="block md:hidden" />
       </div>
-      <div className="w-full space-y-8 p-4 md:p-10">
+      <div className="w-full space-y-6 p-4 md:p-10">
         <div className="flex justify-start md:justify-end">
           <SuperpowerLogo />
         </div>
@@ -82,7 +82,7 @@ const OrganAgeContent = () => {
           <H2>Go beyond your Biological Age</H2>
           <Body1 className="text-zinc-500">
             Understand how each of your body&apos;s major systems is aging, from
-            heart & metabolism to brain & immune health.
+            heart and metabolism to brain and immune health.
           </Body1>
 
           <ProductInfo className="lg:hidden" />
@@ -105,7 +105,7 @@ const OrganAgeContent = () => {
             Go beyond a single &quot;biological age&quot; number. OrganAge
             calculates system-specific biological ages across 9 key areas of
             health. See which systems are aging faster and where to focus your
-            efforts for prevention & longevity.
+            efforts for prevention and longevity.
           </Body1>
         </div>
         <div className="space-y-2">
@@ -140,7 +140,7 @@ const OrganAgeContent = () => {
           <Payment.SubmitPayment
             onSubmit={upgradeOrder}
             onCancel={goToNext}
-            submitLabel="Add Organ Age"
+            submitLabel="Add OrganAge"
             isPending={upgradeOrderMutation.isPending}
             isSuccess={upgradeOrderMutation.isSuccess}
             enabled
