@@ -14,11 +14,10 @@ export type CollectionOptionType = {
 const LOWER_PRICED_AT_HOME_COLLECTION_FEE_STATES = new Set<string>([
   'NY',
   'NJ',
-  'AZ',
 ]);
 
 // Pricing constants (in cents)
-const AT_HOME_PRICE_LOWER = 9900; // $99 for NY, NJ, AZ
+const AT_HOME_PRICE_LOWER = 9900; // $99 for NY, NJ
 const AT_HOME_PRICE_DEFAULT = 11900; // $119 for all other states
 
 /**
