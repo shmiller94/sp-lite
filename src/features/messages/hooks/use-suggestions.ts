@@ -52,6 +52,7 @@ export function useSuggestions({
             message: messages[messages.length - 1],
             id: null,
           },
+          credentials: 'include',
         };
       },
     }),

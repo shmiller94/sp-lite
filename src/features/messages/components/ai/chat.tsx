@@ -59,7 +59,10 @@ export function Chat({
         };
       },
       prepareSendMessagesRequest({ messages, id }) {
-        return { body: { message: messages[messages.length - 1], id } };
+        return {
+          body: { message: messages[messages.length - 1], id },
+          credentials: 'include',
+        };
       },
     }),
     messages: initialMessages,

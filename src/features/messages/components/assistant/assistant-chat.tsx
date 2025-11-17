@@ -69,6 +69,7 @@ export function AssistantChat({
             message: messages[messages.length - 1],
             id: hasUserMessage ? id : null,
           },
+          credentials: 'include',
         };
       },
     }),
