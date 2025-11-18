@@ -8,28 +8,30 @@ type Size = {
 };
 
 const MOBILE_BREAKPOINT = 1024;
-const DEFAULT_DESKTOP_WIDTH = 384;
+const DEFAULT_DESKTOP_WIDTH = 600;
 const DEFAULT_MIN_HEIGHT = 240;
 const DEFAULT_MIN_WIDTH = 320;
+
+export function getDefaultAssistantSize(): { width: number; height: number } {
+  if (typeof window === 'undefined') {
+    return { width: DEFAULT_DESKTOP_WIDTH, height: 512 };
+  }
+
+  const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
+  const initialHeight = Math.max(512, Math.round(window.innerHeight * 0.75));
+  const initialWidth = isMobile
+    ? Math.max(DEFAULT_MIN_WIDTH, Math.round(window.innerWidth - 32)) // mimic w-[calc(100vw-2rem)]
+    : DEFAULT_DESKTOP_WIDTH;
+
+  return { width: initialWidth, height: initialHeight };
+}
 
 function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(value, max));
 }
 
 export function useResizeAssistant() {
-  const initialSize: Size = useMemo(() => {
-    if (typeof window === 'undefined') {
-      return { width: DEFAULT_DESKTOP_WIDTH, height: 512 };
-    }
-
-    const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
-    const initialHeight = Math.max(320, Math.round(window.innerHeight * 0.5));
-    const initialWidth = isMobile
-      ? Math.max(DEFAULT_MIN_WIDTH, Math.round(window.innerWidth - 32)) // mimic w-[calc(100vw-2rem)]
-      : DEFAULT_DESKTOP_WIDTH;
-
-    return { width: initialWidth, height: initialHeight };
-  }, []);
+  const initialSize: Size = useMemo(() => getDefaultAssistantSize(), []);
 
   const [size, setSize] = useState<Size>(initialSize);
 

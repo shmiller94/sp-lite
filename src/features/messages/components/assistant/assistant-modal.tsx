@@ -1,10 +1,10 @@
-import { ChevronsDownUp, PictureInPicture } from 'lucide-react';
+import { ChevronsDownUp, Link, Maximize2, Minimize2 } from 'lucide-react';
 import { useCallback, useMemo, useState, type Ref } from 'react';
 import { Resizable } from 'react-resizable';
 import 'react-resizable/css/styles.css';
-import { useNavigate } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
+import { toast } from '@/components/ui/sonner';
 import {
   Tooltip,
   TooltipContent,
@@ -12,7 +12,10 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { AnimatedIcon } from '@/features/messages/components/ai/animated-icon';
-import { useResizeAssistant } from '@/features/messages/hooks/use-resize-assistant';
+import {
+  getDefaultAssistantSize,
+  useResizeAssistant,
+} from '@/features/messages/hooks/use-resize-assistant';
 import { useAssistantStore } from '@/features/messages/stores/assistant-store';
 import { cn } from '@/lib/utils';
 import { generateUUID } from '@/utils/generate-uiud';
@@ -24,25 +27,40 @@ export const AssistantModal = () => {
   const open = useAssistantStore((s) => s.open);
   const close = useAssistantStore((s) => s.close);
   const input = useAssistantStore((s) => s.input);
-  const clearInput = useAssistantStore((s) => s.clearInput);
   const { width, height, setSize, minConstraints, maxConstraints } =
     useResizeAssistant();
 
   const [isResizing, setIsResizing] = useState(false);
   const collapsedHeight = 48; // equals Tailwind h-12
-  const navigate = useNavigate();
   const chatId = useMemo(() => generateUUID(), []);
   const boxHeight = isExpanded ? height : collapsedHeight;
   const boxWidth = isExpanded ? width : undefined;
 
-  const handleFullscreenClick = useCallback(() => {
-    const message = input?.trim();
-    const q = message ? `?defaultMessage=${encodeURIComponent(message)}` : '';
-    navigate(`/concierge/${chatId}${q}`);
-    // clear the input after navigating away
-    clearInput();
-    close();
-  }, [chatId, clearInput, close, input, navigate]);
+  const handleCopyLinkClick = useCallback(async () => {
+    try {
+      const message = input?.trim();
+      const q = message ? `?defaultMessage=${encodeURIComponent(message)}` : '';
+      const url = `${window.location.origin}/concierge/${chatId}${q}`;
+      await navigator.clipboard.writeText(url);
+      toast.success('Link copied to clipboard');
+    } catch (err) {
+      console.error('Failed to copy link:', err);
+      toast.error('Failed to copy link');
+    }
+  }, [chatId, input]);
+
+  const isMaximized = useMemo(() => {
+    return width === maxConstraints[0] && height === maxConstraints[1];
+  }, [width, height, maxConstraints]);
+
+  const handleMaximizeToggle = useCallback(() => {
+    if (isMaximized) {
+      const defaultSize = getDefaultAssistantSize();
+      setSize(defaultSize);
+    } else {
+      setSize({ width: maxConstraints[0], height: maxConstraints[1] });
+    }
+  }, [isMaximized, maxConstraints, setSize]);
 
   return (
     <Resizable
@@ -121,21 +139,39 @@ export const AssistantModal = () => {
           <div
             className={cn(
               'flex items-center gap-0.5 overflow-hidden transition-all duration-200 ease-out',
-              isExpanded ? 'max-w-20' : 'max-w-0 pointer-events-none',
+              isExpanded ? 'max-w-32' : 'max-w-0 pointer-events-none',
             )}
           >
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
                   <Button
-                    onClick={handleFullscreenClick}
+                    onClick={handleMaximizeToggle}
                     variant="white"
                     className="aspect-square rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-primary"
                   >
-                    <PictureInPicture className="size-4 rotate-180 -scale-x-100" />
+                    {isMaximized ? (
+                      <Minimize2 className="size-4" />
+                    ) : (
+                      <Maximize2 className="size-4" />
+                    )}
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>Full Screen</TooltipContent>
+                <TooltipContent>
+                  {isMaximized ? 'Shrink' : 'Maximize'}
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    onClick={handleCopyLinkClick}
+                    variant="white"
+                    className="aspect-square rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-primary"
+                  >
+                    <Link className="size-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Copy link to chat</TooltipContent>
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger>
