@@ -36,6 +36,7 @@ export const CheckEmailScreen = ({
   );
   const [otpCode, setOtpCode] = useState('');
   const lastSubmittedCodeRef = useRef<string | null>(null);
+  const otpInputRef = useRef<React.ElementRef<typeof InputOTP>>(null);
 
   const sendMagicLinkMutation = useSendMagicLink({
     mutationConfig: {
@@ -56,7 +57,13 @@ export const CheckEmailScreen = ({
       onError: () => {
         // Clear code on error so user can try again
         lastSubmittedCodeRef.current = null;
-        startTransition(() => setOtpCode(''));
+        startTransition(() => {
+          setOtpCode('');
+          // Focus the input after clearing to allow immediate typing
+          setTimeout(() => {
+            otpInputRef.current?.focus();
+          }, 0);
+        });
       },
     },
   });
@@ -122,8 +129,8 @@ export const CheckEmailScreen = ({
       </div>
 
       <div className="absolute inset-0 z-10 flex items-center justify-center">
-        <div className="text-center space-y-8 px-6">
-          <H1 className="text-white text-4xl md:text-6xl">
+        <div className="space-y-8 px-6 text-center">
+          <H1 className="text-4xl text-white md:text-6xl">
             <div className="opacity-100">Welcome to</div>
             <div className="opacity-65">Superpower</div>
           </H1>
@@ -150,6 +157,7 @@ export const CheckEmailScreen = ({
           <div className="space-y-4">
             <div className="flex justify-center">
               <InputOTP
+                ref={otpInputRef}
                 maxLength={6}
                 value={otpCode}
                 onChange={(val) => handleOTPChange(val)}
@@ -175,7 +183,7 @@ export const CheckEmailScreen = ({
             <button
               onClick={handleResend}
               disabled={!canResend}
-              className="disabled:opacity-50 min-h-[2rem]"
+              className="min-h-8 disabled:opacity-50"
             >
               <Body1 className="text-white opacity-65">
                 {sendMagicLinkMutation.isPending ? (
