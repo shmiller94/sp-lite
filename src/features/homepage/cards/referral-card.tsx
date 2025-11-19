@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
-import { NavLink } from 'react-router-dom';
 
+import { Link } from '@/components/ui/link';
 import { Body1, Body2, H4 } from '@/components/ui/typography';
 
 import { HomepageCard } from '../components/homepage-card';
@@ -10,7 +10,10 @@ export const ReferralCard: React.FC = () => {
   return (
     <HomepageCard title="Live better, longer together">
       <div className="group relative cursor-pointer overflow-hidden rounded-3xl">
-        <div className="relative flex items-stretch justify-between bg-zinc-900 px-6">
+        <Link
+          to="/invite"
+          className="relative flex items-center justify-between bg-zinc-900 px-6"
+        >
           <div className="absolute -left-12 top-0 h-full overflow-hidden md:inset-0">
             <motion.img
               src="/home/refer-a-friend.png"
@@ -39,13 +42,9 @@ export const ReferralCard: React.FC = () => {
               </Body1>
             </div>
           </div>
-          <NavLink
-            to={`/invite`}
-            className="relative z-10 flex flex-col justify-center py-6"
-          >
-            <ChevronRight className="size-5 text-white transition-all group-hover:-mr-1" />
-          </NavLink>
-        </div>
+
+          <ChevronRight className="size-5 text-white transition-all group-hover:-mr-1" />
+        </Link>
       </div>
     </HomepageCard>
   );
