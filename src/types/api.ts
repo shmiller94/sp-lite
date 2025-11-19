@@ -542,6 +542,7 @@ export type Wearable = {
 
 export type FhirCarePlan = CarePlan & {
   goal?: Array<{ resource: Goal }>;
+  lastViewed?: string;
 };
 
 /* PRODUCTS */

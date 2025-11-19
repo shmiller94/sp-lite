@@ -1,12 +1,9 @@
 import moment from 'moment';
-import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Body1, H3 } from '@/components/ui/typography';
-import { setLocalStorageViewed } from '@/features/announcements/utils/care-plan';
-import { useCheckActionPlanViewed } from '@/features/plans/api';
 import { CarePlanBook } from '@/features/plans/components/care-plan-book';
 import { useLatestCompletedPlan } from '@/features/plans/hooks/use-latest-completed-plan';
 import { useAnalytics } from '@/hooks/use-analytics';
@@ -25,36 +22,12 @@ export const CarePlanDialog = ({ open, onOpenChange }: CarePlanDialogProps) => {
     ? moment.utc(startDate).format('MMM DD, YYYY')
     : '';
 
-  // Check backend for viewed status
-  useCheckActionPlanViewed({
-    planId: latestPlan?.id ?? '',
-    queryConfig: {
-      enabled: !!latestPlan?.id,
-    },
-  });
-
   const { track } = useAnalytics();
-
-  const markAsViewed = useCallback((id: string) => {
-    const timestamp = new Date().toISOString();
-    setLocalStorageViewed(id, timestamp);
-  }, []);
-
-  const handleOpenChange = useCallback(
-    (next: boolean) => {
-      if (!next && latestPlan?.id) {
-        markAsViewed(latestPlan.id);
-      }
-      onOpenChange(next);
-    },
-    [latestPlan?.id, markAsViewed, onOpenChange],
-  );
 
   if (!latestPlan) return null;
 
   const handleOpenPlan = () => {
     if (!latestPlan?.id) return;
-    markAsViewed(latestPlan.id);
     track('aiap_opened_from_modal', {
       action_plan_id: latestPlan.id,
     });
@@ -64,7 +37,6 @@ export const CarePlanDialog = ({ open, onOpenChange }: CarePlanDialogProps) => {
 
   const handleDismiss = () => {
     if (!latestPlan?.id) return;
-    markAsViewed(latestPlan.id);
     track('aiap_modal_dismissed', {
       action_plan_id: latestPlan.id,
     });
@@ -72,7 +44,7 @@ export const CarePlanDialog = ({ open, onOpenChange }: CarePlanDialogProps) => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[calc(100%-2rem)] space-y-8 px-8 pb-4 pt-12 sm:max-w-md">
         <div className="group mx-auto inline-block -rotate-3">
           <CarePlanBook title="Action Plan" date={formattedDate} />

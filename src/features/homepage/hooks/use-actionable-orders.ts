@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 
+import { ADVISORY_CALL } from '@/const';
 import { useOrders } from '@/features/orders/api';
 import { usePlans } from '@/features/plans/api/get-plans';
 import { OrderStatus } from '@/types/api';
@@ -11,12 +12,15 @@ type OrderWithCarePlan = {
   status: OrderStatus;
   carePlanId?: string;
   carePlanTitle?: string;
+  lastViewed?: string;
+  date?: string; // createdAt for draft orders, period.start for care plans
 };
 
 /**
  * Hook to compute actionable orders:
  * - All draft orders (for booking)
  * - Active/completed orders that have a completed care plan (to view plan)
+ * Results are annotated with lastViewed and sorted by date (most recent first)
  */
 export const useActionableOrders = () => {
   const { data: ordersData, isLoading: isOrdersLoading } = useOrders();
@@ -26,10 +30,9 @@ export const useActionableOrders = () => {
     const orders = ordersData?.orders ?? [];
     const plans = plansData?.actionPlans ?? [];
 
-    // Create a map of order ID to completed care plan only
     const orderToCarePlanMap = new Map<
       string,
-      { id: string; title?: string }
+      { id: string; title?: string; lastViewed?: string; date?: string }
     >();
 
     plans
@@ -44,14 +47,20 @@ export const useActionableOrders = () => {
             orderToCarePlanMap.set(orderId, {
               id: plan.id!,
               title: plan.title,
+              lastViewed: plan.lastViewed,
+              date: plan.period?.start,
             });
           }
         });
       });
 
     // Filter for draft orders and active/completed orders with completed care plans
+    // Exclude advisory calls from the list
     const result: OrderWithCarePlan[] = orders
       .filter((order) => {
+        if (order.serviceName === ADVISORY_CALL) {
+          return false;
+        }
         if (order.status === OrderStatus.draft) {
           return true;
         }
@@ -72,14 +81,48 @@ export const useActionableOrders = () => {
           status: order.status,
           carePlanId: carePlan?.id,
           carePlanTitle: carePlan?.title,
+          lastViewed: carePlan?.lastViewed,
+          date: carePlan?.date || order.createdAt,
         };
+      })
+      .sort((a, b) => {
+        // Priority 1: Draft orders first
+        const isDraftA = a.status === OrderStatus.draft;
+        const isDraftB = b.status === OrderStatus.draft;
+        if (isDraftA && !isDraftB) return -1;
+        if (!isDraftA && isDraftB) return 1;
+
+        // Priority 2: Unseen care plans
+        const isUnseenA = !a.lastViewed;
+        const isUnseenB = !b.lastViewed;
+        if (isUnseenA && !isUnseenB) return -1;
+        if (!isUnseenA && isUnseenB) return 1;
+
+        // Priority 3: Sort by date (most recent first)
+        const dateA = a.date ? new Date(a.date).getTime() : 0;
+        const dateB = b.date ? new Date(b.date).getTime() : 0;
+        return dateB - dateA;
       });
 
     return result;
   }, [ordersData, plansData]);
 
+  const unseenOrDrafts = useMemo(
+    () =>
+      actionableOrders.filter(
+        (order) => order.status === OrderStatus.draft || !order.lastViewed,
+      ),
+    [actionableOrders],
+  );
+
+  const hasDrafts = actionableOrders.some(
+    (order) => order.status === OrderStatus.draft,
+  );
+
   return {
     actionableOrders,
+    unseenOrDrafts,
+    hasDrafts,
     isLoading: isOrdersLoading || isPlansLoading,
   };
 };

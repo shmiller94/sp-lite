@@ -1,15 +1,15 @@
 import moment from 'moment';
 
-import {
-  AIAP_PUBLISH_CUTOFF_DATE,
-  getLocalStorageViewed,
-} from '@/features/announcements/utils/care-plan';
-import { useCheckActionPlanViewed } from '@/features/plans/api';
 import { useLatestCompletedPlan } from '@/features/plans/hooks/use-latest-completed-plan';
 
+export const AIAP_PUBLISH_CUTOFF_DATE = moment('2025-09-01');
+
 export const useNeedsCarePlanAnnouncement = () => {
-  const { data: latestPlan, isLoading: isPlanLoading } =
-    useLatestCompletedPlan();
+  const {
+    data: latestPlan,
+    isLoading: isPlanLoading,
+    lastViewed,
+  } = useLatestCompletedPlan();
 
   const startDate = latestPlan?.period?.start;
 
@@ -18,32 +18,12 @@ export const useNeedsCarePlanAnnouncement = () => {
     !startDate ||
     moment(startDate).isBefore(AIAP_PUBLISH_CUTOFF_DATE);
 
-  const localViewed = latestPlan?.id
-    ? getLocalStorageViewed(latestPlan.id)
-    : null;
-
-  const shouldCheckBackend = !!(
-    latestPlan?.id &&
-    !isLegacyOrMissing &&
-    !localViewed
-  );
-
-  const viewStatusQuery = useCheckActionPlanViewed({
-    planId: latestPlan?.id ?? '',
-    queryConfig: { enabled: shouldCheckBackend },
-  });
-
-  const isLoading =
-    isPlanLoading || (shouldCheckBackend && viewStatusQuery.isLoading);
-
-  if (isLoading) return { needsAnnouncement: false, isLoading: true };
+  if (isPlanLoading) return { needsAnnouncement: false, isLoading: true };
   if (isLegacyOrMissing) return { needsAnnouncement: false, isLoading: false };
-  if (localViewed) return { needsAnnouncement: false, isLoading: false };
+  if (lastViewed) return { needsAnnouncement: false, isLoading: false };
 
   return {
-    needsAnnouncement: shouldCheckBackend
-      ? !viewStatusQuery.data?.hasBeenViewed
-      : false,
+    needsAnnouncement: !lastViewed,
     isLoading: false,
   };
 };

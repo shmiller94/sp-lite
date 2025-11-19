@@ -51,5 +51,6 @@ export const useLatestCompletedPlan = () => {
     goalObservations,
     hasCompletedPlan,
     latestCompletedPlanDate,
+    lastViewed: latestPlan?.lastViewed,
   };
 };

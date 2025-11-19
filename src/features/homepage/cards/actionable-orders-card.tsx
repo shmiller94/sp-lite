@@ -1,4 +1,5 @@
 import { ChevronDown, ChevronRight } from 'lucide-react';
+import moment from 'moment';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -7,6 +8,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
+import { Label } from '@/components/ui/label';
 import { Body1, Body2 } from '@/components/ui/typography';
 import { cn } from '@/lib/utils';
 import { OrderStatus } from '@/types/api';
@@ -16,7 +18,8 @@ import { HomepageCard } from '../components/homepage-card';
 import { useActionableOrders } from '../hooks/use-actionable-orders';
 
 export const ActionableOrdersCard = () => {
-  const { actionableOrders, isLoading } = useActionableOrders();
+  const { actionableOrders, unseenOrDrafts, hasDrafts, isLoading } =
+    useActionableOrders();
   const [isOpen, setIsOpen] = useState(false);
 
   if (isLoading) {
@@ -46,15 +49,20 @@ export const ActionableOrdersCard = () => {
     order: ReturnType<typeof useActionableOrders>['actionableOrders'][0],
   ) => {
     const isDraftOrder = order.status === OrderStatus.draft;
+    const isUnseen = !order.lastViewed;
     return (
       <Link
         to={getOrderLink(order)}
         className="group relative flex items-center gap-3 rounded-[20px] border border-vermillion-900 bg-white px-4 py-2 shadow-[0_0_4px_0_rgba(252,95,43,0.5)]"
       >
         <div className="flex shrink-0 items-center">
-          <div className="relative flex size-4 items-center justify-center rounded-full bg-vermillion-100">
-            <div className="size-1.5 rounded-full bg-vermillion-900" />
-          </div>
+          {isUnseen ? (
+            <div className="relative flex size-4 items-center justify-center rounded-full bg-vermillion-100">
+              <div className="size-1.5 rounded-full bg-vermillion-900" />
+            </div>
+          ) : (
+            <div className="size-4" />
+          )}
           <img
             src={getServiceImage(order.serviceName)}
             alt={order.serviceName}
@@ -63,13 +71,26 @@ export const ActionableOrdersCard = () => {
         </div>
         <div className="flex flex-1 items-center gap-3">
           <div className="flex-1">
-            <Body1 className="text-zinc-900">
-              {isDraftOrder ? 'Book your next test' : 'View your care plan'}
-            </Body1>
+            {isDraftOrder ? (
+              <Body1 className="text-zinc-900">Book your next test</Body1>
+            ) : (
+              <Body1 className="flex items-center gap-2 text-zinc-900">
+                <span>
+                  {isUnseen ? 'View your' : ''} {order.serviceName} Action Plan
+                </span>
+                {isUnseen && (
+                  <Label className="rounded bg-vermillion-100 px-[7px] pb-0.5 pt-[3px] text-xs text-vermillion-900">
+                    New!
+                  </Label>
+                )}
+              </Body1>
+            )}
             <Body2 className="text-zinc-600">
               {isDraftOrder
                 ? order.serviceName
-                : order.carePlanTitle || 'Care Plan'}
+                : order.date
+                  ? moment(order.date).format('MMM D, YYYY')
+                  : ''}
             </Body2>
           </div>
           <ChevronRight className="size-5 text-zinc-400 transition-all group-hover:-mr-1" />
@@ -89,12 +110,18 @@ export const ActionableOrdersCard = () => {
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CollapsibleTrigger asChild>
           <button className="group relative flex w-full items-center gap-3 p-4 text-left">
-            <div className="relative flex size-4 items-center justify-center rounded-full bg-vermillion-100">
-              <div className="size-1.5 rounded-full bg-vermillion-900" />
-            </div>
+            {unseenOrDrafts.length > 0 ? (
+              <div className="relative flex size-4 items-center justify-center rounded-full bg-vermillion-100">
+                <div className="size-1.5 rounded-full bg-vermillion-900" />
+              </div>
+            ) : (
+              <div className="size-4" />
+            )}
             <div className="flex flex-1 items-center justify-between">
               <Body1 className="text-zinc-900">
-                You have {actionableOrders.length} actionables
+                {hasDrafts
+                  ? `You have ${unseenOrDrafts.length} actionables`
+                  : 'View your action plans'}
               </Body1>
               <ChevronDown
                 className={cn(
@@ -111,6 +138,7 @@ export const ActionableOrdersCard = () => {
             <div className="absolute left-[46px] right-4 border-t border-zinc-200" />
             {actionableOrders.map((order, index) => {
               const isDraftOrder = order.status === OrderStatus.draft;
+              const isUnseen = !order.lastViewed;
               const linkTo = getOrderLink(order);
 
               return (
@@ -120,9 +148,13 @@ export const ActionableOrdersCard = () => {
                   className="group relative flex items-center px-4 py-2"
                 >
                   <div className="flex shrink-0 items-center">
-                    <div className="relative flex size-4 items-center justify-center rounded-full bg-vermillion-100">
-                      <div className="size-1.5 rounded-full bg-vermillion-900" />
-                    </div>
+                    {isUnseen ? (
+                      <div className="relative flex size-4 items-center justify-center rounded-full bg-vermillion-100">
+                        <div className="size-1.5 rounded-full bg-vermillion-900" />
+                      </div>
+                    ) : (
+                      <div className="size-4" />
+                    )}
                     <img
                       src={getServiceImage(order.serviceName)}
                       alt={order.serviceName}
@@ -131,15 +163,29 @@ export const ActionableOrdersCard = () => {
                   </div>
                   <div className="flex flex-1 items-center gap-3">
                     <div className="flex-1">
-                      <Body1 className="text-zinc-900">
-                        {isDraftOrder
-                          ? 'Book your test'
-                          : 'View your care plan'}
-                      </Body1>
+                      {isDraftOrder ? (
+                        <Body1 className="text-zinc-900">
+                          Book your next test
+                        </Body1>
+                      ) : (
+                        <Body1 className="flex items-center gap-2 text-zinc-900">
+                          <span>
+                            {isUnseen ? 'View your' : ''} {order.serviceName}{' '}
+                            Action Plan
+                          </span>
+                          {isUnseen && (
+                            <Label className="rounded bg-vermillion-100 px-[7px] pb-0.5 pt-[3px] text-xs text-vermillion-900">
+                              New!
+                            </Label>
+                          )}
+                        </Body1>
+                      )}
                       <Body2 className="text-zinc-600">
                         {isDraftOrder
                           ? order.serviceName
-                          : order.carePlanTitle || 'Care Plan'}
+                          : order.date
+                            ? moment(order.date).format('MMM D, YYYY')
+                            : ''}
                       </Body2>
                     </div>
                     <ChevronRight className="size-5 text-zinc-400 transition-all group-hover:-mr-1" />
