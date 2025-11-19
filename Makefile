@@ -151,6 +151,13 @@ deploy/story/stg: prereq
 .PHONY: deploy/app/prd
 deploy/app/prd: description = Deploy app to prd (production)
 deploy/app/prd:
+	@bash $(SHARED_SCRIPT) info "Checking git branch and working tree ..."
+	@if [ "$$(git rev-parse --abbrev-ref HEAD)" != "main" ]; then \
+		bash $(SHARED_SCRIPT) fatal "Must be on 'main' branch to deploy to production. Current branch: $$(git rev-parse --abbrev-ref HEAD)"; \
+	fi
+	@if [ -n "$$(git status --porcelain)" ]; then \
+		bash $(SHARED_SCRIPT) fatal "Working tree is not clean. Please commit or stash your changes before deploying to production."; \
+	fi
 	@bash $(SHARED_SCRIPT) info "Creating deployment notification in Slack ..."
 	@TARGET=$@ bash $(SHARED_SCRIPT) notify $(PRD_DEPLOYMENT_MSG)
 	@bash $(SHARED_SCRIPT) info "Deploying app to cloudfront ..."
