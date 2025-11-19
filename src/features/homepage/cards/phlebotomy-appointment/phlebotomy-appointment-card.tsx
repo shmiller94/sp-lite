@@ -203,7 +203,7 @@ export const PhlebotomyAppointmentCard = () => {
       </div>
 
       {/* Section */}
-      <div className="mb-6 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+      <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
         <div className="mb-4 flex items-center justify-between">
           <Body1 className="font-medium text-zinc-900">{primaryMessage}</Body1>
           <Link
