@@ -208,10 +208,10 @@ export const PhlebotomyAppointmentCard = () => {
           <Body1 className="font-medium text-zinc-900">{primaryMessage}</Body1>
           <Link
             to={`/orders/${activeBloodPanelOrder.id}`}
-            className="text-sm text-zinc-500 hover:text-zinc-700"
+            className="group text-sm text-zinc-500 hover:text-zinc-700"
           >
             <span className="hidden md:inline-block">More details </span>
-            <ArrowUpRightIcon className="-mt-1 ml-0.5 inline-block size-4" />
+            <ArrowUpRightIcon className="-mt-1 ml-0.5 inline-block size-4 transition-all duration-200 ease-out group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
           </Link>
         </div>
 
