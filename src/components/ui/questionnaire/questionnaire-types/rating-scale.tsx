@@ -51,7 +51,7 @@ export function RatingScale({
         'value',
       ) as TypedValue;
 
-      if (!optionValue?.value) {
+      if (optionValue?.value === undefined || optionValue?.value === null) {
         continue;
       }
 

@@ -186,7 +186,6 @@ export const QuestionnaireFormItem = ({
     );
   }
 
-  // Helpers to extract values and check if we have a rating scale
   const hasAnswerOptions = item.answerOption && item.answerOption.length > 0;
   const firstValueInteger = hasAnswerOptions
     ? item.answerOption![0].valueInteger
@@ -194,13 +193,28 @@ export const QuestionnaireFormItem = ({
   const lastValueInteger = hasAnswerOptions
     ? item.answerOption![item.answerOption!.length - 1].valueInteger
     : undefined;
+
+  const hasRangeLabels = item.extension?.some(
+    (e) =>
+      e.url ===
+        'https://superpower.com/fhir/StructureDefinition/questionnaire-rangeStartLabel' ||
+      e.url ===
+        'https://superpower.com/fhir/StructureDefinition/questionnaire-rangeEndLabel',
+  );
+
+  const isScaleZeroToFive = firstValueInteger === 0 && lastValueInteger === 5;
   const isScaleOneToFive = firstValueInteger === 1 && lastValueInteger === 5;
+  const isScaleZeroToTen = firstValueInteger === 0 && lastValueInteger === 10;
   const isScaleOneToTen = firstValueInteger === 1 && lastValueInteger === 10;
 
   const isRatingScale =
     hasAnswerOptions &&
-    firstValueInteger &&
-    (isScaleOneToFive || isScaleOneToTen);
+    firstValueInteger !== undefined &&
+    (isScaleZeroToFive ||
+      isScaleOneToFive ||
+      isScaleZeroToTen ||
+      isScaleOneToTen) &&
+    hasRangeLabels;
 
   /**
    * This switch statement is used to render the correct component for the item type.
