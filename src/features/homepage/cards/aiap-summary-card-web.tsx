@@ -1,7 +1,7 @@
 import { ChevronRightIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-import { Body2, H4 } from '@/components/ui/typography';
+import { Body1, Body2 } from '@/components/ui/typography';
 import { PlanHealthScore } from '@/features/plans/components/annual-report/plan-health-score';
 import { useLatestCompletedPlan } from '@/features/plans/hooks/use-latest-completed-plan';
 
@@ -35,17 +35,16 @@ export const AiapSummaryCardWeb = () => {
       {latestPlan && (
         <Link
           to={`/plans/${latestPlan.id}`}
-          className="relative mt-2 flex flex-col overflow-hidden rounded-2xl border border-zinc-200 p-4"
+          className="group relative mt-2 flex flex-col rounded-2xl border border-zinc-200 p-4 transition-all duration-200 ease-out hover:bg-zinc-50"
         >
-          <div className="absolute -bottom-12 -right-40 h-[113.593px] w-[271.631px] shrink-0 rotate-[340.629deg] rounded-[271.631px] bg-[#FFA702] blur-[20.624px]" />
-          <H4 className="relative z-10">
+          <Body1 className="relative z-10">
             Review your action plan{' '}
-            <ChevronRightIcon className="inline size-4" />
-          </H4>
+            <ChevronRightIcon className="mb-0.5 inline size-4 text-zinc-400 transition-all ease-out group-hover:ml-0.5" />
+          </Body1>
           <Body2 className="relative z-10 text-zinc-400">
             Updated {formatDate(latestPlan.period?.start)}
           </Body2>
-          <div className="absolute -right-1 top-0 h-full w-32 shrink-0">
+          <div className="pointer-events-none absolute -right-1 bottom-0 w-36 shrink-0 duration-500 ease-out animate-in fade-in-20">
             <img
               src="/home/action-plan.png"
               alt="Action plan illustration"
