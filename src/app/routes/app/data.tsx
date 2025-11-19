@@ -53,7 +53,7 @@ export const DataRoute = () => {
 
   return (
     <ContentLayout title="Data">
-      <div className="mt-[5px] flex size-full min-h-[calc(100vh-256px)] flex-1 flex-col overflow-visible md:grid md:grid-cols-9">
+      <div className="mt-[5px] flex size-full min-h-[calc(100vh-256px)] flex-1 flex-col overflow-visible md:grid md:grid-cols-10 xl:grid-cols-9">
         <DataSidebar />
         <div className="relative top-0 z-0 col-span-3 mb-[-40px] h-[512px] max-h-[50vh] md:sticky md:-mt-16 md:h-full md:max-h-[60vh]">
           {gating.shouldShowWaiting &&
@@ -70,7 +70,7 @@ export const DataRoute = () => {
             )}
           {!isLoading && <DigitalTwin category={activeCategory} />}
         </div>
-        <div className="relative z-10 col-span-5 bg-zinc-50/75 backdrop-blur-lg md:pt-16">
+        <div className="relative z-10 col-span-6 bg-zinc-50/75 backdrop-blur-lg md:pt-16 xl:col-span-5">
           {activeCategory || category ? <CategoryView /> : <Overview />}
         </div>
       </div>
