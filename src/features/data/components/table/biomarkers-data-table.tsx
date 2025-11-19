@@ -436,6 +436,27 @@ const BiomarkersDataTableComponent = ({
     },
   });
 
+  const rows = table.getRowModel().rows;
+  const skeletonColSpan = table.getVisibleLeafColumns().length || 1;
+  const filteredRows = displayPending
+    ? rows
+    : rows.filter(
+        (r) =>
+          r.original.status !== 'PENDING' && r.original.status !== 'UNKNOWN',
+      );
+
+  // sort rows to place RECOMMENDED first, then others
+  const visibleRows = useMemo(() => {
+    return [...filteredRows].sort((a, b) => {
+      const aIsRecommended = a.original.status === 'RECOMMENDED';
+      const bIsRecommended = b.original.status === 'RECOMMENDED';
+
+      if (aIsRecommended && !bIsRecommended) return -1;
+      if (!aIsRecommended && bIsRecommended) return 1;
+      return 0;
+    });
+  }, [filteredRows]);
+
   if (biomarkers.length === 0 && !isFiltering && !isLoading) {
     return (
       <div className="py-16 text-center text-zinc-400">
@@ -447,15 +468,6 @@ const BiomarkersDataTableComponent = ({
       </div>
     );
   }
-
-  const rows = table.getRowModel().rows;
-  const skeletonColSpan = table.getVisibleLeafColumns().length || 1;
-  const visibleRows = displayPending
-    ? rows
-    : rows.filter(
-        (r) =>
-          r.original.status !== 'PENDING' && r.original.status !== 'UNKNOWN',
-      );
 
   return (
     <div
