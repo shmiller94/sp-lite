@@ -4,13 +4,11 @@ import { Link } from 'react-router-dom';
 import { Body2, H4 } from '@/components/ui/typography';
 import { PlanHealthScore } from '@/features/plans/components/annual-report/plan-health-score';
 import { useLatestCompletedPlan } from '@/features/plans/hooks/use-latest-completed-plan';
-import { useUser } from '@/lib/auth';
 
 import { DigitalTwinPreviewMobile } from '../components/digital-twin-preview-mobile';
 import { HomepageCard } from '../components/homepage-card';
 
 export const AiapSummaryCardWeb = () => {
-  const { data: user } = useUser();
   const { data: latestPlan } = useLatestCompletedPlan();
 
   const formatDate = (dateString?: string) => {
@@ -25,7 +23,7 @@ export const AiapSummaryCardWeb = () => {
   return (
     <HomepageCard
       titleClassName="mb-4 hidden md:block"
-      title={`Welcome back, ${user?.firstName ?? ''}`}
+      title="Your summary"
       className="relative overflow-hidden"
     >
       {/* Mobile digital twin preview */}
