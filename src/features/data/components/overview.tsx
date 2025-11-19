@@ -5,14 +5,14 @@ import { useEffect } from 'react';
 import QuickLink from '@/components/shared/quicklink';
 import { SuperpowerScoreLogo } from '@/components/shared/score-logo';
 import { Body2, H2, H4 } from '@/components/ui/typography';
-import { ADVANCED_BLOOD_PANEL, SUPERPOWER_BLOOD_PANEL } from '@/const/services';
+import { PhlebotomyProgress } from '@/features/homepage/cards/phlebotomy-appointment/phlebotomy-progress';
 import { useOrders } from '@/features/orders/api';
 import { useUser } from '@/lib/auth';
-import { OrderStatus } from '@/types/api';
 import { yearsSinceDate } from '@/utils/format';
 
 import { useBiomarkers } from '../api';
 import { MESSAGES } from '../const/messages';
+import { useDataGating } from '../hooks/use-data-gating';
 import { useFilteredBiomarkers } from '../hooks/use-filtered-biomarkers';
 import { useDataFilterStore } from '../stores/data-filter-store';
 import { mostRecent } from '../utils/most-recent-biomarker';
@@ -112,11 +112,12 @@ export const Overview = () => {
   const { clearRange, clearCategories, clearOrderId, clearSearchQuery } =
     useDataFilterStore();
   const { data: user, isLoading: isUserLoading } = useUser();
-  const { data: orders, isLoading: isOrdersLoading } = useOrders();
-  const { data: biomarkers, isLoading: isBiomarkersLoading } = useBiomarkers();
+  const { data: biomarkers } = useBiomarkers();
+  const { data: orders } = useOrders();
+  const gating = useDataGating();
   const filteredBiomarkers = useFilteredBiomarkers({
     biomarkers: biomarkers?.biomarkers,
-    orders: orders?.orders,
+    orders: orders?.orders ?? [],
   });
 
   // we want to remove all filters initially
@@ -127,14 +128,7 @@ export const Overview = () => {
     clearSearchQuery();
   }, [clearRange, clearCategories, clearOrderId, clearSearchQuery]);
 
-  const isLoading = isBiomarkersLoading || isOrdersLoading || isUserLoading;
-
-  const recentCompletedOrders = orders?.orders.filter(
-    (o) =>
-      o.status === OrderStatus.completed &&
-      (o.serviceName === SUPERPOWER_BLOOD_PANEL ||
-        o.serviceName === ADVANCED_BLOOD_PANEL),
-  );
+  const isLoading = isUserLoading || gating.isLoading;
 
   const latestScoreMarker = mostRecent(
     biomarkers?.biomarkers.find((b) => b.name == 'Health Score')?.value ?? [],
@@ -171,15 +165,16 @@ export const Overview = () => {
     : null;
 
   if (
-    !isLoading &&
-    (!biomarkers ||
-      (recentCompletedOrders?.length === 0 &&
-        biomarkers?.biomarkers.length === 0))
+    !isUserLoading &&
+    gating.shouldShowWaiting &&
+    !gating.isTestAppointmentOlderThan5Days
   ) {
     return <WaitingScreen />;
   }
 
-  const markersNotAvailable = superpowerScore === 0 || biologicalAge === 0;
+  // Hide SP score & BioAge until AIAP is complete even if partial markers exist
+  const markersAvailable =
+    gating.hasCompletedPlan && !!superpowerScore && !!biologicalAge;
 
   return (
     <div className="w-full space-y-4">
@@ -197,13 +192,19 @@ export const Overview = () => {
                 </Body2>
               )}
             </div>
-            {!isLoading && (
-              <Body2 className="text-zinc-400">
-                {user?.firstName}, {overviewCopy?.message}
-              </Body2>
-            )}
+            {!isLoading &&
+              (markersAvailable ? (
+                <Body2 className="text-zinc-400">
+                  {user?.firstName}, {overviewCopy?.message}
+                </Body2>
+              ) : (
+                <Body2 className="text-zinc-400">
+                  {user?.firstName}, we&apos;re still processing your data, but
+                  you can already take a look into your first results.
+                </Body2>
+              ))}
           </div>
-          {!markersNotAvailable && (
+          {markersAvailable || isLoading ? (
             <div className="flex w-full flex-col gap-4 lg:flex-row">
               <SuperpowerScore
                 isLoading={isLoading}
@@ -214,6 +215,10 @@ export const Overview = () => {
                 biologicalAge={biologicalAge ?? 0}
                 ageDifference={ageDifference ?? 0}
               />
+            </div>
+          ) : (
+            <div className="pt-6">
+              <PhlebotomyProgress status="processing" />
             </div>
           )}
         </div>

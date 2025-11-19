@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Link } from '@/components/ui/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { H3 } from '@/components/ui/typography';
-import { useBiomarkers } from '@/features/data/api';
+import { useDataGating } from '@/features/data/hooks/use-data-gating';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 import { cn } from '@/lib/utils';
 
@@ -31,9 +31,8 @@ const PureDataSidebar = () => {
 
   const { updateCategories, clearCategories } = useDataFilterStore();
 
-  const { isLoading: isBiomarkersLoading } = useBiomarkers();
-
-  const isLoading = isCategoriesLoading || isBiomarkersLoading;
+  const gating = useDataGating();
+  const isLoading = isCategoriesLoading || gating.isLoading;
 
   const updateCategoryFilter = useCallback(
     (category: string | null) => {
@@ -128,6 +127,10 @@ const PureDataSidebar = () => {
       />,
     );
 
+    if (!gating.hasCompletedPlan && !gating.isTestAppointmentOlderThan5Days) {
+      return items; // only show Summary until AIAP is completed
+    }
+
     if (!categories?.categories) return [];
 
     categories?.categories.forEach((category) => {
@@ -145,7 +148,12 @@ const PureDataSidebar = () => {
     });
 
     return items;
-  }, [isLoading, activeCategory, categories?.categories]);
+  }, [
+    isLoading,
+    activeCategory,
+    categories?.categories,
+    gating.hasCompletedPlan,
+  ]);
 
   return (
     <aside className="col-span-1 flex flex-col">

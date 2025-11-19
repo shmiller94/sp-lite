@@ -1,10 +1,18 @@
 import QuickLink from '@/components/shared/quicklink';
 import { Body2, H2, H4 } from '@/components/ui/typography';
+import { PhlebotomyProgress } from '@/features/homepage/cards/phlebotomy-appointment/phlebotomy-progress';
 import { useUser } from '@/lib/auth';
+
+import { useDataGating } from '../hooks/use-data-gating';
 
 export const WaitingScreen = () => {
   const { data: user } = useUser();
-  // const { riveFile, status } = useAnimations();
+  const gating = useDataGating();
+
+  const ETA = gating.hasAnyBiomarkers ? '4-7' : '7-10';
+  const title = gating.hasAnyBiomarkers
+    ? 'Your results are being analyzed'
+    : 'Your results are pending';
 
   return (
     <div className="mx-auto max-w-3xl flex-1 overflow-y-auto rounded-[24px] bg-white p-6 scrollbar scrollbar-track-transparent scrollbar-thumb-zinc-300">
@@ -12,7 +20,7 @@ export const WaitingScreen = () => {
         <H4 className="mb-2">Hi, {user?.firstName}</H4>
         <Body2 className="mb-4 text-zinc-400">
           We are currently awaiting and analysing your first test results. They
-          should be with you in 7-10 days and appear here in the data page.
+          should be with you in {ETA} days and appear here in the data page.
           You&apos;ll receive an e-mail once your results are ready and your
           digital twin is set up.
           <br />
@@ -20,15 +28,18 @@ export const WaitingScreen = () => {
           Until then, feel free to upload your existing health records or
           connect your wearables.
         </Body2>
+        <div className="py-6">
+          <PhlebotomyProgress status="processing" />
+        </div>
         <div className="flex flex-col gap-4 md:flex-row md:flex-wrap">
           <QuickLink
             to="/services"
-            title="Your results are pending"
+            title={title}
             className="relative w-full overflow-hidden"
           >
             <div className="relative z-20">
               <H2>
-                7-10 <span className="text-xl">days</span>
+                {ETA} <span className="text-xl">days</span>
               </H2>
               <Body2 className="text-zinc-400">
                 Until your lab data is processed

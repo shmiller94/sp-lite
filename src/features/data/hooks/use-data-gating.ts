@@ -1,0 +1,95 @@
+import { useMemo } from 'react';
+
+import { ADVANCED_BLOOD_PANEL, SUPERPOWER_BLOOD_PANEL } from '@/const/services';
+import { useBiomarkers } from '@/features/data/api';
+import { useOrders } from '@/features/orders/api';
+import { usePlans } from '@/features/plans/api/get-plans';
+import { OrderStatus } from '@/types/api';
+
+export type DataGatingState = {
+  isLoading: boolean;
+  hasCompletedPlan: boolean;
+  biomarkersLoaded: boolean;
+  hasAnyBiomarkers: boolean;
+  hasRelevantCompletedOrder: boolean;
+  shouldShowWaiting: boolean;
+  isTestAppointmentOlderThan5Days: boolean;
+};
+
+const FIVE_DAYS_MS = 5 * 24 * 60 * 60 * 1000;
+
+// Centralizes the logic for when to show/hide data based on plans, orders, and biomarkers
+export const useDataGating = (): DataGatingState => {
+  const { data: orders, isLoading: isOrdersLoading } = useOrders();
+  const { data: biomarkers, isLoading: isBiomarkersLoading } = useBiomarkers();
+  const { data: plans, isLoading: isPlansLoading } = usePlans({});
+
+  const hasCompletedPlan = useMemo(
+    () => plans?.actionPlans?.some((p) => p.status === 'completed') ?? false,
+    [plans?.actionPlans],
+  );
+
+  const biomarkersLoaded = useMemo(() => !!biomarkers, [biomarkers]);
+
+  const hasAnyBiomarkers = useMemo(
+    () => (biomarkers?.biomarkers?.length ?? 0) > 0,
+    [biomarkers?.biomarkers],
+  );
+
+  const hasRelevantCompletedOrder = useMemo(
+    () =>
+      orders?.orders?.some(
+        (o) =>
+          o.status === OrderStatus.completed &&
+          (o.serviceName === SUPERPOWER_BLOOD_PANEL ||
+            o.serviceName === ADVANCED_BLOOD_PANEL),
+      ) ?? false,
+    [orders?.orders],
+  );
+
+  // find the most recent appointment start for relevant tests
+  const latestRelevantAppointmentTime = useMemo(() => {
+    const relevantAppointments = orders?.orders?.filter(
+      (o) =>
+        !!o.startTimestamp &&
+        (o.serviceName === SUPERPOWER_BLOOD_PANEL ||
+          o.serviceName === ADVANCED_BLOOD_PANEL),
+    );
+
+    if (!relevantAppointments || relevantAppointments.length === 0)
+      return undefined;
+
+    const latest = relevantAppointments.reduce<number>((max, o) => {
+      const t = new Date(o.startTimestamp as string).getTime();
+      return t > max ? t : max;
+    }, 0);
+
+    return latest || undefined;
+  }, [orders?.orders]);
+
+  const isTestAppointmentOlderThan5Days = useMemo(() => {
+    if (!latestRelevantAppointmentTime) return false;
+
+    return latestRelevantAppointmentTime < Date.now() - FIVE_DAYS_MS;
+  }, [latestRelevantAppointmentTime]);
+
+  const isLoading = isBiomarkersLoading || isOrdersLoading || isPlansLoading;
+
+  // Waiting when: not loading AND (no completed plan OR biomarkers not loaded
+  // OR neither completed order nor any biomarker values exist)
+  const shouldShowWaiting =
+    !isLoading &&
+    (!hasCompletedPlan ||
+      !biomarkersLoaded ||
+      !(hasRelevantCompletedOrder || hasAnyBiomarkers));
+
+  return {
+    isLoading,
+    hasCompletedPlan,
+    biomarkersLoaded,
+    hasAnyBiomarkers,
+    hasRelevantCompletedOrder,
+    shouldShowWaiting,
+    isTestAppointmentOlderThan5Days,
+  };
+};
