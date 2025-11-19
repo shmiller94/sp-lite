@@ -75,9 +75,7 @@ export const ActionableOrdersCard = () => {
               <Body1 className="text-zinc-900">Book your next test</Body1>
             ) : (
               <Body1 className="flex items-center gap-2 text-zinc-900">
-                <span>
-                  {isUnseen ? 'View your' : ''} {order.serviceName} Action Plan
-                </span>
+                <span>{order.serviceName} Action Plan</span>
                 {isUnseen && (
                   <Label className="rounded bg-vermillion-100 px-[7px] pb-0.5 pt-[3px] text-xs text-vermillion-900">
                     New!
@@ -120,7 +118,7 @@ export const ActionableOrdersCard = () => {
             <div className="flex flex-1 items-center justify-between">
               <Body1 className="text-zinc-900">
                 {hasDrafts
-                  ? `You have ${unseenOrDrafts.length} actionables`
+                  ? `You have ${unseenOrDrafts.length} actionable${unseenOrDrafts.length === 1 ? '' : 's'}`
                   : 'View your action plans'}
               </Body1>
               <ChevronDown
@@ -169,10 +167,7 @@ export const ActionableOrdersCard = () => {
                         </Body1>
                       ) : (
                         <Body1 className="flex items-center gap-2 text-zinc-900">
-                          <span>
-                            {isUnseen ? 'View your' : ''} {order.serviceName}{' '}
-                            Action Plan
-                          </span>
+                          <span>{order.serviceName} Action Plan</span>
                           {isUnseen && (
                             <Label className="rounded bg-vermillion-100 px-[7px] pb-0.5 pt-[3px] text-xs text-vermillion-900">
                               New!
