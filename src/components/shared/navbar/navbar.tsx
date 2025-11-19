@@ -19,6 +19,7 @@ import { CircleAiIcon } from '@/components/icons/circle-ai-icon';
 import { PresentIcon } from '@/components/icons/present-icon';
 import { SettingsIcon } from '@/components/icons/settings-icon';
 import { SuperpowerLogo } from '@/components/icons/superpower-logo';
+import { ProfileDropdown } from '@/components/shared/profile-dropdown';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -289,66 +290,32 @@ export const MobileNavbar = () => {
               )}
             </NavLink>
           ))}
-        <DropdownMenu open={open} onOpenChange={setOpen}>
-          <DropdownMenuTrigger className="group rounded-[20px]" asChild>
+        <ProfileDropdown
+          open={open}
+          onOpenChange={setOpen}
+          side="bottom"
+          sideOffset={16}
+          align="end"
+          linkState={{ from: pathname }}
+          onItemClick={() => setOpen(false)}
+          getIsActive={(link, isActive) =>
+            link.to === '/marketplace?tab=orders'
+              ? isMarketplaceOrdersActive
+              : isActive
+          }
+          links={[
+            ...additionalMobileLinks,
+            { name: 'Log out', to: '/logout', icon: LogOut },
+          ]}
+          trigger={
             <Button
               variant="link"
               className="group p-[14px] focus-visible:ring-transparent focus-visible:ring-offset-0 sm:px-4"
             >
               <Ellipsis className="text-zinc-300 transition-colors group-hover:text-secondary group-data-[state='open']:text-zinc-900" />
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className="w-[244px] rounded-3xl border border-zinc-100 bg-white p-1.5 text-white shadow-lg shadow-black/[.03] outline-none xs:w-[178px]"
-            side="bottom"
-            sideOffset={16}
-            align="end"
-          >
-            <ul className="flex flex-col gap-1.5">
-              {additionalMobileLinks.map((link, i) => (
-                <NavLink
-                  key={i}
-                  to={link.to}
-                  state={{ from: pathname }}
-                  target={link.to.includes('https') ? '_blank' : undefined}
-                  rel={
-                    link.to.includes('https')
-                      ? 'noopener noreferrer'
-                      : undefined
-                  }
-                  onClick={() => {
-                    setOpen(false);
-                  }}
-                  className={({ isActive }) => {
-                    const isOrdersLink = link.to === '/marketplace?tab=orders';
-                    const shouldBeActive = isOrdersLink
-                      ? isMarketplaceOrdersActive
-                      : isActive;
-
-                    return cn(
-                      'flex cursor-pointer items-center border hover:text-zinc-600 text-secondary border-transparent gap-3 rounded-[18px] p-4 transition duration-200 ease-in-out',
-                      shouldBeActive &&
-                        'bg-white border-zinc-200 shadow-sm text-zinc-900',
-                    );
-                  }}
-                >
-                  <link.icon width={12} height={12} color="currentColor" />
-                  <p className="text-sm">{link.name}</p>
-                </NavLink>
-              ))}
-              <NavLink
-                to="/logout"
-                onClick={() => {
-                  setOpen(false);
-                }}
-                className="flex cursor-pointer items-center gap-3 rounded-[18px] p-4 text-secondary transition duration-200 ease-in-out hover:text-zinc-600"
-              >
-                <LogOut width={12} height={12} color="currentColor" />
-                <p className="text-sm">Log out</p>
-              </NavLink>
-            </ul>
-          </DropdownMenuContent>
-        </DropdownMenu>
+          }
+        />
       </div>
       <div className="flex aspect-square h-full shrink-0 items-center justify-center rounded-3xl border border-zinc-100 bg-white shadow-lg shadow-black/[.03]">
         <NavLink
