@@ -161,20 +161,22 @@ export const ScoreChart = ({
         <Body3>{displayedBiomarker.name}</Body3>
         {displayedBiomarkerStatus && (
           <Body2>
-            <span
-              className="mr-1 inline-block size-2 rounded-full"
-              style={{
-                backgroundColor: getBiomarkerColor(displayedBiomarkerStatus)
-                  .default,
-              }}
-            />
-            <span
-              className="capitalize"
-              style={{
-                color: getBiomarkerColor(displayedBiomarkerStatus).default,
-              }}
-            >
-              {displayedBiomarkerStatus}
+            <span className="inline-flex items-center gap-1 align-middle">
+              <span
+                className="-mt-0.5 inline-block size-1.5 rounded-full align-middle"
+                style={{
+                  backgroundColor: getBiomarkerColor(displayedBiomarkerStatus)
+                    .default,
+                }}
+              />
+              <span
+                className="capitalize leading-none"
+                style={{
+                  color: getBiomarkerColor(displayedBiomarkerStatus).default,
+                }}
+              >
+                {displayedBiomarkerStatus.toLowerCase()}
+              </span>
             </span>
           </Body2>
         )}
@@ -205,6 +207,7 @@ export const ScoreChart = ({
       </div>
 
       <ChartTooltip
+        className="min-w-36"
         isOpen={displayedIndex !== null}
         position={tooltipPosition}
         side={getTooltipSide(tooltipPosition.angle)}
