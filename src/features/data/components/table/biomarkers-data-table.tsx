@@ -34,7 +34,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Body1, Body2, H4 } from '@/components/ui/typography';
-import { useWindowDimensions } from '@/hooks/use-window-dimensions';
+import { useScreenSize } from '@/features/data/hooks/use-screen-size';
 import { cn } from '@/lib/utils';
 import { Biomarker } from '@/types/api';
 
@@ -355,15 +355,8 @@ const BiomarkersDataTableComponent = ({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  // responsive handler
-  const { width } = useWindowDimensions();
-  const getScreenSize = (): 'mobile' | 'tablet' | 'desktop' | 'widescreen' => {
-    if (width < 1024) return 'mobile';
-    if (width < 1280) return 'tablet';
-    if (width <= 1600) return 'desktop';
-    return 'widescreen';
-  };
-  const screenSize = getScreenSize();
+  // responsive handler using media-query backed hook to avoid frequent re-renders
+  const screenSize = useScreenSize();
 
   const columns = useMemo(
     () => getColumns(screenSize, hiddenColumns),
