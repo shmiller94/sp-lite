@@ -2,11 +2,12 @@ import { ChevronRightIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import { Body1, Body2 } from '@/components/ui/typography';
-import { PlanHealthScore } from '@/features/plans/components/annual-report/plan-health-score';
 import { useLatestCompletedPlan } from '@/features/plans/hooks/use-latest-completed-plan';
 
 import { DigitalTwinPreviewMobile } from '../components/digital-twin-preview-mobile';
 import { HomepageCard } from '../components/homepage-card';
+
+import { ScoreCards } from './score-cards';
 
 export const AiapSummaryCardWeb = () => {
   const { data: latestPlan } = useLatestCompletedPlan();
@@ -31,11 +32,11 @@ export const AiapSummaryCardWeb = () => {
         <DigitalTwinPreviewMobile />
       </div>
 
-      <PlanHealthScore showOverview={false} />
+      <ScoreCards />
       {latestPlan && (
         <Link
           to={`/plans/${latestPlan.id}`}
-          className="group relative mt-2 flex flex-col rounded-2xl border border-zinc-200 p-4 transition-all duration-200 ease-out hover:bg-zinc-50"
+          className="group relative mt-8 flex flex-col rounded-2xl border border-zinc-200 p-4 transition-all duration-200 ease-out hover:bg-zinc-50"
         >
           <Body1 className="relative z-10">
             Review your action plan{' '}

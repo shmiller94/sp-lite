@@ -2,6 +2,7 @@ import NumberFlow from '@number-flow/react';
 import { format } from 'date-fns';
 import { useEffect } from 'react';
 
+import { BiologicalAgeLogo } from '@/components/shared/biological-age-logo';
 import QuickLink from '@/components/shared/quicklink';
 import { SuperpowerScoreLogo } from '@/components/shared/score-logo';
 import { Body2, H2, H4 } from '@/components/ui/typography';
@@ -39,27 +40,31 @@ const SuperpowerScore = ({
 
   return (
     <SuperpowerScoreDialog disabled={isLoading}>
-      <QuickLink className="flex-1 overflow-hidden">
+      <QuickLink className="flex h-full flex-1 flex-col justify-between overflow-hidden bg-white lg:gap-2">
         <SuperpowerScoreLogo logoColor="currentColor" className="mb-2 w-40" />
-        <div className="mb-1 flex items-end justify-start gap-1">
-          {isLoading ? (
-            <Body2 className="m-0 mt-[54px] leading-none text-zinc-400">
-              Waiting for results...
-            </Body2>
-          ) : (
-            <>
-              <H2 className="m-0 leading-none">
-                <NumberFlow value={superpowerScore ?? 0} />
-              </H2>
-              <Body2 className="m-0 mb-2 leading-none text-zinc-400 md:mb-3">
-                / 100
+        <div>
+          <div className="mb-1 flex items-end justify-start gap-1">
+            {isLoading ? (
+              <Body2 className="m-0 mt-[54px] leading-none text-zinc-400">
+                Waiting for results...
               </Body2>
-            </>
+            ) : (
+              <>
+                <H2 className="m-0 leading-none">
+                  <NumberFlow value={superpowerScore ?? 0} />
+                </H2>
+                <Body2 className="m-0 mb-2 leading-none text-zinc-400 md:mb-3">
+                  / 100
+                </Body2>
+              </>
+            )}
+          </div>
+          {!isLoading && (
+            <Body2 className="text-zinc-400">
+              {overviewCopy?.shortMessage}
+            </Body2>
           )}
         </div>
-        {!isLoading && (
-          <Body2 className="text-zinc-400">{overviewCopy?.shortMessage}</Body2>
-        )}
       </QuickLink>
     </SuperpowerScoreDialog>
   );
@@ -78,33 +83,35 @@ const BiologicalAge = ({
 
   return (
     <BiologicalAgeDialog disabled={isLoading || !biologicalAge}>
-      <QuickLink className="h-full flex-1 overflow-hidden">
-        <Body2 className="mb-5 font-semibold">Biological Age</Body2>
-        <div className="mb-1 flex items-end justify-start gap-1">
-          {isLoading ? (
-            <Body2 className="m-0 mt-[54px] leading-none text-zinc-400">
-              Waiting for results...
-            </Body2>
-          ) : (
-            <>
-              <H2 className="m-0 leading-none">
-                <NumberFlow value={biologicalAge ?? 0} />
-              </H2>
-              <Body2 className="m-0 mb-2 leading-none text-zinc-400 md:mb-3">
-                / {Math.round(yearsSinceDate(data?.dateOfBirth ?? ''))}
+      <QuickLink className="flex h-full flex-1 flex-col justify-between gap-2 overflow-hidden bg-white">
+        <BiologicalAgeLogo className="mt-1" />
+        <div>
+          <div className="mb-1 flex items-end justify-start gap-1">
+            {isLoading ? (
+              <Body2 className="m-0 mt-[54px] leading-none text-zinc-400">
+                Waiting for results...
               </Body2>
-            </>
+            ) : (
+              <>
+                <H2 className="m-0 leading-none">
+                  <NumberFlow value={biologicalAge ?? 0} />
+                </H2>
+                <Body2 className="m-0 mb-2 leading-none text-zinc-400 md:mb-3">
+                  / {Math.round(yearsSinceDate(data?.dateOfBirth ?? ''))}
+                </Body2>
+              </>
+            )}
+          </div>
+          {!isLoading && (
+            <Body2 className="text-zinc-400">
+              {ageDifference &&
+                Math.abs(ageDifference) +
+                  ' years ' +
+                  (ageDifference >= 0 ? 'younger' : 'older') +
+                  ' than your actual age'}
+            </Body2>
           )}
         </div>
-        {!isLoading && (
-          <Body2 className="text-zinc-400">
-            {ageDifference &&
-              Math.abs(ageDifference) +
-                ' years ' +
-                (ageDifference >= 0 ? 'younger' : 'older') +
-                ' than your actual age'}
-          </Body2>
-        )}
       </QuickLink>
     </BiologicalAgeDialog>
   );
@@ -133,12 +140,12 @@ export const Overview = () => {
   const isLoading = isUserLoading || gating.isLoading;
 
   const latestScoreMarker = mostRecent(
-    biomarkers?.biomarkers.find((b) => b.name == 'Health Score')?.value ?? [],
+    biomarkers?.biomarkers.find((b) => b.name === 'Health Score')?.value ?? [],
   );
   const superpowerScore = latestScoreMarker?.quantity?.value;
 
   const biologicalAgeMarker = biomarkers?.biomarkers.find(
-    (b) => b.name == 'Biological Age',
+    (b) => b.name === 'Biological Age',
   );
   const biologicalAge = biologicalAgeMarker?.value[0]?.quantity?.value;
   const ageDifference = biologicalAge
@@ -207,7 +214,7 @@ export const Overview = () => {
               ))}
           </div>
           {markersAvailable || isLoading ? (
-            <div className="flex w-full flex-col gap-4 lg:flex-row">
+            <div className="grid w-full grid-cols-1 gap-4 lg:grid-cols-2">
               <SuperpowerScore
                 isLoading={isLoading}
                 superpowerScore={superpowerScore ?? 0}
