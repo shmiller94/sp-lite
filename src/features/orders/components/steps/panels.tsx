@@ -230,7 +230,7 @@ export const AddOnPanelsSelect = ({
   );
 };
 
-const EstimatedTooltip = () => {
+export const EstimatedTooltip = () => {
   return (
     <TooltipProvider>
       <Tooltip delayDuration={75}>
@@ -266,7 +266,7 @@ const EstimatedTooltip = () => {
   );
 };
 
-const PanelInfoCard = ({
+export const PanelInfoCard = ({
   s,
   checked,
   toggle,

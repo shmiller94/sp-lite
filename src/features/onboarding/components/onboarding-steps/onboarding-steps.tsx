@@ -59,8 +59,10 @@ const OnboardingStepsContent = (): React.ReactElement => {
           [ONBOARDING_STEPS.INTAKE]: () => (
             <Steps.IntakeQuestionnaireStep showIntro={true} />
           ),
-          [ONBOARDING_STEPS.ADD_ON_PANELS]: () => <Steps.AddOnPanelsStep />,
           [ONBOARDING_STEPS.ORGAN_AGE]: () => <Steps.OrganAgeStep />,
+          [ONBOARDING_STEPS.FATIGUE_PANEL]: () => <Steps.FatiguePanelStep />,
+          [ONBOARDING_STEPS.HORMONE_PANEL]: () => <Steps.HormonePanelStep />,
+          [ONBOARDING_STEPS.ADD_ON_PANELS]: () => <Steps.AddOnPanelsStep />,
           [ONBOARDING_STEPS.TEST_KIT_STEPS]: () => <TestKitSteps />,
           [ONBOARDING_STEPS.PHLEBOTOMY_BOOKING]: () => (
             <Steps.PhlebotomyBookingStep />

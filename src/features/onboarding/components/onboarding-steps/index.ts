@@ -6,4 +6,6 @@ export * from './info-step/update-info-step';
 export * from './heard-about-us-step';
 export * from './bundled-discount-step/bundled-discount-step';
 export * from './organ-age-step';
+export * from './fatigue-panel-step';
+export * from './hormone-panel-step';
 export * from './add-on-panels-step';

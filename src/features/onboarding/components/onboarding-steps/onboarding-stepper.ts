@@ -2,9 +2,18 @@ import { defineStepper, Get } from '@stepperize/react';
 import { useCallback, useRef, useEffect, useMemo } from 'react';
 
 import { INTAKE_QUESTIONNAIRE } from '@/const/questionnaire';
-import { ADVANCED_BLOOD_PANEL, CUSTOM_BLOOD_PANEL } from '@/const/services';
+import {
+  ADVANCED_BLOOD_PANEL,
+  ANEMIA_PANEL,
+  CUSTOM_BLOOD_PANEL,
+  FATIGUE_PANEL,
+  FEMALE_FERTILITY_PANEL,
+  MALE_HEALTH_PANEL,
+  ORGAN_AGE_PANEL,
+} from '@/const/services';
 import { useOrders } from '@/features/orders/api';
 import { useQuestionnaireResponse } from '@/features/questionnaires/api/get-questionnaire-response';
+import { useServices } from '@/features/services/api';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useUser } from '@/lib/auth';
 
@@ -15,6 +24,8 @@ export const ONBOARDING_STEPS = {
   HEARD_ABOUT_US: 'heard-about-us',
   INTAKE: 'intake',
   ORGAN_AGE: 'organ-age',
+  FATIGUE_PANEL: 'fatigue-panel',
+  HORMONE_PANEL: 'hormone-panel',
   ADD_ON_PANELS: 'add-on-panels',
   TEST_KIT_STEPS: 'test-kit-steps',
   PHLEBOTOMY_BOOKING: 'phlebotomy-booking',
@@ -28,6 +39,8 @@ export const OnboardingStepper = defineStepper(
   { id: ONBOARDING_STEPS.HEARD_ABOUT_US },
   { id: ONBOARDING_STEPS.INTAKE },
   { id: ONBOARDING_STEPS.ORGAN_AGE },
+  { id: ONBOARDING_STEPS.FATIGUE_PANEL },
+  { id: ONBOARDING_STEPS.HORMONE_PANEL },
   { id: ONBOARDING_STEPS.ADD_ON_PANELS },
   { id: ONBOARDING_STEPS.TEST_KIT_STEPS },
   { id: ONBOARDING_STEPS.PHLEBOTOMY_BOOKING },
@@ -41,6 +54,10 @@ type OnboardingStepperReturn = {
   isLoading: boolean;
 };
 
+// Helper to check if a service exists in the services list
+const hasService = (services: { name: string }[] | undefined, name: string) =>
+  services?.some((s) => s.name === name) ?? false;
+
 export const useOnboardingStepper = (): OnboardingStepperReturn => {
   const { track } = useAnalytics();
   const methods = OnboardingStepper.useStepper();
@@ -48,44 +65,56 @@ export const useOnboardingStepper = (): OnboardingStepperReturn => {
 
   // Fetch user profile data and check completion status (proxy for info-update step)
   const { data: user, isLoading: isUserLoading } = useUser();
-  const userInfoCompleted =
-    user?.firstName && user?.lastName && user?.primaryAddress?.state;
+  const userInfoCompleted = Boolean(
+    user?.firstName && user?.lastName && user?.primaryAddress?.state,
+  );
 
   // Check user's order history for upgrade eligibility
   const { data: ordersData, isLoading: isOrdersLoading } = useOrders();
-  const userHasAdvancedUpgrade = ordersData?.orders?.find(
-    (order) => order.serviceName === ADVANCED_BLOOD_PANEL,
+  const userHasAdvancedUpgrade = Boolean(
+    ordersData?.orders?.find((o) => o.serviceName === ADVANCED_BLOOD_PANEL),
   );
-  const userHasCustomPanels = ordersData?.orders?.find(
-    (order) => order.serviceName === CUSTOM_BLOOD_PANEL,
+  const userHasCustomPanels = Boolean(
+    ordersData?.orders?.find((o) => o.serviceName === CUSTOM_BLOOD_PANEL),
   );
 
   // Check intake questionnaire completion status
-  const {
-    data: intakeQuestionnaireData,
-    isLoading: isIntakeQuestionnaireLoading,
-  } = useQuestionnaireResponse({
-    questionnaireName: INTAKE_QUESTIONNAIRE,
+  const { data: intakeData, isLoading: isIntakeLoading } =
+    useQuestionnaireResponse({
+      questionnaireName: INTAKE_QUESTIONNAIRE,
+    });
+  const intakeCompleted =
+    intakeData?.questionnaireResponse?.status === 'completed';
+
+  // Fetch add-on panel services to check availability
+  const { data: addOnServices, isLoading: isServicesLoading } = useServices({
+    group: 'blood-panel-addon',
   });
-  const intakeQuestionnaireCompleted =
-    intakeQuestionnaireData?.questionnaireResponse?.status === 'completed';
 
-  const isLoading = useMemo(() => {
-    return isUserLoading || isOrdersLoading || isIntakeQuestionnaireLoading;
-  }, [isUserLoading, isOrdersLoading, isIntakeQuestionnaireLoading]);
+  // Check if specific panels are available
+  const services = addOnServices?.services;
+  const hasOrganAge = hasService(services, ORGAN_AGE_PANEL);
+  const hasFatigue =
+    hasService(services, FATIGUE_PANEL) && hasService(services, ANEMIA_PANEL);
+  const hormonePanelName =
+    user?.gender?.toLowerCase() === 'male'
+      ? MALE_HEALTH_PANEL
+      : FEMALE_FERTILITY_PANEL;
+  const hasHormone = hasService(services, hormonePanelName);
 
-  // Note: this is currently note dynamic so we wouldnt recalculate everything if e.g. custom blood panel added
-  // if we ever change this logic to actually take it into account this would break and we need more specific handling
-  // right now it should be pretty safe
+  const isLoading =
+    isUserLoading || isOrdersLoading || isIntakeLoading || isServicesLoading;
+
+  // Determine which steps to exclude based on user state and service availability
   const excludedSteps = useMemo((): string[] => {
-    const excludedSteps: string[] = [];
+    const excluded: string[] = [];
 
-    if (userInfoCompleted) {
-      excludedSteps.push(ONBOARDING_STEPS.UPDATE_INFO);
-    }
+    // User info already completed
+    if (userInfoCompleted) excluded.push(ONBOARDING_STEPS.UPDATE_INFO);
 
-    if (intakeQuestionnaireCompleted) {
-      excludedSteps.push(
+    // Intake already completed - skip intro steps
+    if (intakeCompleted) {
+      excluded.push(
         ONBOARDING_STEPS.ADVANCED_UPGRADE,
         ONBOARDING_STEPS.BUNDLED_DISCOUNT,
         ONBOARDING_STEPS.HEARD_ABOUT_US,
@@ -93,12 +122,13 @@ export const useOnboardingStepper = (): OnboardingStepperReturn => {
       );
     }
 
-    if (userHasAdvancedUpgrade) {
-      excludedSteps.push(ONBOARDING_STEPS.ADVANCED_UPGRADE);
-    }
+    // User already has advanced upgrade
+    if (userHasAdvancedUpgrade)
+      excluded.push(ONBOARDING_STEPS.ADVANCED_UPGRADE);
 
+    // User has custom panels - skip most upsells
     if (userHasCustomPanels) {
-      excludedSteps.push(
+      excluded.push(
         ONBOARDING_STEPS.ADVANCED_UPGRADE,
         ONBOARDING_STEPS.BUNDLED_DISCOUNT,
         ONBOARDING_STEPS.ORGAN_AGE,
@@ -106,46 +136,39 @@ export const useOnboardingStepper = (): OnboardingStepperReturn => {
       );
     }
 
-    return excludedSteps;
+    // Panel services not available
+    if (!hasOrganAge) excluded.push(ONBOARDING_STEPS.ORGAN_AGE);
+    if (!hasFatigue) excluded.push(ONBOARDING_STEPS.FATIGUE_PANEL);
+    if (!hasHormone) excluded.push(ONBOARDING_STEPS.HORMONE_PANEL);
+
+    return excluded;
   }, [
     userInfoCompleted,
-    intakeQuestionnaireCompleted,
+    intakeCompleted,
     userHasAdvancedUpgrade,
     userHasCustomPanels,
+    hasOrganAge,
+    hasFatigue,
+    hasHormone,
   ]);
 
   // Initialize valid steps once when data is loaded
   useEffect(() => {
     if (!isLoading && validStepsRef.current.length === 0) {
-      const validSteps = Object.values(ONBOARDING_STEPS).filter(
+      validStepsRef.current = Object.values(ONBOARDING_STEPS).filter(
         (step) => !excludedSteps.includes(step),
       );
-      validStepsRef.current = validSteps;
     }
   }, [isLoading, excludedSteps]);
 
-  const validSteps = validStepsRef.current;
-
-  // Prepare steps data for analytics tracking
-  const steps = useMemo(
-    () => OnboardingStepper.utils.getAll().map((step) => ({ id: step.id })),
-    [],
-  );
-
   // Navigate to next step with analytics tracking
   const next = useCallback(() => {
-    const currentStepId = validSteps.indexOf(methods.current.id);
+    const validSteps = validStepsRef.current;
+    const currentIndex = validSteps.indexOf(methods.current.id);
+    const nextId = validSteps[currentIndex + 1];
 
-    // Fallback to default navigation if current step not found
-    if (currentStepId === -1) {
-      methods.next();
-      return;
-    }
-
-    const nextId = validSteps[currentStepId + 1];
-
-    // Fallback to default navigation if at last step
-    if (!nextId) {
+    // If no next step found, fallback to default navigation
+    if (currentIndex === -1 || !nextId) {
       methods.next();
       return;
     }
@@ -154,11 +177,16 @@ export const useOnboardingStepper = (): OnboardingStepperReturn => {
     track('onboarding_step_next', {
       current_step: methods.current.id,
       next_step: nextId,
-      steps: steps,
+      steps: OnboardingStepper.utils.getAll().map((step) => ({ id: step.id })),
     });
 
     methods.goTo(nextId);
-  }, [validSteps, methods, track, steps]);
+  }, [methods, track]);
 
-  return { validSteps, next, methods, isLoading };
+  return {
+    validSteps: validStepsRef.current,
+    next,
+    methods,
+    isLoading,
+  };
 };

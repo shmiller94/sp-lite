@@ -49,6 +49,11 @@ export const FEMALE_FERTILITY_PANEL = 'Female Fertility Panel';
 export const AUTOIMMUNITY_AND_CELIAC_PANEL = 'Autoimmunity & Celiac Panel';
 export const NUTRIENT_AND_ANTIOXIDANT_PANEL = 'Nutrient & Antioxidant Panel';
 export const ORGAN_AGE_PANEL = 'Organ Age Panel';
+export const MALE_HEALTH_PANEL = "Men's Health Panel";
+export const THYROID_PANEL = 'Thyroid Panel';
+export const OMEGA_PANEL = 'Omega Panel';
+export const FATIGUE_PANEL = 'Fatigue Panel';
+export const ANEMIA_PANEL = 'Anemia Panel';
 
 export const READY_NUM_HOURS_BEFORE_ADVISORY = 2;
 

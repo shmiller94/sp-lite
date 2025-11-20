@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import { SuperpowerLogo } from '@/components/icons/superpower-logo';
 import { SplitScreenLayout } from '@/components/layouts/split-screen-layout';
@@ -10,15 +10,17 @@ import {
 } from '@/const';
 import { useUpdateOrder } from '@/features/orders/api';
 import { useUpgradeOrder } from '@/features/orders/api/upgrade-order';
-import { AddOnPanelsSelect } from '@/features/orders/components/steps';
 import { useGroupedOrders } from '@/features/orders/hooks';
 import * as Payment from '@/features/users/components/payment';
+
+import { useAddOnPanelStore } from '../../stores/add-on-panel-store';
+import { AddOnPanelsSelect } from '../shared/add-on-panels-select';
 
 import { useOnboardingStepper } from './onboarding-stepper';
 
 const AddOnPanelsContent = () => {
   const { next } = useOnboardingStepper();
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const { selectedPanelIds } = useAddOnPanelStore();
 
   const { buckets } = useGroupedOrders();
 
@@ -57,14 +59,14 @@ const AddOnPanelsContent = () => {
       await updateOrderMutation.mutateAsync({
         orderId: hasCustomCredit.order.id,
         data: {
-          addOnServiceIds: [...selectedIds],
+          addOnServiceIds: [...selectedPanelIds],
         },
       });
     } else {
       await upgradeOrderMutation.mutateAsync({
         data: {
           upgradeType: 'custom-panel',
-          addOnServiceIds: [...selectedIds],
+          addOnServiceIds: [...selectedPanelIds],
           paymentMethodId,
         },
       });
@@ -77,8 +79,6 @@ const AddOnPanelsContent = () => {
       <div className="hidden w-full flex-col gap-4 rounded-3xl border border-zinc-200 bg-white p-10 lg:sticky lg:top-8 lg:flex lg:h-[calc(100svh-4rem)] lg:max-h-[calc(100svh-4rem)] lg:overflow-auto">
         <Body1 className="text-zinc-500">Add-on lab tests</Body1>
         <AddOnPanelsSelect
-          selectedIds={selectedIds}
-          setSelectedIds={setSelectedIds}
           existingCreditIds={existingCreditIds}
           isLoading={upgradeOrderMutation.isPending}
           className="max-h-fit flex-1 overflow-y-scroll"
@@ -99,8 +99,6 @@ const AddOnPanelsContent = () => {
         <div className="lg:hidden">
           <Body1 className="text-zinc-500">Add-on lab tests</Body1>
           <AddOnPanelsSelect
-            selectedIds={selectedIds}
-            setSelectedIds={setSelectedIds}
             existingCreditIds={existingCreditIds}
             isLoading={
               upgradeOrderMutation.isPending || updateOrderMutation.isPending
@@ -119,7 +117,7 @@ const AddOnPanelsContent = () => {
               upgradeOrderMutation.isPending || updateOrderMutation.isPending
             }
             isSuccess={upgradeOrderMutation.isSuccess}
-            enabled={selectedIds.size > 0}
+            enabled={selectedPanelIds.size > 0}
           />
         </Payment.PaymentGroup>
       </div>

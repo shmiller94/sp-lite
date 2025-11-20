@@ -89,7 +89,7 @@ export const SubmitPayment = ({
       >
         {cancelLabel}
       </Button>
-      <div className="flex gap-6 text-xs text-zinc-400">
+      <div className="flex gap-6 pt-4 text-xs text-zinc-400">
         <a
           href="https://www.superpower.com/privacy"
           target="_blank"

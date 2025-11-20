@@ -1,18 +1,23 @@
 import { create } from 'zustand';
 
 interface AddOnPanelStoreState {
-  selectedPanelIds: string[];
+  selectedPanelIds: Set<string>;
   togglePanel: (panelId: string) => void;
+  updateSelectedPanelIds: (panelIds: Set<string>) => void;
   clear: () => void;
 }
 
 export const useAddOnPanelStore = create<AddOnPanelStoreState>()((set) => ({
-  selectedPanelIds: [],
+  selectedPanelIds: new Set(),
   togglePanel: (panelId) =>
     set((state) => ({
-      selectedPanelIds: state.selectedPanelIds.includes(panelId)
-        ? state.selectedPanelIds.filter((id) => id !== panelId)
-        : [...state.selectedPanelIds, panelId],
+      selectedPanelIds: state.selectedPanelIds.has(panelId)
+        ? new Set(
+            Array.from(state.selectedPanelIds).filter((id) => id !== panelId),
+          )
+        : new Set([...Array.from(state.selectedPanelIds), panelId]),
     })),
-  clear: () => set(() => ({ selectedPanelIds: [] })),
+  updateSelectedPanelIds: (panelIds: Set<string>) =>
+    set({ selectedPanelIds: new Set(panelIds) }),
+  clear: () => set(() => ({ selectedPanelIds: new Set() })),
 }));
