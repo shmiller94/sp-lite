@@ -1,8 +1,10 @@
 import { useCallback, useMemo } from 'react';
 
-import { getBiomarkerRanges } from '@/components/ui/charts/utils/get-biomarker-ranges';
+import {
+  getBiomarkerRanges,
+  getRangesBySource,
+} from '@/components/ui/charts/utils/get-biomarker-ranges';
 import { getNewestValue } from '@/components/ui/charts/utils/get-newest-value';
-import { getValueStatus } from '@/components/ui/charts/utils/get-value-status';
 import { STATUS_TO_COLOR } from '@/const/status-to-color';
 import type { Biomarker } from '@/types/api';
 
@@ -10,7 +12,9 @@ import type { ChartDimensions } from '../types/chart';
 import {
   calculateChartDimensions,
   convertValueToY,
+  mapValueAcrossDimensions,
 } from '../utils/chart-dimensions';
+import { getValueStatus } from '../utils/get-value-status';
 
 import { CHART_CONFIG } from './config';
 import type {
@@ -115,9 +119,21 @@ export const useSparklineChart = ({
           sortedValues.length === 1
             ? svgWidth - PADDING * 6
             : PADDING * 6 + index * xStep;
+        // Map this value from its own source dimensions to the base dimensions
+        const srcRanges =
+          getRangesBySource(biomarker, (v.source as any) || 'quest') || ranges;
+        const srcDims = calculateChartDimensions(
+          srcRanges,
+          sortedValues.map((sv) => sv.quantity.value),
+          CHART_CONFIG.RANGE_EXTENSION_FACTOR,
+        );
+        const mapped = mapValueAcrossDimensions(
+          v.quantity.value,
+          srcDims,
+          dimensions,
+        );
         const y =
-          (valueToY(v.quantity.value) / 100) * (SVG_HEIGHT - 2 * PADDING) +
-          PADDING;
+          (valueToY(mapped) / 100) * (SVG_HEIGHT - 2 * PADDING) + PADDING;
 
         return {
           x: Number.isFinite(x) ? x : svgWidth / 2,
@@ -126,7 +142,7 @@ export const useSparklineChart = ({
           timestamp: v.timestamp,
           index,
           source: v.source || 'quest',
-          status: getValueStatus(dimensions, v.quantity.value, newestValueInfo),
+          status: getValueStatus(srcDims, v.quantity.value, newestValueInfo),
         };
       }),
     [
@@ -138,6 +154,8 @@ export const useSparklineChart = ({
       SVG_HEIGHT,
       dimensions,
       newestValueInfo,
+      biomarker,
+      ranges,
     ],
   );
 
@@ -147,15 +165,25 @@ export const useSparklineChart = ({
     }
 
     const lastValue = sortedValues[sortedValues.length - 1];
+    const lastSrcRanges =
+      getRangesBySource(biomarker, (lastValue.source as any) || 'quest') ||
+      ranges;
+    const lastSrcDims = calculateChartDimensions(
+      lastSrcRanges,
+      sortedValues.map((sv) => sv.quantity.value),
+      CHART_CONFIG.RANGE_EXTENSION_FACTOR,
+    );
+    const lastMapped = mapValueAcrossDimensions(
+      lastValue.quantity.value,
+      lastSrcDims,
+      dimensions,
+    );
     const lastValueStatus = getValueStatus(
       dimensions,
-      lastValue.quantity.value,
+      lastMapped,
       newestValueInfo,
     );
-    const rangeBounds = getRangeBackgroundBounds(
-      dimensions,
-      lastValue.quantity.value,
-    );
+    const rangeBounds = getRangeBackgroundBounds(dimensions, lastMapped);
 
     const lines: LineSegment[] = [];
     const circles: Circle[] = [];
@@ -170,10 +198,8 @@ export const useSparklineChart = ({
 
     if (sortedValues.length > 0) {
       const firstValue = sortedValues[0];
-      const y =
-        (valueToY(firstValue.quantity.value) / 100) *
-          (SVG_HEIGHT - 2 * PADDING) +
-        PADDING;
+      const firstPos = pointPositions[0];
+      const y = firstPos?.y;
 
       if (Number.isFinite(y)) {
         if (sortedValues.length === 1) {
@@ -185,11 +211,28 @@ export const useSparklineChart = ({
             y2: y,
             stroke:
               STATUS_TO_COLOR[
-                getValueStatus(
-                  dimensions,
-                  firstValue.quantity.value,
-                  newestValueInfo,
-                ) as keyof typeof STATUS_TO_COLOR
+                (() => {
+                  const srcRanges =
+                    getRangesBySource(
+                      biomarker,
+                      (firstValue.source as any) || 'quest',
+                    ) || ranges;
+                  const srcDims = calculateChartDimensions(
+                    srcRanges,
+                    sortedValues.map((sv) => sv.quantity.value),
+                    CHART_CONFIG.RANGE_EXTENSION_FACTOR,
+                  );
+                  const mapped = mapValueAcrossDimensions(
+                    firstValue.quantity.value,
+                    srcDims,
+                    dimensions,
+                  );
+                  return getValueStatus(
+                    dimensions,
+                    mapped,
+                    newestValueInfo,
+                  ) as keyof typeof STATUS_TO_COLOR;
+                })()
               ],
             strokeWidth: STROKE_WIDTH,
             strokeLinecap: 'round',
@@ -204,11 +247,28 @@ export const useSparklineChart = ({
             y2: y,
             stroke:
               STATUS_TO_COLOR[
-                getValueStatus(
-                  dimensions,
-                  firstValue.quantity.value,
-                  newestValueInfo,
-                ) as keyof typeof STATUS_TO_COLOR
+                (() => {
+                  const srcRanges =
+                    getRangesBySource(
+                      biomarker,
+                      (firstValue.source as any) || 'quest',
+                    ) || ranges;
+                  const srcDims = calculateChartDimensions(
+                    srcRanges,
+                    sortedValues.map((sv) => sv.quantity.value),
+                    CHART_CONFIG.RANGE_EXTENSION_FACTOR,
+                  );
+                  const mapped = mapValueAcrossDimensions(
+                    firstValue.quantity.value,
+                    srcDims,
+                    dimensions,
+                  );
+                  return getValueStatus(
+                    dimensions,
+                    mapped,
+                    newestValueInfo,
+                  ) as keyof typeof STATUS_TO_COLOR;
+                })()
               ],
             strokeWidth: STROKE_WIDTH,
             strokeLinecap: 'round',
@@ -243,19 +303,44 @@ export const useSparklineChart = ({
         const nextValue = sortedValues[index + 1];
         const nextPosition = pointPositions[index + 1];
         const x2 = PADDING * 6 + (index + 1) * xStep;
-        const y2 =
-          (valueToY(nextValue.quantity.value) / 100) *
-            (SVG_HEIGHT - 2 * PADDING) +
-          PADDING;
+        const y2 = nextPosition?.y;
 
         if (!Number.isFinite(x2) || !Number.isFinite(y2)) {
           return;
         }
 
-        const intersections: Array<{ x: number; y: number; value: number }> =
+        const intersections: Array<{ x: number; y: number; mapped: number }> =
           [];
 
-        intersections.push({ x, y, value: v.quantity.value });
+        // Compute mapped numeric values in base dimension space
+        const startSrcRanges =
+          getRangesBySource(biomarker, (v.source as any) || 'quest') || ranges;
+        const startSrcDims = calculateChartDimensions(
+          startSrcRanges,
+          sortedValues.map((sv) => sv.quantity.value),
+          CHART_CONFIG.RANGE_EXTENSION_FACTOR,
+        );
+        const startMapped = mapValueAcrossDimensions(
+          v.quantity.value,
+          startSrcDims,
+          dimensions,
+        );
+
+        const endSrcRanges =
+          getRangesBySource(biomarker, (nextValue.source as any) || 'quest') ||
+          ranges;
+        const endSrcDims = calculateChartDimensions(
+          endSrcRanges,
+          sortedValues.map((sv) => sv.quantity.value),
+          CHART_CONFIG.RANGE_EXTENSION_FACTOR,
+        );
+        const endMapped = mapValueAcrossDimensions(
+          nextValue.quantity.value,
+          endSrcDims,
+          dimensions,
+        );
+
+        intersections.push({ x, y, mapped: startMapped });
 
         const rangeBoundaries = [
           dimensions.optimalLow,
@@ -264,14 +349,12 @@ export const useSparklineChart = ({
           dimensions.normalHigh,
         ].sort((a, b) => a - b);
 
-        const startValue = v.quantity.value;
-        const endValue = nextValue.quantity.value;
-        const minValue = Math.min(startValue, endValue);
-        const maxValue = Math.max(startValue, endValue);
+        const minMapped = Math.min(startMapped, endMapped);
+        const maxMapped = Math.max(startMapped, endMapped);
 
         for (const boundary of rangeBoundaries) {
-          if (boundary > minValue && boundary < maxValue) {
-            const t = (boundary - startValue) / (endValue - startValue);
+          if (boundary > minMapped && boundary < maxMapped) {
+            const t = (boundary - startMapped) / (endMapped - startMapped);
             const intersectionX = x + t * (x2 - x);
             const intersectionY = y + t * (y2 - y);
 
@@ -282,13 +365,13 @@ export const useSparklineChart = ({
               intersections.push({
                 x: intersectionX,
                 y: intersectionY,
-                value: boundary,
+                mapped: boundary,
               });
             }
           }
         }
 
-        intersections.push({ x: x2, y: y2, value: nextValue.quantity.value });
+        intersections.push({ x: x2, y: y2, mapped: endMapped });
 
         intersections.sort((a, b) => a.x - b.x);
 
@@ -302,20 +385,17 @@ export const useSparklineChart = ({
             !Number.isFinite(nextSegment.x) ||
             !Number.isFinite(nextSegment.y)
           ) {
-            // Continue with next iteration
+            // skip invalid
           } else {
             let segmentStatus: keyof typeof STATUS_TO_COLOR;
 
-            // If this is a direct line between two points (no intersections) and both points have the same status,
-            // use that status for the line
             if (intersections.length === 2 && status === nextPosition.status) {
               segmentStatus = status as keyof typeof STATUS_TO_COLOR;
             } else {
-              // Otherwise, use the midpoint calculation
-              const segmentValue = (segment.value + nextSegment.value) / 2;
+              const midMapped = (segment.mapped + nextSegment.mapped) / 2;
               segmentStatus = getValueStatus(
                 dimensions,
-                segmentValue,
+                midMapped,
                 newestValueInfo,
               );
             }
@@ -366,6 +446,8 @@ export const useSparklineChart = ({
     STROKE_WIDTH,
     xStep,
     newestValueInfo,
+    biomarker,
+    ranges,
   ]);
 
   const meta = {

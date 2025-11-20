@@ -145,3 +145,53 @@ export const convertValueToY = (
 
   return isFinite(result) ? result : 50;
 };
+
+// Maps a numeric value from one chart dimension to another by piecewise
+export const mapValueAcrossDimensions = (
+  value: number,
+  from: ChartDimensions,
+  to: ChartDimensions,
+): number => {
+  // Build monotonic breakpoint arrays for both spaces
+  const fromMinLow = Math.min(from.normalLow, from.optimalLow);
+  const fromMaxHigh = Math.max(from.normalHigh, from.optimalHigh);
+  const toMinLow = Math.min(to.normalLow, to.optimalLow);
+  const toMaxHigh = Math.max(to.normalHigh, to.optimalHigh);
+
+  const fromPoints = [
+    from.chartMinValue,
+    fromMinLow,
+    from.optimalLow,
+    from.optimalHigh,
+    fromMaxHigh,
+    from.chartMaxValue,
+  ];
+  const toPoints = [
+    to.chartMinValue,
+    toMinLow,
+    to.optimalLow,
+    to.optimalHigh,
+    toMaxHigh,
+    to.chartMaxValue,
+  ];
+
+  // Handle degenerate cases
+  if (!Number.isFinite(value)) return to.chartMinValue + to.totalRange / 2;
+  if (from.chartMaxValue === from.chartMinValue) return to.chartMinValue;
+
+  // Find source interval index i such that value in [from[i], from[i+1]]
+  let i = 0;
+  while (i < fromPoints.length - 2 && value > fromPoints[i + 1]) i += 1;
+
+  const aFrom = fromPoints[i];
+  const bFrom = fromPoints[i + 1];
+  const aTo = toPoints[i];
+  const bTo = toPoints[i + 1];
+
+  const denom = bFrom - aFrom;
+  const t = denom !== 0 ? (value - aFrom) / denom : 0;
+  const mapped = aTo + t * (bTo - aTo);
+
+  if (!Number.isFinite(mapped)) return to.chartMinValue + to.totalRange / 2;
+  return Math.max(to.chartMinValue, Math.min(to.chartMaxValue, mapped));
+};

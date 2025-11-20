@@ -7,8 +7,12 @@ import type { ChartDimensions } from '../types/chart';
 import {
   calculateChartDimensions,
   convertValueToY,
+  mapValueAcrossDimensions,
 } from '../utils/chart-dimensions';
-import { getBiomarkerRanges } from '../utils/get-biomarker-ranges';
+import {
+  getBiomarkerRanges,
+  getRangesBySource,
+} from '../utils/get-biomarker-ranges';
 import { getNewestValue } from '../utils/get-newest-value';
 import { getValueStatus } from '../utils/get-value-status';
 
@@ -308,22 +312,46 @@ export const useTimeSeriesChart = ({
       let status: keyof typeof STATUS_TO_COLOR | 'next-test';
 
       if (isNextTest) {
-        y =
-          pageValues.length > 0
-            ? CHART_CONFIG.TOP_PADDING +
-              (convertValueToY(
-                dimensions,
-                pageValues[pageValues.length - 1].quantity.value,
-              ) /
-                100) *
-                chartHeight
-            : CHART_CONFIG.TOP_PADDING + chartHeight / 2;
+        if (pageValues.length > 0) {
+          const last = pageValues[pageValues.length - 1];
+          const lastSource = (last as any)?.source || 'quest';
+          const lastRanges = getRangesBySource(biomarker, lastSource) || ranges;
+          const lastDims = calculateChartDimensions(
+            lastRanges,
+            values,
+            CHART_CONFIG.RANGE_EXTENSION_FACTOR,
+          );
+          const mappedLast = mapValueAcrossDimensions(
+            last.quantity.value,
+            lastDims,
+            dimensions,
+          );
+          y =
+            CHART_CONFIG.TOP_PADDING +
+            (convertValueToY(dimensions, mappedLast) / 100) * chartHeight;
+        } else {
+          y = CHART_CONFIG.TOP_PADDING + chartHeight / 2;
+        }
         status = 'next-test';
       } else {
-        const yPercent = convertValueToY(dimensions, point.quantity.value);
-        y = CHART_CONFIG.TOP_PADDING + (yPercent / 100) * chartHeight;
-        status = getValueStatus(
+        const pointSource = (point as any).source || 'quest';
+        const pointRanges = getRangesBySource(biomarker, pointSource) || ranges;
+        const pointDimensions = calculateChartDimensions(
+          pointRanges,
+          values,
+          CHART_CONFIG.RANGE_EXTENSION_FACTOR,
+        );
+
+        const mappedValue = mapValueAcrossDimensions(
+          point.quantity.value,
+          pointDimensions,
           dimensions,
+        );
+        const yPercent = convertValueToY(dimensions, mappedValue);
+        y = CHART_CONFIG.TOP_PADDING + (yPercent / 100) * chartHeight;
+
+        status = getValueStatus(
+          pointDimensions,
           point.quantity.value,
           newestValueInfo,
         ) as 'optimal' | 'normal' | 'high' | 'low' | 'out of range';
@@ -463,7 +491,7 @@ export const useTimeSeriesChart = ({
       if (j === 0 && points.length === 2 && start.status === end.status) {
         range = start.status as keyof typeof STATUS_TO_COLOR;
       } else {
-        // Otherwise, use the midpoint calculation
+        // Otherwise, use the midpoint in base axis space derived from y to choose color
         const midY = (segmentStart.y + segmentEnd.y) / 2;
         const midValue = convertYToValue(
           dimensions,

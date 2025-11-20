@@ -52,3 +52,40 @@ export const getBiomarkerRanges = (
     sortedValues,
   };
 };
+
+/**
+ * Returns ranges for a specific lab source if available, otherwise returns empty array.
+ * Useful when mapping values that originate from mixed sources (Labcorp, Quest, etc.).
+ */
+export const getRangesBySource = (
+  biomarker: Biomarker,
+  source: Lab,
+): Range[] => {
+  const direct = biomarker.ranges?.[source as keyof typeof biomarker.ranges];
+  if (direct && direct.length) return direct;
+
+  // Fallback: try other available sources using the same preference order
+  if (biomarker.ranges) {
+    const availableSources = Object.keys(biomarker.ranges) as Array<
+      keyof typeof biomarker.ranges
+    >;
+
+    // Build a prioritized list starting from the requested source, then PREFERENCE_ORDER
+    const preference: Lab[] = [
+      source,
+      ...PREFERENCE_ORDER.filter((s) => s !== source),
+    ];
+
+    for (const s of preference) {
+      if (
+        availableSources.includes(s) &&
+        biomarker.ranges[s] &&
+        biomarker.ranges[s]!.length
+      ) {
+        return biomarker.ranges[s] as unknown as Range[];
+      }
+    }
+  }
+
+  return [];
+};
