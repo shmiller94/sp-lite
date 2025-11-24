@@ -8,7 +8,6 @@ import { Billing } from '@/features/settings/components/billing/billing';
 import { Membership } from '@/features/settings/components/membership/membership';
 import { Profile } from '@/features/settings/components/profile/profile';
 import { OrdersList } from '@/features/settings/components/purchases/orders-list';
-import { Vault } from '@/features/settings/components/vault/vault';
 import { WearablesTable } from '@/features/settings/components/wearables/wearables-table';
 import { capitalize } from '@/utils/format';
 
@@ -19,7 +18,6 @@ export const SettingsListDesktop = () => {
     { component: <Membership />, value: 'membership' },
     { component: <OrdersList />, value: 'history' },
     { component: <WearablesTable />, value: 'integrations' },
-    { component: <Vault />, value: 'health records' },
   ];
 
   return (
