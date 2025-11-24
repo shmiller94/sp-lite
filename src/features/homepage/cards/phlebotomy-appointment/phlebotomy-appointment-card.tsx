@@ -245,7 +245,7 @@ export const PhlebotomyAppointmentCard = () => {
         )}
 
       {appointmentStatus === 'scheduled' && (
-        <div className="mb-6 hidden items-center justify-between md:flex">
+        <div className="my-6 hidden items-center justify-between md:flex">
           <div className="flex items-start gap-3">
             <MapPin className="mt-1 size-5 text-zinc-500" />
             <div>

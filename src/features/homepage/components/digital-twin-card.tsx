@@ -9,7 +9,7 @@ import { useUser } from '@/lib/auth';
 
 export const DigitalTwinCard = () => {
   const { data: user } = useUser();
-  const { data: biomarkers } = useBiomarkers();
+  const { data: biomarkers, isLoading } = useBiomarkers();
 
   const mostRecentBiomarkerTimestamp = biomarkers?.biomarkers
     ? biomarkers.biomarkers
@@ -53,12 +53,14 @@ export const DigitalTwinCard = () => {
         </Link>
 
         {/* Bottom left overlay: Last tested date */}
-        {mostRecentBiomarkerTimestamp ? (
+        {!isLoading && mostRecentBiomarkerTimestamp ? (
           <div className="absolute bottom-6 left-6 z-10 text-sm text-zinc-400">
             Last updated {format(mostRecentBiomarkerTimestamp, 'MMM d, yyyy')}
           </div>
         ) : (
-          <Skeleton className="absolute bottom-6 left-6 z-10 h-6 w-40" />
+          isLoading && (
+            <Skeleton className="absolute bottom-6 left-6 z-10 h-6 w-40" />
+          )
         )}
 
         <DigitalTwin />
