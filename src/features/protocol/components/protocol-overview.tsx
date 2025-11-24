@@ -12,6 +12,7 @@ import { getGoalImage } from '../utils/get-goal-image';
 
 import { ProtocolGoalCard } from './goals/protocol-goal-card';
 import { ProtocolTabs } from './overview/protocol-tabs';
+import { ProtocolWaitingScreen } from './protocol-waiting-screen';
 
 export const ProtocolOverview = ({
   protocolId,
@@ -82,7 +83,16 @@ export const ProtocolOverview = ({
     );
   }
 
-  if (error || !protocol) {
+  if (!protocol) {
+    return (
+      <div className="mx-auto w-full max-w-[1600px] space-y-4 p-6 lg:px-16">
+        <H3 className="text-black">Protocol</H3>
+        <ProtocolWaitingScreen />
+      </div>
+    );
+  }
+
+  if (error) {
     return (
       <div className="mx-auto max-w-4xl p-6">
         <Body2 className="text-red-600">

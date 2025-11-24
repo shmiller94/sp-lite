@@ -17,7 +17,7 @@ export const WaitingScreen = () => {
   return (
     <div className="mx-auto max-w-3xl flex-1 overflow-y-auto rounded-[24px] bg-white p-6 scrollbar scrollbar-track-transparent scrollbar-thumb-zinc-300">
       <div className="size-full">
-        <H4 className="mb-2">Hi, {user?.firstName}</H4>
+        <H4 className="mb-2">Hi {user?.firstName},</H4>
         <Body2 className="mb-4 text-zinc-400">
           We are currently awaiting and analysing your first test results. They
           should be with you in {ETA} days and appear here in the data page.
