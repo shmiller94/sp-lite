@@ -16,6 +16,7 @@ import {
   MarketplaceIcon,
 } from '@/components/icons';
 import { CircleAiIcon } from '@/components/icons/circle-ai-icon';
+import { PlansIcon } from '@/components/icons/plans-icon';
 import { PresentIcon } from '@/components/icons/present-icon';
 import { SettingsIcon } from '@/components/icons/settings-icon';
 import { SuperpowerLogo } from '@/components/icons/superpower-logo';
@@ -27,6 +28,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown';
+// eslint-disable-next-line import/no-restricted-paths
+import { REVEAL_STEPS } from '@/features/protocol/components/reveal/reveal-stepper';
 import { useScrollThreshold } from '@/hooks/use-scroll-threshold';
 import { ROLES, useAuthorization } from '@/lib/authorization';
 import { cn } from '@/lib/utils';
@@ -41,6 +44,7 @@ type Link = {
 const baseLinks: Link[] = [
   { icon: HomeIcon, name: 'Home', to: './' },
   { icon: DataIcon, name: 'Data', to: './data' },
+  { icon: PlansIcon, name: 'Protocol', to: './protocol' },
   { icon: MessageIcon, name: 'Concierge', to: './concierge' },
   { icon: MarketplaceIcon, name: 'Marketplace', to: './marketplace' },
 ];
@@ -62,9 +66,18 @@ const profileDropdownItems = [
 export const Navbar = () => {
   const { pathname } = useLocation();
 
+  const hideNavbarPaths = [
+    `/protocol/reveal/${REVEAL_STEPS.PRODUCT_CHECKOUT}`,
+    `/protocol/reveal/${REVEAL_STEPS.SERVICE_CHECKOUT}`,
+    `/protocol/reveal/${REVEAL_STEPS.SERVICE_BOOKING}`,
+    `/protocol/reveal/${REVEAL_STEPS.RX_QUESTIONNAIRE}`,
+  ];
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [pathname]);
+
+  if (hideNavbarPaths.some((url) => pathname.startsWith(url))) return null;
 
   return (
     <>
@@ -74,7 +87,12 @@ export const Navbar = () => {
   );
 };
 
-const lightNavPaths = ['/invite'];
+const lightNavPaths = [
+  '/invite',
+  '/protocol/reveal/get-started',
+  '/protocol/reveal/biological-age',
+  '/protocol/reveal/score',
+];
 const blurThresholds: Record<string, number> = {
   '/invite': 500,
 };

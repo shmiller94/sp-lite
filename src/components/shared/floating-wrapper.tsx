@@ -14,7 +14,14 @@ import { DesktopCheckout } from '@/features/plans/components/desktop-checkout';
 import { FloatingMenu } from '@/features/plans/components/navigation/floating-menu';
 import { cn } from '@/lib/utils';
 
-const HIDE_WRAPPER_PATHNAMES = ['/concierge', '/onboarding', '/questionnaire'];
+const HIDE_WRAPPER_PATHNAMES = [
+  '/concierge',
+  '/onboarding',
+  '/questionnaire',
+  '/protocol/reveal/get-started',
+  '/protocol/reveal/biological-age',
+  '/protocol/reveal/score',
+];
 
 export const FloatingWrapper = () => {
   const { pathname } = useLocation();

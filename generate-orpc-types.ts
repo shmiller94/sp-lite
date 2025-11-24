@@ -4,7 +4,7 @@
  * This pulls the OpenAPI schema from the running ts-server
  * and generates type-safe client types for oRPC.
  *
- * Run with: yarn generate-types
+ * Run with: yarn generate:orpc-types
  */
 import fs from 'node:fs';
 
@@ -32,7 +32,10 @@ try {
   console.log('✅ Generated oRPC types:', outputPath);
   console.log('📝 You can now import types from @/orpc/types.generated');
 } catch (error) {
-  console.error('❌ Failed to generate types:', error);
+  console.error(
+    '❌ Failed to generate types:',
+    error instanceof Error ? error.message : String(error),
+  );
   console.error('\nMake sure ts-server is running and accessible at:', API_URL);
   process.exit(1);
 }

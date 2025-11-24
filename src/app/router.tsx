@@ -11,6 +11,7 @@ import { ConciergeLayout } from '@/features/messages/layouts/concierge-layout';
 import { ProtectedRoute } from '@/lib/auth';
 
 import { ConciergeRoute } from './routes/app/concierge';
+import { protocolRoutes } from './routes/app/protocol/protocol-router';
 import { AppRoot } from './routes/app/root';
 import { NotFoundRoute } from './routes/not-found';
 
@@ -132,11 +133,12 @@ export const createRouter = () =>
         },
         {
           path: 'plans/:id',
-          lazy: async () => {
-            const { PlanRoute } = await import('./routes/app/plan');
-            return { Component: PlanRoute };
+          loader: async ({ params }) => {
+            return redirect(`/protocol/plans/${params.id}`);
           },
         },
+        // Protocol routes (see protocol-router.tsx for details)
+        protocolRoutes,
         {
           path: 'settings',
           lazy: async () => {

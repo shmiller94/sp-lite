@@ -1,21 +1,24 @@
 import NumberFlowRaw from '@number-flow/react';
-import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
-const MotionNumberFlow = motion(NumberFlowRaw);
+type RawProps = React.ComponentProps<typeof NumberFlowRaw>;
+type Value = RawProps['value'];
+
+type NumberFlowProps = RawProps & {
+  initialValue?: number;
+  duration?: number;
+  easing?: string;
+};
 
 export default function NumberFlow({
   value,
   initialValue,
-  trend,
+  duration,
+  easing,
   className,
-}: {
-  value: number;
-  initialValue?: number;
-  trend?: 'up' | 'down';
-  className?: string;
-}) {
-  const [counter, setCounter] = useState<number>(initialValue ?? 0);
+  ...rest
+}: NumberFlowProps) {
+  const [counter, setCounter] = useState<Value>(initialValue ?? 0);
 
   // Only update the counter after first render
   useEffect(() => {
@@ -23,10 +26,13 @@ export default function NumberFlow({
   }, [value]);
 
   return (
-    <MotionNumberFlow
+    <NumberFlowRaw
       className={className}
       value={counter}
-      trend={trend === 'up' ? 1 : trend === 'down' ? -1 : 0}
+      transformTiming={
+        duration ? { duration, easing: easing ?? 'ease-out' } : undefined
+      }
+      {...rest}
     />
   );
 }

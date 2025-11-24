@@ -2,11 +2,9 @@ import { useMemo, useState } from 'react';
 
 import { useAuthorization } from '@/lib/authorization';
 
-import { useNeedsCarePlanAnnouncement } from '../hooks/use-needs-care-plan-announcement';
 import { useNeedsMembershipConsent } from '../hooks/use-needs-membership-consent';
 import { useNeedsPhiMarketingConsent } from '../hooks/use-needs-phi-marketing-consent';
 
-import { CarePlanDialog } from './modals/care-plan-dialog';
 import { ConsentDialog } from './modals/consent-dialog';
 import { PhiConsentDialog } from './modals/phi-consent-dialog';
 
@@ -24,14 +22,10 @@ export const Announcements = () => {
     isLoading: isMembershipConsentLoading,
   } = useNeedsMembershipConsent();
 
-  const { needsAnnouncement: needsCarePlan, isLoading: isCarePlanLoading } =
-    useNeedsCarePlanAnnouncement();
-
   const { needsConsent: needsPhiConsent, isLoading: isPhiConsentLoading } =
     useNeedsPhiMarketingConsent();
 
-  const isLoading =
-    isMembershipConsentLoading || isCarePlanLoading || isPhiConsentLoading;
+  const isLoading = isMembershipConsentLoading || isPhiConsentLoading;
 
   const queue = useMemo<QueueItem[]>(() => {
     const items: QueueItem[] = [];
@@ -47,21 +41,6 @@ export const Announcements = () => {
               /* This modal is required */
             }}
             onFinished={advance}
-          />
-        ),
-      });
-    }
-
-    if (needsCarePlan) {
-      items.push({
-        key: 'care-plan',
-        required: false,
-        render: (advance) => (
-          <CarePlanDialog
-            open
-            onOpenChange={(next) => {
-              if (!next) advance();
-            }}
           />
         ),
       });
@@ -83,7 +62,7 @@ export const Announcements = () => {
     }
 
     return items;
-  }, [needsMembershipConsent, needsCarePlan, needsPhiConsent]);
+  }, [needsMembershipConsent, needsPhiConsent]);
 
   const [index, setIndex] = useState(0);
 

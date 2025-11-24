@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { isValidPhoneNumber, parsePhoneNumber } from 'libphonenumber-js';
 import * as React from 'react';
 import { configureAuth } from 'react-query-auth';
@@ -6,9 +6,12 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { z } from 'zod';
 
 import { SuperpowerLoadingLogo } from '@/components/icons/superpower-logo';
+// eslint-disable-next-line import/no-restricted-paths
+import { revealLatestQueryKey } from '@/features/protocol/api';
 import { useTask } from '@/features/tasks/api/get-task';
 import { MutationConfig } from '@/lib/react-query';
 import { clearActiveLogin, setActiveLogin } from '@/lib/utils';
+import { api as rawOrpcClient } from '@/orpc/client';
 import {
   LoginAuthenticationResponse,
   OAuthGrantType,
@@ -29,6 +32,8 @@ const logout = async (): Promise<void> => {
 
   return clearActiveLogin();
 };
+
+const orpcClient = rawOrpcClient as any;
 
 export const baseLoginInputSchema = z.object({
   redirectUri: z.string().optional(),
@@ -234,6 +239,12 @@ export const useSetPassword = ({
 export const { useUser, useLogin, useLogout, useRegister } =
   configureAuth(authConfig);
 
+type RevealLatestResponse = {
+  carePlanId: string | null;
+  showReveal: boolean | null;
+  revealCompleted: boolean;
+};
+
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const userQuery = useUser();
@@ -244,6 +255,15 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
       retry: 3,
       retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 5000), // 1s, 2s, 4s, max 5s
     },
+  });
+  const { data: revealLatest } = useQuery<RevealLatestResponse>({
+    queryKey: revealLatestQueryKey,
+    queryFn: async () => {
+      const response = await orpcClient.POST('/protocol/reveal/latest');
+      if (response.error) throw response.error;
+      return response.data;
+    },
+    enabled: userQuery.isSuccess,
   });
 
   if (taskQuery.isLoading) {
@@ -276,6 +296,27 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   const onLegacy = location.pathname.startsWith('/legacy-checkout');
   const onOnboarding = location.pathname.includes('/onboarding');
+  const onProtocolReveal = location.pathname.startsWith('/protocol/reveal');
+
+  // Check if user should be redirected to protocol reveal flow
+  const shouldRedirectToReveal =
+    !!revealLatest?.carePlanId &&
+    revealLatest.showReveal === true &&
+    !revealLatest.revealCompleted;
+
+  if (
+    shouldRedirectToReveal &&
+    !onProtocolReveal &&
+    taskQuery.data?.task.status === 'completed' &&
+    !userQuery.data.admin
+  ) {
+    const target = '/protocol/reveal';
+    console.warn(
+      `Redirecting to protocol reveal: ${target}, current location: ${location.pathname}`,
+    );
+    return <Navigate to={target} replace />;
+  }
+
   if (taskQuery.data) {
     const { task } = taskQuery.data;
     const isTaskIncomplete = task.status !== 'completed';
@@ -345,7 +386,7 @@ const fetchTokens = async (formBody: URLSearchParams) => {
     });
 
     await verifyTokens(response);
-  } catch (error) {
+  } catch {
     clearActiveLogin();
     throw new Error('Failed to fetch tokens');
   }

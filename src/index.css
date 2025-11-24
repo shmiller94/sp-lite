@@ -188,3 +188,68 @@
   -webkit-mask-image: linear-gradient(to bottom, transparent, black);
   mask-image: linear-gradient(to bottom, transparent, black);
 }
+
+/* Gradient mask reveal for nicer text fades */
+@keyframes mask-reveal {
+  from {
+    -webkit-mask-position: 0 100%;
+    mask-position: 0 100%;
+  }
+  to {
+    -webkit-mask-position: 0 0;
+    mask-position: 0 0;
+  }
+}
+
+.mask-reveal {
+  -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
+  -webkit-mask-size: 100% 200%;
+  mask-size: 100% 200%;
+  -webkit-mask-position: 0 100%;
+  mask-position: 0 100%;
+  animation: mask-reveal 700ms ease-out forwards;
+}
+
+/* Horizontal mask reveals */
+@keyframes mask-reveal-left {
+  from {
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+  }
+  to {
+    -webkit-mask-position: 0 0;
+    mask-position: 0 0;
+  }
+}
+
+@keyframes mask-reveal-right {
+  from {
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+  }
+  to {
+    -webkit-mask-position: 0 0;
+    mask-position: 0 0;
+  }
+}
+
+.mask-reveal-left {
+  -webkit-mask-image: linear-gradient(to right, #000 60%, transparent 100%);
+  mask-image: linear-gradient(to right, #000 60%, transparent 100%);
+  -webkit-mask-size: 200% 100%;
+  mask-size: 200% 100%;
+  -webkit-mask-position: 100% 0;
+  mask-position: 100% 0;
+  animation: mask-reveal-left 1500ms ease-out forwards;
+}
+
+.mask-reveal-right {
+  -webkit-mask-image: linear-gradient(to left, #000 60%, transparent 100%);
+  mask-image: linear-gradient(to left, #000 60%, transparent 100%);
+  -webkit-mask-size: 200% 100%;
+  mask-size: 200% 100%;
+  -webkit-mask-position: 100% 0;
+  mask-position: 100% 0;
+  animation: mask-reveal-right 1500ms ease-out forwards;
+}

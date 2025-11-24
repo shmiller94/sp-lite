@@ -31,22 +31,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/checkout/stripe/create-checkout-session": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["checkout.stripe.createCheckoutSession"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/checkout/stripe/checkout-session": {
         parameters: {
             query?: never;
@@ -191,6 +175,150 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/protocol": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["protocol.getAllProtocols"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/protocol/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["protocol.getProtocolById"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/protocol/reveal/latest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["protocol.reveal.getOrCreateReveal"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/protocol/reveal/{carePlanId}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["protocol.reveal.getRevealStatus"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/protocol/reveal/{carePlanId}/order": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["protocol.reveal.createProtocolOrder"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/protocol/reveal/{carePlanId}/checkout/products": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["protocol.reveal.createShopifyCheckout"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/protocol/reveal/{carePlanId}/checkout/services": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["protocol.reveal.createServiceOrders"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/protocol/reveal/{carePlanId}/steps/{step}/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["protocol.reveal.markStepComplete"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/protocol/reveal/{carePlanId}/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["protocol.reveal.completeReveal"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -214,10 +342,15 @@ export interface components {
         };
         CheckoutSession: {
             id: string;
-            clientSecret: string;
+            clientSecret?: string;
             lineItems: components["schemas"]["CheckoutSessionLineItem"][];
             state: string;
             available: boolean;
+            total: number;
+            subtotal: number;
+            discount: number;
+            status?: string;
+            paymentStatus?: string;
         };
         CreateCheckoutSession: {
             /** Format: uri */
@@ -441,211 +574,6 @@ export interface operations {
                         /** @constant */
                         status: 429;
                         /** @default RATE_LIMIT_EXCEEDED */
-                        message: string;
-                        data?: unknown;
-                    } | {
-                        /** @constant */
-                        defined: false;
-                        code: string;
-                        status: number;
-                        message: string;
-                        data?: unknown;
-                    };
-                };
-            };
-        };
-    };
-    "checkout.stripe.createCheckoutSession": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /**
-                     * @description State
-                     * @enum {unknown}
-                     */
-                    state: "AL" | "AK" | "AS" | "AZ" | "AR" | "CA" | "CO" | "CT" | "DE" | "DC" | "FM" | "FL" | "GA" | "GU" | "HI" | "ID" | "IL" | "IN" | "IA" | "KS" | "KY" | "LA" | "ME" | "MH" | "MD" | "MA" | "MI" | "MN" | "MS" | "MO" | "MT" | "NE" | "NV" | "NH" | "NJ" | "NM" | "NY" | "NC" | "ND" | "MP" | "OH" | "OK" | "OR" | "PW" | "PA" | "PR" | "RI" | "SC" | "SD" | "TN" | "TX" | "UT" | "VT" | "VI" | "VA" | "WA" | "WV" | "WI" | "WY";
-                    products: ({
-                        /** @constant */
-                        type: "product";
-                        productId: components["schemas"]["CheckoutProductId"];
-                    } | {
-                        /** @constant */
-                        type: "price";
-                        priceId: string;
-                    })[];
-                    /** Format: uri */
-                    returnUrl: string;
-                    metadata?: {
-                        referralId?: string;
-                    };
-                };
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        checkout: {
-                            id: string;
-                            clientSecret: string;
-                        };
-                    };
-                };
-            };
-            /** @description 400 */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @constant */
-                        defined: true;
-                        /** @constant */
-                        code: "BAD_REQUEST";
-                        /** @constant */
-                        status: 400;
-                        /** @default Bad Request */
-                        message: string;
-                        data?: unknown;
-                    } | {
-                        /** @constant */
-                        defined: false;
-                        code: string;
-                        status: number;
-                        message: string;
-                        data?: unknown;
-                    };
-                };
-            };
-            /** @description 401 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @constant */
-                        defined: true;
-                        /** @constant */
-                        code: "UNAUTHORIZED";
-                        /** @constant */
-                        status: 401;
-                        /** @default Unauthorized */
-                        message: string;
-                        data?: unknown;
-                    } | {
-                        /** @constant */
-                        defined: false;
-                        code: string;
-                        status: number;
-                        message: string;
-                        data?: unknown;
-                    };
-                };
-            };
-            /** @description 403 */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @constant */
-                        defined: true;
-                        /** @constant */
-                        code: "NOT_AN_ADMIN";
-                        /** @constant */
-                        status: 403;
-                        /** @default NOT_AN_ADMIN */
-                        message: string;
-                        data?: unknown;
-                    } | {
-                        /** @constant */
-                        defined: false;
-                        code: string;
-                        status: number;
-                        message: string;
-                        data?: unknown;
-                    };
-                };
-            };
-            /** @description 404 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @constant */
-                        defined: true;
-                        /** @constant */
-                        code: "NOT_FOUND";
-                        /** @constant */
-                        status: 404;
-                        /** @default Not Found */
-                        message: string;
-                        data?: unknown;
-                    } | {
-                        /** @constant */
-                        defined: false;
-                        code: string;
-                        status: number;
-                        message: string;
-                        data?: unknown;
-                    };
-                };
-            };
-            /** @description 429 */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @constant */
-                        defined: true;
-                        /** @constant */
-                        code: "RATE_LIMIT_EXCEEDED";
-                        /** @constant */
-                        status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
-                        message: string;
-                        data?: unknown;
-                    } | {
-                        /** @constant */
-                        defined: false;
-                        code: string;
-                        status: number;
-                        message: string;
-                        data?: unknown;
-                    };
-                };
-            };
-            /** @description 500 */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @constant */
-                        defined: true;
-                        /** @constant */
-                        code: "INTERNAL_SERVER_ERROR";
-                        /** @constant */
-                        status: 500;
-                        /** @default Internal Server Error */
                         message: string;
                         data?: unknown;
                     } | {
@@ -1040,11 +968,8 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    /**
-                     * @description State
-                     * @enum {unknown}
-                     */
-                    state: "AL" | "AK" | "AS" | "AZ" | "AR" | "CA" | "CO" | "CT" | "DE" | "DC" | "FM" | "FL" | "GA" | "GU" | "HI" | "ID" | "IL" | "IN" | "IA" | "KS" | "KY" | "LA" | "ME" | "MH" | "MD" | "MA" | "MI" | "MN" | "MS" | "MO" | "MT" | "NE" | "NV" | "NH" | "NJ" | "NM" | "NY" | "NC" | "ND" | "MP" | "OH" | "OK" | "OR" | "PW" | "PA" | "PR" | "RI" | "SC" | "SD" | "TN" | "TX" | "UT" | "VT" | "VI" | "VA" | "WA" | "WV" | "WI" | "WY";
+                    /** @description State */
+                    state: string;
                     products: ({
                         /** @constant */
                         type: "product";
@@ -1257,6 +1182,9 @@ export interface operations {
                             id: string;
                             status: string | null;
                             paymentStatus: string;
+                            total: number;
+                            subtotal: number;
+                            discount: number;
                         };
                     };
                 };
@@ -1615,8 +1543,7 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    /** @enum {unknown} */
-                    state?: "AL" | "AK" | "AS" | "AZ" | "AR" | "CA" | "CO" | "CT" | "DE" | "DC" | "FM" | "FL" | "GA" | "GU" | "HI" | "ID" | "IL" | "IN" | "IA" | "KS" | "KY" | "LA" | "ME" | "MH" | "MD" | "MA" | "MI" | "MN" | "MS" | "MO" | "MT" | "NE" | "NV" | "NH" | "NJ" | "NM" | "NY" | "NC" | "ND" | "MP" | "OH" | "OK" | "OR" | "PW" | "PA" | "PR" | "RI" | "SC" | "SD" | "TN" | "TX" | "UT" | "VT" | "VI" | "VA" | "WA" | "WV" | "WI" | "WY";
+                    state?: string;
                     products: ({
                         /** @constant */
                         type: "product";
@@ -2299,6 +2226,1964 @@ export interface operations {
                         /** @constant */
                         status: 404;
                         /** @default Not Found */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 429 */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "RATE_LIMIT_EXCEEDED";
+                        /** @constant */
+                        status: 429;
+                        /** @default RATE_LIMIT_EXCEEDED */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 500 */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "INTERNAL_SERVER_ERROR";
+                        /** @constant */
+                        status: 500;
+                        /** @default Internal Server Error */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+        };
+    };
+    "protocol.getAllProtocols": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        protocols: {
+                            id: string;
+                            title: string;
+                            /** @description Markdown formatted description of protocol (generally hard coded) */
+                            description: string;
+                            /** @enum {unknown} */
+                            status: "draft" | "active" | "on-hold" | "revoked" | "completed" | "entered-in-error" | "unknown";
+                            /** Format: date-time */
+                            created: string;
+                            /** @description Whether this protocol should show the reveal flow */
+                            showReveal?: boolean;
+                            /** @default [] */
+                            goals: {
+                                id: string;
+                                /** @enum {unknown} */
+                                status: "proposed" | "planned" | "accepted" | "active" | "on-hold" | "completed" | "cancelled" | "entered-in-error" | "rejected";
+                                /** @enum {unknown} */
+                                priority?: "high-priority" | "medium-priority" | "low-priority";
+                                /** @description Title of the goal */
+                                title: string;
+                                /** @description Brief introduction to the goal */
+                                introduction: string;
+                                /**
+                                 * @description Body of the goal, markdown formatted with citations
+                                 * @default []
+                                 */
+                                body: string[];
+                                /**
+                                 * @description Actions to achieve the goal, markdown formatted with citations
+                                 * @default []
+                                 */
+                                actions: string[];
+                                /**
+                                 * @description IDs of biomarkers this goal addresses
+                                 * @default []
+                                 */
+                                targetBiomarkerIds: string[];
+                                /**
+                                 * @description IDs of activities that help achieve this goal
+                                 * @default []
+                                 */
+                                activityIds: string[];
+                                metadata?: {
+                                    /** @description Impact area of the goal, ie. Low energy */
+                                    healthImpact?: string;
+                                    /** @description Time to recover from the goal, ie. 6-8 weeks */
+                                    recoveryTime?: string;
+                                };
+                                /** @default [] */
+                                citations: {
+                                    /** @description Citation key, ie: [^1], [^2], etc. */
+                                    key: string;
+                                    /** @description Citation content/reference */
+                                    content: string;
+                                    /**
+                                     * Format: uri
+                                     * @description Optional URL to source
+                                     */
+                                    url?: string;
+                                }[];
+                            }[];
+                            /** @default [] */
+                            activities: ({
+                                /** @description Full description in markdown format with citations */
+                                description: string;
+                                /**
+                                 * @description Supporting citations
+                                 * @default []
+                                 */
+                                citations: {
+                                    /** @description Citation key, ie: [^1], [^2], etc. */
+                                    key: string;
+                                    /** @description Citation content/reference */
+                                    content: string;
+                                    /**
+                                     * Format: uri
+                                     * @description Optional URL to source
+                                     */
+                                    url?: string;
+                                }[];
+                                /**
+                                 * @description IDs of goals this activity achieves
+                                 * @default []
+                                 */
+                                goalIds: string[];
+                                /** @description Short summary for compact display (ie. in goal) */
+                                overview?: string;
+                                /** @constant */
+                                type: "service";
+                                service: {
+                                    id: string;
+                                    name: string;
+                                    description: string | null;
+                                    /** @description Price in usd dollars (ie. 199.99) */
+                                    price: number;
+                                    active: boolean;
+                                    bloodTubeCount: number;
+                                    phlebotomy: boolean;
+                                    supportsLabOrder: boolean;
+                                    /** @enum {unknown} */
+                                    group?: "blood-panel-addon" | "blood-panel-base";
+                                    additionalClassification?: string[];
+                                };
+                            } | {
+                                /** @description Full description in markdown format with citations */
+                                description: string;
+                                /**
+                                 * @description Supporting citations
+                                 * @default []
+                                 */
+                                citations: {
+                                    /** @description Citation key, ie: [^1], [^2], etc. */
+                                    key: string;
+                                    /** @description Citation content/reference */
+                                    content: string;
+                                    /**
+                                     * Format: uri
+                                     * @description Optional URL to source
+                                     */
+                                    url?: string;
+                                }[];
+                                /**
+                                 * @description IDs of goals this activity achieves
+                                 * @default []
+                                 */
+                                goalIds: string[];
+                                /** @description Short summary for compact display (ie. in goal) */
+                                overview?: string;
+                                /** @constant */
+                                type: "product";
+                                product: {
+                                    /** @description Shopify variant id without gid prefix, ie. 1234567890 */
+                                    id: string;
+                                    name: string;
+                                    image?: string;
+                                    /** @description Price in usd dollars (ie. 55.99) */
+                                    price: number;
+                                    /** @description Link to Shopify PDP with multipassed URL */
+                                    url: string;
+                                    /** @description Discount amount in dollars (ie. 10.50) */
+                                    discount: number;
+                                    type: string;
+                                    inventoryQuantity: number;
+                                    tags?: string[];
+                                    vendor?: string;
+                                };
+                            } | {
+                                /** @description Full description in markdown format with citations */
+                                description: string;
+                                /**
+                                 * @description Supporting citations
+                                 * @default []
+                                 */
+                                citations: {
+                                    /** @description Citation key, ie: [^1], [^2], etc. */
+                                    key: string;
+                                    /** @description Citation content/reference */
+                                    content: string;
+                                    /**
+                                     * Format: uri
+                                     * @description Optional URL to source
+                                     */
+                                    url?: string;
+                                }[];
+                                /**
+                                 * @description IDs of goals this activity achieves
+                                 * @default []
+                                 */
+                                goalIds: string[];
+                                /** @description Short summary for compact display (ie. in goal) */
+                                overview?: string;
+                                /** @constant */
+                                type: "prescription";
+                                prescription: {
+                                    /** @description Unique Rx catalog entry identifier (ie. rx-semaglutide) */
+                                    id: string;
+                                    /** @description URL to prescription ordering page (ie. /questionnaire/rx-assessment-semaglutide) */
+                                    url: string;
+                                    type: string;
+                                    source: string;
+                                    name: string;
+                                    description: string;
+                                    /** @description Price as a string in usd dollars (ie. 129) */
+                                    price: string;
+                                    active: boolean;
+                                    tags: string[];
+                                };
+                            } | {
+                                /** @description Full description in markdown format with citations */
+                                description: string;
+                                /**
+                                 * @description Supporting citations
+                                 * @default []
+                                 */
+                                citations: {
+                                    /** @description Citation key, ie: [^1], [^2], etc. */
+                                    key: string;
+                                    /** @description Citation content/reference */
+                                    content: string;
+                                    /**
+                                     * Format: uri
+                                     * @description Optional URL to source
+                                     */
+                                    url?: string;
+                                }[];
+                                /**
+                                 * @description IDs of goals this activity achieves
+                                 * @default []
+                                 */
+                                goalIds: string[];
+                                /** @description Short summary for compact display (ie. in goal) */
+                                overview?: string;
+                                /** @constant */
+                                type: "avoid-product";
+                                avoidProduct: {
+                                    name: string;
+                                };
+                            } | {
+                                /** @description Full description in markdown format with citations */
+                                description: string;
+                                /**
+                                 * @description Supporting citations
+                                 * @default []
+                                 */
+                                citations: {
+                                    /** @description Citation key, ie: [^1], [^2], etc. */
+                                    key: string;
+                                    /** @description Citation content/reference */
+                                    content: string;
+                                    /**
+                                     * Format: uri
+                                     * @description Optional URL to source
+                                     */
+                                    url?: string;
+                                }[];
+                                /**
+                                 * @description IDs of goals this activity achieves
+                                 * @default []
+                                 */
+                                goalIds: string[];
+                                /** @description Short summary for compact display (ie. in goal) */
+                                overview?: string;
+                                /** @constant */
+                                type: "lifestyle";
+                            } | {
+                                /** @description Full description in markdown format with citations */
+                                description: string;
+                                /**
+                                 * @description Supporting citations
+                                 * @default []
+                                 */
+                                citations: {
+                                    /** @description Citation key, ie: [^1], [^2], etc. */
+                                    key: string;
+                                    /** @description Citation content/reference */
+                                    content: string;
+                                    /**
+                                     * Format: uri
+                                     * @description Optional URL to source
+                                     */
+                                    url?: string;
+                                }[];
+                                /**
+                                 * @description IDs of goals this activity achieves
+                                 * @default []
+                                 */
+                                goalIds: string[];
+                                /** @description Short summary for compact display (ie. in goal) */
+                                overview?: string;
+                                /** @constant */
+                                type: "nutrition";
+                            } | {
+                                /** @description Full description in markdown format with citations */
+                                description: string;
+                                /**
+                                 * @description Supporting citations
+                                 * @default []
+                                 */
+                                citations: {
+                                    /** @description Citation key, ie: [^1], [^2], etc. */
+                                    key: string;
+                                    /** @description Citation content/reference */
+                                    content: string;
+                                    /**
+                                     * Format: uri
+                                     * @description Optional URL to source
+                                     */
+                                    url?: string;
+                                }[];
+                                /**
+                                 * @description IDs of goals this activity achieves
+                                 * @default []
+                                 */
+                                goalIds: string[];
+                                /** @description Short summary for compact display (ie. in goal) */
+                                overview?: string;
+                                /** @constant */
+                                type: "general";
+                            })[];
+                        }[];
+                    };
+                };
+            };
+            /** @description 401 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "UNAUTHORIZED";
+                        /** @constant */
+                        status: 401;
+                        /** @default Unauthorized */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 403 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_AN_ADMIN";
+                        /** @constant */
+                        status: 403;
+                        /** @default NOT_AN_ADMIN */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 429 */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "RATE_LIMIT_EXCEEDED";
+                        /** @constant */
+                        status: 429;
+                        /** @default RATE_LIMIT_EXCEEDED */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 500 */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "INTERNAL_SERVER_ERROR";
+                        /** @constant */
+                        status: 500;
+                        /** @default Internal Server Error */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+        };
+    };
+    "protocol.getProtocolById": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        protocol: {
+                            id: string;
+                            title: string;
+                            /** @description Markdown formatted description of protocol (generally hard coded) */
+                            description: string;
+                            /** @enum {unknown} */
+                            status: "draft" | "active" | "on-hold" | "revoked" | "completed" | "entered-in-error" | "unknown";
+                            /** Format: date-time */
+                            created: string;
+                            /** @description Whether this protocol should show the reveal flow */
+                            showReveal?: boolean;
+                            /** @default [] */
+                            goals: {
+                                id: string;
+                                /** @enum {unknown} */
+                                status: "proposed" | "planned" | "accepted" | "active" | "on-hold" | "completed" | "cancelled" | "entered-in-error" | "rejected";
+                                /** @enum {unknown} */
+                                priority?: "high-priority" | "medium-priority" | "low-priority";
+                                /** @description Title of the goal */
+                                title: string;
+                                /** @description Brief introduction to the goal */
+                                introduction: string;
+                                /**
+                                 * @description Body of the goal, markdown formatted with citations
+                                 * @default []
+                                 */
+                                body: string[];
+                                /**
+                                 * @description Actions to achieve the goal, markdown formatted with citations
+                                 * @default []
+                                 */
+                                actions: string[];
+                                /**
+                                 * @description IDs of biomarkers this goal addresses
+                                 * @default []
+                                 */
+                                targetBiomarkerIds: string[];
+                                /**
+                                 * @description IDs of activities that help achieve this goal
+                                 * @default []
+                                 */
+                                activityIds: string[];
+                                metadata?: {
+                                    /** @description Impact area of the goal, ie. Low energy */
+                                    healthImpact?: string;
+                                    /** @description Time to recover from the goal, ie. 6-8 weeks */
+                                    recoveryTime?: string;
+                                };
+                                /** @default [] */
+                                citations: {
+                                    /** @description Citation key, ie: [^1], [^2], etc. */
+                                    key: string;
+                                    /** @description Citation content/reference */
+                                    content: string;
+                                    /**
+                                     * Format: uri
+                                     * @description Optional URL to source
+                                     */
+                                    url?: string;
+                                }[];
+                            }[];
+                            /** @default [] */
+                            activities: ({
+                                /** @description Full description in markdown format with citations */
+                                description: string;
+                                /**
+                                 * @description Supporting citations
+                                 * @default []
+                                 */
+                                citations: {
+                                    /** @description Citation key, ie: [^1], [^2], etc. */
+                                    key: string;
+                                    /** @description Citation content/reference */
+                                    content: string;
+                                    /**
+                                     * Format: uri
+                                     * @description Optional URL to source
+                                     */
+                                    url?: string;
+                                }[];
+                                /**
+                                 * @description IDs of goals this activity achieves
+                                 * @default []
+                                 */
+                                goalIds: string[];
+                                /** @description Short summary for compact display (ie. in goal) */
+                                overview?: string;
+                                /** @constant */
+                                type: "service";
+                                service: {
+                                    id: string;
+                                    name: string;
+                                    description: string | null;
+                                    /** @description Price in usd dollars (ie. 199.99) */
+                                    price: number;
+                                    active: boolean;
+                                    bloodTubeCount: number;
+                                    phlebotomy: boolean;
+                                    supportsLabOrder: boolean;
+                                    /** @enum {unknown} */
+                                    group?: "blood-panel-addon" | "blood-panel-base";
+                                    additionalClassification?: string[];
+                                };
+                            } | {
+                                /** @description Full description in markdown format with citations */
+                                description: string;
+                                /**
+                                 * @description Supporting citations
+                                 * @default []
+                                 */
+                                citations: {
+                                    /** @description Citation key, ie: [^1], [^2], etc. */
+                                    key: string;
+                                    /** @description Citation content/reference */
+                                    content: string;
+                                    /**
+                                     * Format: uri
+                                     * @description Optional URL to source
+                                     */
+                                    url?: string;
+                                }[];
+                                /**
+                                 * @description IDs of goals this activity achieves
+                                 * @default []
+                                 */
+                                goalIds: string[];
+                                /** @description Short summary for compact display (ie. in goal) */
+                                overview?: string;
+                                /** @constant */
+                                type: "product";
+                                product: {
+                                    /** @description Shopify variant id without gid prefix, ie. 1234567890 */
+                                    id: string;
+                                    name: string;
+                                    image?: string;
+                                    /** @description Price in usd dollars (ie. 55.99) */
+                                    price: number;
+                                    /** @description Link to Shopify PDP with multipassed URL */
+                                    url: string;
+                                    /** @description Discount amount in dollars (ie. 10.50) */
+                                    discount: number;
+                                    type: string;
+                                    inventoryQuantity: number;
+                                    tags?: string[];
+                                    vendor?: string;
+                                };
+                            } | {
+                                /** @description Full description in markdown format with citations */
+                                description: string;
+                                /**
+                                 * @description Supporting citations
+                                 * @default []
+                                 */
+                                citations: {
+                                    /** @description Citation key, ie: [^1], [^2], etc. */
+                                    key: string;
+                                    /** @description Citation content/reference */
+                                    content: string;
+                                    /**
+                                     * Format: uri
+                                     * @description Optional URL to source
+                                     */
+                                    url?: string;
+                                }[];
+                                /**
+                                 * @description IDs of goals this activity achieves
+                                 * @default []
+                                 */
+                                goalIds: string[];
+                                /** @description Short summary for compact display (ie. in goal) */
+                                overview?: string;
+                                /** @constant */
+                                type: "prescription";
+                                prescription: {
+                                    /** @description Unique Rx catalog entry identifier (ie. rx-semaglutide) */
+                                    id: string;
+                                    /** @description URL to prescription ordering page (ie. /questionnaire/rx-assessment-semaglutide) */
+                                    url: string;
+                                    type: string;
+                                    source: string;
+                                    name: string;
+                                    description: string;
+                                    /** @description Price as a string in usd dollars (ie. 129) */
+                                    price: string;
+                                    active: boolean;
+                                    tags: string[];
+                                };
+                            } | {
+                                /** @description Full description in markdown format with citations */
+                                description: string;
+                                /**
+                                 * @description Supporting citations
+                                 * @default []
+                                 */
+                                citations: {
+                                    /** @description Citation key, ie: [^1], [^2], etc. */
+                                    key: string;
+                                    /** @description Citation content/reference */
+                                    content: string;
+                                    /**
+                                     * Format: uri
+                                     * @description Optional URL to source
+                                     */
+                                    url?: string;
+                                }[];
+                                /**
+                                 * @description IDs of goals this activity achieves
+                                 * @default []
+                                 */
+                                goalIds: string[];
+                                /** @description Short summary for compact display (ie. in goal) */
+                                overview?: string;
+                                /** @constant */
+                                type: "avoid-product";
+                                avoidProduct: {
+                                    name: string;
+                                };
+                            } | {
+                                /** @description Full description in markdown format with citations */
+                                description: string;
+                                /**
+                                 * @description Supporting citations
+                                 * @default []
+                                 */
+                                citations: {
+                                    /** @description Citation key, ie: [^1], [^2], etc. */
+                                    key: string;
+                                    /** @description Citation content/reference */
+                                    content: string;
+                                    /**
+                                     * Format: uri
+                                     * @description Optional URL to source
+                                     */
+                                    url?: string;
+                                }[];
+                                /**
+                                 * @description IDs of goals this activity achieves
+                                 * @default []
+                                 */
+                                goalIds: string[];
+                                /** @description Short summary for compact display (ie. in goal) */
+                                overview?: string;
+                                /** @constant */
+                                type: "lifestyle";
+                            } | {
+                                /** @description Full description in markdown format with citations */
+                                description: string;
+                                /**
+                                 * @description Supporting citations
+                                 * @default []
+                                 */
+                                citations: {
+                                    /** @description Citation key, ie: [^1], [^2], etc. */
+                                    key: string;
+                                    /** @description Citation content/reference */
+                                    content: string;
+                                    /**
+                                     * Format: uri
+                                     * @description Optional URL to source
+                                     */
+                                    url?: string;
+                                }[];
+                                /**
+                                 * @description IDs of goals this activity achieves
+                                 * @default []
+                                 */
+                                goalIds: string[];
+                                /** @description Short summary for compact display (ie. in goal) */
+                                overview?: string;
+                                /** @constant */
+                                type: "nutrition";
+                            } | {
+                                /** @description Full description in markdown format with citations */
+                                description: string;
+                                /**
+                                 * @description Supporting citations
+                                 * @default []
+                                 */
+                                citations: {
+                                    /** @description Citation key, ie: [^1], [^2], etc. */
+                                    key: string;
+                                    /** @description Citation content/reference */
+                                    content: string;
+                                    /**
+                                     * Format: uri
+                                     * @description Optional URL to source
+                                     */
+                                    url?: string;
+                                }[];
+                                /**
+                                 * @description IDs of goals this activity achieves
+                                 * @default []
+                                 */
+                                goalIds: string[];
+                                /** @description Short summary for compact display (ie. in goal) */
+                                overview?: string;
+                                /** @constant */
+                                type: "general";
+                            })[];
+                        };
+                    };
+                };
+            };
+            /** @description 401 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "UNAUTHORIZED";
+                        /** @constant */
+                        status: 401;
+                        /** @default Unauthorized */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 403 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_AN_ADMIN";
+                        /** @constant */
+                        status: 403;
+                        /** @default NOT_AN_ADMIN */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 404 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_FOUND";
+                        /** @constant */
+                        status: 404;
+                        /** @default Protocol not found */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 429 */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "RATE_LIMIT_EXCEEDED";
+                        /** @constant */
+                        status: 429;
+                        /** @default RATE_LIMIT_EXCEEDED */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 500 */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "INTERNAL_SERVER_ERROR";
+                        /** @constant */
+                        status: 500;
+                        /** @default Internal Server Error */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+        };
+    };
+    "protocol.reveal.getOrCreateReveal": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        carePlanId: string | null;
+                        showReveal: boolean;
+                        revealCompleted: boolean;
+                    };
+                };
+            };
+            /** @description 401 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "UNAUTHORIZED";
+                        /** @constant */
+                        status: 401;
+                        /** @default Unauthorized */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 403 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_AN_ADMIN";
+                        /** @constant */
+                        status: 403;
+                        /** @default NOT_AN_ADMIN */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 429 */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "RATE_LIMIT_EXCEEDED";
+                        /** @constant */
+                        status: 429;
+                        /** @default RATE_LIMIT_EXCEEDED */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 500 */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "INTERNAL_SERVER_ERROR";
+                        /** @constant */
+                        status: 500;
+                        /** @default Internal Server Error */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+        };
+    };
+    "protocol.reveal.getRevealStatus": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                carePlanId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        reveal: {
+                            carePlanId: string;
+                            userId: string;
+                            completedAt: string | null;
+                            resultsOverviewCompletedAt: string | null;
+                            productCheckoutCompletedAt: string | null;
+                            serviceCheckoutCompletedAt: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            protocolOrder?: {
+                                id: string;
+                                userId: string;
+                                shopifyOrderId: string | null;
+                                shopifyOrderInvoiceUrl: string | null;
+                                serviceItems: {
+                                    id: string;
+                                    serviceId: string;
+                                    serviceName: string;
+                                    /** @description FHIR ServiceRequest ID - this will be empty for any addon panels */
+                                    fhirServiceRequestId: string | null;
+                                    /** @description FHIR ServiceRequest ID of the base panel when this item is an addon */
+                                    parentServiceRequestId: string | null;
+                                    protocolOrderId: string | null;
+                                    /** Format: date-time */
+                                    createdAt: string;
+                                    /** Format: date-time */
+                                    updatedAt: string;
+                                    /** @enum {unknown} */
+                                    fulfillmentStatus?: "PENDING" | "DRAFT" | "BOOKED";
+                                }[];
+                                rxItems: {
+                                    id: string;
+                                    rxCatalogId: string;
+                                    fhirQuestionnaireResponseId: string | null;
+                                    protocolOrderId: string | null;
+                                    /** Format: date-time */
+                                    createdAt: string;
+                                    /** Format: date-time */
+                                    updatedAt: string;
+                                    /** @enum {unknown} */
+                                    fulfillmentStatus?: "PENDING" | "IN_PROGRESS" | "COMPLETED";
+                                }[];
+                                metadata?: unknown | null;
+                                /** Format: date-time */
+                                createdAt: string;
+                                /** Format: date-time */
+                                updatedAt: string;
+                            } | null;
+                        };
+                        progress: {
+                            resultsOverviewCompleted: boolean;
+                            productCheckoutCompleted: boolean;
+                            serviceCheckoutCompleted: boolean;
+                        };
+                        fulfillmentStates: {
+                            services: {
+                                [key: string]: "PENDING" | "DRAFT" | "BOOKED";
+                            };
+                            rx: {
+                                [key: string]: "PENDING" | "IN_PROGRESS" | "COMPLETED";
+                            };
+                            /** @enum {unknown} */
+                            products: "PENDING" | "CHECKOUT_STARTED" | "COMPLETED";
+                        };
+                    } | null;
+                };
+            };
+            /** @description 401 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "UNAUTHORIZED";
+                        /** @constant */
+                        status: 401;
+                        /** @default Unauthorized */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 403 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_AN_ADMIN";
+                        /** @constant */
+                        status: 403;
+                        /** @default NOT_AN_ADMIN */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 429 */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "RATE_LIMIT_EXCEEDED";
+                        /** @constant */
+                        status: 429;
+                        /** @default RATE_LIMIT_EXCEEDED */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 500 */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "INTERNAL_SERVER_ERROR";
+                        /** @constant */
+                        status: 500;
+                        /** @default Internal Server Error */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+        };
+    };
+    "protocol.reveal.createProtocolOrder": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                carePlanId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    services?: {
+                        serviceId: string;
+                        serviceName: string;
+                    }[];
+                    rx?: {
+                        rxCatalogId: string;
+                    }[];
+                    products?: {
+                        id: string;
+                        name: string;
+                        image?: string;
+                        price: number;
+                        url: string;
+                        discount: number;
+                        type: string;
+                        inventoryQuantity: number;
+                        tags?: string[];
+                        vendor?: string;
+                        quantity?: number;
+                    }[];
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        protocolOrder: {
+                            id: string;
+                            userId: string;
+                            shopifyOrderId: string | null;
+                            shopifyOrderInvoiceUrl: string | null;
+                            serviceItems: {
+                                id: string;
+                                serviceId: string;
+                                serviceName: string;
+                                /** @description FHIR ServiceRequest ID - this will be empty for any addon panels */
+                                fhirServiceRequestId: string | null;
+                                /** @description FHIR ServiceRequest ID of the base panel when this item is an addon */
+                                parentServiceRequestId: string | null;
+                                protocolOrderId: string | null;
+                                /** Format: date-time */
+                                createdAt: string;
+                                /** Format: date-time */
+                                updatedAt: string;
+                                /** @enum {unknown} */
+                                fulfillmentStatus?: "PENDING" | "DRAFT" | "BOOKED";
+                            }[];
+                            rxItems: {
+                                id: string;
+                                rxCatalogId: string;
+                                fhirQuestionnaireResponseId: string | null;
+                                protocolOrderId: string | null;
+                                /** Format: date-time */
+                                createdAt: string;
+                                /** Format: date-time */
+                                updatedAt: string;
+                                /** @enum {unknown} */
+                                fulfillmentStatus?: "PENDING" | "IN_PROGRESS" | "COMPLETED";
+                            }[];
+                            metadata?: unknown | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                        };
+                    };
+                };
+            };
+            /** @description 401 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "UNAUTHORIZED";
+                        /** @constant */
+                        status: 401;
+                        /** @default Unauthorized */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 403 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_AN_ADMIN";
+                        /** @constant */
+                        status: 403;
+                        /** @default NOT_AN_ADMIN */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 429 */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "RATE_LIMIT_EXCEEDED";
+                        /** @constant */
+                        status: 429;
+                        /** @default RATE_LIMIT_EXCEEDED */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 500 */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "INTERNAL_SERVER_ERROR";
+                        /** @constant */
+                        status: 500;
+                        /** @default Internal Server Error */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+        };
+    };
+    "protocol.reveal.createShopifyCheckout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                carePlanId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        checkoutUrl: string | null;
+                        shopifyOrderId: string | null;
+                    };
+                };
+            };
+            /** @description 401 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "UNAUTHORIZED";
+                        /** @constant */
+                        status: 401;
+                        /** @default Unauthorized */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 403 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_AN_ADMIN";
+                        /** @constant */
+                        status: 403;
+                        /** @default NOT_AN_ADMIN */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 404 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_FOUND";
+                        /** @constant */
+                        status: 404;
+                        /** @default Checkout not found */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 429 */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "RATE_LIMIT_EXCEEDED";
+                        /** @constant */
+                        status: 429;
+                        /** @default RATE_LIMIT_EXCEEDED */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 500 */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "INTERNAL_SERVER_ERROR";
+                        /** @constant */
+                        status: 500;
+                        /** @default Internal Server Error */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+        };
+    };
+    "protocol.reveal.createServiceOrders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                carePlanId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    paymentMethodId?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        orders: (unknown | null)[];
+                    };
+                };
+            };
+            /** @description 401 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "UNAUTHORIZED";
+                        /** @constant */
+                        status: 401;
+                        /** @default Unauthorized */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 403 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_AN_ADMIN";
+                        /** @constant */
+                        status: 403;
+                        /** @default NOT_AN_ADMIN */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 429 */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "RATE_LIMIT_EXCEEDED";
+                        /** @constant */
+                        status: 429;
+                        /** @default RATE_LIMIT_EXCEEDED */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 500 */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "INTERNAL_SERVER_ERROR";
+                        /** @constant */
+                        status: 500;
+                        /** @default Internal Server Error */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+        };
+    };
+    "protocol.reveal.markStepComplete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                carePlanId: string;
+                step: "intro";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        reveal: {
+                            carePlanId: string;
+                            userId: string;
+                            completedAt: string | null;
+                            resultsOverviewCompletedAt: string | null;
+                            productCheckoutCompletedAt: string | null;
+                            serviceCheckoutCompletedAt: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                        };
+                    };
+                };
+            };
+            /** @description 401 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "UNAUTHORIZED";
+                        /** @constant */
+                        status: 401;
+                        /** @default Unauthorized */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 403 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_AN_ADMIN";
+                        /** @constant */
+                        status: 403;
+                        /** @default NOT_AN_ADMIN */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 429 */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "RATE_LIMIT_EXCEEDED";
+                        /** @constant */
+                        status: 429;
+                        /** @default RATE_LIMIT_EXCEEDED */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 500 */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "INTERNAL_SERVER_ERROR";
+                        /** @constant */
+                        status: 500;
+                        /** @default Internal Server Error */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+        };
+    };
+    "protocol.reveal.completeReveal": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                carePlanId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        reveal: {
+                            carePlanId: string;
+                            userId: string;
+                            completedAt: string | null;
+                            resultsOverviewCompletedAt: string | null;
+                            productCheckoutCompletedAt: string | null;
+                            serviceCheckoutCompletedAt: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                        };
+                    };
+                };
+            };
+            /** @description 401 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "UNAUTHORIZED";
+                        /** @constant */
+                        status: 401;
+                        /** @default Unauthorized */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 403 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_AN_ADMIN";
+                        /** @constant */
+                        status: 403;
+                        /** @default NOT_AN_ADMIN */
                         message: string;
                         data?: unknown;
                     } | {

@@ -18,6 +18,8 @@ const buttonVariants = cva(
         ghost:
           'text-secondary hover:text-accent-foreground focus-visible:ring-0',
         glass: 'bg-white bg-opacity-5 text-white hover:bg-opacity-10',
+        'glass-outline':
+          'border border-white/10 bg-white/10 text-white backdrop-blur-xl hover:bg-white/20',
         link: 'text-primary underline-offset-4 hover:underline',
         white: 'bg-white text-zinc-900 hover:bg-white/90',
       },

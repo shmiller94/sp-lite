@@ -212,7 +212,7 @@ export const MarketplaceTabs = () => {
         <TabsContent
           key={tab.value}
           value={tab.value}
-          className="py-6 md:py-14"
+          className="py-6 md:py-10"
         >
           {tab.render()}
         </TabsContent>
