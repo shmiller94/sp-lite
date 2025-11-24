@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { Link } from '@/components/ui/link';
@@ -15,10 +15,6 @@ import { encodeCategory } from '../../utils/category/encode-category';
 import { DataSidebarLink } from './data-sidebar-link';
 
 const PureDataSidebar = () => {
-  const { width } = useWindowDimensions();
-  const isMobile = useMemo(() => width < 1024, [width]);
-
-  const [isOpen, setIsOpen] = useState(false);
   const selectorRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const rafIdRef = useRef<number | null>(null);
@@ -33,6 +29,9 @@ const PureDataSidebar = () => {
 
   const gating = useDataGating();
   const isLoading = isCategoriesLoading || gating.isLoading;
+
+  const { width } = useWindowDimensions();
+  const isMobile = useMemo(() => width < 767, [width]);
 
   const updateCategoryFilter = useCallback(
     (category: string | null) => {
@@ -58,8 +57,12 @@ const PureDataSidebar = () => {
     if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
     rafIdRef.current = requestAnimationFrame(() => {
       const selector = selectorRef.current;
+
+      const activeKey = activeCategory
+        ? decodeURIComponent(activeCategory).toLowerCase()
+        : 'summary';
       const activeCategoryElement = document.getElementById(
-        `selector-${activeCategory?.toLowerCase() ?? 'summary'}`,
+        `selector-${activeKey}`,
       );
 
       if (activeCategoryElement && selector) {
@@ -71,34 +74,32 @@ const PureDataSidebar = () => {
           'width',
           `${activeCategoryElement.offsetWidth}px`,
         );
+
+        // On mobile (below md), scroll the horizontal container so the active
+        const container = containerRef.current;
+        if (isMobile && container) {
+          const containerRect = container.getBoundingClientRect();
+          const elementRect = activeCategoryElement.getBoundingClientRect();
+          const currentLeft = container.scrollLeft;
+          const elementLeftInContainer =
+            elementRect.left - containerRect.left + currentLeft;
+          const targetLeft =
+            elementLeftInContainer -
+            container.clientWidth / 2 +
+            activeCategoryElement.offsetWidth / 2;
+
+          container.scrollTo({
+            left: Math.max(0, targetLeft),
+            behavior: 'smooth',
+          });
+        }
       }
     });
-  }, [activeCategory]);
+  }, [activeCategory, isMobile]);
 
   useEffect(() => {
     repositionSelector();
-  }, [activeCategory, isLoading, isOpen, repositionSelector]);
-
-  useEffect(() => {
-    if (!isMobile && isOpen) {
-      setIsOpen(false);
-      document.body.style.overflow = 'auto';
-    }
-  }, [isMobile, isOpen]);
-
-  const toggleSidebar = useCallback(() => {
-    setIsOpen((prev) => {
-      const newIsOpen = !prev;
-
-      if (newIsOpen) {
-        document.body.style.overflow = 'hidden';
-      } else {
-        document.body.style.overflow = 'auto';
-      }
-
-      return newIsOpen;
-    });
-  }, []);
+  }, [activeCategory, isLoading, repositionSelector]);
 
   const categoriesContent = useMemo(() => {
     if (isLoading) {
@@ -156,8 +157,8 @@ const PureDataSidebar = () => {
   ]);
 
   return (
-    <aside className="col-span-1 flex flex-col">
-      <div className="relative z-30 mb-4 flex gap-4 bg-zinc-50/20 backdrop-blur-lg lg:sticky lg:top-16 lg:mb-0">
+    <aside className="relative left-1/2 z-10 col-span-1 flex w-screen -translate-x-1/2 flex-col md:left-0 md:w-40 md:translate-x-0 lg:w-auto">
+      <div className="relative z-30 mb-4 flex gap-4 bg-zinc-50/20 px-6 md:sticky md:top-16 md:mb-0 md:px-0 md:backdrop-blur-lg">
         <Link to="/data">
           <H3>Twin</H3>
         </Link>
@@ -168,57 +169,16 @@ const PureDataSidebar = () => {
         </Link>
       </div>
 
-      <div className="flex lg:hidden">
-        <button
-          onClick={toggleSidebar}
-          className="relative z-10 flex shrink-0 items-center gap-2 rounded-full border border-zinc-100 bg-white px-3 py-1.5 shadow-md shadow-black/[.03]"
-        >
-          <div className="relative h-3 w-3.5">
-            <div
-              className={cn(
-                'absolute left-0 top-0 h-0.5 w-full rounded-full bg-zinc-400 transition-all duration-300 ease-out',
-                isOpen && 'top-1',
-              )}
-            />
-            <div
-              className={cn(
-                'absolute left-0 top-1/2 h-0.5 w-full -translate-y-1/2 rounded-full bg-zinc-400 transition-all duration-300 ease-out',
-                isOpen && 'opacity-0',
-              )}
-            />
-            <div
-              className={cn(
-                'absolute bottom-0 left-0 h-0.5 w-full rounded-full bg-zinc-400 transition-all duration-300 ease-out',
-                isOpen && 'bottom-1',
-              )}
-            />
-          </div>
-          Health Categories
-        </button>
-      </div>
-
       <div
-        onClick={isMobile ? toggleSidebar : undefined}
-        role={isMobile ? 'button' : ''}
-        tabIndex={isMobile ? 0 : undefined}
-        onKeyDown={(e) => {
-          if (isMobile && (e.key === 'Enter' || e.key === ' ')) {
-            toggleSidebar();
-          }
-        }}
         className={cn(
-          'flex items-center px-4 transition-all z-[51]',
-          'fixed inset-0 top-20',
-          // On desktop ensure the sidebar can overflow and sit above neighbors
-          'lg:sticky lg:inset-auto lg:top-28 lg:px-0 lg:pt-0 lg:z-20 lg:my-4 lg:max-w-none lg:-translate-y-3',
-          isOpen
-            ? 'top-0 w-screen h-screen bg-white/80 backdrop-blur-sm lg:block lg:backdrop-blur-none lg:bg-none'
-            : 'opacity-0 pointer-events-none lg:opacity-100 lg:pointer-events-auto lg:h-auto lg:bg-none',
+          'flex items-center transition-all z-[51]',
+          'md:w-auto w-full md:[mask-image:none] [mask-image:linear-gradient(to_right,transparent_0%,black_5%,black_85%,transparent_95%)] px-4',
+          'md:sticky md:inset-auto md:top-28 md:px-0 md:pt-0 md:z-20 md:my-4 md:max-w-none md:-translate-y-3',
         )}
       >
         <div
           ref={containerRef}
-          className="relative -ml-2 flex max-h-svh w-full flex-col place-items-start items-start justify-start gap-3 overflow-y-auto overflow-x-visible px-2 py-12 scrollbar scrollbar-track-transparent scrollbar-thumb-zinc-300 lg:max-h-none lg:overflow-visible lg:px-2 lg:py-8"
+          className="relative -ml-2 flex max-h-svh w-full place-items-start items-start justify-start gap-3 overflow-x-auto overflow-y-hidden p-2 scrollbar scrollbar-thin scrollbar-track-transparent scrollbar-thumb-zinc-300 md:max-h-none md:flex-col md:overflow-visible md:px-2 md:py-8"
         >
           {!isLoading && (
             <div
@@ -230,11 +190,10 @@ const PureDataSidebar = () => {
             >
               <div
                 key={activeCategory}
-                className="max-lg:animate-grow-shrink-horizontal lg:animate-grow-shrink-vertical h-full rounded-full border border-zinc-200 bg-white shadow-md shadow-black/5"
+                className="max-md:animate-grow-shrink-horizontal md:animate-grow-shrink-vertical h-full rounded-full border border-zinc-200 bg-white shadow-md shadow-black/5"
               />
             </div>
           )}
-
           {categoriesContent}
         </div>
       </div>

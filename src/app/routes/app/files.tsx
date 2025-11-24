@@ -5,7 +5,7 @@ import { FilesHub } from '@/features/files/components/files-hub';
 
 export const FilesRoute = () => {
   return (
-    <ContentLayout title="Records">
+    <ContentLayout title="Records" className="max-md:pt-4">
       <FilesHub
         headerSlot={
           <div className="flex gap-4">
