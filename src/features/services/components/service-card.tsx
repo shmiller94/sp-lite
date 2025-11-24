@@ -60,9 +60,17 @@ const DesktopCard = ({
   const displayName = customDisplayNameForService(service);
 
   return (
-    <button
+    <div
+      role="button"
+      tabIndex={0}
       className="group relative hidden cursor-pointer flex-col gap-4 overflow-hidden sm:flex"
       onClick={() => navigate(`/services/${service.id}`)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          navigate(`/services/${service.id}`);
+        }
+      }}
     >
       {badge && !draftOrder ? (
         <Badge className="absolute right-6 top-6 z-20 gap-1 bg-vermillion-100 sm:flex">
@@ -90,7 +98,7 @@ const DesktopCard = ({
           {service.additionalClassification[0]}
         </Body1>
       </div>
-    </button>
+    </div>
   );
 };
 
@@ -107,9 +115,17 @@ const MobileCard = ({
   const displayName = customDisplayNameForService(service);
 
   return (
-    <button
+    <div
+      role="button"
+      tabIndex={0}
       className="flex flex-col gap-2 sm:hidden"
       onClick={() => navigate(`/services/${service.id}`)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          navigate(`/services/${service.id}`);
+        }
+      }}
     >
       <ProgressiveImage
         src={getServiceImage(service.name)}
@@ -138,6 +154,6 @@ const MobileCard = ({
           <Body2 className="text-vermillion-900">{badge}</Body2>
         </Badge>
       ) : null}
-    </button>
+    </div>
   );
 };

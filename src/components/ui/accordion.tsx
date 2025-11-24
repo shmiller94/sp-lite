@@ -25,39 +25,40 @@ type AccordionTriggerProps = React.ComponentPropsWithoutRef<
 };
 
 const AccordionTrigger = React.forwardRef<
-  React.ElementRef<typeof AccordionPrimitive.Trigger>,
+  HTMLDivElement,
   AccordionTriggerProps
 >(({ className, children, variant = 'default', ...props }, ref) => (
   <AccordionPrimitive.Header className="flex">
-    <AccordionPrimitive.Trigger
-      ref={ref}
-      className={cn(
-        'group flex flex-1 items-center justify-between py-4 text-left font-medium transition-all',
-        variant === 'plusMinus'
-          ? '[&>span>svg:last-child]:absolute [&>span>svg:last-child]:opacity-0 [&>span>svg:last-child]:rotate-90 [&>span>svg]:transition-all [&>span>svg]:duration-250 [&>span>svg]:ease-in-out [&[data-state=open]>span>svg:first-child]:-rotate-90 [&[data-state=open]>span>svg:first-child]:opacity-0 [&[data-state=open]>span>svg:last-child]:opacity-100 [&[data-state=open]>span>svg:last-child]:rotate-0'
-          : '[&[data-state=open]>svg]:rotate-180',
-        className,
-      )}
-      {...props}
-    >
-      {children}
-      {variant === 'plusMinus' ? (
-        <span className="relative inline-flex size-5 items-center justify-center">
-          <Plus
+    <AccordionPrimitive.Trigger asChild {...props}>
+      <div
+        ref={ref}
+        className={cn(
+          'group flex flex-1 cursor-pointer items-center justify-between py-4 text-left font-medium transition-all',
+          variant === 'plusMinus'
+            ? '[&>span>svg:last-child]:absolute [&>span>svg:last-child]:opacity-0 [&>span>svg:last-child]:rotate-90 [&>span>svg]:transition-all [&>span>svg]:duration-250 [&>span>svg]:ease-in-out [&[data-state=open]>span>svg:first-child]:-rotate-90 [&[data-state=open]>span>svg:first-child]:opacity-0 [&[data-state=open]>span>svg:last-child]:opacity-100 [&[data-state=open]>span>svg:last-child]:rotate-0'
+            : '[&[data-state=open]>svg]:rotate-180',
+          className,
+        )}
+      >
+        {children}
+        {variant === 'plusMinus' ? (
+          <span className="relative inline-flex size-5 items-center justify-center">
+            <Plus
+              aria-hidden="true"
+              className="size-4 text-secondary transition-all duration-300 ease-in-out"
+            />
+            <Minus
+              aria-hidden="true"
+              className="size-4 text-vermillion-900 transition-all duration-300 ease-in-out"
+            />
+          </span>
+        ) : (
+          <ChevronDown
             aria-hidden="true"
-            className="size-4 text-secondary transition-all duration-300 ease-in-out"
+            className="size-4 shrink-0 text-secondary transition-transform duration-200"
           />
-          <Minus
-            aria-hidden="true"
-            className="size-4 text-vermillion-900 transition-all duration-300 ease-in-out"
-          />
-        </span>
-      ) : (
-        <ChevronDown
-          aria-hidden="true"
-          className="size-4 shrink-0 text-secondary transition-transform duration-200"
-        />
-      )}
+        )}
+      </div>
     </AccordionPrimitive.Trigger>
   </AccordionPrimitive.Header>
 ));

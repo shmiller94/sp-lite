@@ -32,13 +32,24 @@ const DesktopCard = ({ prescription }: { prescription: Rx }) => {
   };
 
   return (
-    <button
+    <div
+      role="button"
+      tabIndex={0}
       className="group relative hidden cursor-pointer flex-col gap-4 overflow-hidden sm:flex"
       onClick={() => {
         posthog?.capture('prescription_card_clicked', {
           prescriptionId: prescription.id,
         });
         navigate(`/prescriptions/${prescription.id}`);
+      }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          posthog?.capture('prescription_card_clicked', {
+            prescriptionId: prescription.id,
+          });
+          navigate(`/prescriptions/${prescription.id}`);
+        }
       }}
     >
       <div className="relative flex aspect-square items-center rounded-[20px] bg-zinc-50">
@@ -60,7 +71,7 @@ const DesktopCard = ({ prescription }: { prescription: Rx }) => {
           {prescription.additionalClassification?.[0]}
         </Body1>
       </div>
-    </button>
+    </div>
   );
 };
 
@@ -69,13 +80,24 @@ const MobileCard = ({ prescription }: { prescription: Rx }) => {
   const navigate = useNavigate();
 
   return (
-    <button
+    <div
+      role="button"
+      tabIndex={0}
       className="flex flex-col gap-2 sm:hidden"
       onClick={() => {
         posthog?.capture('prescription_card_clicked', {
           prescriptionId: prescription.id,
         });
         navigate(`/prescriptions/${prescription.id}`);
+      }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          posthog?.capture('prescription_card_clicked', {
+            prescriptionId: prescription.id,
+          });
+          navigate(`/prescriptions/${prescription.id}`);
+        }
       }}
     >
       <ProgressiveImage
@@ -91,6 +113,6 @@ const MobileCard = ({ prescription }: { prescription: Rx }) => {
         <Body2 className="line-clamp-1">{prescription.name}</Body2>
         <Body2>${prescription.price}</Body2>
       </div>
-    </button>
+    </div>
   );
 };

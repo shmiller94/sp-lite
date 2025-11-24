@@ -420,9 +420,9 @@ const LoadingChatItem = () => {
     <div>
       <Body3 className="px-2 pb-1 text-zinc-700">Today</Body3>
       <div className="flex w-[258px] flex-col">
-        {[44, 100, 28, 64, 52, 22, 78, 44, 54, 86].map((item) => (
+        {[44, 100, 28, 64, 52, 22, 78, 44, 54, 86].map((item, idx) => (
           <div
-            key={item}
+            key={`${item}-${idx}`}
             className="flex h-8 items-center gap-2 rounded-md px-2"
           >
             <div

@@ -144,7 +144,7 @@ export const AssistantModal = () => {
           >
             <TooltipProvider>
               <Tooltip>
-                <TooltipTrigger>
+                <TooltipTrigger asChild>
                   <Button
                     onClick={handleMaximizeToggle}
                     variant="white"
@@ -162,7 +162,7 @@ export const AssistantModal = () => {
                 </TooltipContent>
               </Tooltip>
               <Tooltip>
-                <TooltipTrigger>
+                <TooltipTrigger asChild>
                   <Button
                     onClick={handleCopyLinkClick}
                     variant="white"
@@ -174,7 +174,7 @@ export const AssistantModal = () => {
                 <TooltipContent>Copy link to chat</TooltipContent>
               </Tooltip>
               <Tooltip>
-                <TooltipTrigger>
+                <TooltipTrigger asChild>
                   <Button
                     onClick={() => close()}
                     variant="white"

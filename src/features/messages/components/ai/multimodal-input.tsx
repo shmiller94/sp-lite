@@ -225,7 +225,7 @@ function PureMultimodalInput({
     [setAttachments, uploadFiles, track],
   );
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, isDragActive } = useDropzone({
     // We only want to handle files that can actually be stored for now
     accept: acceptedFileContentTypes,
     onDrop: (acceptedFiles) => {
@@ -379,11 +379,7 @@ function PureMultimodalInput({
           </div>
 
           <div className="absolute bottom-[13px] right-4 flex flex-row items-end justify-end">
-            <AttachmentsButton
-              {...getInputProps()}
-              fileInputRef={fileInputRef}
-              status={status}
-            />
+            <AttachmentsButton fileInputRef={fileInputRef} status={status} />
 
             {status === 'submitted' ? (
               <StopButton stop={stop} setMessages={setMessages} />

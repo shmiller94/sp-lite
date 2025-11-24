@@ -78,9 +78,8 @@ export function DataTable<TData, TValue>({
         <TableBody className="[&_tr:first-child_td]:pt-6">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row, index) => (
-              <>
+              <React.Fragment key={row.id}>
                 <TableRow
-                  key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
                   className="group relative rounded-lg border-none p-6 text-base after:absolute after:inset-x-4 after:bottom-0 after:z-0 after:h-14 after:rounded-xl after:opacity-0 after:transition-colors after:duration-500 after:ease-out after:content-[''] hover:bg-transparent hover:after:bg-zinc-100 hover:after:opacity-100 [&>*:first-child]:pl-12 [&>*:last-child]:pr-12"
                 >
@@ -98,7 +97,7 @@ export function DataTable<TData, TValue>({
                     <div className="absolute left-1/2 -mt-1 h-px w-[calc(100%-2rem)] -translate-x-1/2 bg-zinc-100" />
                   </div>
                 )}
-              </>
+              </React.Fragment>
             ))
           ) : (
             <></>
