@@ -58,7 +58,7 @@ export const ProtocolTabs = ({
         );
 
         return (
-          <div className="space-y-8">
+          <div className="space-y-8 md:pb-24">
             {currentItems.length > 0 && (
               <div>
                 <H4 className="mb-4">Your protocol items</H4>
