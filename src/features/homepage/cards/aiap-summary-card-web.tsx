@@ -35,7 +35,7 @@ export const AiapSummaryCardWeb = () => {
       <ScoreCards />
       {latestPlan && (
         <Link
-          to={`/plans/${latestPlan.id}`}
+          to={`/protocol`}
           className="group relative mt-8 flex flex-col rounded-2xl border border-zinc-200 p-4 transition-all duration-200 ease-out hover:bg-zinc-50"
         >
           <Body1 className="relative z-10">
