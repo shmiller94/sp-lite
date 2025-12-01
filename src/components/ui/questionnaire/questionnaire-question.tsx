@@ -474,6 +474,8 @@ export const QuestionnaireQuestion = ({
         className={cn(
           'mb-8 text-sm text-zinc-500',
           isRxSafetyIntroQuestion && 'text-base text-primary',
+          // We need to force orange link color for consistency. inline-links come with blue style attributes so important is needed.
+          ' [&>a]:!text-vermillion-900',
         )}
         // We need this to render hyperlinks
         // I don't see a case for XSS because the only way to edit this is in Medplum
