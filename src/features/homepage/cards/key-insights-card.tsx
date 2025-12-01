@@ -34,7 +34,11 @@ export const KeyInsightsCard = () => {
             <div className="space-y-2">
               <div className="space-y-2">
                 {goalObservations.map((id) => (
-                  <PlanGoalObservation id={id} key={id} />
+                  <PlanGoalObservation
+                    id={id}
+                    key={id}
+                    className="overflow-x-auto"
+                  />
                 ))}
               </div>
             </div>

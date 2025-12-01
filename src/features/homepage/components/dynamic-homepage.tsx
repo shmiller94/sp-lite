@@ -23,12 +23,12 @@ export const DynamicHomepage = () => {
       </div>
 
       {/* Desktop: Split screen layout */}
-      <div className="mx-auto grid w-full max-w-[1600px] grid-cols-1 gap-6 lg:h-full lg:grid-cols-2 lg:gap-16 lg:px-12 lg:py-8">
+      <div className="mx-auto grid w-full max-w-[1600px] grid-cols-1 gap-6 lg:h-full lg:grid-cols-3 lg:gap-16 lg:px-12 lg:py-8 xl:grid-cols-2">
         {/* Left column: Static, full height (digital twin placeholder) */}
         <DigitalTwinCard />
 
         {/* Right column: Scrollable cards */}
-        <div className="flex flex-col pb-20 lg:pb-60">
+        <div className="flex flex-col pb-20 lg:col-span-2 lg:pb-60 xl:col-span-1">
           {isLoading ? (
             <div className="space-y-6">
               <CardSkeleton />
