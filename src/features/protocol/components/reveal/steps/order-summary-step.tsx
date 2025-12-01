@@ -169,7 +169,7 @@ export function OrderSummaryStep({
               <div key={goal.id} className="flex flex-col items-start gap-2">
                 <ProtocolGoalPriority code={goal.priority} variant="badge" />
                 <H4>
-                  {goalIndex + 1}. {goal.introduction}
+                  {goalIndex + 1}. {goal.title}
                 </H4>
                 <div className="w-full space-y-3">
                   {activities.length === 0 && (
