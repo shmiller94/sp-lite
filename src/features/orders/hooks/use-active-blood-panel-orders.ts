@@ -1,10 +1,6 @@
 import { useMemo } from 'react';
 
-import {
-  ADVANCED_BLOOD_PANEL,
-  CUSTOM_BLOOD_PANEL,
-  SUPERPOWER_BLOOD_PANEL,
-} from '@/const/services';
+import { isBloodPanelService } from '@/const/services';
 import { useOrders } from '@/features/orders/api';
 import { OrderStatus } from '@/types/api';
 
@@ -21,9 +17,7 @@ export const useActiveBloodPanelOrders = () => {
     // Filter for blood panel orders that are not completed/cancelled/revoked
     const bloodPanelOrders = orders.filter(
       (order) =>
-        (order.serviceName === SUPERPOWER_BLOOD_PANEL ||
-          order.serviceName === ADVANCED_BLOOD_PANEL ||
-          order.serviceName === CUSTOM_BLOOD_PANEL) &&
+        isBloodPanelService(order.serviceName) &&
         order.status !== OrderStatus.draft &&
         order.status !== OrderStatus.completed &&
         order.status !== OrderStatus.cancelled &&

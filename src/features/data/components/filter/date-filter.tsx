@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dropdown';
 import { RadioButton } from '@/components/ui/radio-button';
 import { Body1 } from '@/components/ui/typography';
-import { SUPERPOWER_BLOOD_PANEL } from '@/const/services';
+import { isBloodPanelService } from '@/const/services';
 import { useOrders } from '@/features/orders/api';
 
 import { useDataFilterStore } from '../../stores/data-filter-store';
@@ -21,8 +21,7 @@ export const DateFilter = () => {
 
   const orders =
     ordersQuery.data?.orders.filter(
-      (o) =>
-        o.serviceName === SUPERPOWER_BLOOD_PANEL && o.status === 'COMPLETED',
+      (o) => isBloodPanelService(o.serviceName) && o.status === 'COMPLETED',
     ) ?? [];
 
   if (orders.length <= 1) {

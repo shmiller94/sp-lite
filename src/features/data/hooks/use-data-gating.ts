@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { ADVANCED_BLOOD_PANEL, SUPERPOWER_BLOOD_PANEL } from '@/const/services';
+import { isBloodPanelService } from '@/const/services';
 import { useBiomarkers } from '@/features/data/api';
 import { useOrders } from '@/features/orders/api';
 import { usePlans } from '@/features/plans/api/get-plans';
@@ -44,8 +44,7 @@ export const useDataGating = (): DataGatingState => {
       orders?.orders?.some(
         (o) =>
           o.status !== OrderStatus.completed &&
-          (o.serviceName === SUPERPOWER_BLOOD_PANEL ||
-            o.serviceName === ADVANCED_BLOOD_PANEL),
+          isBloodPanelService(o.serviceName),
       ) ?? false,
     [orders?.orders],
   );
@@ -55,8 +54,7 @@ export const useDataGating = (): DataGatingState => {
       orders?.orders?.some(
         (o) =>
           o.status === OrderStatus.completed &&
-          (o.serviceName === SUPERPOWER_BLOOD_PANEL ||
-            o.serviceName === ADVANCED_BLOOD_PANEL),
+          isBloodPanelService(o.serviceName),
       ) ?? false,
     [orders?.orders],
   );
@@ -64,10 +62,7 @@ export const useDataGating = (): DataGatingState => {
   // find the most recent appointment start for relevant tests
   const latestRelevantAppointmentTime = useMemo(() => {
     const relevantAppointments = orders?.orders?.filter(
-      (o) =>
-        !!o.startTimestamp &&
-        (o.serviceName === SUPERPOWER_BLOOD_PANEL ||
-          o.serviceName === ADVANCED_BLOOD_PANEL),
+      (o) => !!o.startTimestamp && isBloodPanelService(o.serviceName),
     );
 
     if (!relevantAppointments || relevantAppointments.length === 0)

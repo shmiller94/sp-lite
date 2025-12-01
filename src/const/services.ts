@@ -42,6 +42,18 @@ export const HEAVY_METALS_TEST_ID = 'heavy-metals';
 export const ADVANCED_BLOOD_PANEL = 'Advanced Blood Panel';
 export const IV_DRIP = 'IV Drip';
 
+// Blood panel services that should be treated as "relevant" for data gating
+export const BLOOD_PANEL_SERVICES = [
+  SUPERPOWER_BLOOD_PANEL,
+  ADVANCED_BLOOD_PANEL,
+  CUSTOM_BLOOD_PANEL,
+] as const;
+
+export const isBloodPanelService = (serviceName: string) =>
+  BLOOD_PANEL_SERVICES.includes(
+    serviceName as (typeof BLOOD_PANEL_SERVICES)[number],
+  );
+
 export const CARDIOVASCULAR_PANEL = 'Cardiovascular Panel';
 export const METABOLIC_PANEL = 'Metabolic Panel';
 export const METHYLATION_PANEL = 'Methylation Panel';

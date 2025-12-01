@@ -1,6 +1,6 @@
 import { useDeferredValue, useMemo } from 'react';
 
-import { ADVANCED_BLOOD_PANEL, SUPERPOWER_BLOOD_PANEL } from '@/const/services';
+import { isBloodPanelService } from '@/const/services';
 import { mostRecent } from '@/features/data/utils/most-recent-biomarker';
 import { Biomarker, Order, OrderStatus } from '@/types/api';
 
@@ -71,8 +71,7 @@ export const filterBiomarkers = ({
     const recentCompletedOrders = orders.filter(
       (o) =>
         o.status === OrderStatus.completed &&
-        (o.serviceName === SUPERPOWER_BLOOD_PANEL ||
-          o.serviceName === ADVANCED_BLOOD_PANEL),
+        isBloodPanelService(o.serviceName),
     );
     const selectedOrder = recentCompletedOrders.find(
       (order) => order.id === selectedOrderId,
