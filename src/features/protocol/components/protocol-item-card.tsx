@@ -121,14 +121,14 @@ export function ProtocolItemCard({
           <Body1>{getTitle()}</Body1>
           <ul className="list-inside list-disc">
             {activity.overview && (
-              <li>
+              <li className="marker:text-zinc-300">
                 <Body2 className="-ml-2 inline text-secondary">
                   {activity.overview}
                 </Body2>
               </li>
             )}
             {activity.actionBrief && (
-              <li>
+              <li className="marker:text-zinc-300">
                 <Body2 className="-ml-2 inline text-secondary">
                   {activity.actionBrief}
                 </Body2>
