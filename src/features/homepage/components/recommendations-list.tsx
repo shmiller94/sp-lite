@@ -9,13 +9,12 @@ import { useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
 
 import { Body1, Body2 } from '@/components/ui/typography';
-import { usePlans } from '@/features/plans/api/get-plans';
-import { useAnalytics } from '@/hooks/use-analytics';
-
 import {
   useRecommendations,
   Recommendation,
-} from '../../api/get-recommendations';
+} from '@/features/homepage/api/get-recommendations';
+import { usePlans } from '@/features/protocol/api/get-plans';
+import { useAnalytics } from '@/hooks/use-analytics';
 
 export const RecommendationsList: React.FC = () => {
   const { data: recommendations, isLoading } = useRecommendations();

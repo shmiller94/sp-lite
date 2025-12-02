@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 
 import { checkLabOrderSupport } from '@/const';
-import { getTimelineQueryOptions } from '@/features/home/api/get-timeline';
+import { getTimelineQueryOptions } from '@/features/homepage/api/get-timeline';
 import {
   consentInputSchema,
   locationInputSchema,

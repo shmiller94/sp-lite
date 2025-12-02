@@ -8,10 +8,6 @@ import { useLocation } from 'react-router-dom';
 
 // eslint-disable-next-line import/no-restricted-paths
 import { AssistantModal } from '@/features/messages/components/assistant/assistant-modal';
-// eslint-disable-next-line import/no-restricted-paths
-import { DesktopCheckout } from '@/features/plans/components/desktop-checkout';
-// eslint-disable-next-line import/no-restricted-paths
-import { FloatingMenu } from '@/features/plans/components/navigation/floating-menu';
 import { cn } from '@/lib/utils';
 
 const HIDE_WRAPPER_PATHNAMES = [
@@ -34,12 +30,6 @@ export const FloatingWrapper = () => {
           'opacity-0 pointer-events-none',
       )}
     >
-      {(pathname === '/plans' || pathname.startsWith('/plans/')) && (
-        <>
-          <DesktopCheckout />
-          <FloatingMenu />
-        </>
-      )}
       <AssistantModal />
     </div>
   );

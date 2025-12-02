@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { isBloodPanelService } from '@/const/services';
 import { useBiomarkers } from '@/features/data/api';
 import { useOrders } from '@/features/orders/api';
-import { usePlans } from '@/features/plans/api/get-plans';
+import { usePlans } from '@/features/protocol/api/get-plans';
 import { OrderStatus } from '@/types/api';
 
 export type DataGatingState = {

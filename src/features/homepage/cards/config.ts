@@ -1,5 +1,5 @@
-import { FamilyInsightsBanner } from '@/features/home/components/family-insights/family-insights-banner';
-import { RecommendationsList } from '@/features/home/components/recommendations/recommendations-list';
+import { FamilyInsightsBanner } from '@/features/homepage/components/family-insights-banner';
+import { RecommendationsList } from '@/features/homepage/components/recommendations-list';
 
 import { cardRegistry } from '../registry/card-registry';
 import { CardConfig, HomepageState } from '../types';

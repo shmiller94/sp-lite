@@ -2,8 +2,8 @@ import { GoalIcon } from 'lucide-react';
 
 import { Body1, Body2 } from '@/components/ui/typography';
 import { BiomarkersDistributionBar } from '@/features/data/components/biomarkers-distribution-bar';
-import { PlanGoalObservation } from '@/features/plans/components/goals/plan-goal-observation';
-import { useLatestCompletedPlan } from '@/features/plans/hooks/use-latest-completed-plan';
+import { ProtocolGoalObservation } from '@/features/protocol/components/goals/protocol-goal-observation';
+import { useLatestCompletedPlan } from '@/features/protocol/hooks/use-latest-completed-plan';
 
 import { HomepageCard } from '../components/homepage-card';
 
@@ -34,7 +34,7 @@ export const KeyInsightsCard = () => {
             <div className="space-y-2">
               <div className="space-y-2">
                 {goalObservations.map((id) => (
-                  <PlanGoalObservation
+                  <ProtocolGoalObservation
                     id={id}
                     key={id}
                     className="overflow-x-auto"

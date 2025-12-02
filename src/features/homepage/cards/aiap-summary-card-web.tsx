@@ -2,7 +2,7 @@ import { ChevronRightIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import { Body1, Body2 } from '@/components/ui/typography';
-import { useLatestCompletedPlan } from '@/features/plans/hooks/use-latest-completed-plan';
+import { useLatestCompletedPlan } from '@/features/protocol/hooks/use-latest-completed-plan';
 
 import { DigitalTwinPreviewMobile } from '../components/digital-twin-preview-mobile';
 import { HomepageCard } from '../components/homepage-card';

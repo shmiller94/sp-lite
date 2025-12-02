@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { ADVISORY_CALL } from '@/const';
 import { useOrders } from '@/features/orders/api';
-import { usePlans } from '@/features/plans/api/get-plans';
+import { usePlans } from '@/features/protocol/api/get-plans';
 import { OrderStatus } from '@/types/api';
 
 type OrderWithCarePlan = {

@@ -7,7 +7,7 @@ import {
   SUPERPOWER_BLOOD_PANEL,
 } from '@/const/services';
 import { useOrders } from '@/features/orders/api';
-import { usePlans } from '@/features/plans/api/get-plans';
+import { usePlans } from '@/features/protocol/api/get-plans';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { OrderStatus } from '@/types/api';
 

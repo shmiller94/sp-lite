@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { usePlans } from '@/features/plans/api';
-import { parseProductRequests } from '@/features/plans/utils/parse-product-requests';
+import { usePlans } from '@/features/protocol/api';
+import { parseProductRequests } from '@/features/protocol/utils/parse-product-requests';
 import { useProducts } from '@/features/supplements/api';
 import { Product } from '@/types/api';
 

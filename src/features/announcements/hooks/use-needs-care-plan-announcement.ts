@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import { useLatestCompletedPlan } from '@/features/plans/hooks/use-latest-completed-plan';
+import { useLatestCompletedPlan } from '@/features/protocol/hooks/use-latest-completed-plan';
 
 export const AIAP_PUBLISH_CUTOFF_DATE = moment('2025-09-01');
 

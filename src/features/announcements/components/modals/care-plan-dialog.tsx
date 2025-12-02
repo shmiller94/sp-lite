@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Body1, H3 } from '@/components/ui/typography';
-import { CarePlanBook } from '@/features/plans/components/care-plan-book';
-import { useLatestCompletedPlan } from '@/features/plans/hooks/use-latest-completed-plan';
+import { ProtocolBook } from '@/features/protocol/components/protocol-book';
+import { useLatestCompletedPlan } from '@/features/protocol/hooks/use-latest-completed-plan';
 import { useAnalytics } from '@/hooks/use-analytics';
 
 type CarePlanDialogProps = {
@@ -47,7 +47,7 @@ export const CarePlanDialog = ({ open, onOpenChange }: CarePlanDialogProps) => {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[calc(100%-2rem)] space-y-8 px-8 pb-4 pt-12 sm:max-w-md">
         <div className="group mx-auto inline-block -rotate-3">
-          <CarePlanBook title="Action Plan" date={formattedDate} />
+          <ProtocolBook title="Action Plan" date={formattedDate} />
         </div>
         <div className="space-y-6">
           <div className="mx-auto max-w-sm space-y-2">

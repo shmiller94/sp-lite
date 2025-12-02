@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { checkLabOrderSupport } from '@/const';
-import { getTimelineQueryOptions } from '@/features/home/api/get-timeline';
+import { getTimelineQueryOptions } from '@/features/homepage/api/get-timeline';
 import { CreateOrderInput } from '@/features/orders/api/create-order';
 import { getOrdersQueryOptions } from '@/features/orders/api/get-orders';
 import { getServices, getServicesQueryOptions } from '@/features/services/api';

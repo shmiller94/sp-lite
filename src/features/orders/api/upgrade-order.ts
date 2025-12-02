@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 
 import { checkLabOrderSupport } from '@/const';
-import { getTimelineQueryOptions } from '@/features/home/api/get-timeline';
+import { getTimelineQueryOptions } from '@/features/homepage/api/get-timeline';
 import { getServicesQueryOptions } from '@/features/services/api';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { api } from '@/lib/api-client';

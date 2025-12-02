@@ -21,7 +21,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { getTimelineQueryOptions } from '@/features/home/api/get-timeline';
+import { getTimelineQueryOptions } from '@/features/homepage/api/get-timeline';
 import { getOrdersQueryOptions } from '@/features/orders/api';
 import {
   OrderStoreProvider,

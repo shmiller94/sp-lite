@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { getTimelineQueryOptions } from '@/features/home/api/get-timeline';
+import { getTimelineQueryOptions } from '@/features/homepage/api/get-timeline';
 import { getOrdersQueryOptions } from '@/features/orders/api/get-orders';
 import { getServicesQueryOptions } from '@/features/services/api';
 import { api } from '@/lib/api-client';

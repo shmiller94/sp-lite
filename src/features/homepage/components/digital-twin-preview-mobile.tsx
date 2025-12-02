@@ -1,7 +1,7 @@
 import { LockKeyholeIcon } from 'lucide-react';
 
 import { DigitalTwin } from '@/features/digital-twin/components/digital-twin';
-import { useLatestCompletedPlan } from '@/features/plans/hooks/use-latest-completed-plan';
+import { useLatestCompletedPlan } from '@/features/protocol/hooks/use-latest-completed-plan';
 
 export const DigitalTwinPreviewMobile = () => {
   const { hasCompletedPlan } = useLatestCompletedPlan();

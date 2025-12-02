@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 
 import { Body2, Body3, H2, H4, Mono } from '@/components/ui/typography';
 import { AiSuggestions } from '@/features/messages/components/ai-suggestions';
-import { PlanGoalObservation } from '@/features/plans/components/goals/plan-goal-observation';
 
 import type { Activity, Goal } from '../../api';
 import { getGoalImage } from '../../utils/get-goal-image';
@@ -12,6 +11,7 @@ import { ProtocolActivitiesList } from '../protocol-activities-list';
 import { ProtocolHeader } from '../protocol-header';
 import { ProtocolMarkdown } from '../protocol-markdown';
 
+import { ProtocolGoalObservation } from './protocol-goal-observation';
 import { ProtocolGoalPriority } from './protocol-goal-priority';
 
 type ProtocolGoalProps = {
@@ -98,7 +98,7 @@ export function ProtocolGoal({
               {goal.targetBiomarkerIds.map((id) => (
                 <>
                   <div className="relative z-10 mx-auto -mt-px h-px w-[calc(100%-2rem)] bg-zinc-200" />
-                  <PlanGoalObservation
+                  <ProtocolGoalObservation
                     key={id}
                     id={id}
                     className="rounded-none border-none shadow-none first:rounded-t-2xl last:rounded-b-2xl"

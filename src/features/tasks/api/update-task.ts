@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 
-import { getTimelineQueryOptions } from '@/features/home/api/get-timeline';
+import { getTimelineQueryOptions } from '@/features/homepage/api/get-timeline';
 import { getTaskQueryOptions } from '@/features/tasks/api/get-task';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { api } from '@/lib/api-client';
