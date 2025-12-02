@@ -15,41 +15,15 @@ import {
 
 import { User } from '@/types/api';
 
+import { RX_ASSESSMENTS } from '../../../../const/questionnaire';
 import {
-  RX_ASSESSMENTS,
-  RxQuestionnaireName,
-} from '../../../../const/questionnaire';
-import {
+  RX_BILLING_PERIOD_LINKID,
+  RX_CONSENT_PAYMENT_LINKID,
   RX_IDENTITY_VERIFICATION_LINKID,
   RX_SEX_ASSIGNED_AT_BIRTH_LINKID,
 } from '../const/special-linkids';
 
 import { isIdentityVerificationExpired } from './questionnaire-identity-utils';
-
-export const FRONTDOOR_EXPERIMENT_SYSTEM =
-  'https://superpower.com/fhir/experiment';
-export const GLP_FRONTDOOR_EXPERIMENT_VALUE = 'glp-frontdoor-experiment';
-
-export function isFrontDoorExperiment(
-  response?: QuestionnaireResponse,
-): boolean {
-  return (
-    response?.identifier?.system === FRONTDOOR_EXPERIMENT_SYSTEM &&
-    response?.identifier?.value === GLP_FRONTDOOR_EXPERIMENT_VALUE
-  );
-}
-
-export function isSemaglutideByName(questionnaire: Questionnaire): boolean {
-  return questionnaire.name?.toLowerCase().includes('semaglutide') ?? false;
-}
-
-// Used to default billing-period to 1 month (semaglutide pricing); frontdoor is also semaglutide
-export function isSemaglutideQuestionnaire(
-  questionnaire: Questionnaire,
-  response?: QuestionnaireResponse,
-): boolean {
-  return isSemaglutideByName(questionnaire) || isFrontDoorExperiment(response);
-}
 
 export enum QuestionnaireItemType {
   group = 'group',
@@ -71,11 +45,29 @@ export enum QuestionnaireItemType {
   quantity = 'quantity',
 }
 
+// Used for RX questionnaires to identify the front-door experiment.
+export const FRONTDOOR_EXPERIMENT_SYSTEM =
+  'https://superpower.com/fhir/experiment';
+export const GLP_FRONTDOOR_EXPERIMENT_VALUE = 'glp-frontdoor-experiment';
+
+/**
+ * Checks if a questionnaire response is a GLP-1 front-door experiment.
+ */
+export function isGLP1FrontDoorExperiment(
+  response?: QuestionnaireResponse,
+): boolean {
+  return (
+    response?.identifier?.system === FRONTDOOR_EXPERIMENT_SYSTEM &&
+    response?.identifier?.value === GLP_FRONTDOOR_EXPERIMENT_VALUE
+  );
+}
+
 /**
  * Checks if a questionnaire is an Rx questionnaire by verifying if its name exists in the RX_ASSESSMENTS list.
  */
 export function isRxQuestionnaire(questionnaire: Questionnaire): boolean {
-  return RX_ASSESSMENTS.includes(questionnaire.name as RxQuestionnaireName);
+  // TODO: this unfortunately uses 'any' because front door experiment names are coupled to the questionnaire name.
+  return RX_ASSESSMENTS.includes(questionnaire.name as any);
 }
 
 /**
@@ -123,26 +115,33 @@ export function shouldSkipIdentityQuestion(
 }
 
 /**
+ * Skip billing period questions because we store these programmatically in the backend
+ * and don't want to show them to the user.
+ *
+ * TODO: we shouldn't determine the billing period by storing it inside the QuestionnaireResponse...
+ * unless we want users to explicitly select this inside the questionnaire.
+ */
+export function shouldSkipBillingPeriodQuestion(
+  item: QuestionnaireItem,
+): boolean {
+  return item.linkId === RX_BILLING_PERIOD_LINKID;
+}
+
+/**
  * Checks if a question should be skipped for front-door experiment users or semaglutide questionnaires.
  * Front-door users already paid, so we skip billing-period and payment questions.
  * For semaglutide questionnaires, billing-period is auto-set to 1 month, so we skip it.
  */
 export function shouldSkipFrontDoorQuestion(
   item: QuestionnaireItem,
-  questionnaire: Questionnaire,
   response?: QuestionnaireResponse,
 ): boolean {
   // For frontdoor experiments, skip both billing-period and payment
-  if (isFrontDoorExperiment(response)) {
+  if (isGLP1FrontDoorExperiment(response)) {
     return (
-      item.linkId === 'consent-payment.billing-period' ||
-      item.linkId === 'consent-payment.payment'
+      item.linkId === RX_BILLING_PERIOD_LINKID ||
+      item.linkId === RX_CONSENT_PAYMENT_LINKID
     );
-  }
-
-  // For all semaglutide questionnaires, skip billing-period (auto-set to 1 month)
-  if (isSemaglutideByName(questionnaire)) {
-    return item.linkId === 'consent-payment.billing-period';
   }
 
   return false;
@@ -157,13 +156,14 @@ export function shouldSkipFrontDoorQuestion(
 export function shouldSkipQuestion(
   item: QuestionnaireItem,
   questionnaire: Questionnaire,
-  user?: User,
-  response?: QuestionnaireResponse,
+  user: User,
+  response: QuestionnaireResponse,
 ): boolean {
   return (
     shouldSkipGenderQuestion(item, questionnaire, user) ||
     shouldSkipIdentityQuestion(item, questionnaire, user) ||
-    shouldSkipFrontDoorQuestion(item, questionnaire, response)
+    shouldSkipFrontDoorQuestion(item, response) ||
+    shouldSkipBillingPeriodQuestion(item)
   );
 }
 

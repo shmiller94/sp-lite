@@ -1,5 +1,8 @@
 const INTAKE_QUESTIONNAIRE = 'onboarding-intake';
 
+// GLP-1 FRONTDOOR EXPERIMENT
+export const GLP_FRONTDOOR_EXPERIMENT = 'glp-frontdoor-experiment';
+
 // RX ASSESSMENTS
 const RX_ASSESSMENT_GHK_CU = 'rx-assessment-ghk-cu';
 const RX_GHK_CU_SYMPTOM_TRACKER = 'rx-assessment-ghk-cu-symptom-tracker';
@@ -52,9 +55,6 @@ const RX_METHYLCOBALAMIN_B12_SYMPTOM_TRACKER =
 const RX_TRT_INJECTABLE = 'rx-assessment-trt-injectable';
 const RX_TRT_INJECTABLE_SYMPTOM_TRACKER =
   'rx-assessment-trt-injectable-symptom-tracker';
-
-// Rx Front Door Experiments
-const GLP_FRONTDOOR_EXPERIMENT = 'glp-frontdoor-experiment';
 
 const RX_SYMPTOM_TRACKERS = [
   RX_GHK_CU_SYMPTOM_TRACKER,
@@ -122,7 +122,6 @@ const RX_ASSESSMENTS = [
   RX_METHYLCOBALAMIN_B12_SYMPTOM_TRACKER,
   RX_TRT_INJECTABLE,
   RX_TRT_INJECTABLE_SYMPTOM_TRACKER,
-  GLP_FRONTDOOR_EXPERIMENT,
 ] as const;
 type RxQuestionnaireName =
   | typeof RX_ASSESSMENT_GHK_CU
@@ -161,11 +160,13 @@ type RxQuestionnaireName =
   | typeof RX_METHYLCOBALAMIN_B12_SYMPTOM_TRACKER
   | typeof RX_TRT_INJECTABLE
   | typeof RX_TRT_INJECTABLE_SYMPTOM_TRACKER
+  // The following questionnaire 'names' are identifiers on the QuestionnaireResponse
+  // used for front-door experiments. TODO: decouple the front door experiment name from the
+  // actual questionnaire name.
   | typeof GLP_FRONTDOOR_EXPERIMENT;
 
 export {
   INTAKE_QUESTIONNAIRE,
-  GLP_FRONTDOOR_EXPERIMENT,
   RX_ASSESSMENT_GHK_CU,
   RX_GHK_CU_SYMPTOM_TRACKER,
   RX_ASSESSMENTS,

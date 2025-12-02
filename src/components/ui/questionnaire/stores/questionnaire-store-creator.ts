@@ -11,9 +11,7 @@ import { User } from '@/types/api';
 
 import {
   buildInitialResponse,
-  isFrontDoorExperiment,
   isQuestionEnabled,
-  isSemaglutideByName,
   shouldSkipQuestion,
   QuestionnaireItemType,
 } from '../utils';
@@ -21,7 +19,7 @@ import {
 export interface QuestionnaireStoreProps {
   questionnaire: Questionnaire;
   initialResponse?: QuestionnaireResponse;
-  user?: User;
+  user: User;
 }
 
 export interface QuestionnaireStore extends QuestionnaireStoreProps {
@@ -57,11 +55,7 @@ export const questionnaireStoreCreator = (
   return createStore<QuestionnaireStore>()((set, get) => {
     const initialResponse =
       initProps.initialResponse ||
-      buildInitialResponse(
-        initProps.questionnaire,
-        initProps.user,
-        initProps.initialResponse,
-      );
+      buildInitialResponse(initProps.questionnaire, initProps.user);
 
     const getAllQuestions = () => {
       const { questionnaire, response, user } = get();
@@ -199,7 +193,7 @@ export const questionnaireStoreCreator = (
                   subItem,
                   initProps.questionnaire,
                   initProps.user,
-                  initialResponse ?? undefined,
+                  initialResponse,
                 )
               ) {
                 return;
@@ -220,7 +214,7 @@ export const questionnaireStoreCreator = (
                 item,
                 initProps.questionnaire,
                 initProps.user,
-                initialResponse ?? undefined,
+                initialResponse,
               )
             ) {
               return acc;
@@ -333,11 +327,8 @@ export const questionnaireStoreCreator = (
       parentContext: QuestionnaireResponseItem[] = [],
       parentDisabled: boolean = false,
     ): QuestionnaireResponseItem[] => {
-      const { questionnaire, response } = get();
+      const { questionnaire } = get();
       const allResponseItems = [...parentContext, ...responseItems];
-
-      const isFrontDoor = isFrontDoorExperiment(response);
-      const isSemaglutide = isSemaglutideByName(questionnaire);
 
       const cleanedItems: QuestionnaireResponseItem[] = [];
 
@@ -354,19 +345,6 @@ export const questionnaireStoreCreator = (
           responseItem.linkId,
         );
 
-        // Keep prefilled billing-period/payment answers even though those questions are skipped
-        const isSkippedWithPrefilledAnswer =
-          (isFrontDoor || isSemaglutide) &&
-          questionnaireItem &&
-          shouldSkipQuestion(
-            questionnaireItem,
-            questionnaire,
-            initProps.user,
-            response,
-          ) &&
-          responseItem.answer &&
-          responseItem.answer.length > 0;
-
         // Check if this item is enabled
         const isEnabled =
           !questionnaireItem ||
@@ -377,7 +355,7 @@ export const questionnaireStoreCreator = (
             initProps.user,
           );
 
-        if (isEnabled || isSkippedWithPrefilledAnswer) {
+        if (isEnabled) {
           if (responseItem.item && responseItem.item.length > 0) {
             // Process nested items, passing the disabled status of parent
             const currentItemDisabled =
@@ -406,7 +384,7 @@ export const questionnaireStoreCreator = (
               cleanedItems.push(responseItem);
             }
           } else {
-            // Keep enabled items and skipped items with prefilled answers
+            // Keep enabled items
             cleanedItems.push(responseItem);
           }
         }
@@ -440,7 +418,6 @@ export const questionnaireStoreCreator = (
 
     return {
       ...initProps,
-      initialResponse: initialResponse,
       response: initialResponse,
       activeStep: initialStep,
       currentGroup: initialGroup,

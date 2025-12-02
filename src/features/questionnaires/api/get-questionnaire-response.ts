@@ -3,12 +3,13 @@ import { queryOptions, useQuery } from '@tanstack/react-query';
 
 import { api } from '@/lib/api-client';
 import { QueryConfig } from '@/lib/react-query';
+import { QuestionnaireName } from '@/types/api';
 
 export const getQuestionnaireResponse = ({
   identifier,
   statuses,
 }: {
-  identifier: string;
+  identifier: string | QuestionnaireName; // id, or most recent questionnaire response by identifier or name
   statuses?: (
     | 'completed'
     | 'in-progress'
@@ -25,7 +26,7 @@ export const getQuestionnaireResponse = ({
 };
 
 export const getQuestionnaireResponseQueryOptions = (
-  identifier: string,
+  identifier: string | QuestionnaireName, // id, or most recent questionnaire response by identifier or name
   statuses?: (
     | 'completed'
     | 'in-progress'
@@ -36,12 +37,16 @@ export const getQuestionnaireResponseQueryOptions = (
 ) => {
   return queryOptions({
     queryKey: ['questionnaire-response', identifier],
-    queryFn: () => getQuestionnaireResponse({ identifier, statuses }),
+    queryFn: () =>
+      getQuestionnaireResponse({
+        identifier: identifier as string | QuestionnaireName,
+        statuses,
+      }),
   });
 };
 
 type UseQuestionnaireResponseOptions = {
-  identifier: string;
+  identifier: string | QuestionnaireName; // id, or most recent questionnaire response by identifier or name
   statuses?: (
     | 'completed'
     | 'in-progress'

@@ -1,6 +1,25 @@
 import { Questionnaire, QuestionnaireResponse } from '@medplum/fhirtypes';
 
+import { User } from '@/types/api';
+
 import { questionnaireStoreCreator } from '../../stores/questionnaire-store-creator';
+
+const mockUser: User = {
+  id: 'test-user-id',
+  username: 'johnpork',
+  firstName: 'john',
+  lastName: 'pork',
+  createdAt: '2023-01-01T00:00:00Z',
+  email: 'test@example.com',
+  phone: '+1234567890',
+  dateOfBirth: '1990-01-01',
+  gender: 'MALE',
+  subscribed: false,
+  admin: false,
+  authMethod: 'password',
+  address: [],
+  role: ['MEMBER'],
+};
 
 describe('questionnaire-store cleanup', () => {
   describe('cleanResponseWhenDisabled', () => {
@@ -51,6 +70,7 @@ describe('questionnaire-store cleanup', () => {
       const store = questionnaireStoreCreator({
         questionnaire,
         initialResponse,
+        user: mockUser,
       });
 
       // Verify both questions are in the response
@@ -133,6 +153,7 @@ describe('questionnaire-store cleanup', () => {
       const store = questionnaireStoreCreator({
         questionnaire,
         initialResponse,
+        user: mockUser,
       });
 
       // Verify both questions are in the response
@@ -224,6 +245,7 @@ describe('questionnaire-store cleanup', () => {
       const store = questionnaireStoreCreator({
         questionnaire,
         initialResponse,
+        user: mockUser,
       });
 
       // Verify the group and its questions are in the response
@@ -312,6 +334,7 @@ describe('questionnaire-store cleanup', () => {
       const store = questionnaireStoreCreator({
         questionnaire,
         initialResponse,
+        user: mockUser,
       });
 
       // Verify all questions are in the response

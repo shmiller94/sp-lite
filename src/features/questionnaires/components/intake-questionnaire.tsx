@@ -4,6 +4,7 @@ import { INTAKE_QUESTIONNAIRE } from '@/const/questionnaire';
 import { useQuestionnaire } from '@/features/questionnaires/api/get-questionnaire';
 import { useQuestionnaireResponse } from '@/features/questionnaires/api/get-questionnaire-response';
 import { useUpdateQuestionnaireResponse } from '@/features/questionnaires/api/update-questionnaire-response';
+import { useUser } from '@/lib/auth';
 
 export const IntakeQuestionnaire = ({
   showIntro = true,
@@ -13,26 +14,28 @@ export const IntakeQuestionnaire = ({
   onSubmit?: () => void;
 }) => {
   const updateQuestionnaireResponseMutation = useUpdateQuestionnaireResponse();
-
   const getQuestionnaireResponseQuery = useQuestionnaireResponse({
     identifier: INTAKE_QUESTIONNAIRE,
     statuses: ['in-progress', 'stopped'],
   });
 
   // Extract questionnaire ID from the response
-  const questionnaireId =
+  const questionnaireRef =
     getQuestionnaireResponseQuery.data?.questionnaireResponse?.questionnaire;
 
   const getQuestionnaireQuery = useQuestionnaire({
-    identifier: questionnaireId || '',
+    identifier: questionnaireRef || '',
     queryConfig: {
-      enabled: !!questionnaireId,
+      enabled: !!questionnaireRef,
     },
   });
 
+  const userQuery = useUser();
+
   if (
     getQuestionnaireQuery.isLoading ||
-    getQuestionnaireResponseQuery.isLoading
+    getQuestionnaireResponseQuery.isLoading ||
+    userQuery.isLoading
   ) {
     return (
       <div className="flex h-dvh w-full items-center justify-center">
@@ -45,7 +48,8 @@ export const IntakeQuestionnaire = ({
     !getQuestionnaireQuery.data ||
     !getQuestionnaireResponseQuery.data ||
     getQuestionnaireResponseQuery.data.questionnaireResponse === null ||
-    !questionnaireId
+    !questionnaireRef ||
+    !userQuery.data
   ) {
     return null;
   }
@@ -54,6 +58,7 @@ export const IntakeQuestionnaire = ({
     <QuestionnaireForm
       questionnaire={getQuestionnaireQuery.data.questionnaire}
       response={getQuestionnaireResponseQuery.data.questionnaireResponse}
+      user={userQuery.data}
       onSave={(item) => {
         updateQuestionnaireResponseMutation.mutate({
           data: { item, status: 'in-progress' },

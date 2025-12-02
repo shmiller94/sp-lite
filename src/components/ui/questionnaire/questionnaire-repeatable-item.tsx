@@ -7,17 +7,15 @@ import { Body1 } from '@/components/ui/typography';
 import { cn } from '@/lib/utils';
 
 import { ConsentPaymentSummary } from './consent-payment-summary';
-import {
-  RX_CONSENT_PAYMENT_LINKID,
-  RX_CONSENT_QUESTION_LINKID,
-} from './const/special-linkids';
+import { RX_CONSENT_PAYMENT_LINKID } from './const/special-linkids';
 import {
   QUESTIONNAIRE_ITEM_CONTROL_EXTENSION_URL,
   SUPERPOWER_QUESTIONNAIRE_DESCRIPTION_EXTENSION_URL,
 } from './const/system-urls';
 import { QuestionnaireFormItem } from './questionnaire-item';
 import { useQuestionnaireStore } from './stores/questionnaire-store';
-import { isFrontDoorExperiment, QuestionnaireItemType } from './utils';
+import { QuestionnaireItemType } from './utils';
+import { isGLP1FrontDoorExperiment } from './utils/questionnaire-utils';
 
 interface QuestionnaireFormRepeatableItemProps {
   item: QuestionnaireItem;
@@ -46,7 +44,8 @@ export const QuestionnaireFormRepeatableItem = ({
   const checkForQuestionEnabled = useQuestionnaireStore(
     (s) => s.checkForQuestionEnabled,
   );
-  const currentResponse = useQuestionnaireStore((s) => s.response);
+  const qr = useQuestionnaireStore((s) => s.response);
+  const isFrontdoorExperiment = isGLP1FrontDoorExperiment(qr ?? undefined);
 
   // If https://superpower.com/fhir/StructureDefinition/questionnaire-description is available in the extension array, use it as the description
   const description = item.extension?.find(
@@ -59,13 +58,6 @@ export const QuestionnaireFormRepeatableItem = ({
   )?.valueCodeableConcept;
 
   const isRxConsentPaymentQuestion = item.linkId === RX_CONSENT_PAYMENT_LINKID;
-  const isRxConsentQuestion = item.linkId === RX_CONSENT_QUESTION_LINKID;
-
-  const isFrontDoor = isFrontDoorExperiment(currentResponse);
-
-  // Frontdoor/semaglutide handle payment via checkout, not in-questionnaires, so we hide it
-  const shouldShowPaymentSummary =
-    (isRxConsentPaymentQuestion || isRxConsentQuestion) && !isFrontDoor;
 
   if (!checkForQuestionEnabled(item)) {
     return null;
@@ -109,8 +101,13 @@ export const QuestionnaireFormRepeatableItem = ({
           // I don't see a case for XSS because the only way to edit this is in Medplum
           dangerouslySetInnerHTML={{ __html: item.text ?? '' }}
         />
-        {description && (
-          <Body1
+        {isFrontdoorExperiment && (
+          <Body2 className="text-secondary">
+            Your Rx prescription is included with your Superpower membership.
+          </Body2>
+        )}
+        {!isFrontdoorExperiment && description && (
+          <Body2
             className="text-secondary"
             // This is needed to allow for HTML tags in the description
             // Again, I don't see a case for XSS because the only way to edit this is in Medplum
@@ -122,7 +119,7 @@ export const QuestionnaireFormRepeatableItem = ({
         )}
       </div>
 
-      {shouldShowPaymentSummary && <ConsentPaymentSummary />}
+      {isRxConsentPaymentQuestion && <ConsentPaymentSummary />}
 
       {/*Should be ...Array(number)*/}
       {[...Array(1)].map((_, index) => (

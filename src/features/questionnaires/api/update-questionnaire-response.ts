@@ -6,6 +6,7 @@ import { getTimelineQueryOptions } from '@/features/homepage/api/get-timeline';
 import { getQuestionnaireResponseQueryOptions } from '@/features/questionnaires/api/get-questionnaire-response';
 import { api } from '@/lib/api-client';
 import { MutationConfig } from '@/lib/react-query';
+import { QuestionnaireName } from '@/types/api';
 
 export const updateQuestionnaireResponseInputSchema = z.object({
   status: z
@@ -29,7 +30,7 @@ export const updateQuestionnaireResponse = ({
   identifier,
 }: {
   data: UpdateQuestionnaireInput;
-  identifier: string;
+  identifier: string | QuestionnaireName; // id, or most recent questionnaire response by identifier or name
 }): Promise<{ questionnaireResponse: QuestionnaireResponse }> => {
   return api.patch(`/questionnaire-response/${identifier}`, data);
 };

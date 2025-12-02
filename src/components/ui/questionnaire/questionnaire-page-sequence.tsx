@@ -38,6 +38,9 @@ export const QuestionnaireFormPageSequence = ({
   showIntro: boolean;
   onSave: (item: QuestionnaireResponseItem[]) => void;
 }) => {
+  const [_showIntro, setShowIntro] = useState(showIntro);
+  const [manualActiveStep, setManualActiveStep] = useState<number | null>(null);
+
   const {
     questionnaire,
     response,
@@ -49,17 +52,17 @@ export const QuestionnaireFormPageSequence = ({
     user,
   } = useQuestionnaireStore((s) => s);
 
-  // Compute whether to show intro based on initial response having answers
-  // This prevents the intro from showing and then immediately hiding
-  const hasInitialAnswers =
-    initialResponse?.item &&
-    initialResponse.item.some((item) => hasAnswers(item));
-  const shouldShowIntro = showIntro && !hasInitialAnswers;
-
-  const [_showIntro, setShowIntro] = useState(shouldShowIntro);
-  const [manualActiveStep, setManualActiveStep] = useState<number | null>(null);
-
   const items = useMemo(() => questionnaire.item ?? [], [questionnaire.item]);
+
+  // Disable the intro if the initial response has answers
+  useEffect(() => {
+    if (
+      initialResponse?.item &&
+      initialResponse.item.some((item) => hasAnswers(item))
+    ) {
+      setShowIntro(false);
+    }
+  }, [initialResponse]);
 
   const effectiveStep =
     manualActiveStep !== null ? manualActiveStep : activeStep;
@@ -87,24 +90,9 @@ export const QuestionnaireFormPageSequence = ({
             const groupResponseItem = response?.item?.find(
               (i) => i.linkId === item.linkId,
             );
-            let nestedResponseItem = groupResponseItem?.item?.find(
+            const nestedResponseItem = groupResponseItem?.item?.find(
               (i) => i.linkId === subItem.linkId,
-            );
-
-            // If not found in current response, check initialResponse for pre-filled answers
-            if (!nestedResponseItem && initialResponse?.item) {
-              const initialGroupItem = initialResponse.item.find(
-                (i) => i.linkId === item.linkId,
-              );
-              nestedResponseItem = initialGroupItem?.item?.find(
-                (i) => i.linkId === subItem.linkId,
-              );
-            }
-
-            // Fallback to empty item with linkId
-            if (!nestedResponseItem) {
-              nestedResponseItem = { linkId: subItem.linkId };
-            }
+            ) || { linkId: subItem.linkId };
 
             const isAnswered = hasAnswers(nestedResponseItem);
 
@@ -137,14 +125,7 @@ export const QuestionnaireFormPageSequence = ({
     });
 
     return result;
-  }, [
-    items,
-    response,
-    checkForQuestionEnabled,
-    questionnaire,
-    user,
-    initialResponse,
-  ]);
+  }, [items, response, checkForQuestionEnabled, questionnaire, user]);
 
   const uniqueGroups = useMemo(() => {
     const groups = new Set(

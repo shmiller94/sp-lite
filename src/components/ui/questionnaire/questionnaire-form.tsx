@@ -30,12 +30,12 @@ export const QuestionnaireForm = ({
   user,
 }: {
   questionnaire: Questionnaire;
-  response?: QuestionnaireResponse;
+  response: QuestionnaireResponse;
+  user: User;
   onSave: (item: QuestionnaireResponseItem[]) => void;
   onSubmit: (item: QuestionnaireResponseItem[]) => void;
   className?: string;
   showIntro?: boolean;
-  user?: User;
 }) => {
   // Process the questionnaire to include both initial values and any existing responses
   const mergedQuestionnaire = {

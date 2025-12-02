@@ -59,7 +59,7 @@ const OnboardingStepsContent = (): React.ReactElement => {
           [ONBOARDING_STEPS.INTAKE]: () => (
             <Steps.IntakeQuestionnaireStep showIntro={true} />
           ),
-          [ONBOARDING_STEPS.GLP_QUESTIONNAIRE]: () => (
+          [ONBOARDING_STEPS.GLP1_QUESTIONNAIRE]: () => (
             <Steps.GLPQuestionnaireStep showIntro={false} />
           ),
           [ONBOARDING_STEPS.ORGAN_AGE]: () => <Steps.OrganAgeStep />,

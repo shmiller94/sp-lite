@@ -46,7 +46,9 @@ export const QuestionnaireRoute = () => {
     return <NotFoundRoute />;
   }
 
-  if (RX_ASSESSMENTS.includes(type as RxQuestionnaireName)) {
+  //NOTE: unfortunatly 'any' because Questionnaire names are coupled with
+  // Questionnaire front door identifiers/response identifiers. TBD to decouple this.
+  if (RX_ASSESSMENTS.includes(type as any)) {
     return (
       <RxQuestionnaire onSubmit={onSubmit} name={type as RxQuestionnaireName} />
     );
