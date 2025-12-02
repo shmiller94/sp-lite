@@ -3,7 +3,7 @@ import {
   QuestionnaireResponseItem,
 } from '@medplum/fhirtypes';
 
-import { Body1, Body2 } from '@/components/ui/typography';
+import { Body1 } from '@/components/ui/typography';
 import { cn } from '@/lib/utils';
 
 import { ConsentPaymentSummary } from './consent-payment-summary';
@@ -12,8 +12,8 @@ import {
   RX_CONSENT_QUESTION_LINKID,
 } from './const/special-linkids';
 import {
-  SUPERPOWER_QUESTIONNAIRE_DESCRIPTION_EXTENSION_URL,
   QUESTIONNAIRE_ITEM_CONTROL_EXTENSION_URL,
+  SUPERPOWER_QUESTIONNAIRE_DESCRIPTION_EXTENSION_URL,
 } from './const/system-urls';
 import { QuestionnaireFormItem } from './questionnaire-item';
 import { useQuestionnaireStore } from './stores/questionnaire-store';
@@ -110,7 +110,7 @@ export const QuestionnaireFormRepeatableItem = ({
           dangerouslySetInnerHTML={{ __html: item.text ?? '' }}
         />
         {description && (
-          <Body2
+          <Body1
             className="text-secondary"
             // This is needed to allow for HTML tags in the description
             // Again, I don't see a case for XSS because the only way to edit this is in Medplum
@@ -118,7 +118,7 @@ export const QuestionnaireFormRepeatableItem = ({
           />
         )}
         {!description && isMultipleChoice && (
-          <Body2 className="text-secondary">Select all that apply.</Body2>
+          <Body1 className="text-secondary">Select all that apply.</Body1>
         )}
       </div>
 

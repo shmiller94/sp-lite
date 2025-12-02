@@ -9,7 +9,7 @@ import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { SuperpowerLogo } from '@/components/icons/superpower-logo';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Body1, Body2, H2 } from '@/components/ui/typography';
+import { Body1, H2 } from '@/components/ui/typography';
 // TODO: move User address components to a shared location so i don't have to do this hack.
 // it's quite a lift so if someone could do this it would be greatly appreciated <3 ~A.S 11-03-2025
 // eslint-disable-next-line import/no-restricted-paths
@@ -412,7 +412,7 @@ export const QuestionnaireQuestion = ({
             dangerouslySetInnerHTML={{ __html: item.text ?? '' }}
           />
           {description && (
-            <Body2
+            <Body1
               className="text-secondary"
               // We need this to render hyperlinks
               // I don't see a case for XSS because the only way to edit this is in Medplum
@@ -472,7 +472,7 @@ export const QuestionnaireQuestion = ({
       </Body1>
       <Body1
         className={cn(
-          'mb-8 text-sm text-zinc-500',
+          'mb-8 text-zinc-500',
           isRxSafetyIntroQuestion && 'text-base text-primary',
           // We need to force orange link color for consistency. inline-links come with blue style attributes so important is needed.
           ' [&>a]:!text-vermillion-900',
@@ -497,7 +497,7 @@ export const QuestionnaireQuestion = ({
       {/* NOTE: we don't want members editing address mid-Rx questionnaire */}
       {isRxSafetyAddressQuestion && <CurrentAddressCard disableEdit={true} />}
       {description && (
-        <Body2
+        <Body1
           className="mb-10 text-secondary"
           // We need this to render hyperlinks
           // I don't see a case for XSS because the only way to edit this is in Medplum
