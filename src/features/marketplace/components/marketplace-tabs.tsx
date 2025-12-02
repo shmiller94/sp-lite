@@ -29,6 +29,7 @@ import { FinishScheduleList } from '@/features/services/components/finish-schedu
 import { OrdersList } from '@/features/services/components/orders-list';
 import { ServicesList } from '@/features/services/components/services-list';
 import { SupplementsList } from '@/features/supplements/components/supplements-list';
+import { useAnalytics } from '@/hooks/use-analytics';
 
 type MarketplaceTab = {
   value: MarketplaceTabValue;
@@ -41,6 +42,7 @@ type MarketplaceTab = {
 export const MarketplaceTabs = () => {
   const { data, isLoading } = useMarketplace();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { track } = useAnalytics();
   const rawTab = searchParams.get('tab');
   const activeTab: MarketplaceTabValue =
     rawTab === 'tests' ||
@@ -157,6 +159,11 @@ export const MarketplaceTabs = () => {
   }, [data, filter, handleClearSearch, isLoading, query, searchTitle]);
 
   const showFilters = activeTab !== 'orders';
+  const tabClickEvents: Partial<Record<MarketplaceTabValue, string>> = {
+    tests: 'click_marketplace_tests',
+    supplements: 'click_marketplace_supplements',
+    prescriptions: 'click_marketplace_prescriptions',
+  };
 
   return (
     <URLTabs>
@@ -179,6 +186,12 @@ export const MarketplaceTabs = () => {
                     aria-label={tab.label}
                     disabled={isDisabled}
                     aria-disabled={isDisabled}
+                    onClick={() => {
+                      const eventName = tabClickEvents[tab.value];
+                      if (eventName) {
+                        track(eventName);
+                      }
+                    }}
                   >
                     <>
                       {Icon ? <Icon className="size-5" /> : null}

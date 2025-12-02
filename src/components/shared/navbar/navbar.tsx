@@ -12,8 +12,8 @@ import {
   DataIcon,
   HomeIcon,
   LockIcon,
-  MessageIcon,
   MarketplaceIcon,
+  MessageIcon,
 } from '@/components/icons';
 import { CircleAiIcon } from '@/components/icons/circle-ai-icon';
 import { PlansIcon } from '@/components/icons/plans-icon';
@@ -29,6 +29,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown';
 // eslint-disable-next-line import/no-restricted-paths
+import { useAnalytics } from '@/hooks/use-analytics';
 import { useScrollThreshold } from '@/hooks/use-scroll-threshold';
 import { ROLES, useAuthorization } from '@/lib/authorization';
 import { cn } from '@/lib/utils';
@@ -94,6 +95,7 @@ const blurThresholds: Record<string, number> = {
 export const DesktopNavbar = () => {
   const { checkAccess } = useAuthorization();
   const { pathname } = useLocation();
+  const { track } = useAnalytics();
 
   const isLight = lightNavPaths.includes(pathname);
   const isBlurred = useScrollThreshold({
@@ -149,6 +151,11 @@ export const DesktopNavbar = () => {
               <NavLink
                 key={idx}
                 to={link.to}
+                onClick={() => {
+                  if (link.name === 'Marketplace') {
+                    track('click_marketplace_button');
+                  }
+                }}
                 className={({ isActive }) =>
                   cn(
                     'group relative z-10 truncate px-4 py-1.5 transition-all duration-150 active:scale-[98%]',
@@ -239,6 +246,7 @@ export const MobileNavbar = () => {
   const { checkAccess } = useAuthorization();
   const [open, setOpen] = useState(false);
   const { pathname, search } = useLocation();
+  const { track } = useAnalytics();
   const searchParams = useMemo(() => new URLSearchParams(search), [search]);
   const isMarketplaceOrdersActive =
     pathname === '/marketplace' && searchParams.get('tab') === 'orders';
@@ -285,6 +293,11 @@ export const MobileNavbar = () => {
             <NavLink
               key={idx}
               to={link.to}
+              onClick={() => {
+                if (link.name === 'Marketplace') {
+                  track('click_marketplace_button');
+                }
+              }}
               className={cn(
                 'flex justify-center group shrink-0 h-[calc(100%-0.5rem)] transition-colors rounded-[20px] flex-col md:flex-row items-center gap-2 aspect-square p-4 md:min-w-0 cursor-pointer',
               )}
