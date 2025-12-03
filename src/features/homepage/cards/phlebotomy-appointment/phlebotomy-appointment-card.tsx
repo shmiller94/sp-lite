@@ -223,7 +223,7 @@ export const PhlebotomyAppointmentCard = () => {
       {/* Desktop: Date & Location with CTAs - Only show when scheduled */}
       {appointmentStatus === 'scheduled' &&
         activeBloodPanelOrder.startTimestamp && (
-          <div className="mb-4 hidden items-center justify-between md:flex">
+          <div className="mb-4 mt-6 hidden items-center justify-between pl-4 md:flex">
             <div className="flex items-start gap-3">
               <Calendar className="mt-1 size-5 text-zinc-500" />
               <div>
@@ -245,7 +245,7 @@ export const PhlebotomyAppointmentCard = () => {
         )}
 
       {appointmentStatus === 'scheduled' && (
-        <div className="my-6 hidden items-center justify-between md:flex">
+        <div className="my-6 hidden items-center justify-between pl-4 md:flex">
           <div className="flex items-start gap-3">
             <MapPin className="mt-1 size-5 text-zinc-500" />
             <div>

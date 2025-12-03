@@ -15,7 +15,7 @@ export const WaitingScreen = () => {
       <div className="size-full">
         <H4 className="mb-2">Hi {user?.firstName},</H4>
         <Body2 className="mb-4 text-zinc-400">
-          We are currently awaiting and analysing your first test results. They
+          We are currently awaiting and analyzing your first test results. They
           should be with you in {ETA} days and appear here in the data page.
           You&apos;ll receive an e-mail once your results are ready and your
           digital twin is set up.
