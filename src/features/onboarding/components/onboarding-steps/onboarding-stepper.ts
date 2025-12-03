@@ -96,7 +96,8 @@ export const useOnboardingStepper = (): OnboardingStepperReturn => {
       identifier: GLP_FRONTDOOR_EXPERIMENT,
     });
   const hasIncompleteRxFrontDoorIntake =
-    rxFrontDoorIntakeData?.questionnaireResponse?.status !== 'completed';
+    rxFrontDoorIntakeData?.questionnaireResponse != null &&
+    rxFrontDoorIntakeData.questionnaireResponse.status !== 'completed';
 
   // Fetch add-on panel services to check availability
   const { data: addOnServices, isLoading: isServicesLoading } = useServices({
