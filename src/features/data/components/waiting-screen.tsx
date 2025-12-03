@@ -8,7 +8,7 @@ export const WaitingScreen = () => {
   const { data: user } = useUser();
   const gating = useDataGating();
 
-  const ETA = gating.hasAnyBiomarkers ? '4-7' : '7-10';
+  const ETA = gating.hasPartialResults ? '4-7' : '7-10';
 
   return (
     <div className="mx-auto max-w-3xl flex-1 overflow-y-auto rounded-[24px] bg-white p-6 scrollbar scrollbar-track-transparent scrollbar-thumb-zinc-300">

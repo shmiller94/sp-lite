@@ -1,4 +1,4 @@
-import { CarePlan, Goal } from '@medplum/fhirtypes';
+import { CarePlan, DiagnosticReport, Goal } from '@medplum/fhirtypes';
 
 import {
   INTAKE_QUESTIONNAIRE,
@@ -381,6 +381,16 @@ export type CollectionMethodType =
   | 'PHLEBOTOMY_KIT'
   | 'EVENT';
 
+export type CarePlanSummary = {
+  id: string;
+  status: CarePlan['status'];
+};
+
+export type DiagnosticReportSummary = {
+  id: string;
+  status: DiagnosticReport['status'];
+};
+
 export type Order = Entity<{
   serviceName: string;
   serviceId: string;
@@ -396,6 +406,8 @@ export type Order = Entity<{
   fileId?: string;
   performer?: ServiceLabType;
   appointmentType?: AppointmentType;
+  carePlan?: CarePlanSummary;
+  diagnosticReport?: DiagnosticReportSummary;
 }>;
 
 export type Location = {

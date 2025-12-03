@@ -177,17 +177,13 @@ export const Overview = () => {
         )?.timestamp
     : null;
 
-  if (
-    !isUserLoading &&
-    gating.shouldShowWaiting &&
-    !gating.isTestAppointmentOlderThan5Days
-  ) {
+  if (!isUserLoading && !gating.hasCompletedCarePlan) {
     return <WaitingScreen />;
   }
 
   // Hide SP score & BioAge until AIAP is complete even if partial markers exist
   const markersAvailable =
-    gating.hasCompletedPlan && !!superpowerScore && !!biologicalAge;
+    gating.hasCompletedCarePlan && !!superpowerScore && !!biologicalAge;
 
   return (
     <div className="w-full space-y-4">

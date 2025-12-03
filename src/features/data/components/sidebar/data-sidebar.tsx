@@ -128,7 +128,7 @@ const PureDataSidebar = () => {
       />,
     );
 
-    if (!gating.hasCompletedPlan && !gating.isTestAppointmentOlderThan5Days) {
+    if (!gating.hasCompletedCarePlan) {
       return items; // only show Summary until AIAP is completed
     }
 
@@ -153,7 +153,7 @@ const PureDataSidebar = () => {
     isLoading,
     activeCategory,
     categories?.categories,
-    gating.hasCompletedPlan,
+    gating.hasCompletedCarePlan,
   ]);
 
   return (

@@ -13,13 +13,14 @@ type OrderWithCarePlan = {
   carePlanId?: string;
   carePlanTitle?: string;
   lastViewed?: string;
-  date?: string; // createdAt for draft orders, period.start for care plans
+  date?: string;
 };
 
 /**
  * Hook to compute actionable orders:
  * - All draft orders (for booking)
  * - Active/completed orders that have a completed care plan (to view plan)
+ * - Orders that have a completed diagnostic report and are older than 30 days (we did not have care plans at the time)
  * Results are annotated with lastViewed and sorted by date (most recent first)
  */
 export const useActionableOrders = () => {
@@ -30,29 +31,8 @@ export const useActionableOrders = () => {
     const orders = ordersData?.orders ?? [];
     const plans = plansData?.actionPlans ?? [];
 
-    const orderToCarePlanMap = new Map<
-      string,
-      { id: string; title?: string; lastViewed?: string; date?: string }
-    >();
-
-    plans
-      .filter((plan) => plan.status === 'completed')
-      .forEach((plan) => {
-        const supportingInfo = plan.supportingInfo ?? [];
-        supportingInfo.forEach((info) => {
-          // Extract order ID from "ServiceRequest/{orderId}" format
-          const reference = info.reference;
-          if (reference?.startsWith('ServiceRequest/')) {
-            const orderId = reference.replace('ServiceRequest/', '');
-            orderToCarePlanMap.set(orderId, {
-              id: plan.id!,
-              title: plan.title,
-              lastViewed: plan.lastViewed,
-              date: plan.period?.start,
-            });
-          }
-        });
-      });
+    // Build a map of care plan ID to care plan data for quick lookup
+    const carePlanMap = new Map(plans.map((plan) => [plan.id, plan]));
 
     // Filter for draft orders and active/completed orders with completed care plans
     // Exclude advisory calls from the list
@@ -68,21 +48,32 @@ export const useActionableOrders = () => {
           order.status === OrderStatus.active ||
           order.status === OrderStatus.completed
         ) {
-          return orderToCarePlanMap.has(order.id);
+          if (order.carePlan?.status === 'completed') return true;
+
+          // Legacy case: order has a completed diagnostic report and is older than 30 days
+          const isLegacyCompleted =
+            order.diagnosticReport?.status === 'final' &&
+            order.createdAt &&
+            new Date(order.createdAt).getTime() <
+              Date.now() - 30 * 24 * 60 * 60 * 1000;
+
+          return isLegacyCompleted;
         }
         return false;
       })
       .map((order) => {
-        const carePlan = orderToCarePlanMap.get(order.id);
+        const carePlan = order.carePlan?.id
+          ? carePlanMap.get(order.carePlan.id)
+          : undefined;
         return {
           id: order.id,
           serviceName: order.serviceName,
           serviceId: order.serviceId,
           status: order.status,
-          carePlanId: carePlan?.id,
+          carePlanId: order.carePlan?.id,
           carePlanTitle: carePlan?.title,
           lastViewed: carePlan?.lastViewed,
-          date: carePlan?.date || order.createdAt,
+          date: carePlan?.period?.start || order.createdAt,
         };
       })
       .sort((a, b) => {
