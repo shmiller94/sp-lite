@@ -6,7 +6,7 @@ import { AIIcon } from '@/components/icons/ai-icon';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogTrigger, DialogContent } from '@/components/ui/dialog';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
-import { Body2, H3 } from '@/components/ui/typography';
+import { Body1, Body2, H3 } from '@/components/ui/typography';
 import { useQuestionnaireInsights } from '@/features/questionnaires/api/get-questionnaire-insights';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
@@ -18,9 +18,9 @@ import { handleShare } from '@/utils/share';
 export const FamilyInsightsBanner = () => {
   return (
     <FamilyInsightsDialog>
-      <div className="mb-6 md:pl-9">
+      <div className="mb-6">
         <div
-          className="flex items-center gap-4 rounded-[20px] bg-cover bg-no-repeat px-6 py-2 shadow-[0_0_4px_rgba(24,24,27,0.1)]"
+          className="group flex cursor-pointer items-center gap-4 rounded-[20px] bg-cover bg-no-repeat px-6 py-2 shadow-[0_0_4px_rgba(24,24,27,0.1)]"
           style={{
             backgroundImage: `
       url('/home/health-insights-banner.png'),
@@ -30,12 +30,12 @@ export const FamilyInsightsBanner = () => {
         >
           <div className="size-20 lg:w-28 xl:w-36" />
           <div className="flex-1">
-            <H3 className="text-base text-white">
+            <Body1 className="text-base text-white">
               Review family health insights
               <br /> from your intake
-            </H3>
+            </Body1>
           </div>
-          <ChevronRight className="size-5 min-w-5 text-zinc-400" />
+          <ChevronRight className="size-5 text-white transition-all group-hover:-mr-1" />
         </div>
       </div>
     </FamilyInsightsDialog>
