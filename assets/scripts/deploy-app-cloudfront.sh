@@ -166,6 +166,12 @@ aws s3 cp dist/ "s3://${APP_BUCKET}/" \
   --exclude "*" \
   --include "*.riv"
 
+aws s3 cp dist/ "s3://${APP_BUCKET}/" \
+  --recursive \
+  --content-type "video/webm" \
+  --cache-control "public, max-age=31536000" \
+  --exclude "*" \
+  --include "*.webm"
 
 aws s3 cp dist/ "s3://${APP_BUCKET}/" \
   --recursive \

@@ -296,9 +296,15 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   const onLegacy = location.pathname.startsWith('/legacy-checkout');
   const onOnboarding = location.pathname.includes('/onboarding');
-  const onProtocolReveal = location.pathname.startsWith('/protocol/reveal');
-  const onProtocolAutopilot = location.pathname.startsWith(
+
+  const revealPermissiblePaths = [
+    '/protocol/reveal',
     '/protocol/autopilot',
+    '/onboarding', // Prevent infinite redirect loop
+    '/action-plan/intro', // Videos
+  ];
+  const onPermissiblePath = revealPermissiblePaths.some((path) =>
+    location.pathname.startsWith(path),
   );
 
   // Check if user should be redirected to protocol reveal flow
@@ -309,8 +315,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   if (
     shouldRedirectToReveal &&
-    !onProtocolReveal &&
-    !onProtocolAutopilot &&
+    !onPermissiblePath &&
     taskQuery.data?.task.status === 'completed' &&
     !userQuery.data.admin
   ) {
