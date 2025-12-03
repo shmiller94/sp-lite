@@ -32,14 +32,14 @@ export const RxQuestionnaire = ({
     statuses: ['in-progress', 'stopped'],
   });
 
+  const questionnaireRef =
+    getQuestionnaireResponseQuery.data?.questionnaireResponse?.questionnaire;
+
   const questionnaireResponseId =
     getQuestionnaireResponseQuery.data?.questionnaireResponse?.id;
 
   const getQuestionnaireQuery = useQuestionnaire({
-    identifier: name || '',
-    queryConfig: {
-      enabled: !!name,
-    },
+    identifier: questionnaireRef ?? name,
   });
 
   if (
