@@ -23,6 +23,10 @@ export const IntakeQuestionnaire = ({
   const questionnaireRef =
     getQuestionnaireResponseQuery.data?.questionnaireResponse?.questionnaire;
 
+  const questionnaireResponseId =
+    getQuestionnaireResponseQuery.data?.questionnaireResponse?.id ||
+    INTAKE_QUESTIONNAIRE;
+
   const getQuestionnaireQuery = useQuestionnaire({
     identifier: questionnaireRef || '',
     queryConfig: {
@@ -62,13 +66,13 @@ export const IntakeQuestionnaire = ({
       onSave={(item) => {
         updateQuestionnaireResponseMutation.mutate({
           data: { item, status: 'in-progress' },
-          identifier: INTAKE_QUESTIONNAIRE,
+          identifier: questionnaireResponseId,
         });
       }}
       onSubmit={(item) => {
         updateQuestionnaireResponseMutation.mutate({
           data: { item, status: 'completed' },
-          identifier: INTAKE_QUESTIONNAIRE,
+          identifier: questionnaireResponseId,
         });
         onSubmit && onSubmit();
       }}
