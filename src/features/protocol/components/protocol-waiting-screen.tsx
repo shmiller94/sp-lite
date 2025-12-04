@@ -31,7 +31,7 @@ export const ProtocolWaitingScreen = () => (
           <img
             src="/action-plan/goals/dead.webp"
             alt="Locked goal"
-            className="pointer-events-none absolute inset-0"
+            className="pointer-events-none absolute inset-0 size-full object-cover"
           />
           <div className="absolute inset-0 z-10 flex flex-col justify-between p-6">
             <div className="mb-8 flex w-full items-start justify-end">
