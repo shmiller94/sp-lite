@@ -1,6 +1,7 @@
-import { MarketplaceFilter } from '@/features/marketplace/components/marketplace-filters';
 import { MarketplaceSkeleton } from '@/features/marketplace/components/marketplace-skeleton';
-import { getMarketplaceSearchMeta } from '@/features/marketplace/helper/get-marketplace-search-meta';
+import { MarketplaceFilter } from '@/features/marketplace/const/categories';
+import { getFilterDisplayLabel } from '@/features/marketplace/utils/category-utils';
+import { getMarketplaceSearchMeta } from '@/features/marketplace/utils/get-marketplace-search-meta';
 import { matchesMarketplaceQuery } from '@/features/marketplace/utils/matches-marketplace-query';
 import { getRecommendedServices } from '@/features/services/utils/get-recommended-services';
 import { HealthcareService } from '@/types/api';
@@ -24,13 +25,14 @@ export const ServicesList = ({
   if (!services) return null;
 
   const {
+    trimmedQuery,
     normalizedQuery,
     isFiltered,
     isSearching,
     filterTitle,
     titleOverride,
     subtitleOverride,
-  } = getMarketplaceSearchMeta(query, filter);
+  } = getMarketplaceSearchMeta(query, filter, 'tests');
 
   const filteredServices = services.filter((service) =>
     matchesMarketplaceQuery(service, filter, normalizedQuery),
@@ -72,7 +74,21 @@ export const ServicesList = ({
     ].filter(({ services }) => services.length > 0);
   }
 
-  if (!filteredServices.length || !sections.length) return null;
+  if (!filteredServices.length) {
+    return (
+      <div className="flex flex-col items-center space-y-4 rounded-2xl border border-dashed border-zinc-200 px-6 py-10 text-center text-sm text-secondary">
+        <p>
+          {isSearching
+            ? `No tests found for “${trimmedQuery}”.`
+            : filter === 'all'
+              ? 'No tests available right now.'
+              : `No tests available for “${getFilterDisplayLabel(filter, 'tests')}” right now.`}
+        </p>
+      </div>
+    );
+  }
+
+  if (!sections.length) return null;
 
   return (
     <div className="flex flex-col gap-14">

@@ -1,6 +1,7 @@
-import { MarketplaceFilter } from '@/features/marketplace/components/marketplace-filters';
 import { MarketplaceSkeleton } from '@/features/marketplace/components/marketplace-skeleton';
-import { getMarketplaceSearchMeta } from '@/features/marketplace/helper/get-marketplace-search-meta';
+import { MarketplaceFilter } from '@/features/marketplace/const/categories';
+import { getFilterDisplayLabel } from '@/features/marketplace/utils/category-utils';
+import { getMarketplaceSearchMeta } from '@/features/marketplace/utils/get-marketplace-search-meta';
 import { matchesMarketplaceQuery } from '@/features/marketplace/utils/matches-marketplace-query';
 import { useProgressiveReveal } from '@/hooks/use-progressive-reveal';
 import { Product } from '@/types/api';
@@ -30,13 +31,14 @@ export const SupplementsList = ({
   query = '',
 }: SupplementsListProps) => {
   const {
+    trimmedQuery,
     normalizedQuery,
     isFiltered,
     isSearching,
     filterTitle,
     titleOverride,
     subtitleOverride,
-  } = getMarketplaceSearchMeta(query, filter);
+  } = getMarketplaceSearchMeta(query, filter, 'supplements');
 
   const filteredSupplements = (products ?? []).filter((product) =>
     matchesMarketplaceQuery(product, filter, normalizedQuery),
@@ -77,7 +79,21 @@ export const SupplementsList = ({
 
   if (isLoading) return <MarketplaceSkeleton />;
 
-  if (!filteredSupplements.length || !sections.length) return null;
+  if (!filteredSupplements.length) {
+    return (
+      <div className="flex flex-col items-center space-y-4 rounded-2xl border border-dashed border-zinc-200 px-6 py-10 text-center text-sm text-secondary">
+        <p>
+          {isSearching
+            ? `No supplements found for “${trimmedQuery}”.`
+            : filter === 'all'
+              ? 'No supplements available right now.'
+              : `No supplements available for “${getFilterDisplayLabel(filter, 'supplements')}” right now.`}
+        </p>
+      </div>
+    );
+  }
+
+  if (!sections.length) return null;
 
   return (
     <div className="flex flex-col gap-14">

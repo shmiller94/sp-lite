@@ -1,6 +1,7 @@
-import { MarketplaceFilter } from '@/features/marketplace/components/marketplace-filters';
 import { MarketplaceSkeleton } from '@/features/marketplace/components/marketplace-skeleton';
-import { getMarketplaceSearchMeta } from '@/features/marketplace/helper/get-marketplace-search-meta';
+import { MarketplaceFilter } from '@/features/marketplace/const/categories';
+import { getFilterDisplayLabel } from '@/features/marketplace/utils/category-utils';
+import { getMarketplaceSearchMeta } from '@/features/marketplace/utils/get-marketplace-search-meta';
 import { matchesMarketplaceQuery } from '@/features/marketplace/utils/matches-marketplace-query';
 import { useUser } from '@/lib/auth';
 import { Rx } from '@/types/api';
@@ -86,7 +87,7 @@ export const PrescriptionsList = ({
         <p>
           {isSearching
             ? `No prescriptions found for "${trimmedQuery}".`
-            : `No prescriptions available for "${filter}" right now.`}
+            : `No prescriptions available for "${getFilterDisplayLabel(filter, 'prescriptions')}" right now.`}
         </p>
       </div>
     );

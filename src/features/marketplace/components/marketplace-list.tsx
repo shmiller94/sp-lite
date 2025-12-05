@@ -1,8 +1,9 @@
 import { Button } from '@/components/ui/button';
 import { H2 } from '@/components/ui/typography';
-import { MarketplaceFilter } from '@/features/marketplace/components/marketplace-filters';
 import { MarketplaceSkeleton } from '@/features/marketplace/components/marketplace-skeleton';
-import { getMarketplaceSearchMeta } from '@/features/marketplace/helper/get-marketplace-search-meta';
+import { MarketplaceFilter } from '@/features/marketplace/const/categories';
+import { getFilterDisplayLabel } from '@/features/marketplace/utils/category-utils';
+import { getMarketplaceSearchMeta } from '@/features/marketplace/utils/get-marketplace-search-meta';
 import { matchesMarketplaceQuery } from '@/features/marketplace/utils/matches-marketplace-query';
 import { PrescriptionCard } from '@/features/prescriptions/components/prescriptions-card';
 import { PrescriptionsCategory } from '@/features/prescriptions/components/prescriptions-category';
@@ -74,7 +75,7 @@ export const MarketplaceList = ({
             ? `No results found for “${trimmedQuery}”.`
             : filter === 'all'
               ? 'No products available right now.'
-              : `No products available for “${filter}” right now.`}
+              : `No products available for “${getFilterDisplayLabel(filter, 'all')}” right now.`}
         </p>
         {clearQueryButton ? (
           <Button variant="outline" size="medium" onClick={onClearSearch}>

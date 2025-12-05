@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import { getMarketplaceSearchMeta } from '@/features/marketplace/helper/get-marketplace-search-meta';
+import { getMarketplaceSearchMeta } from '@/features/marketplace/utils/get-marketplace-search-meta';
 
 export const useMarketplaceSearch = () => {
   const [query, setQuery] = useState('');

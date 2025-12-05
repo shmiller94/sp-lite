@@ -16,13 +16,13 @@ import {
 } from '@/components/ui/slider-tabs';
 import { H2 } from '@/components/ui/typography';
 import { useMarketplace } from '@/features/marketplace/api/get-marketplace';
-import {
-  MarketplaceFilter,
-  MarketplaceFilters,
-  MarketplaceTabValue,
-} from '@/features/marketplace/components/marketplace-filters';
+import { MarketplaceFilters } from '@/features/marketplace/components/marketplace-filters';
 import { MarketplaceList } from '@/features/marketplace/components/marketplace-list';
 import { MarketplaceSearch } from '@/features/marketplace/components/marketplace-search';
+import {
+  MarketplaceFilter,
+  MarketplaceTabValue,
+} from '@/features/marketplace/const/categories';
 import { useMarketplaceSearch } from '@/features/marketplace/hooks/use-marketplace-search';
 import { PrescriptionsList } from '@/features/prescriptions/components/prescription-list';
 import { FinishScheduleList } from '@/features/services/components/finish-schedule-list';

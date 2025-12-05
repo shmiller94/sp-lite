@@ -1,32 +1,20 @@
+import { ListFilterIcon } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuCheckboxItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown';
+import {
+  MARKETPLACE_FILTER_OPTIONS,
+  MarketplaceFilter,
+  MarketplaceTabValue,
+} from '@/features/marketplace/const/categories';
+import { getFilterDisplayLabel } from '@/features/marketplace/utils/category-utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
-
-const MARKETPLACE_FILTER_LABELS = {
-  all: {
-    all: 'All products',
-    tests: 'All tests',
-    supplements: 'All supplements',
-    prescriptions: 'All prescriptions',
-    orders: 'All orders',
-  },
-} as const;
-
-export const MARKETPLACE_FILTER_OPTIONS = [
-  'all',
-  'Metabolic health',
-  'Gut health',
-  'Heart health',
-] as const;
-
-export type MarketplaceFilter = (typeof MARKETPLACE_FILTER_OPTIONS)[number];
-
-export type MarketplaceTabValue =
-  | 'all'
-  | 'tests'
-  | 'supplements'
-  | 'prescriptions'
-  | 'orders';
 
 type MarketplaceFiltersProps = {
   activeTab: MarketplaceTabValue;
@@ -37,13 +25,7 @@ type MarketplaceFiltersProps = {
 const getFilterLabel = (
   option: MarketplaceFilter,
   activeTab: MarketplaceTabValue,
-) => {
-  if (option === 'all') {
-    return MARKETPLACE_FILTER_LABELS.all[activeTab];
-  }
-
-  return option;
-};
+) => getFilterDisplayLabel(option, activeTab);
 
 export const MarketplaceFilters = ({
   activeTab,
@@ -51,11 +33,50 @@ export const MarketplaceFilters = ({
   onChange,
 }: MarketplaceFiltersProps) => {
   const isMobile = useIsMobile();
+  const PILL_OPTIONS: MarketplaceFilter[] = [
+    'all',
+    'METABOLIC_HEALTH',
+    'GUT_HEALTH',
+    'HEART_HEALTH',
+  ];
+
+  const DROPDOWN_OPTIONS = MARKETPLACE_FILTER_OPTIONS.filter(
+    (opt) => !PILL_OPTIONS.includes(opt),
+  );
 
   return (
     <div className="relative">
-      <div className="flex flex-nowrap items-center gap-1 overflow-x-auto pr-8 md:flex-wrap md:overflow-visible md:pr-0">
-        {MARKETPLACE_FILTER_OPTIONS.map((option) => {
+      <div className="flex flex-nowrap items-center gap-1 overflow-x-auto pr-8 md:flex-wrap md:overflow-visible md:pr-10">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              type="button"
+              size={isMobile ? 'small' : 'medium'}
+              variant="outline"
+              className="space-x-2.5 rounded-full border-input text-secondary"
+            >
+              <ListFilterIcon className="-mt-0.5 size-4" />
+              <span>Filters</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="start"
+            className="w-[220px] rounded-[16px] border-zinc-100"
+          >
+            {DROPDOWN_OPTIONS.map((option) => (
+              <DropdownMenuCheckboxItem
+                key={option}
+                checked={value === option}
+                onCheckedChange={() => onChange(option)}
+                className="rounded-lg"
+              >
+                {getFilterLabel(option, activeTab)}
+              </DropdownMenuCheckboxItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <div className="relative mx-2 mt-0.5 h-5 w-px bg-zinc-200" />
+        {PILL_OPTIONS.map((option) => {
           const isActive = value === option;
 
           return (

@@ -1,5 +1,5 @@
-import { MarketplaceFilter } from '@/features/marketplace/components/marketplace-filters';
-import { filterByCategory } from '@/features/marketplace/utils/filter-by-categoty';
+import { MarketplaceFilter } from '@/features/marketplace/const/categories';
+import { filterByCategory } from '@/features/marketplace/utils/filter-by-category';
 
 type MarketplaceEntity = {
   name: string;
