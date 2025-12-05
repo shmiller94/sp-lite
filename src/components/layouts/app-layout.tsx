@@ -27,8 +27,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const hideNavBar =
     !data ||
     pathname.includes('onboarding') ||
-    pathname.includes('questionnaire') ||
-    pathname.includes('legacy-checkout');
+    pathname.includes('questionnaire');
 
   const isWhiteBg = WHITE_BACKGROUND_PATHS.some((path) =>
     pathname.includes(path),

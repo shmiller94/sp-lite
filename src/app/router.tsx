@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import {
   createBrowserRouter,
-  RouterProvider,
   Navigate,
   redirect,
+  RouterProvider,
 } from 'react-router-dom';
 
 import { MainErrorFallback } from '@/components/errors/main';
@@ -163,16 +163,6 @@ export const createRouter = () =>
             );
             return { Component: PrescriptionRoute };
           },
-        },
-        {
-          path: 'legacy-checkout',
-          lazy: async () => {
-            const { LegacyCheckoutRoute } = await import(
-              './routes/app/legacy-checkout'
-            );
-            return { Component: LegacyCheckoutRoute };
-          },
-          errorElement: <MainErrorFallback />,
         },
         {
           path: 'onboarding',

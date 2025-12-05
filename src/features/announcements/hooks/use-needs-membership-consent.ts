@@ -13,8 +13,7 @@ export const useNeedsMembershipConsent = () => {
   const isAdmin = checkAdminActorAccess();
   const { data, isLoading } = useGetConsent({ userId: user?.id || '' });
 
-  const disabledByRoute =
-    pathname.includes('onboarding') || pathname.includes('legacy-checkout');
+  const disabledByRoute = pathname.includes('onboarding');
 
   const shouldShow =
     !isLoading && !isAdmin && !disabledByRoute && data?.exists === false;

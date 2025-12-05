@@ -6,6 +6,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { z } from 'zod';
 
 import { SuperpowerLoadingLogo } from '@/components/icons/superpower-logo';
+import { env } from '@/config/env';
 import { INTAKE_QUESTIONNAIRE } from '@/const/questionnaire';
 // eslint-disable-next-line import/no-restricted-paths
 import { revealLatestQueryKey } from '@/features/protocol/api';
@@ -304,7 +305,6 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  const onLegacy = location.pathname.startsWith('/legacy-checkout');
   const onOnboarding = location.pathname.includes('/onboarding');
 
   const revealPermissiblePaths = [
@@ -345,13 +345,13 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     let target: string | null = null;
 
     if (isTaskIncomplete) {
-      // highest priority: send *unsubscribed* users to legacy checkout,
-      //    but don't bounce away if they're already there.
-      if (!isSubscribed && !onLegacy) {
-        target = '/legacy-checkout';
+      // If a user isn't subscribed, send them to checkout
+      if (!isSubscribed) {
+        window.location.href = env.CHECKOUT_URL;
+        return null;
       }
-      // otherwise, send to onboarding (but not if already there or on legacy)
-      else if (!onOnboarding && !onLegacy) {
+      // otherwise, send to onboarding (but not if already there)
+      else if (!onOnboarding) {
         target = '/onboarding';
       }
     }
