@@ -22,38 +22,42 @@ export const PhiConsentDialog = ({
 }: PhiConsentDialogProps) => {
   const { data } = useUser();
 
-  const createConsentMutation = useCreateConsent({
-    mutationConfig: {
-      onSuccess: () => {
-        toast.success('Preferences saved');
-      },
-      onError: () => {
-        toast.error('Failed to save preferences');
-      },
-    },
-  });
+  const createConsentMutation = useCreateConsent();
 
-  const handleAgree = async () => {
-    await createConsentMutation.mutateAsync({
-      data: {
-        agreedAt: new Date().toISOString(),
-        type: ConsentType.PHI_MARKETING,
-        accepted: true,
-      },
-    });
+  const handleAgree = () => {
     onOpenChange(false);
+    toast.promise(
+      createConsentMutation.mutateAsync({
+        data: {
+          agreedAt: new Date().toISOString(),
+          type: ConsentType.PHI_MARKETING,
+          accepted: true,
+        },
+      }),
+      {
+        loading: 'Saving preferences...',
+        success: () => 'Preferences saved',
+        error: () => 'Failed to save preferences',
+      },
+    );
   };
 
-  const handleClose = async () => {
-    // Create consent with accepted = false
-    await createConsentMutation.mutateAsync({
-      data: {
-        agreedAt: new Date().toISOString(),
-        type: ConsentType.PHI_MARKETING,
-        accepted: false,
-      },
-    });
+  const handleClose = () => {
     onOpenChange(false);
+    toast.promise(
+      createConsentMutation.mutateAsync({
+        data: {
+          agreedAt: new Date().toISOString(),
+          type: ConsentType.PHI_MARKETING,
+          accepted: false,
+        },
+      }),
+      {
+        loading: 'Saving preferences...',
+        success: () => 'Preferences saved',
+        error: () => 'Failed to save preferences',
+      },
+    );
   };
 
   return (
