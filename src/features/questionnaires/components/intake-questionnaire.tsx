@@ -1,3 +1,5 @@
+import { QuestionnaireResponseItem } from '@medplum/fhirtypes';
+
 import { QuestionnaireForm } from '@/components/ui/questionnaire';
 import { Spinner } from '@/components/ui/spinner';
 import { INTAKE_QUESTIONNAIRE } from '@/const/questionnaire';
@@ -58,26 +60,36 @@ export const IntakeQuestionnaire = ({
     return null;
   }
 
+  const handleSave = (item: QuestionnaireResponseItem[]) => {
+    updateQuestionnaireResponseMutation.mutate({
+      data: { item, status: 'in-progress' },
+      identifier: questionnaireResponseId,
+      invalidateIdentifiers: [INTAKE_QUESTIONNAIRE],
+    });
+  };
+
+  const handleSubmit = (item: QuestionnaireResponseItem[]) => {
+    updateQuestionnaireResponseMutation.mutate(
+      {
+        data: { item, status: 'completed' },
+        identifier: questionnaireResponseId,
+        invalidateIdentifiers: [INTAKE_QUESTIONNAIRE],
+      },
+      {
+        onSuccess: () => {
+          onSubmit?.();
+        },
+      },
+    );
+  };
+
   return (
     <QuestionnaireForm
       questionnaire={getQuestionnaireQuery.data.questionnaire}
       response={getQuestionnaireResponseQuery.data.questionnaireResponse}
       user={userQuery.data}
-      onSave={(item) => {
-        updateQuestionnaireResponseMutation.mutate({
-          data: { item, status: 'in-progress' },
-          identifier: questionnaireResponseId,
-          invalidateIdentifiers: [INTAKE_QUESTIONNAIRE],
-        });
-      }}
-      onSubmit={(item) => {
-        updateQuestionnaireResponseMutation.mutate({
-          data: { item, status: 'completed' },
-          identifier: questionnaireResponseId,
-          invalidateIdentifiers: [INTAKE_QUESTIONNAIRE],
-        });
-        onSubmit?.();
-      }}
+      onSave={handleSave}
+      onSubmit={handleSubmit}
       showIntro={showIntro}
       className="space-y-6"
     />

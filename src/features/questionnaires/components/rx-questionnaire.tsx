@@ -1,3 +1,4 @@
+import { QuestionnaireResponseItem } from '@medplum/fhirtypes';
 import { keepPreviousData } from '@tanstack/react-query';
 import { useState } from 'react';
 
@@ -83,6 +84,39 @@ export const RxQuestionnaire = ({
     );
   }
 
+  const handleSave = (item: QuestionnaireResponseItem[]) => {
+    updateQuestionnaireResponseMutation.mutate({
+      data: { item, status: 'in-progress' },
+      identifier: questionnaireResponseId || name,
+    });
+  };
+
+  const handleSubmit = (item: QuestionnaireResponseItem[]) => {
+    const isIneligible = isMemberIneligible(
+      item,
+      getQuestionnaireQuery.data.questionnaire.item ?? [],
+    );
+
+    // NOTE(audric): server-side also handles frontdoor screenout logic.
+    updateQuestionnaireResponseMutation.mutate(
+      {
+        data: { item, status: 'completed' },
+        identifier: questionnaireResponseId || name,
+      },
+      {
+        onSuccess: () => {
+          if (isIneligible == true) {
+            setShowIneligibleScreen(true);
+          } else {
+            // NOTE(audric): includes case for inEligible === undefined;
+            // on failure default to NP approval downstream flow
+            onSubmit && onSubmit();
+          }
+        },
+      },
+    );
+  };
+
   return (
     <QuestionnaireForm
       key={getQuestionnaireQuery.data.questionnaire.id}
@@ -91,32 +125,8 @@ export const RxQuestionnaire = ({
         getQuestionnaireResponseQuery.data?.questionnaireResponse ?? undefined
       }
       user={userQuery.data}
-      onSave={(item) => {
-        updateQuestionnaireResponseMutation.mutate({
-          data: { item, status: 'in-progress' },
-          identifier: questionnaireResponseId || name,
-        });
-      }}
-      onSubmit={(item) => {
-        const isIneligible = isMemberIneligible(
-          item,
-          getQuestionnaireQuery.data.questionnaire.item ?? [],
-        );
-
-        // NOTE(audric): server-side also handles frontdoor screenout logic.
-        updateQuestionnaireResponseMutation.mutate({
-          data: { item, status: 'completed' },
-          identifier: questionnaireResponseId || name,
-        });
-
-        if (isIneligible == true) {
-          setShowIneligibleScreen(true);
-        } else {
-          // NOTE(audric): includes case for inEligible === undefined;
-          // on failure default to NP approval downstream flow
-          onSubmit && onSubmit();
-        }
-      }}
+      onSave={handleSave}
+      onSubmit={handleSubmit}
       showIntro={showIntro}
       className="space-y-6"
     />
