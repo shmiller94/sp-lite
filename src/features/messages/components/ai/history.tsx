@@ -34,6 +34,7 @@ import { cn } from '@/lib/utils';
 import { Chat } from '@/types/api';
 
 import { scrollToBottom } from '../../utils/scroll-to-bottom';
+import { ChatShareDialog } from '../chat-share-dialog';
 
 type GroupedChats = {
   today: Chat[];
@@ -441,21 +442,29 @@ const LoadingChatItem = () => {
 };
 
 export const ChatHistory = () => {
+  const { id } = useParams();
   const { width } = useWindowDimensions();
 
   if (width <= 1024) {
     return (
       <Sheet>
-        <div className="space-y-4 pt-4">
-          <SheetTrigger>
-            <PanelLeft size={24} className="text-zinc-400" />
-          </SheetTrigger>
-          <div className="flex items-center gap-2">
-            <H3>Concierge</H3>
-            <div className="rounded-full border border-vermillion-900 px-2 py-0.5">
-              <p className="font-mono text-xs text-vermillion-900">BETA</p>
+        <div className="flex w-full items-center justify-between gap-4 space-y-4 pt-4">
+          <div className="flex items-center gap-4">
+            <SheetTrigger>
+              <PanelLeft size={24} className="text-zinc-400" />
+            </SheetTrigger>
+            <div className="flex items-center gap-2">
+              <H3>Concierge</H3>
+              <div className="rounded-full border border-vermillion-900 px-2 py-0.5">
+                <p className="font-mono text-xs text-vermillion-900">BETA</p>
+              </div>
             </div>
           </div>
+          {!!id && (
+            <div className="flex w-full justify-end pb-2">
+              <ChatShareDialog chatId={id} />
+            </div>
+          )}
         </div>
         <SheetContent
           side="left"

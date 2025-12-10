@@ -17,6 +17,7 @@ const createEnv = () => {
       .optional()
       .default('false'),
     APP_URL: z.string().optional().default('http://localhost:3000'),
+    WEBSITE_URL: z.string().optional().default('http://localhost:2999'),
     APP_MOCK_API_PORT: z.string().optional().default('8080'),
     VITAL_ENV: z.string(),
     GOOGLE_API_KEY: z.string(),

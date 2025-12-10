@@ -41,7 +41,8 @@ export const ConciergeRoute = () => {
   }
 
   if (getMessagesQuery.isLoading) {
-    return <></>;
+    // We need this div in the loading to prevent layout shifts to the right
+    return <div className="w-full" />;
   }
 
   return (
