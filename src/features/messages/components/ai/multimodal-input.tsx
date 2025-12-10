@@ -352,6 +352,7 @@ function PureMultimodalInput({
                 paddingRight: 96,
               }}
               rows={1}
+              disabled={status !== 'ready'}
               className="size-full min-h-0 flex-1 scroll-p-4 overflow-hidden rounded-none border-none bg-transparent p-1 outline-none transition-all scrollbar scrollbar-track-transparent scrollbar-thumb-zinc-300 hover:scrollbar-thumb-zinc-400 focus-visible:bg-transparent focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
               onKeyDown={(event) => {
                 if (
@@ -366,13 +367,7 @@ function PureMultimodalInput({
                     return;
                   }
 
-                  if (status !== 'ready') {
-                    toast.info(
-                      'Please wait for the model to finish its response!',
-                    );
-                  } else {
-                    submitForm();
-                  }
+                  submitForm();
                 }
               }}
             />
@@ -381,7 +376,7 @@ function PureMultimodalInput({
           <div className="absolute bottom-[13px] right-4 flex flex-row items-end justify-end">
             <AttachmentsButton fileInputRef={fileInputRef} status={status} />
 
-            {status === 'submitted' ? (
+            {status === 'submitted' || status === 'streaming' ? (
               <StopButton stop={stop} setMessages={setMessages} />
             ) : (
               <SendButton
