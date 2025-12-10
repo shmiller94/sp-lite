@@ -28,6 +28,8 @@ jobs:
         run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       - name: Run build, unit & e2e tests, lint, type checks
         run: make test
+        env:
+          CENTRAL_LICENSE_KEY: ${{ secrets.CENTRAL_LICENSE_KEY }}
       - name: Install Doppler CLI
         uses: dopplerhq/cli-action@v3
       - name: Configure AWS credentials
@@ -44,3 +46,4 @@ jobs:
         run: VERSION="${{ steps.vars.outputs.sha_short }}-feature" make build/docker/app/feature
         env:
           DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
+          CENTRAL_LICENSE_KEY: ${{ secrets.CENTRAL_LICENSE_KEY }}

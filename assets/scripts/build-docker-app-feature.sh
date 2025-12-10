@@ -33,7 +33,8 @@ debug "VITE_APP_API_URL=https://api-${FEATURE_NAME}.superpower-staging.com"
 info "Building Docker image for feature: ${FEATURE_NAME}"
 docker buildx build --push \
     --platform=linux/arm64 \
+    --build-arg CENTRAL_LICENSE_KEY=${CENTRAL_LICENSE_KEY} \
     -t ${AWS_ECR_URL}/${SERVICE}:${VERSION} \
     -f ./Dockerfile .
 
-info "✅ Feature Docker image built and pushed: ${AWS_ECR_URL}/${SERVICE}:${VERSION}" 
+info "✅ Feature Docker image built and pushed: ${AWS_ECR_URL}/${SERVICE}:${VERSION}"

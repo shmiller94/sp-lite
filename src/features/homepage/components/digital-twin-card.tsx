@@ -1,5 +1,5 @@
+import { IconArrowUpRight } from '@central-icons-react/round-filled-radius-3-stroke-1.5/IconArrowUpRight';
 import { format } from 'date-fns';
-import { ArrowUpRight } from 'lucide-react';
 
 import { Link } from '@/components/ui/link';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -49,7 +49,7 @@ export const DigitalTwinCard = () => {
           className="absolute right-6 top-6 z-10 rounded-full p-2 text-zinc-400 transition-colors hover:bg-zinc-200"
           aria-label="Expand digital twin"
         >
-          <ArrowUpRight className="size-6" strokeWidth={1.5} />
+          <IconArrowUpRight className="size-6" strokeWidth={1.5} />
         </Link>
 
         {/* Bottom left overlay: Last tested date */}

@@ -2,14 +2,12 @@ FROM node:20.19.4-alpine
 
 WORKDIR /app
 
-# Copy package.json, yarn.lock, and .env
+# Copy package.json, yarn.lock
 COPY package.json yarn.lock ./
 
-# Use env variables from .env during yarn install
-RUN printenv > .env
-
-# RUN export $(grep -v '^#' .env | xargs) && \
-RUN yarn install --frozen-lockfile --network-timeout 600000
+# Accept license key at build time and scope only to install
+ARG CENTRAL_LICENSE_KEY
+RUN CENTRAL_LICENSE_KEY=$CENTRAL_LICENSE_KEY yarn install --frozen-lockfile --network-timeout 600000
 
 # Copy the rest of the application
 COPY . .

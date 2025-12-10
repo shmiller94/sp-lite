@@ -46,10 +46,14 @@ unset NODE_ENV
 #info "Building Docker image..."
 #info "Building Docker image..."
 if [ "${BUILD_ENV}" == "dev" ]; then
-    (eval $(minikube docker-env) && docker build -t ${SERVICE}:${VERSION} -f ./deployment/superpower/app/Dockerfile .)
+    (eval $(minikube docker-env) && docker build \
+        --build-arg CENTRAL_LICENSE_KEY=${CENTRAL_LICENSE_KEY} \
+        -t ${SERVICE}:${VERSION} \
+        -f ./deployment/superpower/app/Dockerfile .)
 else
     docker buildx build --push \
         --platform=linux/arm64 \
+        --build-arg CENTRAL_LICENSE_KEY=${CENTRAL_LICENSE_KEY} \
         -t ${AWS_ECR_URL}/${SERVICE}:${VERSION} \
         -f ./Dockerfile .
 fi
