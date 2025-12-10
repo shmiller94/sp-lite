@@ -1,6 +1,6 @@
 import {
+  AT_HOME_PRICE,
   COLLECTION_METHODS,
-  getAtHomePrice,
   type CollectionOptionType,
 } from '@/const';
 import { Address, HealthcareService, Order } from '@/types/api';
@@ -67,12 +67,9 @@ export const getCollectionMethods = (
     return [];
   }
 
-  const state = primaryAddress.state;
-  const atHomePrice = getAtHomePrice(state);
-
   // If user is admin, allow in-lab options regardless of state
   if (isAdmin) {
-    return [createInLabOption(), createAtHomedOption({ price: atHomePrice })];
+    return [createInLabOption(), createAtHomedOption({ price: AT_HOME_PRICE })];
   }
 
   if (!service.supportsLabOrder) {
@@ -81,9 +78,9 @@ export const getCollectionMethods = (
         disabled: true,
         description: "This service doesn't support in-lab",
       }),
-      createAtHomedOption({ price: atHomePrice }),
+      createAtHomedOption({ price: AT_HOME_PRICE }),
     ];
   }
 
-  return [createInLabOption(), createAtHomedOption({ price: atHomePrice })];
+  return [createInLabOption(), createAtHomedOption({ price: AT_HOME_PRICE })];
 };
