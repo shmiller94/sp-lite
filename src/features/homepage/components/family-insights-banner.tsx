@@ -128,10 +128,7 @@ const FamilyInsightsDialog = ({ children }: { children: ReactNode }) => {
               </li>
             ))}
           </ul>
-          <Body2>
-            Have family members you think may also be at risk? Help them take
-            action!
-          </Body2>
+          <Body2>Have family members you think may also be at risk?</Body2>
         </div>
         <Button
           size={width < 1024 ? 'medium' : 'small'}
