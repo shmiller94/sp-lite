@@ -37,7 +37,7 @@ import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 import { cn } from '@/lib/utils';
 import { Visibility } from '@/types/api';
 
-import { useChat } from '../api/get-chat';
+import { useHistory } from '../api/get-history';
 import { useMessages } from '../api/get-messages';
 import { useUpdateChat } from '../api/update-chat';
 import {
@@ -73,24 +73,28 @@ export function ChatShareDialog({
       staleTime: 0,
     },
   });
-  const chatQuery = useChat({
-    chatId,
+  const historyQuery = useHistory({
     queryConfig: {
       enabled,
       staleTime: 0,
     },
   });
 
+  const selectedChat = useMemo(
+    () => historyQuery.data?.find((c) => c.id === chatId),
+    [historyQuery.data, chatId],
+  );
+
   const lastUserMessage = getLastUserMessage(messagesQuery.data);
   const lastAiMessage = getLastAiMessage(messagesQuery.data);
 
   // Sync local state only when the server value changes.
   useEffect(() => {
-    const serverVisibility = chatQuery.data?.visibility;
+    const serverVisibility = selectedChat?.visibility;
     if (serverVisibility) {
       setVisibility(serverVisibility);
     }
-  }, [chatQuery.data?.visibility]);
+  }, [selectedChat?.visibility]);
 
   const updateChatMutation = useUpdateChat({});
 
@@ -184,7 +188,7 @@ export function ChatShareDialog({
           </Body1>
         </div>
         <div className="flex items-center justify-center gap-2.5">
-          {chatQuery.isLoading || messagesQuery.isLoading ? (
+          {historyQuery.isLoading || messagesQuery.isLoading ? (
             <Skeleton className="h-7 w-12 rounded-full" />
           ) : (
             <TooltipProvider>
