@@ -233,18 +233,18 @@ export function ChatShareDialog({
         <SheetTrigger asChild>
           <Trigger />
         </SheetTrigger>
-        <SheetContent className="flex flex-col gap-0 overflow-hidden rounded-t-2xl p-0">
+        <SheetContent className="flex max-h-[85vh] flex-col gap-0 rounded-t-2xl p-0">
           <SheetHeader className="sr-only px-6 pb-4 pt-12">
             <SheetTitle className="flex items-center gap-2 text-lg">
               <AIIcon className="-mt-0.5" />
               Chat Settings
             </SheetTitle>
-            <SheetClose asChild className="-mt-4">
-              <div className="flex h-[44px] min-w-[44px] cursor-pointer items-center justify-center rounded-full">
-                <X className="h-4 min-w-4" />
-              </div>
-            </SheetClose>
           </SheetHeader>
+          <SheetClose asChild className="absolute right-2 top-2 z-10">
+            <div className="flex h-[44px] min-w-[44px] cursor-pointer items-center justify-center rounded-full">
+              <X className="h-4 min-w-4 text-white" />
+            </div>
+          </SheetClose>
           {content()}
         </SheetContent>
       </Sheet>
