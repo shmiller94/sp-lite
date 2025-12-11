@@ -50,8 +50,8 @@ export function BiologicalAgeStep({ next }: BiologicalAgeStepProps) {
             </H2>
             {ageDifference !== null && (
               <Body1 className="mb-8 max-w-lg text-center text-white/80 delay-100 animate-in fade-in">
-                You are {Math.abs(ageDifference)} years younger than your
-                chronological age!
+                You are {Math.abs(ageDifference)} years{' '}
+                {isYounger ? 'younger' : 'older'} than your chronological age!
               </Body1>
             )}
             <Button
