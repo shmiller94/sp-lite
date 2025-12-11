@@ -60,7 +60,11 @@ export function Chat({
       },
       prepareSendMessagesRequest({ messages, id }) {
         return {
-          body: { message: messages[messages.length - 1], id },
+          body: {
+            message: messages[messages.length - 1],
+            id,
+            _followup: false,
+          },
           credentials: 'include',
         };
       },

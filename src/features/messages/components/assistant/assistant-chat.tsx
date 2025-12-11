@@ -1,16 +1,15 @@
 import { useChat } from '@ai-sdk/react';
-import { DefaultChatTransport, FileUIPart, type DataUIPart } from 'ai';
-import { useRef, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { DefaultChatTransport, FileUIPart } from 'ai';
+import { useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { z } from 'zod';
 
 import { env } from '@/config/env';
+import { useCreateFollowups } from '@/features/messages/api/create-followups';
 import { useHistory } from '@/features/messages/api/get-history';
 import { MultimodalInput } from '@/features/messages/components/ai/multimodal-input';
 import { AssistantMessages } from '@/features/messages/components/assistant/assistant-messages';
-import { useSuggestions } from '@/features/messages/hooks/use-suggestions';
 import { useAssistantStore } from '@/features/messages/stores/assistant-store';
-import { getFollowupString } from '@/features/messages/utils/data-parts';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { cn, getActiveLogin } from '@/lib/utils';
 import { generateUUID } from '@/utils/generate-uiud';
@@ -29,6 +28,7 @@ export function AssistantChat({
   const { refetch } = useHistory();
   const { track } = useAnalytics();
   const { pathname } = useLocation();
+  const queryClient = useQueryClient();
 
   const [id] = useState<string>(chatId);
 
@@ -39,7 +39,8 @@ export function AssistantChat({
   const input = useAssistantStore((s) => s.input);
   const setInput = useAssistantStore((s) => s.setInput);
   const [attachments, setAttachments] = useState<Array<FileUIPart>>([]);
-  const updateSuggestionsRef = useRef<(s: string | string[]) => void>(() => {});
+
+  const [shouldGenerateFollowups, setShouldGenerateFollowups] = useState(false);
 
   const transportHeaders: Record<string, string> = {
     Accept: 'application/json',
@@ -68,19 +69,15 @@ export function AssistantChat({
           body: {
             message: messages[messages.length - 1],
             id: hasUserMessage ? id : null,
+            _followup: false,
           },
           credentials: 'include',
         };
       },
     }),
-    dataPartSchemas: { followup: z.string() },
     messages: [],
     experimental_throttle: 100,
     generateId: generateUUID,
-    onData: (part: DataUIPart<Record<string, unknown>>) => {
-      const s = getFollowupString(part);
-      if (s) updateSuggestionsRef.current(s);
-    },
     onFinish: ({ message }) => {
       refetch();
 
@@ -104,21 +101,58 @@ export function AssistantChat({
         track('received_message_ai', {
           response_time: responseTime,
         });
+
+        const assistantText = (message.parts || [])
+          .map((p) => (p.type === 'text' ? p.text : ''))
+          .join('')
+          .trim();
+        if (assistantText.length > 0) {
+          setShouldGenerateFollowups(true);
+        }
       }
     },
   });
 
-  const { suggestions, updateSuggestions, clearSuggestions } = useSuggestions({
-    enabled: isActive && messages.length === 0,
-    max: 3,
-    context: `I'm currently visiting ${pathname} in the Superpower app, please give me some suggestions based on this.`,
-  });
-  // Keep ref in sync for the onData callback defined above.
-  updateSuggestionsRef.current = updateSuggestions;
+  const followupsContext = `I'm currently visiting ${pathname} in the Superpower app, please give me some suggestions based on this.`;
+
+  const wantsInitialFollowups = isActive && messages.length === 0;
 
   const lastIsAssistant = messages[messages.length - 1]?.role === 'assistant';
-  const visibleSuggestions =
-    messages.length === 0 ? suggestions : lastIsAssistant ? suggestions : [];
+
+  const assistantContext = useMemo(() => {
+    if (!lastIsAssistant) return '';
+
+    const m = messages[messages.length - 1];
+    return (m.parts || [])
+      .map((p) => (p.type === 'text' ? p.text : ''))
+      .join('')
+      .trim();
+  }, [messages, lastIsAssistant]);
+
+  const wantsAssistantFollowups = Boolean(
+    isActive && shouldGenerateFollowups && lastIsAssistant && assistantContext,
+  );
+
+  let followupsQueryContext: string | null = null;
+
+  if (wantsInitialFollowups) {
+    followupsQueryContext = followupsContext;
+  } else if (wantsAssistantFollowups) {
+    followupsQueryContext = assistantContext;
+  }
+
+  const { data: followupsData = [] } = useCreateFollowups({
+    context: followupsQueryContext ?? '',
+    count: 3,
+    enabled: Boolean(followupsQueryContext),
+  });
+
+  const showInitialSuggestions = messages.length === 0;
+  const showAssistantSuggestions = messages.length !== 0 && lastIsAssistant;
+  const shouldShowSuggestions =
+    showInitialSuggestions || showAssistantSuggestions;
+
+  const visibleSuggestions = shouldShowSuggestions ? followupsData : [];
 
   return (
     <div
@@ -157,7 +191,17 @@ export function AssistantChat({
             setInput={setInput}
             sendMessage={(message, options) => {
               setInput('');
-              clearSuggestions();
+              if (assistantContext) {
+                queryClient.cancelQueries({
+                  queryKey: ['followups', assistantContext, 3],
+                });
+              }
+              if (messages.length === 0) {
+                queryClient.cancelQueries({
+                  queryKey: ['followups', followupsContext, 3],
+                });
+              }
+              setShouldGenerateFollowups(false);
               return sendMessage(message, options);
             }}
             status={status}
