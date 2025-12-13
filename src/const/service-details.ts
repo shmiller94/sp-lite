@@ -255,7 +255,7 @@ export const SERVICE_DETAILS: Record<string, ServiceDetails> = {
       {
         question: "What's included in this panel?",
         answer:
-          'Nutrients don’t act in isolation. These panels measure vitamins and minerals in the context of their pathways, cofactors, and interactions - giving you a more accurate picture of true nutritional balance. \n\n This bundle includes:\n- **Vitamin E** — antioxidant protection & cell stability\n- **Vitamin K** — bone & heart health, clotting balance\n- **Vitamin C** — immune defense, collagen, iron absorption\n- **Selenium** — thyroid support & antioxidant defense\n- **Magnesium (RBC)** — energy, nerves & muscle function',
+          'Nutrients don’t act in isolation. These panels measure vitamins and minerals in the context of their pathways, cofactors, and interactions - giving you a more accurate picture of true nutritional balance. \n\n This bundle includes:\n- **Vitamin E** — antioxidant protection & cell stability\n- **Vitamin K** — bone & heart health, clotting balance\n- **Vitamin C** — immune defense, collagen, iron absorption\n- **Selenium** — thyroid support & antioxidant defense\n- **Magnesium (RBC)** — energy, nerves & muscle function\n\nNote: Vitamin K is not available in NY or NJ.',
       },
       {
         question: 'Why is this test important?',
