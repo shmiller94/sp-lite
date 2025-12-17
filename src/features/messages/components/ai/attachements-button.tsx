@@ -28,7 +28,7 @@ function PureAttachmentsButton({
               event.preventDefault();
               fileInputRef.current?.click();
             }}
-            disabled={status !== 'ready'}
+            disabled={status === 'streaming' || status === 'submitted'}
             variant="ghost"
           >
             <PlusIcon size={16} />
