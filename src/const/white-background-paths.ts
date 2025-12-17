@@ -1,1 +1,6 @@
-export const WHITE_BACKGROUND_PATHS = ['invite', 'marketplace', 'prescription'];
+export const WHITE_BACKGROUND_PATHS = [
+  'invite',
+  'marketplace',
+  'prescription',
+  'orders',
+];

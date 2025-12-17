@@ -4,9 +4,6 @@
 
 import { useLocation } from 'react-router-dom';
 
-// TODO: Add support for restricted paths here so we can organize better
-
-// eslint-disable-next-line import/no-restricted-paths
 import { AssistantModal } from '@/features/messages/components/assistant/assistant-modal';
 import { cn } from '@/lib/utils';
 

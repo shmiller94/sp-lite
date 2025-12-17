@@ -1,7 +1,6 @@
 import { CalendarEvent } from 'calendar-link';
 import { format } from 'date-fns';
 
-import { checkLabOrderSupport, GRAIL_GALLERI_MULTI_CANCER_TEST } from '@/const';
 import { Address, CollectionMethodType, Slot } from '@/types/api';
 import { formatAddress } from '@/utils/format';
 
@@ -60,15 +59,13 @@ export const getCalendarEvent = ({
   slot,
   address,
   collectionMethod,
-  serviceName,
+  isCancerEvent = false,
 }: {
   slot: Slot;
   address: Address;
   collectionMethod: CollectionMethodType;
-  serviceName: string;
+  isCancerEvent?: boolean;
 }) => {
-  if (!checkLabOrderSupport(serviceName)) return;
-
   const labLocation = `${address?.line.join(' ')}, ${address?.city}, ${address?.state}, ${address?.postalCode}`;
   const cancerEvent: CalendarEvent = {
     title: 'Superpower - Cancer Test Window',
@@ -111,7 +108,7 @@ What to have ready:
     location: labLocation,
   };
 
-  if (serviceName === GRAIL_GALLERI_MULTI_CANCER_TEST) {
+  if (isCancerEvent) {
     return cancerEvent;
   }
 

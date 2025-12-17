@@ -8,27 +8,22 @@ import { TestimonialCarousel } from '@/components/shared/testimonials/components
 import { Button } from '@/components/ui/button';
 import { H3, H4 } from '@/components/ui/typography';
 import { useTestKitServices } from '@/features/onboarding/hooks/use-test-kits';
-import { useCreateBulkOrders } from '@/features/orders/api/create-bulk-orders';
-import { CreateOrderInput } from '@/features/orders/api/create-order';
+import { useCreateCredit } from '@/features/orders/api/credits';
 import { usePaymentMethodSelection } from '@/features/settings/hooks';
 import * as Payment from '@/features/users/components/payment';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
-import { OrderStatus } from '@/types/api';
 
 import { useOnboardingStepper } from '../onboarding-steps/onboarding-stepper';
 import { ItemPreviews } from '../shared/item-previews';
 import { UpsellServiceCard } from '../shared/upsell-service-card';
 
-import { TestKitStepper } from './test-kit-stepper';
-
 const CheckoutStepContent = () => {
   const { services, selectedServices, selectService } = useTestKitServices();
   const { data: user } = useUser();
-  const { mutateAsync, isPending, error } = useCreateBulkOrders();
+  const { mutateAsync, isPending, error } = useCreateCredit();
   const { track } = useAnalytics();
-  const { next: nextTestKitStep } = TestKitStepper.useStepper();
   const { next: nextOnboardingStep } = useOnboardingStepper();
 
   const {
@@ -43,19 +38,15 @@ const CheckoutStepContent = () => {
     return selectedServices.reduce((acc, service) => acc + service.price, 0);
   }, [selectedServices]);
 
-  const createBulkOrdersFromServices = useCallback(async () => {
+  const createCreditsFromServices = useCallback(async () => {
     if (!user) return;
 
-    const orders: CreateOrderInput[] = selectedServices.map((service) => {
-      return {
-        serviceId: service.id,
-        location: {},
-        status: OrderStatus.draft,
+    await mutateAsync({
+      data: {
+        serviceIds: selectedServices.map((s) => s.id),
         paymentMethodId: activePaymentMethod?.externalPaymentMethodId,
-      };
+      },
     });
-
-    await mutateAsync({ data: orders });
 
     track('upsell_checkout_completed', {
       number_of_services: selectedServices.length,
@@ -66,7 +57,7 @@ const CheckoutStepContent = () => {
       payment_provider: activePaymentMethod?.paymentProvider.toLowerCase(),
     });
 
-    return nextTestKitStep();
+    return nextOnboardingStep();
   }, [
     user,
     selectedServices,
@@ -75,7 +66,7 @@ const CheckoutStepContent = () => {
     totalPrice,
     activePaymentMethod?.paymentProvider,
     activePaymentMethod?.externalPaymentMethodId,
-    nextTestKitStep,
+    nextOnboardingStep,
   ]);
 
   const existingOrders = useMemo(() => {
@@ -83,15 +74,11 @@ const CheckoutStepContent = () => {
   }, [services]);
 
   const handleBooking = async () => {
-    if (existingOrders && !selectedServices?.length) {
-      return nextTestKitStep();
-    }
-
     if (!selectedServices?.length) {
       return nextOnboardingStep();
     }
 
-    await createBulkOrdersFromServices();
+    await createCreditsFromServices();
   };
 
   const buttonContent = useMemo(() => {

@@ -1,6 +1,5 @@
 import {
   ADVANCED_BLOOD_PANEL,
-  CUSTOM_BLOOD_PANEL,
   GRAIL_GALLERI_MULTI_CANCER_TEST,
   GUT_MICROBIOME_ANALYSIS,
   SUPERPOWER_BLOOD_PANEL,
@@ -71,26 +70,6 @@ export const SERVICE_DETAILS: Record<string, ServiceDetails> = {
         question: 'Pre-test considerations',
         answer:
           '- Hydrate for 24 hours prior to sample collection and after your blood draw is completed.\n- No eating 10 hours prior to the appointment. The sample should be collected in a fasted state.\n- No caffeine 10 hours prior to your appointment -- just water.\n- Stop taking supplements containing biotin such as multivitamins, B-complex, or hair skin and nail vitamins. Continue taking prescribed medications.',
-      },
-    ],
-  },
-
-  [CUSTOM_BLOOD_PANEL]: {
-    faqs: [
-      {
-        question: 'Why is this test important?',
-        answer:
-          "Proactive laboratory testing can provide targeted insight into you body's current health status, identifying areas of optimal and suboptimal physiologic function. Establish a baseline or track how your body is responding to your Superpower action plan.",
-      },
-      {
-        question: 'Test Process',
-        answer:
-          '1. Order and schedule your custom blood panel.\n2. Fast and prepare for your appointment.\n3. Perform the phlebotomy visit and have your blood draw done.\n4. Receive your results within 10 days.\n5. The Superpower clinical team will review your results and create an action plan.',
-      },
-      {
-        question: 'Pre-test considerations',
-        answer:
-          '- Hydrate for 24 hours prior to sample collection and after your blood draw is completed.\n- No eating 10 hours prior to the appointment. The sample should be collected in a fasted state.\n- No caffeine 10 hours prior to your appointment -- just water.\n- Continue taking your medications and supplements as scheduled.\n- Text the Superpower SMS Concierge if you have any questions or concerns ahead of testing.',
       },
     ],
   },

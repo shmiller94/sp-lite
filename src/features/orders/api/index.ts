@@ -4,6 +4,4 @@ export * from './get-orders';
 export * from './get-phlebotomy-locations';
 export * from './get-serviceability';
 export * from './update-order';
-export * from './cancel-order';
-export * from './upgrade-order';
-export * from './complete-order';
+export * from './credits/upgrade-credit';

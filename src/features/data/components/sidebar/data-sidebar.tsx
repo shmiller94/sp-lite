@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Link } from '@/components/ui/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { H3 } from '@/components/ui/typography';
-import { useDataGating } from '@/features/data/hooks/use-data-gating';
+import { useSummary } from '@/features/summary/api/get-summary';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 import { cn } from '@/lib/utils';
 
@@ -19,16 +19,19 @@ const PureDataSidebar = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const rafIdRef = useRef<number | null>(null);
   const previousActiveCategoryRef = useRef<string | null>(null);
+  const summaryQuery = useSummary();
+  const categoriesQuery = useCategories();
+
+  const isLoading = categoriesQuery.isLoading || summaryQuery.isLoading;
+
+  const categories = categoriesQuery.data?.categories ?? [];
+  const gating = summaryQuery.data;
 
   const [searchParams] = useSearchParams();
-  const { data: categories, isLoading: isCategoriesLoading } = useCategories();
 
   const activeCategory = searchParams.get('category');
 
   const { updateCategories, clearCategories } = useDataFilterStore();
-
-  const gating = useDataGating();
-  const isLoading = isCategoriesLoading || gating.isLoading;
 
   const { width } = useWindowDimensions();
   const isMobile = useMemo(() => width < 767, [width]);
@@ -128,13 +131,13 @@ const PureDataSidebar = () => {
       />,
     );
 
-    if (!gating.hasCompletedCarePlan) {
+    if (gating && !gating.hasCompletedCarePlan) {
       return items; // only show Summary until AIAP is completed
     }
 
-    if (!categories?.categories) return [];
+    if (categories.length === 0) return [];
 
-    categories?.categories.forEach((category) => {
+    categories.forEach((category) => {
       const isActive =
         encodeCategory(category.category) ===
         encodeCategory(activeCategory ?? '');
@@ -149,12 +152,7 @@ const PureDataSidebar = () => {
     });
 
     return items;
-  }, [
-    isLoading,
-    activeCategory,
-    categories?.categories,
-    gating.hasCompletedCarePlan,
-  ]);
+  }, [isLoading, activeCategory, categories, gating]);
 
   return (
     <aside className="relative left-1/2 z-10 col-span-1 flex w-screen -translate-x-1/2 flex-col md:left-0 md:w-40 md:translate-x-0 lg:w-auto">

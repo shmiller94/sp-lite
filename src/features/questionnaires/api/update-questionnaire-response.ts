@@ -2,7 +2,6 @@ import { QuestionnaireResponse } from '@medplum/fhirtypes';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 
-import { getTimelineQueryOptions } from '@/features/homepage/api/get-timeline';
 import { getQuestionnaireResponseQueryOptions } from '@/features/questionnaires/api/get-questionnaire-response';
 import { api } from '@/lib/api-client';
 import { MutationConfig } from '@/lib/react-query';
@@ -62,9 +61,6 @@ export const useUpdateQuestionnaireResponse = ({
         queryClient.invalidateQueries({
           queryKey: getQuestionnaireResponseQueryOptions(id).queryKey,
         });
-      });
-      queryClient.invalidateQueries({
-        queryKey: getTimelineQueryOptions().queryKey,
       });
       onSuccess?.(data, variables, ...args);
     },

@@ -8,13 +8,12 @@ import {
 } from '@/const/questionnaire';
 import {
   ADVANCED_BLOOD_PANEL,
-  CUSTOM_BLOOD_PANEL,
   FATIGUE_PANEL,
   FEMALE_FERTILITY_PANEL,
   MALE_HEALTH_PANEL,
   ORGAN_AGE_PANEL,
 } from '@/const/services';
-import { useOrders } from '@/features/orders/api';
+import { useCredits } from '@/features/orders/api/credits';
 import { useQuestionnaireResponse } from '@/features/questionnaires/api/get-questionnaire-response';
 import { useServices } from '@/features/services/api';
 import { useAnalytics } from '@/hooks/use-analytics';
@@ -33,7 +32,6 @@ export const ONBOARDING_STEPS = {
   ADD_ON_PANELS: 'add-on-panels',
   TEST_KIT_STEPS: 'test-kit-steps',
   PHLEBOTOMY_BOOKING: 'phlebotomy-booking',
-  MISSION: 'mission',
 } as const satisfies Record<string, string>;
 
 export const OnboardingStepper = defineStepper(
@@ -49,7 +47,6 @@ export const OnboardingStepper = defineStepper(
   { id: ONBOARDING_STEPS.ADD_ON_PANELS },
   { id: ONBOARDING_STEPS.TEST_KIT_STEPS },
   { id: ONBOARDING_STEPS.PHLEBOTOMY_BOOKING },
-  { id: ONBOARDING_STEPS.MISSION },
 );
 
 type OnboardingStepperReturn = {
@@ -74,15 +71,6 @@ export const useOnboardingStepper = (): OnboardingStepperReturn => {
     user?.firstName && user?.lastName && user?.primaryAddress?.state,
   );
 
-  // Check user's order history for upgrade eligibility
-  const { data: ordersData, isLoading: isOrdersLoading } = useOrders();
-  const userHasAdvancedUpgrade = Boolean(
-    ordersData?.orders?.find((o) => o.serviceName === ADVANCED_BLOOD_PANEL),
-  );
-  const userHasCustomPanels = Boolean(
-    ordersData?.orders?.find((o) => o.serviceName === CUSTOM_BLOOD_PANEL),
-  );
-
   // Check intake questionnaire completion status
   const { data: intakeData, isLoading: isIntakeLoading } =
     useQuestionnaireResponse({
@@ -103,10 +91,18 @@ export const useOnboardingStepper = (): OnboardingStepperReturn => {
     rxFrontDoorIntakeData?.questionnaireResponse != null &&
     isGLP1FrontDoorExperiment(rxFrontDoorIntakeData.questionnaireResponse);
 
-  // Fetch add-on panel services to check availability
   const { data: addOnServices, isLoading: isServicesLoading } = useServices({
-    group: 'blood-panel-addon',
+    group: 'phlebotomy',
   });
+
+  const { data: creditsData } = useCredits();
+  const credits = creditsData?.credits ?? [];
+  const userHasAdvancedUpgrade = credits.find(
+    (c) => c.serviceName === ADVANCED_BLOOD_PANEL,
+  );
+  const userHasOrganAge = credits.find(
+    (c) => c.serviceName === ORGAN_AGE_PANEL,
+  );
 
   // Check if specific panels are available
   const services = addOnServices?.services;
@@ -142,7 +138,6 @@ export const useOnboardingStepper = (): OnboardingStepperReturn => {
 
   const isLoading =
     isUserLoading ||
-    isOrdersLoading ||
     isIntakeLoading ||
     isRxFrontDoorIntakeLoading ||
     isServicesLoading;
@@ -170,11 +165,15 @@ export const useOnboardingStepper = (): OnboardingStepperReturn => {
     }
 
     // User already has advanced upgrade
-    if (userHasAdvancedUpgrade)
+    if (userHasAdvancedUpgrade) {
       excluded.push(ONBOARDING_STEPS.ADVANCED_UPGRADE);
+    }
+    if (userHasOrganAge) {
+      excluded.push(ONBOARDING_STEPS.ORGAN_AGE);
+    }
 
     // User has custom panels, or purchased a GLP-1 front-door experiment - skip most upsells
-    if (userHasCustomPanels || isFrontDoorExperiment) {
+    if (isFrontDoorExperiment) {
       excluded.push(
         ONBOARDING_STEPS.ADVANCED_UPGRADE,
         ONBOARDING_STEPS.BUNDLED_DISCOUNT,
@@ -200,7 +199,6 @@ export const useOnboardingStepper = (): OnboardingStepperReturn => {
     hasIncompleteRxFrontDoorIntake,
     isFrontDoorExperiment,
     userHasAdvancedUpgrade,
-    userHasCustomPanels,
     hasOrganAge,
     hasFatigue,
     hasHormone,

@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-restricted-paths
 import type { Area } from '@/features/digital-twin/types';
 
 export const CATEGORY_MAP: Record<string, Area | undefined> = {

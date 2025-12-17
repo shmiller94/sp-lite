@@ -21,7 +21,7 @@ const buttonVariants = cva(
         'glass-outline':
           'border border-white/10 bg-white/10 text-white backdrop-blur-xl hover:bg-white/20',
         link: 'text-primary underline-offset-4 hover:underline',
-        white: 'bg-white text-zinc-900 hover:bg-white/90',
+        white: 'border bg-white text-zinc-900 hover:bg-white/90',
       },
       size: {
         default: 'px-5 py-3.5 text-base',

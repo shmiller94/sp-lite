@@ -1,5 +1,4 @@
-import { useOrders } from '@/features/orders/api';
-import { OrderStatus } from '@/types/api';
+import { useCredits } from '../api/credits/get-credits';
 
 interface UseHasCreditProps {
   serviceName: string;
@@ -11,19 +10,17 @@ interface UseHasCreditProps {
  * @returns
  */
 export const useHasCredit = ({ serviceName }: UseHasCreditProps) => {
-  const ordersQuery = useOrders({});
+  const creditsQuery = useCredits({});
 
-  const draftOrders = ordersQuery.data?.orders?.filter(
-    (o) => o.status === OrderStatus.draft,
-  );
+  const draftCredits = creditsQuery.data?.credits ?? [];
 
-  const existingDraftOrder = draftOrders?.find(
+  const existingCredit = draftCredits?.find(
     (o) => o.serviceName === serviceName,
   );
 
   return {
-    isCreditLoading: ordersQuery.isLoading,
-    credit: existingDraftOrder,
-    hasCredit: !!existingDraftOrder,
+    isCreditLoading: creditsQuery.isLoading,
+    credit: existingCredit,
+    hasCredit: !!existingCredit,
   };
 };

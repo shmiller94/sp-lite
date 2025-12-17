@@ -2,19 +2,20 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 import { StatusFilterOptionType } from '@/features/data/types/filters';
+import { RequestGroup } from '@/types/api';
 
 interface DataFilterStore {
   selectedRange: StatusFilterOptionType;
   selectedCategories: string[];
-  selectedOrderId?: string;
+  selectedOrder?: RequestGroup;
   searchQuery: string;
   updateRange: (selectedRange: StatusFilterOptionType) => void;
   updateCategories: (selectedCategories: string[]) => void;
-  updateOrderId: (selectedOrderId: string) => void;
+  updateSelectedOrder: (selectedOrder?: RequestGroup) => void;
   updateSearchQuery: (searchQuery: string) => void;
   clearRange: () => void;
   clearCategories: () => void;
-  clearOrderId: () => void;
+  clearSelectedOrder: () => void;
   clearSearchQuery: () => void;
 }
 
@@ -23,15 +24,15 @@ export const useDataFilterStore = create<DataFilterStore>()(
     (set) => ({
       selectedRange: 'all',
       selectedCategories: [],
-      selectedOrderId: undefined,
+      selectedOrder: undefined,
       searchQuery: '',
       updateRange: (selectedRange) => set({ selectedRange }),
       updateCategories: (selectedCategories) => set({ selectedCategories }),
-      updateOrderId: (selectedOrderId) => set({ selectedOrderId }),
+      updateSelectedOrder: (selectedOrder) => set({ selectedOrder }),
       updateSearchQuery: (searchQuery) => set({ searchQuery }),
       clearRange: () => set({ selectedRange: 'all' }),
       clearCategories: () => set({ selectedCategories: [] }),
-      clearOrderId: () => set({ selectedOrderId: undefined }),
+      clearSelectedOrder: () => set({ selectedOrder: undefined }),
       clearSearchQuery: () => set({ searchQuery: '' }),
     }),
     { name: 'DataFilterStore' },

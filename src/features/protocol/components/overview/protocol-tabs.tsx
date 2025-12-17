@@ -10,7 +10,6 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 
 import { Protocol } from '../../api';
-import { useServicesForProtocols } from '../../hooks/use-services-for-protocols';
 import { isActivityInProtocol } from '../../utils/protocol-activity';
 import { ProtocolBook } from '../protocol-book';
 import { ProtocolItemRow } from '../protocol-item-row';
@@ -42,8 +41,6 @@ export const ProtocolTabs = ({
 }) => {
   const [activeTab, setActiveTab] = useState<ProtocolTabValue>('products');
   const isMobile = useIsMobile();
-  const historicalIds = (historicalProtocols ?? []).map((p) => p.id);
-  const { servicesMap } = useServicesForProtocols(historicalIds);
 
   const tabsToShow = PROTOCOL_TABS.filter((tab) => {
     switch (tab.value) {
@@ -186,9 +183,7 @@ export const ProtocolTabs = ({
         return historicalProtocols && historicalProtocols.length > 0 ? (
           <div className="flex flex-col gap-4 lg:flex-row lg:flex-wrap lg:gap-12">
             {historicalProtocols.map((historicalProtocol) => {
-              const info = servicesMap.get(historicalProtocol.id);
-              const associatedOrder = info?.order;
-              const coverImage = info?.coverImage;
+              const supportingInfo = historicalProtocol.supportingInfo;
 
               return (
                 <Link
@@ -207,7 +202,8 @@ export const ProtocolTabs = ({
                               'DD MMM, YYYY',
                             )
                       }
-                      coverImage={coverImage}
+                      // TODO: figure out image when there are > 1 supporting info elements
+                      coverImage={'/services/custom_blood_panel.pngs'}
                     />
                   </div>
                   <div className="lg:hidden">
@@ -215,9 +211,9 @@ export const ProtocolTabs = ({
                     <Body2 className="text-secondary">
                       {moment(historicalProtocol.created).format('DD MMM YYYY')}
                     </Body2>
-                    {associatedOrder && (
+                    {supportingInfo.length > 0 && (
                       <Body2 className="text-secondary">
-                        {associatedOrder.serviceName}
+                        {supportingInfo.map((si) => si.display).join(', ')}
                       </Body2>
                     )}
                   </div>

@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { NotFoundRoute } from '@/app/routes/not-found';
 import { Spinner } from '@/components/ui/spinner';
 import { useOrders } from '@/features/orders/api';
-import { HealthcareServiceReschedule } from '@/features/orders/components/reschedule';
+import { RescheduleFlow } from '@/features/orders/components/reschedule';
 import { useServices } from '@/features/services/api';
 
 export const OrderRoute = () => {
@@ -24,16 +24,13 @@ export const OrderRoute = () => {
     return <NotFoundRoute />;
   }
 
-  const order = getOrdersQuery.data?.orders?.find((o) => o.id === id);
-  const service = getServicesQuery.data?.services?.find(
-    (s) => s.id === order?.serviceId,
+  const requestGroup = getOrdersQuery.data?.requestGroups?.find(
+    (rg) => rg.id === id,
   );
 
-  if (!order) {
+  if (!requestGroup) {
     return <NotFoundRoute />;
   }
 
-  return (
-    <HealthcareServiceReschedule order={order} healthcareService={service} />
-  );
+  return <RescheduleFlow requestGroup={requestGroup} />;
 };

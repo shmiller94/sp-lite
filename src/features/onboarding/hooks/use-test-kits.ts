@@ -81,9 +81,11 @@ export const useTestKitServices = (): UseTestKitServicesReturn => {
 
   const order = useCallback(
     (serviceId: string) => {
-      return ordersData?.orders?.find((order) => order.serviceId === serviceId);
+      return ordersData?.requestGroups
+        ?.flatMap((rg) => rg.orders)
+        ?.find((order) => order.serviceId === serviceId);
     },
-    [ordersData?.orders],
+    [ordersData?.requestGroups],
   );
 
   const services = useMemo(() => {

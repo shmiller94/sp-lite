@@ -5,7 +5,6 @@ import { forwardRef, type ButtonHTMLAttributes } from 'react';
 import { Body2, H3 } from '@/components/ui/typography';
 import { useBiomarkers } from '@/features/data/api';
 import { biomarkerStatusCount } from '@/features/data/utils/biomarkers-status-count';
-import { useOrders } from '@/features/orders/api';
 import { cn } from '@/lib/utils';
 
 import { STATUS_TO_COLOR } from '../../../const/status-to-color';
@@ -79,12 +78,12 @@ export const BiomarkersDistributionBar = ({
   enableToggle?: boolean;
 }) => {
   const { selectedRange, updateRange } = useDataFilterStore();
-  const { data: biomarkers } = useBiomarkers();
-  const { data: orders } = useOrders();
+  const biomarkersQuery = useBiomarkers();
+
+  const biomarkers = biomarkersQuery.data?.biomarkers ?? [];
 
   const filteredBiomarkers = useFilteredBiomarkers({
-    biomarkers: biomarkers?.biomarkers,
-    orders: orders?.orders,
+    biomarkers: biomarkers,
     enabledFilters: {
       range: false,
       categories: true,

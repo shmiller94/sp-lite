@@ -2,15 +2,8 @@ import { useEffect } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Body1 } from '@/components/ui/typography';
-import { AT_HOME_PRICE } from '@/const';
 import { cn } from '@/lib/utils';
-import {
-  Address,
-  CollectionMethodType,
-  HealthcareService,
-  Slot,
-} from '@/types/api';
-import { formatMoney } from '@/utils/format-money';
+import { Address, CollectionMethodType, Slot } from '@/types/api';
 
 import { SchedulerDays, SchedulerHeading, SchedulerTimes } from './components';
 import { SchedulerStoreProvider, useScheduler } from './stores/scheduler';
@@ -18,12 +11,12 @@ import { SchedulerStoreProvider, useScheduler } from './stores/scheduler';
 interface Props {
   collectionMethod: CollectionMethodType;
   address: Address;
-  service: HealthcareService;
   onSlotUpdate?: (slot: Slot | null, tz: string) => void;
   numDays?: number;
   className?: string;
   displayCancellationNote?: boolean;
   showCreateBtn?: boolean;
+  isAdvisory?: boolean;
 }
 
 /*
@@ -38,20 +31,20 @@ export function Scheduler(props: Props) {
     className,
     collectionMethod,
     address,
-    service,
     numDays,
     displayCancellationNote = false,
     showCreateBtn = true,
+    isAdvisory = false,
     ...rest
   } = props;
 
   return (
     <SchedulerStoreProvider
       address={address}
-      service={service}
       collectionMethod={collectionMethod}
       numDays={numDays}
       showCreateBtn={showCreateBtn}
+      isAdvisory={isAdvisory}
       {...rest}
     >
       <SchedulerConsumer
@@ -91,9 +84,8 @@ function SchedulerConsumer({
           <div className="mt-6">
             <Body1 className="text-zinc-500">
               Rescheduling or cancelling less than 24 hours in advance of your
-              scheduled appointment will result in a{' '}
-              {formatMoney(AT_HOME_PRICE)} re-booking fee. Refer to our Terms of
-              Service for more details.
+              scheduled appointment will result in a re-booking fee. Refer to
+              our Terms of Service for more details.
             </Body1>
           </div>
         ) : null}

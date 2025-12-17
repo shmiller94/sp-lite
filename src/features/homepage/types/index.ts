@@ -6,7 +6,7 @@ export interface HomepageState {
   readonly hasActionableOrders: boolean;
   readonly hasCompletedActionPlan: boolean;
   readonly hasMultipleActionPlans: boolean;
-  readonly hasActiveBloodPanelOrders: boolean;
+  readonly hasActiveNonLabOrders: boolean;
 }
 
 export interface CardConfig {

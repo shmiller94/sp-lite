@@ -54,53 +54,6 @@ module.exports = {
           },
         ],
         '@typescript-eslint/no-unused-vars': 'off',
-        'import/no-restricted-paths': [
-          'error',
-          {
-            zones: [
-              // disables cross-feature imports:
-              // eg. src/features/onboarding should not import from src/features/home, etc.
-
-              // We disabled that feature on 09/06/2024 NM
-              // Our codebase is largely connected by now and splitting this up will cause A LOT of pain
-
-              //  {
-              //    target: './src/features/auth',
-              //    from: './src/features',
-              //    except: ['./auth'],
-              //  },
-
-              // however, we do enforce unidirectional codebase:
-
-              // e.g. src/app can import from src/features but not the other way around
-              {
-                target: './src/features',
-                from: './src/app',
-              },
-
-              // e.g src/features and src/app can import from these shared modules but not the other way around
-              {
-                target: [
-                  './src/components',
-                  './src/hooks',
-                  './src/lib',
-                  './src/types',
-                  './src/utils',
-                  './src/const',
-                ],
-                from: ['./src/features', './src/app'],
-                // exception here to import useTask to check onboarding state in auth.tsx
-                // exception 2 here to import AddressDialog in app layout
-                // exception 3 here to import ConsentModal in app layout
-                except: [
-                  './tasks/api/get-task.ts',
-                  './users/components/dialogs/address-dialog.tsx',
-                  './consent/components/consent-dialog',
-                ],
-              },
-            ],
-          },
-        ],
         'import/no-cycle': 'error',
         'linebreak-style': ['error', 'unix'],
         'react/prop-types': 'off',

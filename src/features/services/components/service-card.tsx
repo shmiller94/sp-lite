@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { ProgressiveImage } from '@/components/ui/progressive-image';
 import { Body1, Body2, Body3, H4 } from '@/components/ui/typography';
 import { HealthcareService, Order } from '@/types/api';
-import { customDisplayNameForService } from '@/utils/display-name-for-service';
 import { formatMoney } from '@/utils/format-money';
 import { getServiceBadge, getServiceImage } from '@/utils/service';
 
@@ -57,8 +56,6 @@ const DesktopCard = ({
     );
   };
 
-  const displayName = customDisplayNameForService(service);
-
   return (
     <div
       role="button"
@@ -91,7 +88,7 @@ const DesktopCard = ({
 
       <div className="flex flex-col gap-1">
         <div className="flex justify-between gap-2">
-          <H4 className="truncate">{displayName}</H4>
+          <H4 className="truncate">{service.name}</H4>
           {service.price > 0 ? <H4>{formatMoney(service.price)}</H4> : null}
         </div>
         <Body1 className="text-left text-secondary">
@@ -112,7 +109,6 @@ const MobileCard = ({
   draftOrder?: Order;
 }) => {
   const navigate = useNavigate();
-  const displayName = customDisplayNameForService(service);
 
   return (
     <div
@@ -137,7 +133,7 @@ const MobileCard = ({
         <Body3 className="text-left text-secondary">
           {service.additionalClassification[0]}
         </Body3>
-        <Body2 className="line-clamp-1 text-left">{displayName}</Body2>
+        <Body2 className="line-clamp-1 text-left">{service.name}</Body2>
 
         {service.price > 0 ? (
           <Body2 className="text-left">{formatMoney(service.price)}</Body2>

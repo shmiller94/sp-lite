@@ -18,7 +18,7 @@ const HormonePanelContent = () => {
 
   // Get the add-on services for the user
   const { data, isLoading: isServicesLoading } = useServices({
-    group: 'blood-panel-addon',
+    group: 'phlebotomy',
   });
 
   const isMale = user?.gender?.toLowerCase() === 'male';
@@ -180,7 +180,7 @@ const ProductInfo = ({ className }: { className?: string }) => {
 const ServiceInfoCard = ({ className }: { className?: string }) => {
   const { data: user } = useUser();
   const { data } = useServices({
-    group: 'blood-panel-addon',
+    group: 'phlebotomy',
   });
 
   const isMale = user?.gender?.toLowerCase() === 'male';

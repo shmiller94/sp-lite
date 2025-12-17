@@ -20,7 +20,6 @@ export const REVEAL_STEPS = {
   ORDER_SUMMARY: 'order-summary',
   PRODUCT_CHECKOUT: 'product-checkout',
   SERVICE_CHECKOUT: 'service-checkout',
-  SERVICE_BOOKING: 'service-booking',
   RX_QUESTIONNAIRE: 'rx-questionnaire',
 } as const satisfies Record<string, string>;
 
@@ -39,7 +38,6 @@ export const createRevealStepper = (goalStepIds: string[]) => {
     { id: REVEAL_STEPS.ORDER_SUMMARY },
     { id: REVEAL_STEPS.PRODUCT_CHECKOUT },
     { id: REVEAL_STEPS.SERVICE_CHECKOUT },
-    { id: REVEAL_STEPS.SERVICE_BOOKING },
     { id: REVEAL_STEPS.RX_QUESTIONNAIRE },
   ] as const;
 
@@ -105,18 +103,6 @@ function deriveInitialStep(
       continue;
     }
 
-    // Skip service booking if all services are booked
-    if (step === REVEAL_STEPS.SERVICE_BOOKING) {
-      const allServicesBooked =
-        fulfillmentStates.services &&
-        Object.values(fulfillmentStates.services).every(
-          (status) => status === 'BOOKED',
-        );
-      if (allServicesBooked) {
-        continue;
-      }
-    }
-
     // Skip RX questionnaire if all RX items are completed
     if (step === REVEAL_STEPS.RX_QUESTIONNAIRE) {
       const rxItems = revealStatus.reveal.protocolOrder?.rxItems ?? [];
@@ -178,7 +164,6 @@ export const useRevealStepper = (
       REVEAL_STEPS.ORDER_SUMMARY,
       REVEAL_STEPS.PRODUCT_CHECKOUT,
       REVEAL_STEPS.SERVICE_CHECKOUT,
-      REVEAL_STEPS.SERVICE_BOOKING,
       REVEAL_STEPS.RX_QUESTIONNAIRE,
     ],
     [protocol?.goals],

@@ -32,6 +32,7 @@ const biomarker: Biomarker = {
       status: 'OPTIMAL',
       source: 'quest',
       component: [],
+      orderIds: [],
     },
     {
       id: '2',
@@ -44,6 +45,7 @@ const biomarker: Biomarker = {
       status: 'OPTIMAL',
       source: 'quest',
       component: [],
+      orderIds: [],
     },
     {
       id: '3',
@@ -56,6 +58,7 @@ const biomarker: Biomarker = {
       status: 'OPTIMAL',
       source: 'quest',
       component: [],
+      orderIds: [],
     },
     {
       id: '4',
@@ -68,6 +71,7 @@ const biomarker: Biomarker = {
       status: 'OPTIMAL',
       source: 'quest',
       component: [],
+      orderIds: [],
     },
     {
       id: '5',
@@ -80,6 +84,7 @@ const biomarker: Biomarker = {
       status: 'OPTIMAL',
       source: 'quest',
       component: [],
+      orderIds: [],
     },
     {
       id: '6',
@@ -92,6 +97,7 @@ const biomarker: Biomarker = {
       status: 'OPTIMAL',
       source: 'quest',
       component: [],
+      orderIds: [],
     },
   ],
   metadata: {
@@ -301,6 +307,7 @@ const singleValueBiomarker: Biomarker = {
       status: 'OPTIMAL',
       source: 'quest',
       component: [],
+      orderIds: [],
     },
   ],
   metadata: {
@@ -391,6 +398,7 @@ const extremeBoundaryBiomarker: Biomarker = {
       status: 'OPTIMAL',
       source: 'quest',
       component: [],
+      orderIds: [],
     },
     {
       id: '2',
@@ -403,6 +411,7 @@ const extremeBoundaryBiomarker: Biomarker = {
       status: 'HIGH',
       source: 'quest',
       component: [],
+      orderIds: [],
     },
     {
       id: '3',
@@ -415,6 +424,7 @@ const extremeBoundaryBiomarker: Biomarker = {
       status: 'LOW',
       source: 'quest',
       component: [],
+      orderIds: [],
     },
     {
       id: '4',
@@ -427,6 +437,7 @@ const extremeBoundaryBiomarker: Biomarker = {
       status: 'LOW',
       source: 'quest',
       component: [],
+      orderIds: [],
     },
     {
       id: '5',
@@ -439,6 +450,7 @@ const extremeBoundaryBiomarker: Biomarker = {
       status: 'HIGH',
       source: 'quest',
       component: [],
+      orderIds: [],
     },
     {
       id: '6',
@@ -451,6 +463,7 @@ const extremeBoundaryBiomarker: Biomarker = {
       status: 'OPTIMAL',
       source: 'quest',
       component: [],
+      orderIds: [],
     },
     {
       id: '7',
@@ -463,6 +476,7 @@ const extremeBoundaryBiomarker: Biomarker = {
       status: 'LOW',
       source: 'quest',
       component: [],
+      orderIds: [],
     },
     {
       id: '8',
@@ -475,6 +489,7 @@ const extremeBoundaryBiomarker: Biomarker = {
       status: 'LOW',
       source: 'quest',
       component: [],
+      orderIds: [],
     },
   ],
   metadata: {
@@ -656,6 +671,7 @@ const extremeDateClusteringBiomarker: Biomarker = {
       status: 'OPTIMAL',
       source: 'quest',
       component: [],
+      orderIds: [],
     },
     {
       id: '2',
@@ -668,6 +684,7 @@ const extremeDateClusteringBiomarker: Biomarker = {
       status: 'OPTIMAL',
       source: 'quest',
       component: [],
+      orderIds: [],
     },
     {
       id: '3',
@@ -680,6 +697,7 @@ const extremeDateClusteringBiomarker: Biomarker = {
       status: 'OPTIMAL',
       source: 'quest',
       component: [],
+      orderIds: [],
     },
     {
       id: '4',
@@ -692,6 +710,7 @@ const extremeDateClusteringBiomarker: Biomarker = {
       status: 'OPTIMAL',
       source: 'quest',
       component: [],
+      orderIds: [],
     },
     {
       id: '5',
@@ -704,6 +723,7 @@ const extremeDateClusteringBiomarker: Biomarker = {
       status: 'OPTIMAL',
       source: 'quest',
       component: [],
+      orderIds: [],
     },
   ],
   metadata: {

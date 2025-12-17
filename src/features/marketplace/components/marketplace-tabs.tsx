@@ -14,7 +14,6 @@ import {
   TabsTrigger,
   URLTabs,
 } from '@/components/ui/slider-tabs';
-import { H2 } from '@/components/ui/typography';
 import { useMarketplace } from '@/features/marketplace/api/get-marketplace';
 import { MarketplaceFilters } from '@/features/marketplace/components/marketplace-filters';
 import { MarketplaceList } from '@/features/marketplace/components/marketplace-list';
@@ -25,8 +24,6 @@ import {
 } from '@/features/marketplace/const/categories';
 import { useMarketplaceSearch } from '@/features/marketplace/hooks/use-marketplace-search';
 import { PrescriptionsList } from '@/features/prescriptions/components/prescription-list';
-import { FinishScheduleList } from '@/features/services/components/finish-schedule-list';
-import { OrdersList } from '@/features/services/components/orders-list';
 import { ServicesList } from '@/features/services/components/services-list';
 import { SupplementsList } from '@/features/supplements/components/supplements-list';
 import { useAnalytics } from '@/hooks/use-analytics';
@@ -149,12 +146,6 @@ export const MarketplaceTabs = () => {
           />
         ),
       },
-      /* ORDERS - Hidden */
-      {
-        value: 'orders',
-        label: 'Orders',
-        render: () => <MarketplaceOrdersTab />,
-      },
     ];
   }, [data, filter, handleClearSearch, isLoading, query, searchTitle]);
 
@@ -231,20 +222,5 @@ export const MarketplaceTabs = () => {
         </TabsContent>
       ))}
     </URLTabs>
-  );
-};
-
-const MarketplaceOrdersTab = () => {
-  return (
-    <div className="flex flex-col gap-8 [&>*]:flex [&>*]:flex-col [&>*]:gap-6">
-      <section>
-        <H2>To be scheduled</H2>
-        <FinishScheduleList />
-      </section>
-      <section>
-        <H2>Past orders</H2>
-        <OrdersList />
-      </section>
-    </div>
   );
 };

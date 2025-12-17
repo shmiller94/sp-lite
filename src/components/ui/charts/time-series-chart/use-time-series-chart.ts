@@ -276,6 +276,7 @@ export const useTimeSeriesChart = ({
       timestamp: nextTestTimestamp.toISOString(),
       quantity: { value: 0, comparator: 'EQUALS' as Comparator },
       component: [],
+      orderIds: [],
     };
 
     allValuesWithNextTest = [...pageValues, nextTestValue];

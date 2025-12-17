@@ -24,7 +24,6 @@ const TestKitStepsContent = (): React.ReactElement => {
           [TEST_KIT_STEPS.SELECT_GUT]: () => <Steps.SelectGutStep />,
           [TEST_KIT_STEPS.SELECT_TOXINS]: () => <Steps.SelectToxinsStep />,
           [TEST_KIT_STEPS.CHECKOUT]: () => <Steps.CheckoutStep />,
-          [TEST_KIT_STEPS.BOOKING]: () => <Steps.BookingStep />,
         })}
       </React.Fragment>
     </AnimatePresence>

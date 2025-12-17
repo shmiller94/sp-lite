@@ -9,24 +9,19 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown';
 import { toast } from '@/components/ui/sonner';
-import { useSubscriptions, useInvoice } from '@/features/settings/api';
-import { CancelMembershipDialog } from '@/features/settings/components/membership/cancel-membership-dialog';
+import { useInvoice } from '@/features/settings/api';
 import { OrderInvoiceContent } from '@/features/settings/components/purchases/orders-invoice-content';
-import { MultiPlatformOrder, Subscription } from '@/types/api';
+import { MultiPlatformOrder } from '@/types/api';
 
 interface OrderDropDownProps {
   multiPlatformOrder: MultiPlatformOrder;
 }
 export const OrderDropDown = ({ multiPlatformOrder }: OrderDropDownProps) => {
-  const { invoiceUrl, invoiceId, type } = multiPlatformOrder;
+  const { invoiceUrl, invoiceId } = multiPlatformOrder;
   const invoiceQuery = useInvoice({
     invoiceId: invoiceId as string,
     queryConfig: { enabled: !!invoiceId },
   });
-  const { data: subscriptionsData } = useSubscriptions({});
-  const superpowerMembership = subscriptionsData?.subscriptions.find(
-    (subscription) => subscription.name === 'membership',
-  );
 
   if (!invoiceUrl && !invoiceId) return null;
 
@@ -81,11 +76,6 @@ export const OrderDropDown = ({ multiPlatformOrder }: OrderDropDownProps) => {
             Download invoice
           </DropdownMenuItem>
         )}
-        {type === 'membership' &&
-          superpowerMembership &&
-          superpowerMembership.status === 'active' && (
-            <UnsubscribeMenuItem superpowerMembership={superpowerMembership} />
-          )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -111,24 +101,5 @@ const SeeDetailsMenuItem = ({
         <OrderInvoiceContent multiPlatformOrder={multiPlatformOrder} />
       </DialogContent>
     </Dialog>
-  );
-};
-
-const UnsubscribeMenuItem = ({
-  superpowerMembership,
-}: {
-  superpowerMembership: Subscription;
-}) => {
-  return (
-    <CancelMembershipDialog membership={superpowerMembership}>
-      <DropdownMenuItem
-        className="text-pink-700 focus:bg-pink-50 focus:text-pink-700"
-        onSelect={(event) => {
-          event.preventDefault();
-        }}
-      >
-        Unsubscribe
-      </DropdownMenuItem>
-    </CancelMembershipDialog>
   );
 };

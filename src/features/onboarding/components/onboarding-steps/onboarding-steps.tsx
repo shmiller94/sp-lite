@@ -74,7 +74,6 @@ const OnboardingStepsContent = (): React.ReactElement => {
           [ONBOARDING_STEPS.PHLEBOTOMY_BOOKING]: () => (
             <Steps.PhlebotomyBookingStep />
           ),
-          [ONBOARDING_STEPS.MISSION]: () => <Steps.MissionStep />,
         })}
       </React.Fragment>
     </AnimatePresence>

@@ -1,12 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 
+import { SelectableCard } from '@/components/shared/selectable-card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useServices } from '@/features/services/api';
-import { ServiceActionCard } from '@/features/services/components/service-action-card';
 import { BiomarkerRecommendedTests } from '@/types/api';
-
-import { getServiceActionUrl } from '../../utils/get-service-action-url';
+import { getServiceImage } from '@/utils/service';
 
 export const BiomarkerServiceSuggestions = ({
   recommendedTests,
@@ -26,7 +25,7 @@ export const BiomarkerServiceSuggestions = ({
 
 const SuggestedServices = ({ serviceIds }: { serviceIds: Set<string> }) => {
   const navigate = useNavigate();
-  const getServicesQuery = useServices({ group: 'blood-panel-addon' });
+  const getServicesQuery = useServices({ group: 'phlebotomy' });
 
   if (getServicesQuery.isLoading) {
     return <Skeleton className="h-[106px] w-full rounded-[20px]" />;
@@ -43,12 +42,13 @@ const SuggestedServices = ({ serviceIds }: { serviceIds: Set<string> }) => {
   if (filteredServices.length === 0) return null;
 
   return filteredServices.map((s) => (
-    <ServiceActionCard
+    <SelectableCard
       key={s.id}
-      service={s}
-      displayPrice={false}
-      toggle={() => {
-        navigate(getServiceActionUrl(s.id));
+      title={s.name}
+      imageSrc={getServiceImage(s.name)}
+      description={s.description}
+      onToggle={() => {
+        navigate(`/services/${s.id}`);
       }}
       trigger={<Button size="small">Test now</Button>}
     />

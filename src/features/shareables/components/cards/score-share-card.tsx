@@ -2,8 +2,7 @@ import { SuperpowerScoreLogo } from '@/components/shared/score-logo';
 import { Hover3D } from '@/components/ui/hover-3d';
 import { Body1, Body2 } from '@/components/ui/typography';
 import { SCORE_MESSAGES } from '@/const/score-messages';
-import { useBiomarkers } from '@/features/data/api';
-import { mostRecent } from '@/features/data/utils/most-recent-biomarker';
+import { useLatestHealthScore } from '@/features/data/api';
 import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 
@@ -14,18 +13,16 @@ export const ScoreShareCard = () => {
   // const { data: avatar } = useAvatar({
   //   username: user?.username ?? '',
   // });
-  const getBiomarkersQuery = useBiomarkers();
+  const latestHealthScoreQuery = useLatestHealthScore();
 
-  if (!user || !getBiomarkersQuery.data) {
-    return <div>No user or biomarkers found</div>;
+  if (!user || !latestHealthScoreQuery.data?.healthScore) {
+    return <div>No health score found</div>;
   }
 
   const { firstName, lastName } = user;
 
-  const latestScore = mostRecent(
-    getBiomarkersQuery.data?.biomarkers.find((b) => b.name == 'Health Score')
-      ?.value ?? [],
-  );
+  const latestHealthScore =
+    latestHealthScoreQuery.data.healthScore.quantity.value;
 
   return (
     <div className="flex min-h-96 justify-center">
@@ -57,7 +54,7 @@ export const ScoreShareCard = () => {
               <div className="flex size-full items-start justify-between gap-4 p-1">
                 <SuperpowerScoreLogo className="w-40" logoColor="white" />
                 <span className="mr-2 mt-1 text-3xl text-white">
-                  {latestScore?.quantity.value ?? 0}
+                  {latestHealthScore}
                 </span>
               </div>
               {/* {avatar && (
@@ -74,9 +71,8 @@ export const ScoreShareCard = () => {
                   {
                     SCORE_MESSAGES.find(
                       (message) =>
-                        latestScore?.quantity?.value &&
-                        latestScore?.quantity?.value >= message.range[0] &&
-                        latestScore?.quantity?.value <= message.range[1],
+                        latestHealthScore >= message.range[0] &&
+                        latestHealthScore <= message.range[1],
                     )?.message
                   }
                 </Body2>

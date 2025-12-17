@@ -1,8 +1,7 @@
 import { useDeferredValue, useMemo } from 'react';
 
-import { isBloodPanelService } from '@/const/services';
 import { mostRecent } from '@/features/data/utils/most-recent-biomarker';
-import { Biomarker, Order, OrderStatus } from '@/types/api';
+import { Biomarker, RequestGroup } from '@/types/api';
 
 import { useDataFilterStore } from '../stores/data-filter-store';
 import { StatusFilterOptionType } from '../types/filters';
@@ -10,9 +9,8 @@ import { StatusFilterOptionType } from '../types/filters';
 interface FilterBiomarkersParams {
   biomarkers: Biomarker[];
   selectedCategories: string[];
-  selectedOrderId?: string;
+  selectedOrder?: RequestGroup;
   selectedRange?: StatusFilterOptionType;
-  orders: Order[];
   searchQuery: string;
 }
 
@@ -25,9 +23,8 @@ interface FilterConfig {
 export const filterBiomarkers = ({
   biomarkers,
   selectedCategories,
-  selectedOrderId,
+  selectedOrder,
   selectedRange,
-  orders,
   searchQuery,
 }: FilterBiomarkersParams): Biomarker[] => {
   if (!biomarkers) return [];
@@ -67,30 +64,15 @@ export const filterBiomarkers = ({
     });
   }
 
-  if (selectedOrderId) {
-    const recentCompletedOrders = orders.filter(
-      (o) =>
-        o.status === OrderStatus.completed &&
-        isBloodPanelService(o.serviceName),
-    );
-    const selectedOrder = recentCompletedOrders.find(
-      (order) => order.id === selectedOrderId,
-    );
-    const orderDate = selectedOrder?.endTimestamp
-      ? new Date(selectedOrder.endTimestamp)
-      : null;
+  if (selectedOrder) {
+    const selectedOrderIds = selectedOrder.orders.map((o) => o.id);
 
     // only filter which biomarkers are shown (those that have a value for this order/date),
     // but keep each biomarker's full value history intact for charts and dialogs.
     filtered = filtered.filter((biomarker) =>
-      biomarker.value.some((result) => {
-        if (result.orderId) return result.orderId === selectedOrderId;
-        if (!orderDate) return false;
-        const resultDate = new Date(result.timestamp);
-        const timeDiff = Math.abs(resultDate.getTime() - orderDate.getTime());
-        const oneDayInMs = 24 * 60 * 60 * 1000;
-        return timeDiff <= oneDayInMs;
-      }),
+      biomarker.value.some((result) =>
+        result.orderIds.some((orderId) => selectedOrderIds.includes(orderId)),
+      ),
     );
   }
 
@@ -99,36 +81,32 @@ export const filterBiomarkers = ({
 
 interface UseFilteredBiomarkersParams {
   biomarkers?: Biomarker[];
-  orders?: Order[];
   enabledFilters?: FilterConfig;
 }
 
 export const useFilteredBiomarkers = ({
   biomarkers,
-  orders,
   enabledFilters = { categories: true, date: true, range: true },
 }: UseFilteredBiomarkersParams): Biomarker[] => {
-  const { selectedCategories, selectedOrderId, selectedRange, searchQuery } =
+  const { selectedCategories, selectedOrder, selectedRange, searchQuery } =
     useDataFilterStore();
   const deferredQuery = useDeferredValue(searchQuery);
 
   return useMemo(() => {
-    if (!biomarkers || !orders) return [];
+    if (!biomarkers) return [];
 
     return filterBiomarkers({
       biomarkers,
       selectedCategories: enabledFilters.categories ? selectedCategories : [],
-      selectedOrderId: enabledFilters.date ? selectedOrderId : undefined,
+      selectedOrder: enabledFilters.date ? selectedOrder : undefined,
       selectedRange: enabledFilters.range ? selectedRange : undefined,
-      orders,
       searchQuery: deferredQuery,
     });
   }, [
     biomarkers,
     selectedCategories,
-    selectedOrderId,
+    selectedOrder,
     selectedRange,
-    orders,
     deferredQuery,
     enabledFilters.categories,
     enabledFilters.date,

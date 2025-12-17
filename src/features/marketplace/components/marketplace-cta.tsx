@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Body1 } from '@/components/ui/typography/body1/body1';
 import { SUPPLEMENTS_MARKETPLACE_URL } from '@/const/marketplaces';
-import { useGroupedOrders } from '@/features/orders/hooks/use-grouped-orders';
+import { useCredits } from '@/features/orders/api/credits';
 import { useGetMultipassUrl } from '@/features/supplements/api';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { cn } from '@/lib/utils';
@@ -14,11 +14,15 @@ import { cn } from '@/lib/utils';
 export const MarketplaceCta = () => {
   const [searchParams] = useSearchParams();
   const isOrdersTab = searchParams.get('tab') === 'orders';
-  const { buckets, groupedOrdersLoading } = useGroupedOrders();
+
+  const creditsQuery = useCredits();
+
   const { data: multipassData, isLoading } = useGetMultipassUrl({
     returnTo: '/apps/retextion/login',
   });
   const { track } = useAnalytics();
+
+  const credits = creditsQuery.data?.credits ?? [];
 
   const handleMarketplaceClick = () => {
     track('click_products_marketplace');
@@ -31,7 +35,7 @@ export const MarketplaceCta = () => {
     window.open(targetUrl, '_blank', 'noopener,noreferrer');
   };
 
-  if (groupedOrdersLoading)
+  if (creditsQuery.isLoading)
     return (
       <div className="flex items-center gap-4">
         <Skeleton className="inline-flex h-5 w-48 rounded-full" />
@@ -40,9 +44,7 @@ export const MarketplaceCta = () => {
     );
 
   const label =
-    buckets.drafts.length > 0
-      ? `View Orders (${buckets.drafts.length})`
-      : 'View Orders';
+    credits.length > 0 ? `View Orders (${credits.length})` : 'View Orders';
 
   return (
     <div className="flex items-center gap-4">
@@ -57,7 +59,7 @@ export const MarketplaceCta = () => {
       </Button>
       <Button asChild variant="ghost" className="p-0">
         <NavLink
-          to="?tab=orders"
+          to="/orders"
           className="group relative inline-flex items-center gap-2 text-primary"
         >
           <span className="relative inline-flex">
@@ -65,7 +67,7 @@ export const MarketplaceCta = () => {
               aria-hidden
               className="size-4 text-primary transition-colors duration-150 ease-in-out group-hover:text-secondary"
             />
-            {buckets.drafts.length > 0 && (
+            {credits.length > 0 && (
               <span className="absolute -right-0.5 -top-0.5 size-1 rounded-full bg-[#11C182]" />
             )}
           </span>

@@ -5,8 +5,8 @@ import { SuperpowerScoreLogo } from '@/components/shared/score-logo';
 import { QuickLink } from '@/components/ui/quick-link';
 import { Spinner } from '@/components/ui/spinner';
 import { Body2, H2 } from '@/components/ui/typography';
-import { useBiomarkers } from '@/features/data/api';
-import { mostRecent } from '@/features/data/utils/most-recent-biomarker';
+import { useLatestHealthScore } from '@/features/data/api';
+import { useLatestBioAge } from '@/features/data/api/get-latest-bio-age';
 import { ShareableCardsModal } from '@/features/shareables/components/shareable-cards-modal';
 import { useUser } from '@/lib/auth';
 import { yearsSinceDate } from '@/utils/format';
@@ -138,12 +138,12 @@ const BiologicalAge = ({
 
 export function ScoreCards() {
   const { data: user } = useUser();
-  const { data: biomarkersData, isLoading: biomarkersLoading } =
-    useBiomarkers();
+  const latestHealthScoreQuery = useLatestHealthScore();
+  const latestBiologicalAgeQuery = useLatestBioAge();
 
   if (!user) return null;
 
-  if (biomarkersLoading) {
+  if (latestHealthScoreQuery.isLoading || latestBiologicalAgeQuery.isLoading) {
     return (
       <div className="flex h-48 w-full items-center justify-center">
         <Spinner variant="primary" />
@@ -151,58 +151,30 @@ export function ScoreCards() {
     );
   }
 
-  if (!biomarkersData) {
+  if (
+    !latestHealthScoreQuery.data?.healthScore ||
+    !latestBiologicalAgeQuery.data?.bioAge
+  ) {
     return null;
   }
 
-  const healthScore = biomarkersData.biomarkers.find(
-    (b) => b.name === 'Health Score',
-  );
+  const latestBiologicalAge =
+    latestBiologicalAgeQuery.data.bioAge.quantity.value;
 
-  if (!healthScore) {
-    console.warn('Health score not found.');
-    return null;
-  }
-
-  const latestScore = mostRecent(healthScore.value);
-
-  if (!latestScore) {
-    console.warn('Latest health score not found.');
-    return null;
-  }
-
-  const biologicalAge = biomarkersData.biomarkers.find(
-    (b) => b.name === 'Biological Age',
-  );
-
-  if (!biologicalAge) {
-    console.warn('Biological age not found.');
-    return null;
-  }
-
-  const latestBiologicalAge = mostRecent(biologicalAge.value)?.quantity.value;
-
-  if (!latestBiologicalAge) {
-    console.warn('Latest biological age not found.');
-    return null;
-  }
-
-  const ageDifference = latestBiologicalAge
-    ? Math.round(
-        (yearsSinceDate(user.dateOfBirth) - latestBiologicalAge) * 10,
-      ) / 10.0
-    : 0;
+  const ageDifference =
+    Math.round((yearsSinceDate(user.dateOfBirth) - latestBiologicalAge) * 10) /
+    10.0;
 
   return (
     <div className="grid w-full grid-cols-1 gap-2 xl:grid-cols-2">
       <SuperpowerScore
-        isLoading={biomarkersLoading}
-        superpowerScore={latestScore.quantity.value ?? 0}
+        isLoading={latestHealthScoreQuery.isLoading}
+        superpowerScore={latestHealthScoreQuery.data.healthScore.quantity.value}
       />
       <BiologicalAge
-        isLoading={biomarkersLoading}
-        biologicalAge={latestBiologicalAge ?? 0}
-        ageDifference={ageDifference ?? 0}
+        isLoading={latestBiologicalAgeQuery.isLoading}
+        biologicalAge={latestBiologicalAge}
+        ageDifference={ageDifference}
       />
     </div>
   );

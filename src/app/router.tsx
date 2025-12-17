@@ -95,10 +95,24 @@ export const createRouter = () =>
           },
         },
         {
+          path: 'orders',
+          lazy: async () => {
+            const { OrdersRoute } = await import('./routes/app/orders');
+            return { Component: OrdersRoute };
+          },
+        },
+        {
           path: 'orders/:id',
           lazy: async () => {
             const { OrderRoute } = await import('./routes/app/order');
             return { Component: OrderRoute };
+          },
+        },
+        {
+          path: 'schedule',
+          lazy: async () => {
+            const { ScheduleRoute } = await import('./routes/app/schedule');
+            return { Component: ScheduleRoute };
           },
         },
         {

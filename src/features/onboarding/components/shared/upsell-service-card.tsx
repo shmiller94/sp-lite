@@ -1,6 +1,7 @@
 import { InfoIcon } from 'lucide-react';
 import React, { useMemo } from 'react';
 
+import { SelectableCard } from '@/components/shared/selectable-card';
 import { Button } from '@/components/ui/button';
 import { DialogClose } from '@/components/ui/dialog';
 import { Body2 } from '@/components/ui/typography';
@@ -11,8 +12,8 @@ import {
   TOTAL_TOXIN_TEST_ID,
 } from '@/const/services';
 import { ServiceWithMetadata } from '@/features/onboarding/hooks/use-test-kits';
-import { HealthcareServiceDialog } from '@/features/orders/components/healthcare-service-dialog';
-import { ServiceActionCard } from '@/features/services/components/service-action-card';
+import { PurchaseDialog } from '@/features/orders/components/purchase';
+import { getServiceImage } from '@/utils/service';
 
 const INDIVIDUAL_TOXIN_TEST_IDS = [
   MYCOTOXINS_TEST_ID,
@@ -60,14 +61,17 @@ export const UpsellServiceCard = ({
   };
 
   return (
-    <ServiceActionCard
+    <SelectableCard
       checked={isSelected}
       disabled={isDisabled}
-      toggle={handleSelectService}
-      service={service}
+      onToggle={handleSelectService}
+      title={service.name}
+      imageSrc={getServiceImage(service.name)}
+      description={service.description}
+      price={service.price}
       details={() => ({
         trigger: (
-          <HealthcareServiceDialog
+          <PurchaseDialog
             healthcareService={service}
             flow="info"
             infoFlowBtn={() => (
@@ -89,7 +93,7 @@ export const UpsellServiceCard = ({
               </Body2>
               <InfoIcon className="size-4 text-zinc-400 transition-all duration-200 group-hover:text-zinc-500" />
             </div>
-          </HealthcareServiceDialog>
+          </PurchaseDialog>
         ),
       })}
     />

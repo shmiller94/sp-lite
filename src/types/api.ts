@@ -1,4 +1,4 @@
-import { CarePlan, DiagnosticReport, Goal } from '@medplum/fhirtypes';
+import { CarePlan, Goal } from '@medplum/fhirtypes';
 
 import {
   INTAKE_QUESTIONNAIRE,
@@ -164,7 +164,11 @@ export type TaskName =
   | 'onboarding-gift';
 
 /* HEALTHCARE SERVICE */
-export type ServiceGroup = 'blood-panel-addon' | 'blood-panel-base';
+export type ServiceGroup =
+  | 'test-kit' // everything that is not phlebotomy
+  | 'phlebotomy-kit' // cancer test
+  | 'phlebotomy'
+  | 'advisory-call';
 
 export type HealthcareService = Entity<{
   name: string;
@@ -172,7 +176,6 @@ export type HealthcareService = Entity<{
   price: number;
   active: boolean;
   additionalClassification: string[];
-  phlebotomy: boolean;
   supportsLabOrder: boolean;
   bloodTubeCount: number;
   group?: ServiceGroup;
@@ -235,8 +238,8 @@ export type BiomarkerComponent = {
 export type BiomarkerResult = Entity<{
   quantity: Quantity;
   timestamp: string;
+  orderIds: string[];
   status?: BiomarkerStatus;
-  orderId?: string;
   source?: Lab;
   component: BiomarkerComponent[];
 }>;
@@ -351,15 +354,14 @@ export type MembershipPriceMeta = {
 /* ORDERS */
 
 export enum OrderStatus {
-  upcoming = 'UPCOMING',
-  active = 'ACTIVE',
-  completed = 'COMPLETED',
-  cancelled = 'CANCELLED',
-  revoked = 'REVOKED',
-  draft = 'DRAFT',
-  pending = 'PENDING',
+  draft = 'draft',
+  active = 'active',
+  revoked = 'revoked',
+  completed = 'completed',
+  enteredInError = 'entered-in-error',
+  unknown = 'unknown',
+  onHold = 'on-hold',
 }
-
 export type AppointmentType = 'SCHEDULED' | 'UNSCHEDULED';
 
 export enum ServiceTypeEnum {
@@ -375,47 +377,39 @@ export enum ServiceLabTypeEnum {
 }
 export type ServiceLabType = ServiceLabTypeEnum;
 
-export type CollectionMethodType =
-  | 'AT_HOME'
-  | 'IN_LAB'
-  | 'PHLEBOTOMY_KIT'
-  | 'EVENT';
-
-export type CarePlanSummary = {
-  id: string;
-  status: CarePlan['status'];
-};
-
-export type DiagnosticReportSummary = {
-  id: string;
-  status: DiagnosticReport['status'];
-};
+export type CollectionMethodType = 'AT_HOME' | 'IN_LAB' | 'PHLEBOTOMY_KIT';
 
 export type Order = Entity<{
   serviceName: string;
   serviceId: string;
-  addOnServiceIds?: string[];
   collectionMethod?: CollectionMethodType;
   status: OrderStatus;
-  location: Location;
+  address?: Address;
   startTimestamp?: string;
   endTimestamp?: string;
   timezone?: string;
   createdAt?: string;
-  externalId?: string;
-  fileId?: string;
-  performer?: ServiceLabType;
   appointmentType?: AppointmentType;
-  carePlan?: CarePlanSummary;
-  diagnosticReport?: DiagnosticReportSummary;
 }>;
 
-export type Location = {
-  name?: string;
-  isDefault?: boolean;
+export type RequestGroup = Entity<{
+  id: string;
+  status: OrderStatus;
+  orders: Order[];
+  collectionMethod?: CollectionMethodType;
+  startTimestamp?: string;
+  endTimestamp?: string;
   address?: Address;
-  webAddress?: WebAddressDTO;
-};
+  timezone?: string;
+  createdAt?: string;
+  appointmentType?: AppointmentType;
+}>;
+
+export type Credit = Entity<{
+  serviceId: string;
+  serviceName: string;
+  collectionMethod?: CollectionMethodType;
+}>;
 
 export type AddressUseType = 'home' | 'work' | 'temp' | 'old' | 'billing';
 
@@ -601,7 +595,7 @@ export type Marketplace = {
   active?: boolean | null;
   description?: string | null;
   additionalClassification?: string[] | null;
-  phlebotomy?: boolean | null;
+  group?: ServiceGroup;
   supportsLabOrder?: boolean | null;
   bloodTubeCount?: number | null;
 };
@@ -673,7 +667,7 @@ export type File = {
   processingStatus: FileProcessingStatus;
   category?: FileCategory;
   source?: FileSource;
-  orderId?: string;
+  orderIds?: string[];
   deletable: boolean;
   presignedUrl?: string;
   image?: string;
@@ -734,92 +728,6 @@ export type TimelineItem = Entity<{
   id: string;
   timestamp: Date;
 }>;
-
-/* BRIDGE INSURANCE */
-export type BridgePayer = {
-  id: string;
-  code: string;
-  name: string;
-  memberId: boolean;
-};
-
-export type BridgePolicyStatus =
-  | 'PENDING'
-  | 'UNKNOWN'
-  | 'CONFIRMED'
-  | 'REVALIDATING'
-  | 'INVALID';
-
-export type BridgeRelationshipStatus =
-  | 'SELF'
-  | 'CHILD'
-  | 'SPOUSE'
-  | 'OTHER'
-  | 'NONE';
-
-export type BridgePerson = {
-  firstName: string;
-  lastName: string;
-  dateOfBirth: string;
-  middleName?: string;
-};
-
-export type BridgeError = {
-  code: string;
-  message: string;
-};
-
-export type BridgeLatest = {
-  id: string;
-  plan: string;
-  validatedAt: string;
-  effectiveFrom?: string;
-  effectiveTo?: string;
-};
-
-export type BridgePolicy = {
-  id: string;
-  payerId: string;
-  payer: BridgePayer;
-  status: BridgePolicyStatus;
-  state: string;
-  planName?: string;
-  person?: BridgePerson;
-  errors?: BridgeError[];
-  memberId?: string;
-  policyHolder?: BridgePerson;
-  relationship?: BridgeRelationshipStatus;
-  patientId?: string;
-  latest?: BridgeLatest;
-};
-
-export type BridgeCoverage = {
-  rank: number;
-  policyId: string;
-};
-
-export type BridgeAddress = {
-  state: string;
-  line1?: string;
-  line2?: string;
-  city?: string;
-  postalCode?: string;
-  country?: string;
-};
-
-export type BridgePatient = {
-  id: string;
-  createdAt: string;
-  coverage: BridgeCoverage[];
-  firstName: string;
-  lastName: string;
-  email: string;
-  dateOfBirth: string;
-  patientToken?: string;
-  externalId?: string;
-  phone?: string;
-  address?: BridgeAddress;
-};
 
 /* AI CHAT */
 export type Visibility = 'public' | 'private';
@@ -915,4 +823,10 @@ export interface RxService {
   price: string;
   active: boolean;
   tags: string[];
+}
+export interface SummaryResult {
+  hasCompletedCarePlan: boolean;
+  hasPartialResults: boolean;
+  completedCarePlans: number;
+  partialDiagnosticReports: number;
 }

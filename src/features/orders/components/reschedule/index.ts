@@ -1,1 +1,1 @@
-export * from './healthcare-service-reschedule-dialog';
+export * from './reschedule-flow';

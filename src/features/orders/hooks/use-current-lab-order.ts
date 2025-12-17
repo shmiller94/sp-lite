@@ -1,0 +1,47 @@
+import { useMemo } from 'react';
+
+import { useOrders } from '@/features/orders/api';
+import { OrderStatus } from '@/types/api';
+
+export const useCurrentLabOrder = () => {
+  const { data, isLoading } = useOrders();
+
+  const activeLabOrder = useMemo(() => {
+    const requestGroups = data?.requestGroups ?? [];
+    // const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
+    // Filter for blood panel orders that are not completed/revoked
+    const bloodPanelOrders = requestGroups.filter((rg) => {
+      if (rg.appointmentType === undefined) return false;
+      if (rg.status === OrderStatus.draft) return false;
+      if (rg.status === OrderStatus.completed) return false;
+      if (rg.status === OrderStatus.revoked) return false;
+
+      // TODO: potentially query care plans as well
+      // if (order.carePlan?.status === 'completed') return false;
+
+      // NOTE (Nikita): there also was following case here:
+      // Filter out legacy orders with completed diagnosticReport older than 30 days
+      // we ran a migration to sync all service requests and diagnostic reports so I assume its not needed anymore
+
+      return true;
+    });
+
+    // Sort by start timestamp (soonest first for upcoming appointments)
+    bloodPanelOrders.sort((a, b) => {
+      if (!a.startTimestamp) return 1;
+      if (!b.startTimestamp) return -1;
+      return (
+        new Date(a.startTimestamp).getTime() -
+        new Date(b.startTimestamp).getTime()
+      );
+    });
+
+    return bloodPanelOrders[0] || null;
+  }, [data]);
+
+  return {
+    activeLabOrder,
+    isLoading,
+  };
+};

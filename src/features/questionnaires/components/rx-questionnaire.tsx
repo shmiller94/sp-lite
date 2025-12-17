@@ -3,7 +3,6 @@ import { keepPreviousData } from '@tanstack/react-query';
 import { useState } from 'react';
 
 // TODO: move data fetching upstream, or make this a global component
-// eslint-disable-next-line import/no-restricted-paths
 import { NotFoundRoute } from '@/app/routes/not-found';
 import { QuestionnaireForm } from '@/components/ui/questionnaire';
 import { RxScreenOut } from '@/components/ui/questionnaire/rx-screen-out';

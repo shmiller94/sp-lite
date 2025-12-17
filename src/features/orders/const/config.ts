@@ -1,1 +1,1 @@
-export const HEALTHCARE_SERVICE_DIALOG_CONTAINER_STYLE = 'px-6 md:px-16';
+export const SHARED_CONTAINER_STYLE = 'px-6 md:px-16';

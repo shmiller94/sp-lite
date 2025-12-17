@@ -14,7 +14,7 @@ import { Separator } from '@/components/ui/separator';
 import { toast } from '@/components/ui/sonner';
 import { Body1, Body2, H2, H3, H4 } from '@/components/ui/typography';
 import { UPGRADE_INFO } from '@/const';
-import { useUpgradeOrder } from '@/features/orders/api/upgrade-order';
+import { useUpgradeCredit } from '@/features/orders/api';
 import * as Payment from '@/features/users/components/payment';
 import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
@@ -26,7 +26,7 @@ import { useOnboardingStepper } from './onboarding-stepper';
 const AdvancedPanelUpgradeContent = () => {
   const { next } = useOnboardingStepper();
 
-  const upgradeOrderMutation = useUpgradeOrder({
+  const upgradeOrderMutation = useUpgradeCredit({
     mutationConfig: {
       onSuccess: () => {
         toast.success(`One-time Advanced Panel upgrade successful!`);

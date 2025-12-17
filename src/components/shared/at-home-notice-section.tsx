@@ -1,7 +1,8 @@
 import { AlertCircle, LucideInfo } from 'lucide-react';
 
 import { Body2 } from '@/components/ui/typography';
-import { ADDITIONAL_LAB_FEES, AT_HOME_PRICE, US_STATES } from '@/const';
+import { ADDITIONAL_LAB_FEES, US_STATES } from '@/const';
+import { useUpgradeCreditPrice } from '@/features/orders/api/credits/get-upgrade-credit-price';
 import { cn } from '@/lib/utils';
 import { formatMoney } from '@/utils/format-money';
 import { getState } from '@/utils/verify-state-from-postal';
@@ -18,6 +19,10 @@ export const AtHomeNoticeSection = ({
   atHomeDrawCredit?: boolean;
   className?: string;
 }) => {
+  const upgradePriceQuery = useUpgradeCreditPrice({
+    upgradeType: 'at-home',
+  });
+
   const state = getState(postalCode);
   if (!state) return null;
   if (!NOTICE_STATES.includes(state.state)) return null;
@@ -25,14 +30,16 @@ export const AtHomeNoticeSection = ({
   const stateName = US_STATES.find((s) => s.value === state.state)?.label;
   if (!stateName) return null;
 
+  const price = upgradePriceQuery.data?.price ?? 0;
+
   const nynjNotice = (
     <Body2 className="ml-6 text-zinc-400">
       {stateName} State has unique rules around blood test billing. To comply
       with these regulations, there is an additional annual fee of&nbsp;
       {formatMoney(ADDITIONAL_LAB_FEES[state.state])}. Blood draws are also done
       in the comfort of your own home via our at-home testing partners. An at
-      home draw is an additional {formatMoney(AT_HOME_PRICE)} which you will pay
-      when scheduling your blood draw in a few steps.
+      home draw is an additional {formatMoney(price)} which you will pay when
+      scheduling your blood draw in a few steps.
     </Body2>
   );
 

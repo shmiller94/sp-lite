@@ -5,10 +5,8 @@ import { useMemo } from 'react';
 
 import { isIdentityVerificationExpired } from '@/components/ui/questionnaire/utils';
 import { toast } from '@/components/ui/sonner';
-// eslint-disable-next-line import/no-restricted-paths
 import { useCreateVerificationSession } from '@/features/onboarding/api/create-verification-session';
 import { useTask } from '@/features/tasks/api/get-task';
-// eslint-disable-next-line import/no-restricted-paths
 import { useUpdateTask } from '@/features/tasks/api/update-task';
 import { useUser } from '@/lib/auth';
 

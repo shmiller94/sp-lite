@@ -9,4 +9,4 @@ export * from './bundled-discount-step/bundled-discount-step';
 export * from './organ-age-step';
 export * from './fatigue-panel-step';
 export * from './hormone-panel-step';
-export * from './add-on-panels-step';
+export * from './panels-step/add-on-panels-step';

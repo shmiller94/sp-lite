@@ -1,5 +1,7 @@
 import { Meta } from '@storybook/react';
 
+import { Biomarker } from '@/types/api';
+
 import { SparklineChart } from './sparkline-chart';
 
 export default {
@@ -7,7 +9,7 @@ export default {
   component: SparklineChart,
 } as Meta;
 
-const baseBiomarker = {
+const baseBiomarker: Biomarker = {
   id: 'test-biomarker-1',
   name: 'Test Biomarker',
   description: 'A test biomarker for sparkline chart',
@@ -24,9 +26,34 @@ const baseBiomarker = {
     rx: [],
     services: [],
   },
+  value: [],
+  ranges: {
+    custom: [],
+    quest: [
+      {
+        low: { value: 21 },
+        high: { value: 100 },
+        status: 'OPTIMAL' as const,
+      },
+    ],
+    labcorp: [
+      {
+        low: { value: 21 },
+        high: { value: 100 },
+        status: 'OPTIMAL' as const,
+      },
+    ],
+    bioref: [
+      {
+        low: { value: 21 },
+        high: { value: 100 },
+        status: 'OPTIMAL' as const,
+      },
+    ],
+  },
 };
 
-const optimalBoundedBiomarker = {
+const optimalBoundedBiomarker: Biomarker = {
   ...baseBiomarker,
   ranges: {
     custom: [],
@@ -59,6 +86,7 @@ const optimalBoundedBiomarker = {
       timestamp: '2024-01-01',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '2',
@@ -66,6 +94,7 @@ const optimalBoundedBiomarker = {
       timestamp: '2024-01-02',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '3',
@@ -73,6 +102,7 @@ const optimalBoundedBiomarker = {
       timestamp: '2024-01-03',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '4',
@@ -80,6 +110,7 @@ const optimalBoundedBiomarker = {
       timestamp: '2024-01-04',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '5',
@@ -87,6 +118,7 @@ const optimalBoundedBiomarker = {
       timestamp: '2024-01-05',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '6',
@@ -94,6 +126,7 @@ const optimalBoundedBiomarker = {
       timestamp: '2024-01-06',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '7',
@@ -101,6 +134,7 @@ const optimalBoundedBiomarker = {
       timestamp: '2024-01-07',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '8',
@@ -108,6 +142,7 @@ const optimalBoundedBiomarker = {
       timestamp: '2024-01-08',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
   ],
 };
@@ -120,7 +155,7 @@ export const OptimalBounded = (): JSX.Element => {
   );
 };
 
-const singleOptimalUnboundedUpperBiomarker = {
+const singleOptimalUnboundedUpperBiomarker: Biomarker = {
   ...baseBiomarker,
   ranges: {
     quest: [
@@ -150,6 +185,7 @@ const singleOptimalUnboundedUpperBiomarker = {
       timestamp: '2024-01-02',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
   ],
 };
@@ -162,7 +198,7 @@ export const SingleOptimalUnboundedUpper = (): JSX.Element => {
   );
 };
 
-const doubleOptimalUnboundedUpperBiomarker = {
+const doubleOptimalUnboundedUpperBiomarker: Biomarker = {
   ...baseBiomarker,
   ranges: {
     quest: [
@@ -192,6 +228,7 @@ const doubleOptimalUnboundedUpperBiomarker = {
       timestamp: '2024-01-01',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '2',
@@ -199,6 +236,7 @@ const doubleOptimalUnboundedUpperBiomarker = {
       timestamp: '2024-01-02',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '3',
@@ -206,6 +244,7 @@ const doubleOptimalUnboundedUpperBiomarker = {
       timestamp: '2024-01-03',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
   ],
 };
@@ -218,7 +257,7 @@ export const DoubleOptimalUnboundedUpper = (): JSX.Element => {
   );
 };
 
-const optimalUnboundedUpperBiomarker = {
+const optimalUnboundedUpperBiomarker: Biomarker = {
   ...baseBiomarker,
   ranges: {
     quest: [
@@ -248,6 +287,7 @@ const optimalUnboundedUpperBiomarker = {
       timestamp: '2024-01-01',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '2',
@@ -255,6 +295,7 @@ const optimalUnboundedUpperBiomarker = {
       timestamp: '2024-01-02',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '3',
@@ -262,6 +303,7 @@ const optimalUnboundedUpperBiomarker = {
       timestamp: '2024-01-03',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '4',
@@ -269,6 +311,7 @@ const optimalUnboundedUpperBiomarker = {
       timestamp: '2024-01-04',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '5',
@@ -276,6 +319,7 @@ const optimalUnboundedUpperBiomarker = {
       timestamp: '2024-01-05',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '6',
@@ -283,6 +327,7 @@ const optimalUnboundedUpperBiomarker = {
       timestamp: '2024-01-06',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '7',
@@ -290,6 +335,7 @@ const optimalUnboundedUpperBiomarker = {
       timestamp: '2024-01-07',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '8',
@@ -297,6 +343,7 @@ const optimalUnboundedUpperBiomarker = {
       timestamp: '2024-01-08',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '9',
@@ -304,6 +351,7 @@ const optimalUnboundedUpperBiomarker = {
       timestamp: '2024-01-09',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '10',
@@ -311,6 +359,7 @@ const optimalUnboundedUpperBiomarker = {
       timestamp: '2024-01-10',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
   ],
 };
@@ -323,7 +372,7 @@ export const OptimalUnboundedUpper = (): JSX.Element => {
   );
 };
 
-const optimalUnboundedLowerBiomarker = {
+const optimalUnboundedLowerBiomarker: Biomarker = {
   ...baseBiomarker,
   ranges: {
     custom: [],
@@ -353,6 +402,7 @@ const optimalUnboundedLowerBiomarker = {
       timestamp: '2024-01-01',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '2',
@@ -360,6 +410,7 @@ const optimalUnboundedLowerBiomarker = {
       timestamp: '2024-01-02',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '3',
@@ -367,6 +418,7 @@ const optimalUnboundedLowerBiomarker = {
       timestamp: '2024-01-03',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '4',
@@ -374,6 +426,7 @@ const optimalUnboundedLowerBiomarker = {
       timestamp: '2024-01-04',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '5',
@@ -381,6 +434,7 @@ const optimalUnboundedLowerBiomarker = {
       timestamp: '2024-01-05',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '6',
@@ -388,6 +442,7 @@ const optimalUnboundedLowerBiomarker = {
       timestamp: '2024-01-06',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '7',
@@ -395,6 +450,7 @@ const optimalUnboundedLowerBiomarker = {
       timestamp: '2024-01-07',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '8',
@@ -402,6 +458,7 @@ const optimalUnboundedLowerBiomarker = {
       timestamp: '2024-01-08',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '9',
@@ -409,6 +466,7 @@ const optimalUnboundedLowerBiomarker = {
       timestamp: '2024-01-09',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '10',
@@ -416,6 +474,7 @@ const optimalUnboundedLowerBiomarker = {
       timestamp: '2024-01-10',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
   ],
 };
@@ -428,7 +487,7 @@ export const OptimalUnboundedLower = (): JSX.Element => {
   );
 };
 
-const optimalAndNormalBoundedBiomarker = {
+const optimalAndNormalBoundedBiomarker: Biomarker = {
   ...baseBiomarker,
   ranges: {
     quest: [
@@ -476,6 +535,7 @@ const optimalAndNormalBoundedBiomarker = {
       timestamp: '2024-01-01',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '2',
@@ -483,6 +543,7 @@ const optimalAndNormalBoundedBiomarker = {
       timestamp: '2024-01-02',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '3',
@@ -490,6 +551,7 @@ const optimalAndNormalBoundedBiomarker = {
       timestamp: '2024-01-03',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '4',
@@ -497,6 +559,7 @@ const optimalAndNormalBoundedBiomarker = {
       timestamp: '2024-01-04',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '5',
@@ -504,6 +567,7 @@ const optimalAndNormalBoundedBiomarker = {
       timestamp: '2024-01-05',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '6',
@@ -511,6 +575,7 @@ const optimalAndNormalBoundedBiomarker = {
       timestamp: '2024-01-06',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '7',
@@ -518,6 +583,7 @@ const optimalAndNormalBoundedBiomarker = {
       timestamp: '2024-01-07',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '8',
@@ -525,6 +591,7 @@ const optimalAndNormalBoundedBiomarker = {
       timestamp: '2024-01-08',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
   ],
 };
@@ -537,7 +604,7 @@ export const OptimalAndNormalBounded = (): JSX.Element => {
   );
 };
 
-const optimalAndNormalUnboundedUpperBiomarker = {
+const optimalAndNormalUnboundedUpperBiomarker: Biomarker = {
   ...baseBiomarker,
   ranges: {
     quest: [
@@ -579,6 +646,7 @@ const optimalAndNormalUnboundedUpperBiomarker = {
       timestamp: '2024-01-01',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '2',
@@ -586,6 +654,7 @@ const optimalAndNormalUnboundedUpperBiomarker = {
       timestamp: '2024-01-02',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '3',
@@ -593,6 +662,7 @@ const optimalAndNormalUnboundedUpperBiomarker = {
       timestamp: '2024-01-03',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '4',
@@ -600,6 +670,7 @@ const optimalAndNormalUnboundedUpperBiomarker = {
       timestamp: '2024-01-04',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '5',
@@ -607,6 +678,7 @@ const optimalAndNormalUnboundedUpperBiomarker = {
       timestamp: '2024-01-05',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '6',
@@ -614,6 +686,7 @@ const optimalAndNormalUnboundedUpperBiomarker = {
       timestamp: '2024-01-06',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '7',
@@ -621,6 +694,7 @@ const optimalAndNormalUnboundedUpperBiomarker = {
       timestamp: '2024-01-07',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '8',
@@ -628,6 +702,7 @@ const optimalAndNormalUnboundedUpperBiomarker = {
       timestamp: '2024-01-08',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
   ],
 };
@@ -640,7 +715,7 @@ export const OptimalAndNormalUnboundedUpper = (): JSX.Element => {
   );
 };
 
-const optimalAndNormalUnboundedLowerBiomarker = {
+const optimalAndNormalUnboundedLowerBiomarker: Biomarker = {
   ...baseBiomarker,
   ranges: {
     custom: [],
@@ -682,6 +757,7 @@ const optimalAndNormalUnboundedLowerBiomarker = {
       timestamp: '2024-01-01',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '2',
@@ -689,6 +765,7 @@ const optimalAndNormalUnboundedLowerBiomarker = {
       timestamp: '2024-01-02',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '3',
@@ -696,6 +773,7 @@ const optimalAndNormalUnboundedLowerBiomarker = {
       timestamp: '2024-01-03',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '4',
@@ -703,6 +781,7 @@ const optimalAndNormalUnboundedLowerBiomarker = {
       timestamp: '2024-01-04',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '5',
@@ -710,6 +789,7 @@ const optimalAndNormalUnboundedLowerBiomarker = {
       timestamp: '2024-01-05',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '6',
@@ -717,6 +797,7 @@ const optimalAndNormalUnboundedLowerBiomarker = {
       timestamp: '2024-01-06',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '7',
@@ -724,6 +805,7 @@ const optimalAndNormalUnboundedLowerBiomarker = {
       timestamp: '2024-01-07',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '8',
@@ -731,6 +813,7 @@ const optimalAndNormalUnboundedLowerBiomarker = {
       timestamp: '2024-01-08',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
   ],
 };
@@ -744,7 +827,7 @@ export const OptimalAndNormalUnboundedLower = (): JSX.Element => {
 };
 
 // Example with different sources to showcase dynamic range selection
-const multiSourceBiomarker = {
+const multiSourceBiomarker: Biomarker = {
   ...baseBiomarker,
   ranges: {
     quest: [
@@ -777,6 +860,7 @@ const multiSourceBiomarker = {
       timestamp: '2024-01-01',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '2',
@@ -784,6 +868,7 @@ const multiSourceBiomarker = {
       timestamp: '2024-01-02',
       source: 'quest' as const,
       component: [],
+      orderIds: [],
     },
     {
       id: '3',
@@ -791,6 +876,7 @@ const multiSourceBiomarker = {
       timestamp: '2024-01-03',
       source: 'labcorp' as const, // Last value from labcorp, so will use labcorp ranges
       component: [],
+      orderIds: [],
     },
   ],
 };

@@ -22,7 +22,7 @@ export const Greeting = () => {
     {
       icon: Package,
       name: 'Your Orders',
-      to: '/marketplace?tab=orders',
+      to: '/orders',
     },
     {
       icon: SettingsIcon,

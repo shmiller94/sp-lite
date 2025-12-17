@@ -8,9 +8,7 @@ import { z } from 'zod';
 import { SuperpowerLoadingLogo } from '@/components/icons/superpower-logo';
 import { env } from '@/config/env';
 import { INTAKE_QUESTIONNAIRE } from '@/const/questionnaire';
-// eslint-disable-next-line import/no-restricted-paths
 import { revealLatestQueryKey } from '@/features/protocol/api';
-// eslint-disable-next-line import/no-restricted-paths
 import { useQuestionnaireResponse } from '@/features/questionnaires/api/get-questionnaire-response';
 import { useTask } from '@/features/tasks/api/get-task';
 import { MutationConfig } from '@/lib/react-query';

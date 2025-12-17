@@ -18,14 +18,12 @@ export function AddToCalendar({
   slot,
   address,
   collectionMethod,
-  serviceName,
   className,
   variant = 'button',
 }: {
   slot: Slot;
   address: Address;
   collectionMethod: CollectionMethodType;
-  serviceName: string;
   className?: string;
   variant?: 'vermillion' | 'button'; // decides whether to use a orange text as a dropdown, or the default button variant
 }) {
@@ -33,7 +31,6 @@ export function AddToCalendar({
     slot,
     address,
     collectionMethod,
-    serviceName,
   });
 
   if (!event) return;

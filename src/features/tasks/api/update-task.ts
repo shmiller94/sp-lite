@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 
-import { getTimelineQueryOptions } from '@/features/homepage/api/get-timeline';
 import { getTaskQueryOptions } from '@/features/tasks/api/get-task';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { api } from '@/lib/api-client';
@@ -57,9 +56,6 @@ export const useUpdateTask = ({
 
       queryClient.invalidateQueries({
         queryKey: getTaskQueryOptions(variables.taskName).queryKey,
-      });
-      queryClient.invalidateQueries({
-        queryKey: getTimelineQueryOptions().queryKey,
       });
       onSuccess?.(data, variables, context);
     },

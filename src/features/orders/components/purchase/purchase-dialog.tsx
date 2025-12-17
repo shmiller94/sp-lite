@@ -1,0 +1,179 @@
+import { X } from 'lucide-react';
+import React, { ReactNode } from 'react';
+
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Progress } from '@/components/ui/progress';
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
+import { useWindowDimensions } from '@/hooks/use-window-dimensions';
+import { HealthcareService } from '@/types/api';
+
+import {
+  PurchaseStoreProvider,
+  usePurchaseStore,
+} from '../../stores/purchase-store';
+
+import { PurchaseDialogStepper } from './purchase-dialog-stepper';
+import { PurchaseDialogSteps } from './purchase-dialog-steps';
+
+/**
+ *
+ * `children` is expected to be a button that triggers this dialog from anywhere.
+ *
+ * @param {ReactNode} children - A button to trigger the dialog for scheduling services.
+ * @param healthcareService - The healthcare service being scheduled. If not provided, then won't render inside the modal
+ * @param excludeSteps - Steps that we want to exclude. It's important to check if step is required and can be skipped.
+ * @param flow - Will render full steps flow or just information about service
+ * @param infoFlowBtn - Will replace regular footer on the info step
+ */
+type PurchaseDialogProps = {
+  healthcareService: HealthcareService;
+  children?: ReactNode;
+  flow?: 'full' | 'info';
+  infoFlowBtn?: () => ReactNode;
+  onClose?: () => void;
+};
+
+export const PurchaseDialog: React.FC<PurchaseDialogProps> = ({
+  healthcareService,
+  children,
+  flow = 'full',
+  infoFlowBtn,
+  onClose,
+}) => {
+  return (
+    <PurchaseStoreProvider
+      service={healthcareService}
+      flow={flow}
+      infoFlowBtn={infoFlowBtn}
+    >
+      <PurchaseDialogConsumer onClose={onClose}>
+        {children}
+      </PurchaseDialogConsumer>
+    </PurchaseStoreProvider>
+  );
+};
+
+const PurchaseDialogConsumer = ({
+  children,
+  onClose,
+}: {
+  children?: ReactNode;
+  onClose?: () => void;
+}) => {
+  const reset = usePurchaseStore((s) => s.reset);
+  const { all, current } = PurchaseDialogStepper.useStepper();
+  const { width } = useWindowDimensions();
+
+  const index = PurchaseDialogStepper.utils.getIndex(current.id);
+
+  const handleClose = () => {
+    reset();
+
+    onClose?.();
+  };
+
+  /**
+   * If children (that always should be a button) is not passed, we directly call the content of modal
+   * This allows us to trigger and invoke any logic we want under handleOpenChange
+   *
+   * We still wrap into <Dialog /> simply because we have places where we call <DialogClose> that should be wrapped inside of Dialog
+   * Moreover, it doesn't impact anything since Dialog is just a provider:
+   * https://github.com/radix-ui/primitives/blob/74b182b401c8ca0fa5b66a5a9a47f507bb3d5adc/packages/react/dialog/src/Dialog.tsx#L50
+   */
+  if (!children) {
+    return (
+      <Dialog onOpenChange={handleClose}>
+        <div className="mx-auto w-full max-w-3xl py-8">
+          <PurchaseDialogSteps />
+        </div>
+      </Dialog>
+    );
+  }
+
+  if (width <= 768) {
+    return (
+      <Sheet onOpenChange={handleClose}>
+        <SheetTrigger asChild>{children}</SheetTrigger>
+        <SheetContent className="flex flex-col overflow-hidden rounded-t-2xl bg-white">
+          <SheetHeader className="sticky top-0 z-50 flex flex-col gap-4 px-6 pb-4 pt-8 backdrop-blur-sm">
+            <div className="flex justify-center">
+              <Progress
+                value={((index + 1) / all.length) * 100}
+                className="h-1 w-32"
+              />
+            </div>
+
+            <SheetTitle className="grid w-full grid-cols-3 items-center">
+              <SheetClose className="flex size-10 items-center justify-center rounded-full bg-zinc-100">
+                <X className="size-5 text-black" />
+              </SheetClose>
+              <span className="text-center">Book a service</span>
+              <div className="size-10" />
+            </SheetTitle>
+          </SheetHeader>
+          <SheetDescription className="sr-only">
+            Dialog for booking healthcare services and managing the scheduling
+            process
+          </SheetDescription>
+          <div className="flex-1 overflow-auto">
+            <PurchaseDialogSteps />
+          </div>
+        </SheetContent>
+      </Sheet>
+    );
+  }
+
+  return (
+    <Dialog onOpenChange={handleClose}>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent className="flex max-h-[90vh] flex-col bg-white px-0.5">
+        <DialogHeader className="sticky top-0 z-50 px-16 backdrop-blur-sm">
+          <div className="flex items-center gap-2">
+            <DialogTitle className="text-zinc-500">
+              Step {index + 1} / {all.length}
+            </DialogTitle>
+            <Progress
+              value={((index + 1) / all.length) * 100}
+              className="ml-2 h-1 w-32"
+            />
+          </div>
+          <DialogDescription className="sr-only">
+            Dialog for booking healthcare services and managing the scheduling
+            process
+          </DialogDescription>
+          <DialogClose>
+            <X className="size-6 cursor-pointer p-1" />
+          </DialogClose>
+        </DialogHeader>
+        {/*
+         * Custom scrollbar psuedo-element styling:
+         * - [overflow:overlay] - Positions scrollbar on top of content without taking up space
+         * - [&::-webkit-scrollbar]:w-2 - Sets the width of the scrollbar track to 2px
+         * - [&::-webkit-scrollbar-thumb]:rounded-full - Makes the scrollbar thumb fully rounded
+         * - [&::-webkit-scrollbar-button:end:increment] - Targets the bottom pseudo-element of the scrollbar
+         *   - block - Makes the pseudo-element visible (but transparent)
+         *   - h-[13vh] - Creates an invisible spacer to offset the scrollbar from the sticky footer
+         */}
+        <div className="flex-1 overflow-y-auto scrollbar scrollbar-thumb-zinc-300 [overflow:overlay] [&::-webkit-scrollbar-button:end:increment]:block [&::-webkit-scrollbar-button:end:increment]:h-[13vh] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar]:w-2">
+          <PurchaseDialogSteps />
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};

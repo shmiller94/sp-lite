@@ -2,9 +2,9 @@ import { queryOptions, useQuery } from '@tanstack/react-query';
 
 import { api } from '@/lib/api-client';
 import { QueryConfig } from '@/lib/react-query';
-import { Order } from '@/types/api';
+import { RequestGroup } from '@/types/api';
 
-export const getOrders = (): Promise<{ orders: Order[] }> => {
+export const getOrders = (): Promise<{ requestGroups: RequestGroup[] }> => {
   return api.get('/orders');
 };
 

@@ -108,7 +108,7 @@ export const ServiceCheckoutStep = ({
         name: serviceActivity?.name ?? item.serviceName,
         description:
           serviceActivity?.additionalClassification?.[0] ??
-          (serviceActivity?.phlebotomy
+          (serviceActivity?.group === 'phlebotomy'
             ? 'In-person blood draw'
             : 'Speciality Test'),
         price: serviceActivity?.price ?? 0,

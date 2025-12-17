@@ -4,7 +4,6 @@ import { ProgressiveImage } from '@/components/ui/progressive-image';
 import { isGLP1FrontDoorExperiment } from '@/components/ui/questionnaire/utils/questionnaire-utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/components/ui/sonner';
-// eslint-disable-next-line import/no-restricted-paths
 import { useMarketplace } from '@/features/marketplace/api/get-marketplace';
 import { Rx } from '@/types/api';
 

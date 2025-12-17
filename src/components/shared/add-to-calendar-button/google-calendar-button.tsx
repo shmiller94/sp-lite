@@ -9,20 +9,17 @@ export function GoogleCalendarButton({
   slot,
   address,
   collectionMethod,
-  serviceName,
   className,
 }: {
   slot: Slot;
   address: Address;
   collectionMethod: CollectionMethodType;
-  serviceName: string;
   className?: string;
 }) {
   const event = getCalendarEvent({
     slot,
     address,
     collectionMethod,
-    serviceName,
   });
 
   if (!event) return;

@@ -388,7 +388,7 @@ export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         /** @enum {unknown} */
-        CheckoutProductId: "v2-baseline-membership-20250801" | "v2-membership-advanced-upgrade-20250801" | "at-home-sample-collection-20251016" | "membership-gift-20251125" | "membership-gift-nynj-20251128" | "v2-autoimmunity-bundle-20250929" | "v2-cardiovascular-bundle-20250929" | "v2-metabolic-bundle-20250929" | "v2-fertility-bundle-20250929" | "v2-methylation-bundle-20250929" | "v2-nutrients-bundle-20250929" | "v2-baseline-blood-panel-20250801" | "v2-advanced-blood-panel-20250801" | "v2-custom-blood-panel-20251002" | "gut-microbiome-analysis-20240513" | "grail-galleri-multi-cancer-test-20240513" | "heavy-metals-20240513" | "mycotoxins-20240513" | "environmental-toxin-20240513" | "total-toxins-20240513" | "rx-semaglutide-90day-20251022" | "rx-semaglutide-180day-20251022" | "rx-semaglutide-60day-20251124";
+        CheckoutProductId: "v2-baseline-membership-20250801" | "v2-membership-advanced-upgrade-20250801" | "at-home-sample-collection-20251016" | "membership-gift-20251125" | "membership-gift-nynj-20251128" | "free-membership-gift-20251207" | "free-membership-gift-nynj-20251207" | "v2-autoimmunity-bundle-20250929" | "v2-cardiovascular-bundle-20250929" | "v2-metabolic-bundle-20250929" | "v2-fertility-bundle-20250929" | "v2-methylation-bundle-20250929" | "v2-nutrients-bundle-20250929" | "v2-baseline-blood-panel-20250801" | "v2-advanced-blood-panel-20250801" | "v2-custom-blood-panel-20251002" | "gut-microbiome-analysis-20240513" | "grail-galleri-multi-cancer-test-20240513" | "heavy-metals-20240513" | "mycotoxins-20240513" | "environmental-toxin-20240513" | "total-toxins-20240513" | "rx-semaglutide-90day-20251022" | "rx-semaglutide-180day-20251022" | "rx-semaglutide-60day-20251124";
         CheckoutSessionLineItem: {
             id: string;
             slug: components["schemas"]["CheckoutProductId"];
@@ -2961,6 +2961,10 @@ export interface operations {
                             created: string;
                             /** @description Whether this protocol should show the reveal flow */
                             showReveal?: boolean;
+                            supportingInfo: {
+                                display: string;
+                                reference: string;
+                            }[];
                             /** @default [] */
                             goals: {
                                 id: string;
@@ -3051,10 +3055,9 @@ export interface operations {
                                     price: number;
                                     active: boolean;
                                     bloodTubeCount: number;
-                                    phlebotomy: boolean;
                                     supportsLabOrder: boolean;
                                     /** @enum {unknown} */
-                                    group?: "blood-panel-addon" | "blood-panel-base";
+                                    group?: "test-kit" | "phlebotomy-kit" | "phlebotomy" | "advisory-call";
                                     additionalClassification?: string[];
                                 };
                             } | {
@@ -3417,6 +3420,10 @@ export interface operations {
                             created: string;
                             /** @description Whether this protocol should show the reveal flow */
                             showReveal?: boolean;
+                            supportingInfo: {
+                                display: string;
+                                reference: string;
+                            }[];
                             /** @default [] */
                             goals: {
                                 id: string;
@@ -3507,10 +3514,9 @@ export interface operations {
                                     price: number;
                                     active: boolean;
                                     bloodTubeCount: number;
-                                    phlebotomy: boolean;
                                     supportsLabOrder: boolean;
                                     /** @enum {unknown} */
-                                    group?: "blood-panel-addon" | "blood-panel-base";
+                                    group?: "test-kit" | "phlebotomy-kit" | "phlebotomy" | "advisory-call";
                                     additionalClassification?: string[];
                                 };
                             } | {
@@ -4561,7 +4567,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        orders: (unknown | null)[];
+                        credits: (unknown | null)[];
                     };
                 };
             };

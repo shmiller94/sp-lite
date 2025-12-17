@@ -1,4 +1,3 @@
-export * from './booking-step/booking-step';
 export * from './select-gut-step';
 export * from './select-toxins-step';
 export * from './checkout-step';

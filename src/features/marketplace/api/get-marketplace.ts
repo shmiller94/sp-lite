@@ -46,9 +46,9 @@ const toHealthcareService = (product: Marketplace): HealthcareService => {
     price: product.price ?? 0,
     active: product.active ?? true,
     additionalClassification: product.additionalClassification ?? [],
-    phlebotomy: product.phlebotomy ?? false,
     supportsLabOrder: product.supportsLabOrder ?? false,
     bloodTubeCount: product.bloodTubeCount ?? 0,
+    group: product.group,
   };
 };
 

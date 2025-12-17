@@ -7,12 +7,12 @@ import QuickLink from '@/components/shared/quicklink';
 import { SuperpowerScoreLogo } from '@/components/shared/score-logo';
 import { Body2, H2, H4 } from '@/components/ui/typography';
 import { useOrders } from '@/features/orders/api';
+import { useSummary } from '@/features/summary/api/get-summary';
 import { useUser } from '@/lib/auth';
 import { yearsSinceDate } from '@/utils/format';
 
 import { useBiomarkers } from '../api';
 import { MESSAGES } from '../const/messages';
-import { useDataGating } from '../hooks/use-data-gating';
 import { useFilteredBiomarkers } from '../hooks/use-filtered-biomarkers';
 import { useDataFilterStore } from '../stores/data-filter-store';
 import { mostRecent } from '../utils/most-recent-biomarker';
@@ -122,33 +122,41 @@ const BiologicalAge = ({
 };
 
 export const Overview = () => {
-  const { clearRange, clearCategories, clearOrderId, clearSearchQuery } =
+  const { clearRange, clearCategories, clearSelectedOrder, clearSearchQuery } =
     useDataFilterStore();
   const { data: user, isLoading: isUserLoading } = useUser();
-  const { data: biomarkers } = useBiomarkers();
-  const { data: orders } = useOrders();
-  const gating = useDataGating();
+  const biomarkersQuery = useBiomarkers();
+  const ordersQuery = useOrders();
+  const summaryQuery = useSummary();
+
+  const biomarkers = biomarkersQuery.data?.biomarkers ?? [];
+
   const filteredBiomarkers = useFilteredBiomarkers({
-    biomarkers: biomarkers?.biomarkers,
-    orders: orders?.orders ?? [],
+    biomarkers: biomarkers,
   });
 
   // we want to remove all filters initially
   useEffect(() => {
     clearRange();
     clearCategories();
-    clearOrderId();
+    clearSelectedOrder();
     clearSearchQuery();
-  }, [clearRange, clearCategories, clearOrderId, clearSearchQuery]);
+  }, [clearRange, clearCategories, clearSelectedOrder, clearSearchQuery]);
 
-  const isLoading = isUserLoading || gating.isLoading;
+  const isLoading =
+    isUserLoading ||
+    summaryQuery.isLoading ||
+    ordersQuery.isLoading ||
+    biomarkersQuery.isLoading;
+
+  const gating = summaryQuery.data;
 
   const latestScoreMarker = mostRecent(
-    biomarkers?.biomarkers.find((b) => b.name === 'Health Score')?.value ?? [],
+    biomarkers.find((b) => b.name === 'Health Score')?.value ?? [],
   );
   const superpowerScore = latestScoreMarker?.quantity?.value;
 
-  const biologicalAgeMarker = biomarkers?.biomarkers.find(
+  const biologicalAgeMarker = biomarkers.find(
     (b) => b.name === 'Biological Age',
   );
   const biologicalAge = biologicalAgeMarker?.value[0]?.quantity?.value;
@@ -164,26 +172,27 @@ export const Overview = () => {
       m.scoreRange[1] >= superpowerScore!,
   );
 
-  const mostRecentBiomarkerTimestamp = biomarkers?.biomarkers
-    ? biomarkers.biomarkers
-        .flatMap((biomarker) => biomarker.value)
-        .reduce(
-          (latest, result) => {
-            const latestDate = new Date(latest?.timestamp ?? 0);
-            const resultDate = new Date(result.timestamp);
-            return resultDate > latestDate ? result : latest;
-          },
-          biomarkers.biomarkers.flatMap((biomarker) => biomarker.value)[0],
-        )?.timestamp
-    : null;
+  const mostRecentBiomarkerTimestamp = biomarkers
+    .flatMap((biomarker) => biomarker.value)
+    .reduce(
+      (latest, result) => {
+        const latestDate = new Date(latest?.timestamp ?? 0);
+        const resultDate = new Date(result.timestamp);
+        return resultDate > latestDate ? result : latest;
+      },
+      biomarkers.flatMap((biomarker) => biomarker.value)[0],
+    )?.timestamp;
 
-  if (!isUserLoading && !gating.hasCompletedCarePlan) {
+  if (!isUserLoading && gating && !gating.hasCompletedCarePlan) {
     return <WaitingScreen />;
   }
 
   // Hide SP score & BioAge until AIAP is complete even if partial markers exist
   const markersAvailable =
-    gating.hasCompletedCarePlan && !!superpowerScore && !!biologicalAge;
+    gating &&
+    gating.hasCompletedCarePlan &&
+    !!superpowerScore &&
+    !!biologicalAge;
 
   return (
     <div className="w-full space-y-4">

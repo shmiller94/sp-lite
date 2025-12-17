@@ -8,7 +8,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
 import { toast } from '@/components/ui/sonner';
 import { Body1, H2, H3, H4 } from '@/components/ui/typography';
-import { useUpgradeOrder } from '@/features/orders/api/upgrade-order';
+import { useUpgradeCredit } from '@/features/orders/api';
 import * as Payment from '@/features/users/components/payment';
 import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
@@ -134,7 +134,7 @@ const BundledDiscountCard = ({
 
 const BundledDiscountContent = () => {
   const { next } = useOnboardingStepper();
-  const upgradeOrderMutation = useUpgradeOrder({
+  const upgradeOrderMutation = useUpgradeCredit({
     mutationConfig: {
       onSuccess: () => {
         toast.success(

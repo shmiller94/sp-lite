@@ -16,7 +16,7 @@ const SEGMENTS: Array<{
   {
     key: 'service',
     title: 'Testing',
-    steps: [REVEAL_STEPS.SERVICE_CHECKOUT, REVEAL_STEPS.SERVICE_BOOKING],
+    steps: [REVEAL_STEPS.SERVICE_CHECKOUT],
   },
   { key: 'rx', title: 'Prescriptions', steps: [REVEAL_STEPS.RX_QUESTIONNAIRE] },
 ];

@@ -2,33 +2,25 @@ type HealthScoreStepProps = {
   next: () => void;
   previous: () => void;
 };
-import { useMemo } from 'react';
 
 import { SuperpowerLogo } from '@/components/icons/superpower-logo';
 import { SuperpowerScoreLogo } from '@/components/shared/score-logo';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Body1, H2 } from '@/components/ui/typography';
-import { useBiomarkers } from '@/features/data/api';
+import { useLatestHealthScore } from '@/features/data/api';
 import { MESSAGES } from '@/features/data/const/messages';
-import { mostRecent } from '@/features/data/utils/most-recent-biomarker';
 import { useUser } from '@/lib/auth';
 
 import { ScoreCounter } from '../score-counter';
 
 export function HealthScoreStep({ next }: HealthScoreStepProps) {
-  const { data: biomarkersData, isLoading: isBiomarkersLoading } =
-    useBiomarkers();
   const { data: userData, isLoading: isUserLoading } = useUser();
+  const latestHealthScoreQuery = useLatestHealthScore();
 
-  const isLoading = isBiomarkersLoading || isUserLoading;
+  const isLoading = latestHealthScoreQuery.isLoading || isUserLoading;
 
-  const value = useMemo(() => {
-    const healthScore = biomarkersData?.biomarkers.find(
-      (b) => b.name === 'Health Score',
-    );
-    return mostRecent(healthScore?.value ?? [])?.quantity.value ?? 0;
-  }, [biomarkersData]);
+  const value = latestHealthScoreQuery.data?.healthScore?.quantity.value ?? 0;
 
   const overviewCopy = MESSAGES.find(
     (m) => m.scoreRange[0] <= value! && m.scoreRange[1] >= value!,

@@ -1,13 +1,8 @@
 import { useMemo } from 'react';
 
-import {
-  CUSTOM_BLOOD_PANEL,
-  ADVANCED_BLOOD_PANEL,
-  LAB_ORDER_SUPPORTED_SERVICES,
-  SUPERPOWER_BLOOD_PANEL,
-} from '@/const/services';
 import { useOrders } from '@/features/orders/api';
-import { usePlans } from '@/features/protocol/api/get-plans';
+import { useCredits } from '@/features/orders/api/credits';
+import { useSummary } from '@/features/summary/api/get-summary';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { OrderStatus } from '@/types/api';
 
@@ -27,55 +22,40 @@ export const useHomepageState = (): {
 
   const isMobile = useIsMobile();
 
-  const { data: plansData, isLoading: isPlansLoading } = usePlans();
+  const { data: summaryData, isLoading: isSummaryDataLoading } = useSummary();
+
+  // NOTE(Nikita): these should be coming from the summary endpoint most likely as well
+  // NOTE: but credits and orders are highly dynamic...
+  const { data: creditsData, isLoading: isCreditsLoading } = useCredits();
   const { data: ordersData, isLoading: isOrdersLoading } = useOrders();
 
-  const isLoading = isPlansLoading || isOrdersLoading;
+  const isLoading = isSummaryDataLoading || isCreditsLoading || isOrdersLoading;
 
   const state = useMemo<HomepageState>(() => {
-    const actionPlans = plansData?.actionPlans ?? [];
-    const completedActionPlans = actionPlans.filter(
-      (plan) => plan.status === 'completed',
-    );
-    const hasCompletedActionPlan = completedActionPlans.length > 0;
-    const hasMultipleActionPlans = completedActionPlans.length > 1;
+    const summary = summaryData;
+    const credits = creditsData?.credits ?? [];
+    const requestGroups = ordersData?.requestGroups ?? [];
 
-    const orders = ordersData?.orders ?? [];
-
-    // Upcoming lab orders (Active order which are not blood panel orders)
-    const hasActiveLabOrders = orders.some(
-      (order) =>
-        order.status === OrderStatus.upcoming &&
-        !LAB_ORDER_SUPPORTED_SERVICES.includes(order.serviceName),
+    // if there is no appointment type then its not a lab order
+    const hasActiveLabOrders = requestGroups.some(
+      (rg) =>
+        rg.status === OrderStatus.active && rg.appointmentType !== undefined,
     );
 
-    // Upcoming, active, draft, or completed orders (Actionable orders)
-    const hasActionableOrders = orders.some((order) =>
-      [OrderStatus.active, OrderStatus.draft, OrderStatus.completed].includes(
-        order.status,
-      ),
-    );
-
-    // Upcoming or active blood panel orders (In progress)
-    const hasActiveBloodPanelOrders = orders.some(
-      (order) =>
-        [OrderStatus.upcoming, OrderStatus.active].includes(order.status) &&
-        [
-          SUPERPOWER_BLOOD_PANEL,
-          ADVANCED_BLOOD_PANEL,
-          CUSTOM_BLOOD_PANEL,
-        ].includes(order.serviceName),
+    const hasActiveNonLabOrders = requestGroups.some(
+      (rg) =>
+        rg.status === OrderStatus.active && rg.appointmentType === undefined,
     );
 
     return {
       isMobile,
       hasActiveLabOrders,
-      hasActionableOrders,
-      hasCompletedActionPlan,
-      hasMultipleActionPlans,
-      hasActiveBloodPanelOrders,
+      hasActionableOrders: credits.length > 0,
+      hasCompletedActionPlan: summary ? summary.hasCompletedCarePlan : false,
+      hasMultipleActionPlans: summary ? summary.completedCarePlans > 1 : false,
+      hasActiveNonLabOrders,
     };
-  }, [plansData, ordersData, isMobile]);
+  }, [summaryData, creditsData, ordersData, isMobile]);
 
   const visibleCards = useMemo(() => {
     if (isLoading) {

@@ -14,9 +14,8 @@ const FatiguePanelContent = () => {
   const { next } = useOnboardingStepper();
   const { togglePanel } = useAddOnPanelStore();
 
-  // Get the add-on services for the user
   const { data, isLoading: isServicesLoading } = useServices({
-    group: 'blood-panel-addon',
+    group: 'phlebotomy',
   });
 
   const handleAddPanel = () => {
@@ -149,7 +148,7 @@ const ProductInfo = ({ className }: { className?: string }) => {
 
 const ServiceInfoCard = ({ className }: { className?: string }) => {
   const { data } = useServices({
-    group: 'blood-panel-addon',
+    group: 'phlebotomy',
   });
 
   const fatiguePanel = data?.services.find((s) => s.name === FATIGUE_PANEL);

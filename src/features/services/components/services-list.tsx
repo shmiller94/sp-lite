@@ -64,12 +64,16 @@ export const ServicesList = ({
         services: recommended,
       },
       {
-        title: 'Blood tests',
-        services: filteredServices.filter((service) => service.phlebotomy),
+        title: 'Blood test',
+        services: filteredServices.filter(
+          (service) => service.group === 'phlebotomy',
+        ),
       },
       {
         title: 'Other tests',
-        services: filteredServices.filter((service) => !service.phlebotomy),
+        services: filteredServices.filter(
+          (service) => service.group !== 'phlebotomy',
+        ),
       },
     ].filter(({ services }) => services.length > 0);
   }

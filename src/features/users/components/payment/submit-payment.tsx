@@ -3,7 +3,6 @@ import { useCallback } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { TransactionSpinner } from '@/components/ui/spinner/transaction-spinner';
-// eslint-disable-next-line import/no-restricted-paths
 import { usePaymentMethodSelection } from '@/features/settings/hooks';
 
 interface SubmitPaymentProps {

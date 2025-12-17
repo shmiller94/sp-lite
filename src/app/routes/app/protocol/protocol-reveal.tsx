@@ -17,7 +17,6 @@ import { HealthScoreStep } from '@/features/protocol/components/reveal/steps/hea
 import { OrderSummaryStep } from '@/features/protocol/components/reveal/steps/order-summary-step';
 import { ProductCheckoutStep } from '@/features/protocol/components/reveal/steps/product-checkout-step';
 import { RxQuestionnaireStep } from '@/features/protocol/components/reveal/steps/rx-questionnaire-step';
-import { ServiceBookingStep } from '@/features/protocol/components/reveal/steps/service-booking-step';
 import { ServiceCheckoutStep } from '@/features/protocol/components/reveal/steps/service-checkout-step';
 import { cn } from '@/lib/utils';
 
@@ -165,14 +164,6 @@ const ProtocolRevealContent = ({
       case REVEAL_STEPS.SERVICE_CHECKOUT:
         return (
           <ServiceCheckoutStep
-            carePlanId={carePlanId}
-            next={next}
-            previous={previous}
-          />
-        );
-      case REVEAL_STEPS.SERVICE_BOOKING:
-        return (
-          <ServiceBookingStep
             carePlanId={carePlanId}
             next={next}
             previous={previous}

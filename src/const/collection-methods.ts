@@ -7,10 +7,7 @@ export type CollectionOptionType = {
   cancelationText?: string;
   price: number;
   disabled: boolean;
-  pricingText?: string;
 };
-
-export const AT_HOME_PRICE = 119_00; // $119 for all states
 
 export const COLLECTION_METHODS: Record<
   'AT_HOME' | 'IN_LAB',
@@ -30,7 +27,7 @@ export const COLLECTION_METHODS: Record<
     description:
       'A licensed nurse will meet you at home, work, or wherever you are to perform your blood draw.',
     cancelationText: 'Late cancellation or rescheduling fees apply.',
-    price: AT_HOME_PRICE,
+    price: 0, // will be dynamically added inside the hook
     disabled: false,
   },
 } as const;

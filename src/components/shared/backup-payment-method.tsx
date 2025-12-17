@@ -2,9 +2,7 @@ import { StripeError } from '@stripe/stripe-js';
 
 import { StripeCardElement } from '@/components/shared/stripe-card-element';
 import { Body2, H3 } from '@/components/ui/typography';
-// eslint-disable-next-line import/no-restricted-paths
 import { usePaymentMethodSelection } from '@/features/settings/hooks';
-// eslint-disable-next-line import/no-restricted-paths
 import * as Payment from '@/features/users/components/payment';
 
 interface BackupPaymentMethodProps {

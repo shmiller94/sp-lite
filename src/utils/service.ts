@@ -1,4 +1,3 @@
-import { AnimatedTimelineType } from '@/components/ui/animated-timeline';
 import {
   ADVANCED_BLOOD_PANEL,
   ADVISORY_CALL,
@@ -6,7 +5,6 @@ import {
   AUTOIMMUNITY_AND_CELIAC_PANEL,
   CARDIOVASCULAR_PANEL,
   CONTINUOUS_GLUCOSE_MONITOR,
-  CUSTOM_BLOOD_PANEL,
   DEXA_SCAN,
   ENVIRONMENTAL_TOXIN_TEST,
   ENVIRONMENTAL_TOXINS,
@@ -31,50 +29,7 @@ import {
   VO2_MAX_TEST,
 } from '@/const';
 import { SERVICE_DETAILS } from '@/const/service-details';
-import { CollectionMethodType, HealthcareService } from '@/types/api';
 import { ServiceDetails } from '@/types/service';
-
-export const getServiceTimeline = (
-  healthcareService: HealthcareService | null,
-  collectionMethod: CollectionMethodType | null,
-): AnimatedTimelineType[] => {
-  if (!healthcareService) return [];
-
-  if (healthcareService.phlebotomy) {
-    return [
-      { title: 'Test ordered', complete: true },
-      { title: 'Schedule a test appointment', complete: true },
-      {
-        title:
-          collectionMethod === 'IN_LAB'
-            ? 'Phlebotomist completes your blood draw appointment in ~15 minutes'
-            : 'At-home testing',
-        complete: false,
-      },
-      { title: 'Test results processed within 10 days', complete: false },
-      { title: 'Results uploaded', complete: false },
-      { title: 'Action plan ready', complete: false },
-    ];
-  }
-
-  switch (healthcareService.name) {
-    case GUT_MICROBIOME_ANALYSIS: {
-      return [
-        { title: 'Test ordered', complete: true },
-        {
-          title: 'At-home testing',
-          complete: false,
-        },
-        { title: 'Test results processed within 2-4 weeks', complete: false },
-        { title: 'Results uploaded', complete: false },
-        { title: 'Schedule a follow-up appointment', complete: false },
-      ];
-    }
-    default: {
-      return [];
-    }
-  }
-};
 
 export const getDetailsForService = (
   serviceName: string,
@@ -204,9 +159,6 @@ export const getServiceImage = (name: string): string => {
 
     case CONTINUOUS_GLUCOSE_MONITOR:
       return serviceImages.ContinuousGlucoseMonitor;
-
-    case CUSTOM_BLOOD_PANEL:
-      return serviceImages.CustomBloodPanel;
 
     case GRAIL_GALLERI_MULTI_CANCER_TEST:
       return serviceImages.GrailGalleriMultiCancer;

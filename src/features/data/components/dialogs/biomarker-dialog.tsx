@@ -24,7 +24,6 @@ import { cn } from '@/lib/utils';
 import { Biomarker } from '@/types/api';
 
 import { STATUS_TO_COLOR } from '../../../../const/status-to-color';
-import { getServiceActionUrl } from '../../utils/get-service-action-url';
 
 import { BiomarkerContentTabs } from './biomarker-content-tabs';
 
@@ -81,7 +80,7 @@ export const BiomarkerDialog = ({
                   biomarker.recommendedTests.services[0]?.id;
 
                 if (firstServiceId) {
-                  navigate(getServiceActionUrl(firstServiceId));
+                  navigate(`/services/${firstServiceId}`);
                 }
               }}
             >

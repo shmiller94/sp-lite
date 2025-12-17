@@ -9,20 +9,23 @@ import { useCategories } from '@/features/data/api/get-categories';
 import { CategoryView } from '@/features/data/components/category-view';
 import { Overview } from '@/features/data/components/overview';
 import { DataSidebar } from '@/features/data/components/sidebar/data-sidebar';
-import { useDataGating } from '@/features/data/hooks/use-data-gating';
 import { encodeCategory } from '@/features/data/utils/category/encode-category';
 import { DigitalTwin } from '@/features/digital-twin/components/digital-twin';
+import { useSummary } from '@/features/summary/api/get-summary';
 
 export const DataRoute = () => {
   const [searchParams] = useSearchParams();
-  const gating = useDataGating();
-  const { data: categories, isLoading: isCategoriesLoading } = useCategories();
+  const summaryQuery = useSummary();
+  const categoriesQuery = useCategories();
   const navigate = useNavigate();
 
-  const isLoading = isCategoriesLoading || gating.isLoading;
+  const isLoading = categoriesQuery.isLoading || summaryQuery.isLoading;
+
+  const categories = categoriesQuery.data?.categories ?? [];
+  const gating = summaryQuery.data;
 
   const category = searchParams.get('category');
-  const activeCategory = categories?.categories.find(
+  const activeCategory = categories.find(
     (c) => encodeCategory(c.category) === encodeCategory(category ?? ''),
   );
 
@@ -30,7 +33,7 @@ export const DataRoute = () => {
   if (
     category &&
     !isLoading &&
-    !categories?.categories.some(
+    !categories.some(
       (c) => encodeCategory(c.category) === encodeCategory(category),
     )
   ) {
@@ -56,7 +59,7 @@ export const DataRoute = () => {
       <div className="mt-[5px] flex size-full min-h-[calc(100vh-256px)] flex-1 flex-col overflow-visible md:grid md:grid-cols-10 xl:grid-cols-9">
         <DataSidebar />
         <div className="relative top-0 z-0 col-span-3 mb-[-40px] h-[512px] max-h-[50vh] md:sticky md:-mt-16 md:h-full md:max-h-[60vh]">
-          {gating.hasPartialResults && (
+          {gating && gating.hasPartialResults && (
             <Badge
               variant="secondary"
               className="absolute left-1/2 top-1/2 z-10 -mt-28 flex -translate-x-1/2 -translate-y-1/2 items-center gap-2 truncate bg-zinc-100/50 px-3 py-2 text-sm text-secondary backdrop-blur-sm md:hidden lg:mt-0 lg:flex"

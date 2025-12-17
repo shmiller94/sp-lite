@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/button';
 import { Body1, H2 } from '@/components/ui/typography';
 // TODO: move User address components to a shared location so i don't have to do this hack.
 // it's quite a lift so if someone could do this it would be greatly appreciated <3 ~A.S 11-03-2025
-// eslint-disable-next-line import/no-restricted-paths
 import { CurrentAddressCard } from '@/features/users/components/current-address-card';
 import { useIdentityVerification } from '@/hooks/use-identity-verification';
 import { cn } from '@/lib/utils';

@@ -1,10 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 
+import { SelectableCard } from '@/components/shared/selectable-card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Body2 } from '@/components/ui/typography';
 import { useRx } from '@/features/rx/api/get-rx';
-import { ServiceActionCard } from '@/features/services/components/service-action-card';
 import { BiomarkerRecommendedTests } from '@/types/api';
 import { getPrescriptionImage } from '@/utils/prescription';
 
@@ -42,19 +42,12 @@ export const BiomarkerRxSuggestion = ({
         </Body2>
 
         {existingRx ? (
-          <ServiceActionCard
+          <SelectableCard
             key={existingRx.id}
-            service={{
-              ...existingRx,
-              additionalClassification: [],
-              phlebotomy: false,
-              supportsLabOrder: false,
-              bloodTubeCount: 0,
-              price: 0,
-            }}
-            imgOverwrite={getPrescriptionImage(existingRx.name)}
-            displayPrice={false}
-            toggle={() => {
+            title={existingRx.name}
+            description={existingRx.description}
+            imageSrc={getPrescriptionImage(existingRx.name)}
+            onToggle={() => {
               navigate(`/prescriptions/${existingRx.id}`);
             }}
             trigger={<Button size="small">Learn more</Button>}

@@ -4,22 +4,17 @@ import { toast } from 'sonner';
 import { createStore } from 'zustand';
 
 import { api } from '@/lib/api-client';
-import {
-  Address,
-  CollectionMethodType,
-  HealthcareService,
-  Slot,
-} from '@/types/api';
+import { Address, CollectionMethodType, Slot } from '@/types/api';
 
 const URL = '/phlebotomy/availability';
 
 export interface SchedulerProps {
   collectionMethod: CollectionMethodType;
   address: Address;
-  service: HealthcareService;
   onSlotUpdate?: (slot: Slot | null, tz: string) => void;
   numDays?: number;
   showCreateBtn?: boolean;
+  isAdvisory?: boolean;
 }
 
 export interface SchedulerStore extends SchedulerProps {
@@ -44,7 +39,7 @@ export const schedulerStoreCreator = (initProps: SchedulerProps) => {
     showCreateBtn: initProps.showCreateBtn,
     collectionMethod: initProps.collectionMethod,
     address: initProps.address,
-    service: initProps.service,
+    isAdvisory: initProps.isAdvisory ?? false,
   };
 
   return createStore<SchedulerStore>()((set, get) => ({
@@ -56,15 +51,16 @@ export const schedulerStoreCreator = (initProps: SchedulerProps) => {
       const state = get();
       const collectionMethod = state.collectionMethod;
       const address = state.address;
-      const service = state.service;
       const startRange = state.startRange;
+      const isAdvisory = state.isAdvisory;
       set({ loading: true });
+
       const response: { slots: Slot[]; timezone: string | undefined } =
         await api.post(URL, {
           collectionMethod,
           address,
-          serviceId: service.id,
           start: startRange ? startRange.toDate() : new Date(),
+          isAdvisory,
         });
 
       set({ loading: false, slots: response.slots });

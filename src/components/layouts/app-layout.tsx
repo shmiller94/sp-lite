@@ -5,12 +5,12 @@ import { useLocation } from 'react-router-dom';
 import { FloatingWrapper } from '@/components/shared/floating-wrapper';
 import { NavigationProgress } from '@/components/ui/navigation-progress';
 import { WHITE_BACKGROUND_PATHS } from '@/const/white-background-paths';
-// eslint-disable-next-line import/no-restricted-paths
 import { Announcements } from '@/features/announcements/components/announcements';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 
+import { DevHelper } from '../shared/dev-helper';
 import { Navbar } from '../shared/navbar';
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
@@ -35,6 +35,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <main className={isWhiteBg ? 'bg-white' : 'bg-zinc-50'}>
+      <DevHelper />
       {!hideNavBar && <Navbar />}
       <NavigationProgress />
       <motion.div

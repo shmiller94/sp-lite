@@ -28,7 +28,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown';
-// eslint-disable-next-line import/no-restricted-paths
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useScrollThreshold } from '@/hooks/use-scroll-threshold';
 import { ROLES, useAuthorization } from '@/lib/authorization';
@@ -269,7 +268,7 @@ export const MobileNavbar = () => {
     {
       icon: Package,
       name: 'Your Orders',
-      to: '/marketplace?tab=orders',
+      to: './orders',
     },
     {
       icon: SettingsIcon,
@@ -324,9 +323,7 @@ export const MobileNavbar = () => {
           linkState={{ from: pathname }}
           onItemClick={() => setOpen(false)}
           getIsActive={(link, isActive) =>
-            link.to === '/marketplace?tab=orders'
-              ? isMarketplaceOrdersActive
-              : isActive
+            link.to === '/marketplace' ? isMarketplaceOrdersActive : isActive
           }
           links={[
             ...additionalMobileLinks,

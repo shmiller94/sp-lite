@@ -2,11 +2,8 @@ import { Moment } from 'moment';
 import { useEffect } from 'react';
 import 'moment-timezone';
 
-import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Body1 } from '@/components/ui/typography';
-import { ADVISORY_CALL } from '@/const';
-import { useStepper } from '@/lib/stepper';
 
 import { useScheduler } from '../stores/scheduler';
 import { dayArray, isDisabledDaySlot } from '../utils';
@@ -20,7 +17,6 @@ export function SchedulerDays(): JSX.Element {
     startRange,
     numDays,
     loading,
-    service,
   } = useScheduler((s) => s);
 
   useEffect(() => {
@@ -32,7 +28,6 @@ export function SchedulerDays(): JSX.Element {
       }
     }
   }, [slots]);
-  const { prevStep } = useStepper((s) => s);
 
   const renderDays = numDays && startRange && slots.length > 0 && !loading;
 
@@ -42,20 +37,7 @@ export function SchedulerDays(): JSX.Element {
         <Body1 className="text-center text-zinc-500">
           We were unable to find available slots within the next few months.
           <br />
-          {service.name === ADVISORY_CALL
-            ? 'Please check back again later.'
-            : 'Please pick a different location.'}
         </Body1>
-
-        {service.name === ADVISORY_CALL ? null : (
-          <Button
-            variant="outline"
-            className="mt-4 w-full bg-white md:w-auto"
-            onClick={prevStep}
-          >
-            Pick new location
-          </Button>
-        )}
       </div>
     );
   }

@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/sonner';
 import { Spinner } from '@/components/ui/spinner';
-// eslint-disable-next-line import/no-restricted-paths
 import { useCreateFlexCheckoutSession } from '@/features/settings/api/create-flex-checkout-session';
 
 import { Body1 } from '../ui/typography/body1/body1';

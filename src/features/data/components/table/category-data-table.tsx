@@ -2,6 +2,7 @@ import { useEffect, useState, useTransition } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDebouncedCallback } from 'use-debounce';
 
+import { SelectableCard } from '@/components/shared/selectable-card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -12,9 +13,9 @@ import {
 } from '@/const';
 import { useOrders } from '@/features/orders/api';
 import { useService, useServices } from '@/features/services/api';
-import { ServiceActionCard } from '@/features/services/components/service-action-card';
 import { cn } from '@/lib/utils';
 import { Category, SuperpowerCategory } from '@/types/api';
+import { getServiceImage } from '@/utils/service';
 
 import { useBiomarkers } from '../../api';
 import { useFilteredBiomarkers } from '../../hooks/use-filtered-biomarkers';
@@ -34,22 +35,15 @@ export const CategoryDataTable = ({ category }: { category?: Category }) => {
 
   const [localQuery, setLocalQuery] = useState(searchQuery);
 
-  const {
-    data: orders,
-    isLoading: isOrdersLoading,
-    isFetching: isOrdersFetching,
-  } = useOrders();
-  const {
-    data: biomarkers,
-    isLoading: isBiomarkersLoading,
-    isFetching: isBiomarkersFetching,
-  } = useBiomarkers({
+  const ordersQuery = useOrders();
+  const biomarkersQuery = useBiomarkers({
     category: category?.category,
   });
 
+  const biomarkers = biomarkersQuery.data?.biomarkers ?? [];
+
   const filteredBiomarkers = useFilteredBiomarkers({
-    biomarkers: biomarkers?.biomarkers,
-    orders: orders?.orders,
+    biomarkers: biomarkers,
     enabledFilters: { categories: false, date: true, range: true },
   });
 
@@ -60,10 +54,10 @@ export const CategoryDataTable = ({ category }: { category?: Category }) => {
   }, 200);
 
   const isLoading =
-    isOrdersLoading ||
-    isBiomarkersLoading ||
-    isOrdersFetching ||
-    isBiomarkersFetching;
+    ordersQuery.isLoading ||
+    biomarkersQuery.isLoading ||
+    ordersQuery.isFetching ||
+    biomarkersQuery.isFetching;
 
   return (
     <div>
@@ -135,10 +129,11 @@ const GutInsights = () => {
   }
 
   return (
-    <ServiceActionCard
-      displayPrice={false}
-      service={service}
-      toggle={() => navigate(`/services/${service.id}`)}
+    <SelectableCard
+      title={service.name}
+      imageSrc={getServiceImage(service.name)}
+      description={service.description}
+      onToggle={() => navigate(`/services/${service.id}`)}
       trigger={
         <Button size="small" variant="outline">
           Unlock
@@ -169,10 +164,11 @@ const ToxinsInsights = () => {
   return (
     <div className="space-y-2">
       {env ? (
-        <ServiceActionCard
-          displayPrice={false}
-          service={env}
-          toggle={() => navigate(`/services/${env.id}`)}
+        <SelectableCard
+          title={env.name}
+          imageSrc={getServiceImage(env.name)}
+          description={env.description}
+          onToggle={() => navigate(`/services/${env.id}`)}
           trigger={
             <Button size="small" variant="outline">
               Unlock
@@ -181,10 +177,11 @@ const ToxinsInsights = () => {
         />
       ) : null}
       {mycotoxins ? (
-        <ServiceActionCard
-          displayPrice={false}
-          service={mycotoxins}
-          toggle={() => navigate(`/services/${mycotoxins.id}`)}
+        <SelectableCard
+          title={mycotoxins.name}
+          imageSrc={getServiceImage(mycotoxins.name)}
+          description={mycotoxins.description}
+          onToggle={() => navigate(`/services/${mycotoxins.id}`)}
           trigger={
             <Button size="small" variant="outline">
               Unlock
@@ -193,10 +190,11 @@ const ToxinsInsights = () => {
         />
       ) : null}
       {heavymetals ? (
-        <ServiceActionCard
-          displayPrice={false}
-          service={heavymetals}
-          toggle={() => navigate(`/services/${heavymetals.id}`)}
+        <SelectableCard
+          title={heavymetals.name}
+          imageSrc={getServiceImage(heavymetals.name)}
+          description={heavymetals.description}
+          onToggle={() => navigate(`/services/${heavymetals.id}`)}
           trigger={
             <Button size="small" variant="outline">
               Unlock

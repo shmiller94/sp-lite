@@ -11,6 +11,7 @@ export const DigitalTwinCard = () => {
   const { data: user } = useUser();
   const { data: biomarkers, isLoading } = useBiomarkers();
 
+  // TODO: just add this field on backend...
   const mostRecentBiomarkerTimestamp = biomarkers?.biomarkers
     ? biomarkers.biomarkers
         .flatMap((biomarker) => biomarker.value)

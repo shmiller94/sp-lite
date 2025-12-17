@@ -1,72 +1,38 @@
 import { SuperpowerLogo } from '@/components/icons/superpower-logo';
 import { SplitScreenLayout } from '@/components/layouts';
-import { toast } from '@/components/ui/sonner';
+import { Button } from '@/components/ui/button';
 import { Body1, Body2, H2, H3, H4 } from '@/components/ui/typography';
-import { ADVANCED_BLOOD_PANEL, ORGAN_AGE_PANEL } from '@/const';
-import { useAddOnPanelStore } from '@/features/onboarding/stores/add-on-panel-store';
-import { useUpgradeOrder } from '@/features/orders/api/upgrade-order';
-import { useHasCredit } from '@/features/orders/hooks';
+import { ORGAN_AGE_PANEL } from '@/const';
 import { useServices } from '@/features/services/api';
-import * as Payment from '@/features/users/components/payment';
 import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 import { formatMoney } from '@/utils/format-money';
+
+import { useAddOnPanelStore } from '../../stores/add-on-panel-store';
 
 import { useOnboardingStepper } from './onboarding-stepper';
 
 const ORGAN_AGE_PRICE = 9900;
 
 const OrganAgeContent = () => {
-  const { next, methods } = useOnboardingStepper();
+  const { next } = useOnboardingStepper();
   const { togglePanel } = useAddOnPanelStore();
-
-  const { credit } = useHasCredit({
-    serviceName: ADVANCED_BLOOD_PANEL,
-  });
-
-  const upgradeOrderMutation = useUpgradeOrder({
-    mutationConfig: {
-      onSuccess: () => {
-        toast.success(`One-time OrganAge upgrade successful!`);
-      },
-    },
-  });
-
-  // Get the add-on services for the user
   const { data, isLoading: isServicesLoading } = useServices({
-    group: 'blood-panel-addon',
+    group: 'phlebotomy',
   });
 
-  const goToNext = () => {
-    if (credit) {
-      methods.goTo('test-kit-steps');
-    } else {
-      next();
-    }
-  };
-
-  // If the user has advanced credit, upgrade the order and skip the add-on panels step
-  const upgradeOrder = async (paymentMethodId: string) => {
+  const handleAddPanel = async () => {
     const organAge = data?.services.find((s) => s.name === ORGAN_AGE_PANEL);
 
-    if (!organAge) {
-      toast.error('Something went wrong, contact concierge@superpower.com');
-      return;
-    }
-
-    if (credit) {
-      await upgradeOrderMutation.mutateAsync({
-        data: {
-          upgradeType: 'custom-panel',
-          addOnServiceIds: [organAge.id],
-          paymentMethodId,
-        },
-      });
-    } else {
+    if (organAge) {
       togglePanel(organAge.id);
     }
 
-    goToNext();
+    next();
+  };
+
+  const handleSkip = () => {
+    next();
   };
 
   if (isServicesLoading) {
@@ -76,7 +42,7 @@ const OrganAgeContent = () => {
   const organAgePanel = data?.services.find((s) => s.name === ORGAN_AGE_PANEL);
 
   if (!organAgePanel) {
-    goToNext();
+    next();
     return null;
   }
 
@@ -141,22 +107,32 @@ const OrganAgeContent = () => {
         </div>
         <ServiceInfoCard className="block md:hidden" />
 
-        <Payment.PaymentGroup>
-          {credit && (
-            <>
-              <Payment.PaymentDetails />
-              <Payment.CurrentPaymentMethodCard className="!bg-white" />
-            </>
-          )}
-          <Payment.SubmitPayment
-            onSubmit={upgradeOrder}
-            onCancel={goToNext}
-            submitLabel={`Add Organ Age Panel - ${formatMoney(organAgePanel.price)}`}
-            isPending={upgradeOrderMutation.isPending}
-            isSuccess={upgradeOrderMutation.isSuccess}
-            enabled
-          />
-        </Payment.PaymentGroup>
+        <div className="flex flex-col gap-2">
+          <Button onClick={handleAddPanel}>
+            Add Organ Age Panel - {formatMoney(organAgePanel.price)}
+          </Button>
+          <Button variant="outline" className="bg-white" onClick={handleSkip}>
+            Skip for now
+          </Button>
+          <div className="flex gap-6 pt-4 text-xs text-zinc-400">
+            <a
+              href="https://www.superpower.com/privacy"
+              target="_blank"
+              rel="noreferrer"
+              className="transition-colors duration-150 hover:text-zinc-500"
+            >
+              Privacy Policy
+            </a>
+            <a
+              href="https://www.superpower.com/terms"
+              target="_blank"
+              rel="noreferrer"
+              className="transition-colors duration-150 hover:text-zinc-500"
+            >
+              Terms of services
+            </a>
+          </div>
+        </div>
       </div>
     </>
   );
