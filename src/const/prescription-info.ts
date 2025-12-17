@@ -60,7 +60,7 @@ export const NAD_INTRANASAL = {
     },
     {
       question: 'What are potential contraindications?',
-      answer: `Contraindications: Known allergies to NAD+ or any components of the injection. Pregnancy and lactation (safety unknown). Severe hepatic impairment (metabolism may be altered). Renal failure (excretion may be impaired). Unstable angina, acute decompensated heart failure, or advanced heart block (due to potential vasodilatory effects). Active malignancy (theoretical risk of fueling tumor metabolism). Moderate to severe cardiac and respiratory diseases. Precautions: Hypotension — monitor blood pressure during and after treatment due to potential vasodilatory effects. Arrhythmia — monitor heart rate and rhythm during and after treatment due to potential cardiac effects. Liver function — baseline and periodic testing of liver enzymes is advisable due to potential altered metabolism in severe hepatic impairment. Renal function — baseline and periodic testing of renal function is advisable due to potential impaired excretion in renal failure. Allergic reactions — monitor for signs and symptoms of allergic reactions during and after treatment.`,
+      answer: `Contraindications: Known allergies to NAD+ or any components of the nasal spray. Pregnancy and lactation (safety unknown). Severe hepatic impairment (metabolism may be altered). Renal failure (excretion may be impaired). Unstable angina, acute decompensated heart failure, or advanced heart block (due to potential vasodilatory effects). Active malignancy (theoretical risk of fueling tumor metabolism). Moderate to severe cardiac and respiratory diseases. Precautions: Hypotension — monitor blood pressure during and after treatment due to potential vasodilatory effects. Arrhythmia — monitor heart rate and rhythm during and after treatment due to potential cardiac effects. Liver function — baseline and periodic testing of liver enzymes is advisable due to potential altered metabolism in severe hepatic impairment. Renal function — baseline and periodic testing of renal function is advisable due to potential impaired excretion in renal failure. Allergic reactions — monitor for signs and symptoms of allergic reactions during and after treatment.`,
     },
     {
       question: 'Potential drug interactions?',
@@ -406,11 +406,6 @@ Modern Evolution: Today; Gonadorelin is leveraged by forward-thinking men’s he
     },
     {
       question:
-        'What do I do if I need a higher dose of Semaglutide than is prescribed in the titration schedule?',
-      answer: `We will prescribe up to a maximum of 2mg per week (as medically required). If you feel you need a higher dose, please contact your physician and we will adjust the amount we send you for your next 90 day supply. There will be no extra fee's incurred.`,
-    },
-    {
-      question:
         'How long before I see results in terms of fertility improvements?',
       answer: `Men often notice improvements in energy and libido within a few weeks; however, fertility markers like sperm count may require 3–6 months for significant change due to the sperm production cycle.`,
     },
@@ -538,21 +533,23 @@ Most side effects are mild and transient. If you experience severe or persistent
     },
     {
       question: 'What are potential contraindications?',
-      answer: `Contraindications
+      answer: `Known allergies or hypersensitivity: Avoid this combination if you have known allergies or hypersensitivity to oxytocin, bremelanotide, tadalafil, or any of their components.
 
-Known hypersensitivity to GnRH or similar peptides
-Primary testicular failure (where the testes themselves cannot respond)
-Precautions
+Cardiovascular conditions: Exercise caution in individuals with significant cardiovascular conditions, uncontrolled hypertension, or low blood pressure, as the combination may pose risks, particularly during sexual activity.
 
-Pituitary Tumors: Use caution if a pituitary lesion is known or suspected
-Elevated Prolactin: Hyperprolactinemia may interfere with Gonadorelin efficacy
-Underlying Chronic Conditions: Discuss with your provider if you have severe heart; kidney; or liver disease`,
+Nitrate medications: Contraindicated in individuals taking nitrates (e.g., nitroglycerin) or alpha-blockers, as combining these with tadalafil can cause dangerous drops in blood pressure.
+
+Pregnancy and breastfeeding: Not recommended during pregnancy, breastfeeding, or when planning to become pregnant, as safety data are not well-established for these populations.
+
+Hepatic or renal impairment: Consult healthcare professionals before using this combination if you have severe hepatic or renal impairment.
+
+Priapism history: Use cautiously in patients with a history of priapism or conditions predisposing to priapism, such as sickle cell anemia.`,
     },
     {
       question: 'Potential drug interactions?',
       answer: `- Nitrates (e.g. nitroglycerin) or alpha-blockers: Can cause significant blood pressure drops when combined with tadalafil.
-- CYP3A4 inhibitors: Certain medications (e.g.; some antibiotics, antifungals) can increase the concentration of tadalafil.
-- Alcohol: Excessive alcohol may amplify certain side effects; such as dizziness and hypotension.`,
+- CYP3A4 inhibitors: Certain medications (e.g., some antibiotics, antifungals) can increase the concentration of tadalafil.
+- Alcohol: Excessive alcohol may amplify certain side effects, such as dizziness and hypotension.`,
     },
   ],
 };
@@ -590,13 +587,15 @@ export const TADALAFIL = {
       answer: `A good candidate for Tadalafil typically includes individuals experiencing erectile dysfunction or symptoms of benign prostatic hyperplasia, after consulting with a healthcare provider to assess their medical history and overall health. Compatibility with other medications, cardiovascular health, and lifestyle factors are also important considerations in determining suitability for Tadalafil usage.`,
     },
     {
-      question: 'What’s the difference between Tadalafil and Cialis?',
+      question: "What's the difference between Tadalafil and Cialis?",
       answer:
-        'Unlike other ED medications, Tadalafil can be taken daily. This means you can be intimate at any time, rather than needing to take a pill from time to time, as needed, like other brands.Clinical evidence also supports Tadalafil for a variety of health and longevity benefits due to its ability to act as an anti-inflammatory, improve cognitive function, and improve blood flow to major organs.',
+        'Tadalafil is the active ingredient used in Cialis and is the generic equivalent. As clinically evidenced, Tadalafil is just as safe and effective as branded Cialis; it works for the same amount of time and delivers the same lasting effects.',
     },
     {
       question: 'What are the advantages of Tadalafil over other ED meds?',
-      answer: `Yes, in certain cases. Bremelanotide and oxytocin are studied for female sexual response, and while tadalafil is primarily indicated for erectile dysfunction in men, there is ongoing research exploring its effects on blood flow and sexual arousal in women. Consult a healthcare professional to determine if this therapy is appropriate for you.`,
+      answer: `Unlike other ED medications, Tadalafil can be taken daily. This means you can be intimate at any time, rather than needing to take a pill from time to time, as needed, like other brands.
+
+Clinical evidence also supports Tadalafil for a variety of health and longevity benefits due to its ability to act as an anti-inflammatory, improve cognitive function, and improve blood flow to major organs.`,
     },
     {
       question:
@@ -738,7 +737,13 @@ export const TRETINOIN = {
     {
       question:
         'Can tretinoin cream be used during pregnancy or while breastfeeding?',
-      answer: `Tretinoin can be challenging for individuals with sensitive skin, as it may cause irritation, redness, or peeling. However, starting with a lower concentration of tretinoin and gradually increasing frequency of use can help minimize these side effects.`,
+      answer: `Tretinoin / Aloe Vera Face Cream is contraindicated for use in pregnant women, and caution is advised to prevent potential harm to a developing fetus.
+
+Breastfeeding women should avoid Tretinoin / Aloe Vera Face Cream due to the risk of excretion in breast milk, posing potential risks to nursing infants.
+
+Pregnant women should not handle Tretinoin / Aloe Vera Face Cream to prevent potential systemic absorption and exposure to the developing fetus.
+
+Individuals should consult with healthcare professionals before using Tretinoin / Aloe Vera Face Cream, especially if pregnant, planning pregnancy, or breastfeeding.`,
     },
     {
       question: 'What are the potential side effects?',
@@ -873,7 +878,7 @@ export const LOW_DOSE_NALTREXONE = {
     {
       question:
         'Are there any significant side effects or risks associated with low dose naltrexone (LDN)?',
-      answer: `TNaltrexone administration can lead to a variety of side effects across multiple body systems. Gastrointestinal effects are common, with nausea occurring in 33% of patients, and other symptoms like abdominal pain, decreased appetite, diarrhea, and vomiting also reported. The nervous system can be affected, with notable side effects including anxiety, asthenia, headaches, insomnia, and dizziness. Liver enzyme levels may increase, indicating potential hepatic side effects, and neuromuscular & skeletal complaints such as arthralgia, arthritis, and increased creatine phosphokinase levels are observed. Less common and postmarketing side effects span a wide range, including dermatologic, respiratory, cardiovascular, and hypersensitivity reactions, highlighting the broad impact naltrexone can have on patients.`,
+      answer: `Naltrexone administration can lead to a variety of side effects across multiple body systems. Gastrointestinal effects are common, with nausea occurring in 33% of patients, and other symptoms like abdominal pain, decreased appetite, diarrhea, and vomiting also reported. The nervous system can be affected, with notable side effects including anxiety, asthenia, headaches, insomnia, and dizziness. Liver enzyme levels may increase, indicating potential hepatic side effects, and neuromuscular & skeletal complaints such as arthralgia, arthritis, and increased creatine phosphokinase levels are observed. Less common and postmarketing side effects span a wide range, including dermatologic, respiratory, cardiovascular, and hypersensitivity reactions, highlighting the broad impact naltrexone can have on patients.`,
     },
     {
       question: 'What are the potential side effects?',
@@ -1277,7 +1282,7 @@ export const SERMORELIN_TROCHES = {
   ],
   science: {
     activeIngredients: `Sermorelin is a synthetic peptide made up of a chain of amino acids, specifically 29 amino acids. The primary ingredient in sermorelin is the peptide itself, which mimics the effects of natural growth hormone-releasing hormone (GHRH) produced by the hypothalamus in the brain. Additionally, the formulation may include other compounds necessary for stability and administration, such as bacteriostatic water or other solvents used for reconstitution.`,
-    mechanism: `Sermorelin is usually administered through subcutaneous injection. The specific dosage and frequency will be determined by healthcare professionals based on individual needs. Strict adherence to the prescribed administration guidelines is crucial for optimal results.`,
+    mechanism: `Sermorelin troches are administered orally by placing the troche under the tongue or in the cheek (buccal area) and allowing it to dissolve. The specific dosage and frequency will be determined by healthcare professionals based on individual needs. It is typically taken before bedtime since the body naturally releases growth hormone during sleep. Strict adherence to the prescribed administration guidelines is crucial for optimal results.`,
     history: `Sermorelin, first developed in the 1970s, represents a milestone in the field of endocrinology. It was designed as a synthetic analog of the naturally occurring growth hormone-releasing hormone (GHRH) to address growth hormone deficiencies. The research and development of Sermorelin aimed to provide a more targeted and safer alternative to traditional growth hormone therapy. Over the years, its use has evolved, with a focus on stimulating the pituitary gland for the pulsatile release of growth hormone, contributing to improved well-being. Since its discovery, Sermorelin has undergone rigorous clinical evaluation, solidifying its role in medical practice for managing growth hormone-related conditions.`,
   },
   headerFaq: [
@@ -1310,7 +1315,7 @@ export const SERMORELIN_TROCHES = {
     },
     {
       question: 'What are the potential side effects?',
-      answer: `Common side effects of Sermorelin include injection site reactions, such as redness or swelling. Mild dizziness or headaches may also occur. While serious side effects are rare, immediate medical attention is necessary if allergic reactions or signs of tumor growth occur.`,
+      answer: `Common side effects of Sermorelin troches may include oral irritation or discomfort in the mouth, mild dizziness, or headaches. Some individuals may experience a temporary taste sensation. While serious side effects are rare, immediate medical attention is necessary if allergic reactions or signs of tumor growth occur.`,
     },
     {
       question: 'What are potential contraindications?',
@@ -1331,7 +1336,9 @@ Safety and efficacy have not been well established in pediatric patients. Use on
     },
     {
       question: 'Potential drug interactions?',
-      answer: `Sermorelin may interact with certain medications, highlighting the importance of disclosing all current medications and supplements to healthcare providers. If you are on insulin/diabetic meds, corticosteroids, or thyroid therapies, then you should consult your HCP prior to use. This ensures a thorough assessment of potential drug interactions, allowing for adjustments in treatment plans to avoid adverse effects.`,
+      answer: `Sermorelin may interact with certain medications, highlighting the importance of disclosing all current medications and supplements to healthcare providers.
+
+If you are on insulin/diabetic meds, corticosteroids, or thyroid therapies, then you should consult your HCP prior to use. This ensures a thorough assessment of potential drug interactions, allowing for adjustments in treatment plans to avoid adverse effects.`,
     },
   ],
 };
