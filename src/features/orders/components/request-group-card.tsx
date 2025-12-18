@@ -116,7 +116,7 @@ const SingleCard = ({
 
   const createdWithTz = order.createdAt
     ? moment(order.createdAt).tz(timezone).format('MMM D, YYYY')
-    : '???';
+    : undefined;
   const price = services.find((s) => s.id === order.serviceId)?.price;
 
   return (
@@ -130,7 +130,9 @@ const SingleCard = ({
         <div className="flex flex-col">
           <Body1>{order.serviceName}</Body1>
           <Body2 className="text-zinc-500">
-            {createdWithTz} · {price ? formatMoney(price) : '???'}
+            {createdWithTz && price
+              ? `${createdWithTz} · ${formatMoney(price)}`
+              : createdWithTz ?? (price ? formatMoney(price) : null)}
           </Body2>
         </div>
         {handleManage ? (
