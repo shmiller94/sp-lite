@@ -26,6 +26,7 @@
     "@central-icons-react/round-filled-radius-3-stroke-1.5": "^1.1.60",
     "@hookform/resolvers": "^3.9.0",
     "@imgly/background-removal": "^1.6.0",
+    "@leeoniya/ufuzzy": "^1.0.19",
     "@medplum/core": "^3.2.29",
     "@medplum/fhirtypes": "^3.2.28",
     "@newrelic/browser-agent": "^1.288.1",

@@ -2,7 +2,7 @@ import { MarketplaceSkeleton } from '@/features/marketplace/components/marketpla
 import { MarketplaceFilter } from '@/features/marketplace/const/categories';
 import { getFilterDisplayLabel } from '@/features/marketplace/utils/category-utils';
 import { getMarketplaceSearchMeta } from '@/features/marketplace/utils/get-marketplace-search-meta';
-import { matchesMarketplaceQuery } from '@/features/marketplace/utils/matches-marketplace-query';
+import { searchMarketplaceItems } from '@/features/marketplace/utils/search-marketplace-items';
 import { useUser } from '@/lib/auth';
 import { Rx } from '@/types/api';
 
@@ -46,7 +46,6 @@ export const PrescriptionsList = ({
 
   const {
     trimmedQuery,
-    normalizedQuery,
     isFiltered,
     isSearching,
     filterTitle,
@@ -54,8 +53,10 @@ export const PrescriptionsList = ({
     subtitleOverride,
   } = getMarketplaceSearchMeta(query, filter);
 
-  const filteredPrescriptions = prescriptions.filter((prescription) =>
-    matchesMarketplaceQuery(prescription, filter, normalizedQuery),
+  const filteredPrescriptions = searchMarketplaceItems(
+    prescriptions,
+    filter,
+    trimmedQuery,
   );
 
   let sections: {

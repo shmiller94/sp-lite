@@ -2,7 +2,7 @@ import { MarketplaceSkeleton } from '@/features/marketplace/components/marketpla
 import { MarketplaceFilter } from '@/features/marketplace/const/categories';
 import { getFilterDisplayLabel } from '@/features/marketplace/utils/category-utils';
 import { getMarketplaceSearchMeta } from '@/features/marketplace/utils/get-marketplace-search-meta';
-import { matchesMarketplaceQuery } from '@/features/marketplace/utils/matches-marketplace-query';
+import { searchMarketplaceItems } from '@/features/marketplace/utils/search-marketplace-items';
 import { useProgressiveReveal } from '@/hooks/use-progressive-reveal';
 import { Product } from '@/types/api';
 import { isMobile } from '@/utils/browser-detection';
@@ -32,7 +32,6 @@ export const SupplementsList = ({
 }: SupplementsListProps) => {
   const {
     trimmedQuery,
-    normalizedQuery,
     isFiltered,
     isSearching,
     filterTitle,
@@ -40,8 +39,10 @@ export const SupplementsList = ({
     subtitleOverride,
   } = getMarketplaceSearchMeta(query, filter, 'supplements');
 
-  const filteredSupplements = (products ?? []).filter((product) =>
-    matchesMarketplaceQuery(product, filter, normalizedQuery),
+  const filteredSupplements = searchMarketplaceItems(
+    products ?? [],
+    filter,
+    trimmedQuery,
   );
 
   const sections: SupplementsCategory = [];

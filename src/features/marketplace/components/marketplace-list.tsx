@@ -4,7 +4,7 @@ import { MarketplaceSkeleton } from '@/features/marketplace/components/marketpla
 import { MarketplaceFilter } from '@/features/marketplace/const/categories';
 import { getFilterDisplayLabel } from '@/features/marketplace/utils/category-utils';
 import { getMarketplaceSearchMeta } from '@/features/marketplace/utils/get-marketplace-search-meta';
-import { matchesMarketplaceQuery } from '@/features/marketplace/utils/matches-marketplace-query';
+import { searchMarketplaceItems } from '@/features/marketplace/utils/search-marketplace-items';
 import { PrescriptionCard } from '@/features/prescriptions/components/prescriptions-card';
 import { PrescriptionsCategory } from '@/features/prescriptions/components/prescriptions-category';
 import { getRecommendedPrescriptions } from '@/features/prescriptions/utils/get-recommended-prescriptions';
@@ -42,23 +42,28 @@ export const MarketplaceList = ({
 
   const {
     trimmedQuery,
-    normalizedQuery,
     isFiltered,
     isSearching,
     resultsTitle,
     resultsSubtitle,
   } = getMarketplaceSearchMeta(query, filter);
 
-  const filteredServices = (services ?? []).filter((service) =>
-    matchesMarketplaceQuery(service, filter, normalizedQuery),
+  const filteredServices = searchMarketplaceItems(
+    services ?? [],
+    filter,
+    trimmedQuery,
   );
 
-  const filteredSupplements = (supplements ?? []).filter((product) =>
-    matchesMarketplaceQuery(product, filter, normalizedQuery),
+  const filteredSupplements = searchMarketplaceItems(
+    supplements ?? [],
+    filter,
+    trimmedQuery,
   );
 
-  const filteredPrescriptions = (prescriptions ?? []).filter((prescription) =>
-    matchesMarketplaceQuery(prescription, filter, normalizedQuery),
+  const filteredPrescriptions = searchMarketplaceItems(
+    prescriptions ?? [],
+    filter,
+    trimmedQuery,
   );
 
   const clearQueryButton = isSearching && !!onClearSearch;

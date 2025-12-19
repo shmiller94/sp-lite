@@ -2,7 +2,7 @@ import { MarketplaceSkeleton } from '@/features/marketplace/components/marketpla
 import { MarketplaceFilter } from '@/features/marketplace/const/categories';
 import { getFilterDisplayLabel } from '@/features/marketplace/utils/category-utils';
 import { getMarketplaceSearchMeta } from '@/features/marketplace/utils/get-marketplace-search-meta';
-import { matchesMarketplaceQuery } from '@/features/marketplace/utils/matches-marketplace-query';
+import { searchMarketplaceItems } from '@/features/marketplace/utils/search-marketplace-items';
 import { getRecommendedServices } from '@/features/services/utils/get-recommended-services';
 import { HealthcareService } from '@/types/api';
 
@@ -26,7 +26,6 @@ export const ServicesList = ({
 
   const {
     trimmedQuery,
-    normalizedQuery,
     isFiltered,
     isSearching,
     filterTitle,
@@ -34,8 +33,10 @@ export const ServicesList = ({
     subtitleOverride,
   } = getMarketplaceSearchMeta(query, filter, 'tests');
 
-  const filteredServices = services.filter((service) =>
-    matchesMarketplaceQuery(service, filter, normalizedQuery),
+  const filteredServices = searchMarketplaceItems(
+    services,
+    filter,
+    trimmedQuery,
   );
 
   let sections: {
