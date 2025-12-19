@@ -1,9 +1,13 @@
+import { useNavigate } from 'react-router-dom';
+
 import { ChevronLeft } from '@/components/icons/chevron-left-icon';
+import { Button } from '@/components/ui/button';
 import { Link } from '@/components/ui/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Body1, Body2 } from '@/components/ui/typography';
 
 import { useLatestProtocol, useProtocol } from '../../api';
+import { getGoalIndex } from '../../utils/get-goal-index';
 import { ProtocolLayout } from '../layouts/protocol-layout';
 
 import { ProtocolGoal } from './protocol-goal';
@@ -24,6 +28,7 @@ export function ProtocolGoalView({
   const { data: lastProtocol, isLoading: isLatestProtocolLoading } =
     useLatestProtocol();
   const { data: protocol, isLoading, error } = useProtocol(protocolId);
+  const navigate = useNavigate();
 
   const protocolLink =
     lastProtocol?.id === protocolId
@@ -54,6 +59,11 @@ export function ProtocolGoalView({
 
   const goal = protocol.goals.find((g) => g.id === goalId);
 
+  const currentIndex = getGoalIndex(protocol.goals, goalId);
+  const hasNextGoal =
+    currentIndex >= 0 && currentIndex < protocol.goals.length - 1;
+  const nextGoalId = hasNextGoal ? protocol.goals[currentIndex + 1].id : null;
+
   if (!goal) {
     return (
       <div className="mx-auto max-w-4xl p-6">
@@ -69,6 +79,14 @@ export function ProtocolGoalView({
       activity.goalIds.includes(goalId),
   );
 
+  const handleNextGoal = () => {
+    if (hasNextGoal) {
+      navigate(`/protocol/plans/${protocolId}/goals/${nextGoalId}`);
+    } else {
+      navigate(protocolLink);
+    }
+  };
+
   return (
     <ProtocolLayout className="lg:pt-7">
       <div className="sticky top-20 hidden w-40 shrink-0 lg:block">
@@ -82,12 +100,18 @@ export function ProtocolGoalView({
           </Body2>
         </Link>
       </div>
-      <div className="mx-auto w-full max-w-[680px] space-y-12 pb-24">
+      <div className="mx-auto flex w-full max-w-[680px] flex-col items-center space-y-12 pb-24">
         <ProtocolGoal
           goal={goal}
           activities={goalActivities}
           allGoals={protocol.goals}
         />
+        <Button
+          onClick={handleNextGoal}
+          className="w-full max-w-[calc(100%-3rem)] lg:max-w-none"
+        >
+          {hasNextGoal ? 'Next goal' : 'Go back'}
+        </Button>
       </div>
       <div className="hidden w-40 shrink-0 lg:block" />
     </ProtocolLayout>
