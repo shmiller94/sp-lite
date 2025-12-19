@@ -10,6 +10,7 @@ import { usePurchaseStore } from '@/features/orders/stores/purchase-store';
 import { CreatePaymentMethodForm } from '@/features/settings/components/billing/create-payment-method-form';
 import { usePaymentMethodSelection } from '@/features/settings/hooks';
 import { CurrentPaymentMethodCard } from '@/features/users/components/payment';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { cn } from '@/lib/utils';
 import { formatMoney } from '@/utils/format-money';
 import { getServiceImage } from '@/utils/service';
@@ -18,8 +19,9 @@ import { PurchaseDialogFooter } from '../purchase-dialog-footer';
 import { usePurchaseDialogStepper } from '../purchase-dialog-stepper';
 
 export function PurchaseSummaryStep(): ReactNode {
-  const { buildCreateCreditData } = usePurchaseStore((s) => s);
+  const { buildCreateCreditData, service } = usePurchaseStore((s) => s);
   const { prev, next } = usePurchaseDialogStepper();
+  const { track } = useAnalytics();
 
   const createCreditMutation = useCreateCredit();
 
@@ -38,6 +40,13 @@ export function PurchaseSummaryStep(): ReactNode {
 
     const response = await createCreditMutation.mutateAsync({ data });
     if (response.credits) {
+      track('marketplace_credits_purchased', {
+        value: service.price,
+        service: service.name,
+        payment_provider:
+          activePaymentMethod?.paymentProvider?.toLowerCase() ?? 'unknown',
+      });
+
       next();
     }
   };
