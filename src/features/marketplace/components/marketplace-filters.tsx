@@ -88,7 +88,7 @@ export const MarketplaceFilters = ({
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
-        <div className="relative mx-2 mt-0.5 h-5 w-px bg-zinc-200" />
+        <div className="relative mx-2 mt-0.5 h-5 w-px shrink-0 bg-zinc-200" />
         {PILL_OPTIONS.map((option) => {
           const isActive = value === option;
 
