@@ -14,6 +14,7 @@ import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 import { formatMoney } from '@/utils/format-money';
 
+import { useOnboardingAnalytics } from '../../../hooks/use-onboarding-analytics';
 import { useOnboardingStepper } from '../onboarding-stepper';
 
 import {
@@ -134,18 +135,12 @@ const BundledDiscountCard = ({
 
 const BundledDiscountContent = () => {
   const { next } = useOnboardingStepper();
-  const upgradeOrderMutation = useUpgradeCredit({
-    mutationConfig: {
-      onSuccess: () => {
-        toast.success(
-          `Purchase of ${selectedBundledDiscount.quantity} additional test${selectedBundledDiscount.quantity > 1 ? 's' : ''} successful!`,
-        );
-      },
-    },
-  });
+  const { trackOnboardingCreditPurchase } = useOnboardingAnalytics();
   const { data: user } = useUser();
   const [selectedBundledDiscount, setSelectedBundledDiscount] =
     useState<BundledDiscount>(BUNDLED_DISCOUNTS[0]);
+
+  const upgradeOrderMutation = useUpgradeCredit();
 
   const upgradeOrder = async (paymentMethodId: string) => {
     await upgradeOrderMutation.mutateAsync({
@@ -155,6 +150,21 @@ const BundledDiscountContent = () => {
         quantity: selectedBundledDiscount.quantity,
       },
     });
+
+    const pricing = getPricingForUser(selectedBundledDiscount, user);
+    trackOnboardingCreditPurchase({
+      credits: [
+        {
+          id: `baseline-bundle-${selectedBundledDiscount.quantity}`,
+          price: pricing.price,
+        },
+      ],
+      totalValue: pricing.price,
+    });
+    toast.success(
+      `Purchase of ${selectedBundledDiscount.quantity} additional test${selectedBundledDiscount.quantity > 1 ? 's' : ''} successful!`,
+    );
+
     next();
   };
 

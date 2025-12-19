@@ -11,10 +11,10 @@ import { useTestKitServices } from '@/features/onboarding/hooks/use-test-kits';
 import { useCreateCredit } from '@/features/orders/api/credits';
 import { usePaymentMethodSelection } from '@/features/settings/hooks';
 import * as Payment from '@/features/users/components/payment';
-import { useAnalytics } from '@/hooks/use-analytics';
 import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 
+import { useOnboardingAnalytics } from '../../hooks/use-onboarding-analytics';
 import { useOnboardingStepper } from '../onboarding-steps/onboarding-stepper';
 import { ItemPreviews } from '../shared/item-previews';
 import { UpsellServiceCard } from '../shared/upsell-service-card';
@@ -22,9 +22,10 @@ import { UpsellServiceCard } from '../shared/upsell-service-card';
 const CheckoutStepContent = () => {
   const { services, selectedServices, selectService } = useTestKitServices();
   const { data: user } = useUser();
-  const { mutateAsync, isPending, error } = useCreateCredit();
-  const { track } = useAnalytics();
+  const { trackOnboardingCreditPurchase } = useOnboardingAnalytics();
   const { next: nextOnboardingStep } = useOnboardingStepper();
+
+  const { mutateAsync, isPending, error } = useCreateCredit();
 
   const {
     isFlexSelected,
@@ -48,13 +49,14 @@ const CheckoutStepContent = () => {
       },
     });
 
-    track('upsell_checkout_completed', {
-      number_of_services: selectedServices.length,
-      value: totalPrice,
-      currency: 'USD',
-      services: selectedServices.map((service) => service.name),
-      service_ids: selectedServices.map((service) => service.id),
-      payment_provider: activePaymentMethod?.paymentProvider.toLowerCase(),
+    const purchasedCredits = selectedServices.map((s) => ({
+      id: s.id,
+      price: s.price,
+    }));
+    const totalValue = purchasedCredits.reduce((sum, c) => sum + c.price, 0);
+    trackOnboardingCreditPurchase({
+      credits: purchasedCredits,
+      totalValue,
     });
 
     return nextOnboardingStep();
@@ -62,11 +64,9 @@ const CheckoutStepContent = () => {
     user,
     selectedServices,
     mutateAsync,
-    track,
-    totalPrice,
-    activePaymentMethod?.paymentProvider,
     activePaymentMethod?.externalPaymentMethodId,
     nextOnboardingStep,
+    trackOnboardingCreditPurchase,
   ]);
 
   const existingOrders = useMemo(() => {

@@ -21,21 +21,17 @@ import { cn } from '@/lib/utils';
 import { formatMoney } from '@/utils/format-money';
 import { getUpgradePrice } from '@/utils/get-upgrade-price';
 
+import { useOnboardingAnalytics } from '../../hooks/use-onboarding-analytics';
+
 import { useOnboardingStepper } from './onboarding-stepper';
 
 const AdvancedPanelUpgradeContent = () => {
   const { next } = useOnboardingStepper();
-
-  const upgradeOrderMutation = useUpgradeCredit({
-    mutationConfig: {
-      onSuccess: () => {
-        toast.success(`One-time Advanced Panel upgrade successful!`);
-      },
-    },
-  });
+  const { trackOnboardingCreditPurchase } = useOnboardingAnalytics();
   const { data: user } = useUser();
-
   const price = getUpgradePrice(user);
+
+  const upgradeOrderMutation = useUpgradeCredit();
 
   const upgradeOrder = async (paymentMethodId: string) => {
     await upgradeOrderMutation.mutateAsync({
@@ -44,6 +40,13 @@ const AdvancedPanelUpgradeContent = () => {
         paymentMethodId,
       },
     });
+
+    trackOnboardingCreditPurchase({
+      credits: [{ id: 'advanced-panel', price }],
+      totalValue: price,
+    });
+    toast.success(`One-time Advanced Panel upgrade successful!`);
+
     next();
   };
 

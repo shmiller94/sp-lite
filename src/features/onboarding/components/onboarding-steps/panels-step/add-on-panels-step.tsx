@@ -4,8 +4,10 @@ import { SuperpowerLogo } from '@/components/icons/superpower-logo';
 import { SplitScreenLayout } from '@/components/layouts/split-screen-layout';
 import { Body1, H2 } from '@/components/ui/typography';
 import { useCreateCredit, useCredits } from '@/features/orders/api/credits';
+import { useServices } from '@/features/services/api';
 import * as Payment from '@/features/users/components/payment';
 
+import { useOnboardingAnalytics } from '../../../hooks/use-onboarding-analytics';
 import { useAddOnPanelStore } from '../../../stores/add-on-panel-store';
 import { useOnboardingStepper } from '../onboarding-stepper';
 
@@ -13,10 +15,14 @@ import { AddOnPanelsSelect } from './panels';
 
 const AddOnPanelsContent = () => {
   const { next } = useOnboardingStepper();
+  const { trackOnboardingCreditPurchase } = useOnboardingAnalytics();
   const { selectedPanelIds, togglePanel } = useAddOnPanelStore();
 
   const creditsQuery = useCredits();
   const credits = creditsQuery.data?.credits ?? [];
+
+  const servicesQuery = useServices({ group: 'phlebotomy' });
+  const services = servicesQuery.data?.services ?? [];
 
   const existingCreditIds = useMemo(() => {
     const ids = new Set<string>();
@@ -37,6 +43,18 @@ const AddOnPanelsContent = () => {
         paymentMethodId,
       },
     });
+
+    const selectedServices = services.filter((s) => selectedPanelIds.has(s.id));
+    const purchasedCredits = selectedServices.map((s) => ({
+      id: s.id,
+      price: s.price,
+    }));
+    const totalValue = purchasedCredits.reduce((sum, c) => sum + c.price, 0);
+    trackOnboardingCreditPurchase({
+      credits: purchasedCredits,
+      totalValue,
+    });
+
     next();
   };
 
