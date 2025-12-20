@@ -1,14 +1,12 @@
 import { Button } from '@/components/ui/button';
 import { Body1, H2 } from '@/components/ui/typography';
-import { VIDEOS } from '@/features/protocol/const/videos';
-import { usePreloadVideos } from '@/features/protocol/hooks/use-preload-videos';
 import { useUser } from '@/lib/auth';
 
 export function GetStartedStep({ next }: { next: () => void }) {
   const { data: user, isLoading } = useUser();
 
-  // Preloads the video already in this step
-  usePreloadVideos(VIDEOS.map((video) => video.source));
+  // Disable hook for now (devices seem to crash loading the videos)
+  // usePreloadVideos(VIDEOS.map((video) => video.source));
 
   return (
     <div
