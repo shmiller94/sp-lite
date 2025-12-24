@@ -58,11 +58,11 @@ export const DataRoute = () => {
     <ContentLayout title="Data" className="max-md:pt-5 md:pt-9">
       <div className="mt-[5px] flex size-full min-h-[calc(100vh-256px)] flex-1 flex-col overflow-visible md:grid md:grid-cols-10 xl:grid-cols-9">
         <DataSidebar />
-        <div className="relative top-0 z-0 col-span-3 mb-[-40px] h-[512px] max-h-[50vh] md:sticky md:-mt-16 md:h-full md:max-h-[60vh]">
+        <div className="relative top-0 z-0 col-span-3 mb-[-40px] h-[512px] max-h-[50vh] md:invisible md:sticky md:-mt-16 md:h-full md:max-h-[60vh] lg:visible">
           {gating && gating.hasPartialResults && (
             <Badge
               variant="secondary"
-              className="absolute left-1/2 top-1/2 z-10 -mt-28 flex -translate-x-1/2 -translate-y-1/2 items-center gap-2 truncate bg-zinc-100/50 px-3 py-2 text-sm text-secondary backdrop-blur-sm md:hidden lg:mt-0 lg:flex"
+              className="absolute left-1/2 top-1/2 z-10 -mt-28 flex -translate-x-1/2 -translate-y-1/2 items-center gap-2 text-balance bg-zinc-100/50 px-3 py-2 text-sm text-secondary backdrop-blur-sm max-lg:truncate md:hidden lg:mt-0 lg:flex lg:max-w-40 xl:max-w-full xl:truncate"
             >
               <Lock className="inline size-3.5 shrink-0" />
               Unlocks after data is processed
