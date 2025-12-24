@@ -2,6 +2,7 @@ import { Info } from 'lucide-react';
 import React, { useCallback, useMemo } from 'react';
 
 import { SelectableCard } from '@/components/shared/selectable-card';
+import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   Tooltip,
@@ -32,11 +33,11 @@ export const CreditsSelectStep = () => {
     <>
       <div className={cn('space-y-8', SHARED_CONTAINER_STYLE)}>
         <div className="space-y-2">
-          <H2>Schedule your tests</H2>
+          <H2>Schedule your appointment</H2>
           <Body1 className="text-zinc-500">
-            For your health and safety, each visit is limited to a combined
-            total of 14 vials (Vial is small blood sample tube). If you want to
-            test more, please book another appointment.
+            For your health and safety, each appointment is limited to 14 vials
+            (a vial is a small blood sample tube). If your selection would go
+            over the limit, you’ll need to schedule an additional appointment.
           </Body1>
         </div>
         <CreditsSelectContent
@@ -101,6 +102,17 @@ const CreditsSelectContent = ({
 
     return sum;
   }, [selectedIds, uniqueCredits, tubeCountByServiceId]);
+
+  const anyWouldExceed = useMemo(() => {
+    return services.some((service) => {
+      const serviceTubes = service.bloodTubeCount ?? 0;
+      const credit = uniqueCredits.find((c) => c.serviceId === service.id);
+
+      if (!credit || selectedIds.has(credit.id)) return false;
+
+      return totalTubes + serviceTubes > MAX_TUBE_COUNT;
+    });
+  }, [services, uniqueCredits, selectedIds, totalTubes]);
 
   const toggle = useCallback(
     (credit: Credit) => {
@@ -172,6 +184,13 @@ const CreditsSelectContent = ({
                     ? `${service.bloodTubeCount} vials`
                     : service.description
                 }
+                trigger={
+                  wouldExceed ? (
+                    <Badge variant="outline" className="text-right">
+                      Requires another appointment
+                    </Badge>
+                  ) : undefined
+                }
               />
             );
           })}
@@ -185,11 +204,22 @@ const CreditsSelectContent = ({
             <>
               <div className="flex items-center gap-2">
                 <Body1 className="text-secondary">
-                  Estimated Total: {totalTubes}/{MAX_TUBE_COUNT} additional
-                  tubes
+                  Estimated Total: {totalTubes}/{MAX_TUBE_COUNT} vials
                 </Body1>
                 <EstimatedTooltip />
               </div>
+              {totalTubes >= MAX_TUBE_COUNT && (
+                <div className="flex items-center">
+                  <Badge variant="vermillion">Limit reached</Badge>
+                </div>
+              )}
+              {anyWouldExceed && totalTubes < MAX_TUBE_COUNT && (
+                <div className="ml-4 flex items-center">
+                  <Body1 className="text-zinc-500">
+                    Some tests require another appointment.
+                  </Body1>
+                </div>
+              )}
             </>
           )}
         </div>
@@ -222,11 +252,11 @@ export const EstimatedTooltip = () => {
           }}
         >
           <p>
-            For your comfort and safety, we limit each draw to 14 tubes. This
+            For your comfort and safety, we limit each draw to 14 vials. This
             ensures we collect enough blood to run all your tests without taking
-            more than your body can easily replenish in a single visit. If
-            you&apos;d like to add even more tests, you can visit the Services
-            page in your dashboard and schedule another appointment.
+            more than your body can easily replenish in a single visit. If you’d
+            like to add more tests, visit the Marketplace page in your dashboard
+            and schedule another appointment.
           </p>
         </TooltipContent>
       </Tooltip>

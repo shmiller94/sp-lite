@@ -52,7 +52,11 @@ export const PurchaseSuccessStep = () => {
               Schedule now
             </Button>
             <DialogClose asChild>
-              <Button className="w-full" variant="white">
+              <Button
+                onClick={() => navigate('/orders')}
+                className="w-full"
+                variant="white"
+              >
                 Schedule later
               </Button>
             </DialogClose>
