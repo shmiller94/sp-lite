@@ -1,4 +1,5 @@
 import { FamilyInsightsBanner } from '@/features/homepage/components/family-insights-banner';
+import { FamilyRiskBanner } from '@/features/homepage/components/family-risk-banner';
 import { RecommendationsList } from '@/features/homepage/components/recommendations-list';
 
 import { cardRegistry } from '../registry/card-registry';
@@ -82,6 +83,17 @@ const familyInsightsBannerConfig: CardConfig = {
 };
 
 /**
+ * Card configuration for Family Risk Banner card
+ * Shows when user has a family risk plan available
+ */
+const familyRiskBannerConfig: CardConfig = {
+  id: 'familyRiskBanner',
+  component: FamilyRiskBanner,
+  shouldShow: () => true,
+  getPriority: () => 35,
+};
+
+/**
  * Card configuration for Referral card
  */
 const referralCardConfig: CardConfig = {
@@ -100,3 +112,4 @@ cardRegistry.register(labOrderCardConfig);
 cardRegistry.register(keyInsightsCardConfig);
 cardRegistry.register(referralCardConfig);
 cardRegistry.register(familyInsightsBannerConfig);
+cardRegistry.register(familyRiskBannerConfig);

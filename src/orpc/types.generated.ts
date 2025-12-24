@@ -191,6 +191,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/family-risk/plan": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["familyRisk.getLatestFamilyRiskPlan"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/family-risk/plan/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["familyRisk.getFamilyRiskPlanById"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/family-risk/plan/{id}/share": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["familyRisk.setPublicSharing"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/gifts": {
         parameters: {
             query?: never;
@@ -388,7 +436,7 @@ export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         /** @enum {unknown} */
-        CheckoutProductId: "v2-baseline-membership-20250801" | "v2-membership-advanced-upgrade-20250801" | "at-home-sample-collection-20251016" | "membership-gift-20251125" | "membership-gift-nynj-20251128" | "free-membership-gift-20251207" | "free-membership-gift-nynj-20251207" | "v2-autoimmunity-bundle-20250929" | "v2-cardiovascular-bundle-20250929" | "v2-metabolic-bundle-20250929" | "v2-fertility-bundle-20250929" | "v2-methylation-bundle-20250929" | "v2-nutrients-bundle-20250929" | "v2-baseline-blood-panel-20250801" | "v2-advanced-blood-panel-20250801" | "v2-custom-blood-panel-20251002" | "gut-microbiome-analysis-20240513" | "grail-galleri-multi-cancer-test-20240513" | "heavy-metals-20240513" | "mycotoxins-20240513" | "environmental-toxin-20240513" | "total-toxins-20240513" | "rx-semaglutide-90day-20251022" | "rx-semaglutide-180day-20251022" | "rx-semaglutide-60day-20251124";
+        CheckoutProductId: "v2-baseline-membership-20250801" | "v2-advanced-membership-20251212" | "v2-premium-membership-20251212" | "v2-membership-advanced-upgrade-20250801" | "at-home-sample-collection-20251016" | "membership-gift-20251125" | "membership-gift-nynj-20251128" | "free-membership-gift-20251207" | "free-membership-gift-nynj-20251207" | "v2-autoimmunity-bundle-20250929" | "v2-cardiovascular-bundle-20250929" | "v2-metabolic-bundle-20250929" | "v2-fertility-bundle-20250929" | "v2-methylation-bundle-20250929" | "v2-nutrients-bundle-20250929" | "v2-baseline-blood-panel-20250801" | "v2-advanced-blood-panel-20250801" | "v2-custom-blood-panel-20251002" | "gut-microbiome-analysis-20240513" | "grail-galleri-multi-cancer-test-20240513" | "heavy-metals-20240513" | "mycotoxins-20240513" | "environmental-toxin-20240513" | "total-toxins-20240513" | "rx-semaglutide-90day-20251022" | "rx-semaglutide-180day-20251022" | "rx-semaglutide-60day-20251124";
         CheckoutSessionLineItem: {
             id: string;
             slug: components["schemas"]["CheckoutProductId"];
@@ -426,6 +474,7 @@ export interface components {
                 priceId?: string;
             }[];
             referralId?: string;
+            tags?: string[];
         };
         UpdateCheckoutSession: {
             id: string;
@@ -435,6 +484,7 @@ export interface components {
                 quantity: number;
                 priceId?: string;
             }[];
+            tags?: string[];
         };
     };
     responses: never;
@@ -1032,6 +1082,7 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
+                    tags?: string[];
                     /** @description State */
                     state: string;
                     products: ({
@@ -2482,6 +2533,610 @@ export interface operations {
                         /** @constant */
                         status: 404;
                         /** @default Not Found */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 429 */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "RATE_LIMIT_EXCEEDED";
+                        /** @constant */
+                        status: 429;
+                        /** @default RATE_LIMIT_EXCEEDED */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 500 */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "INTERNAL_SERVER_ERROR";
+                        /** @constant */
+                        status: 500;
+                        /** @default Internal Server Error */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+        };
+    };
+    "familyRisk.getLatestFamilyRiskPlan": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        plan: {
+                            id: string;
+                            /**
+                             * Format: date-time
+                             * @description When the assessment was created
+                             */
+                            created: string;
+                            /** @description ID of the related care plan */
+                            carePlanId?: string;
+                            /** @description ID of the related service request */
+                            serviceRequestId?: string;
+                            subject: {
+                                id: string;
+                                name: string;
+                            };
+                            /** @default [] */
+                            basisBiomarkers: {
+                                /** @description The observation ID */
+                                id: string;
+                                /** @description The biomarker display name */
+                                name: string;
+                            }[];
+                            /** @default [] */
+                            risks: {
+                                /** @description Prediction ID (e.g., prediction-1) */
+                                id: string;
+                                /** @description Title of the family risk (from outcome.text) */
+                                title: string;
+                                /** @description Description/rationale of the risk */
+                                description: string;
+                                /** @description Markdown bullets explaining family relevance */
+                                whyThisMattersForFamily: string;
+                                /** @description Actions family members can consider */
+                                whatFamilyMembersCanConsider: string;
+                                /** @description 1-10 scale: 1=lifestyle, 10=inherited */
+                                inheritedRiskScore: number;
+                                /**
+                                 * @description Biomarkers associated with this risk
+                                 * @default []
+                                 */
+                                biomarkers: {
+                                    /** @description The observation ID */
+                                    id: string;
+                                    /** @description The biomarker display name */
+                                    name: string;
+                                }[];
+                                /**
+                                 * @description Research citations
+                                 * @default []
+                                 */
+                                citations: {
+                                    /** @description The author(s) of the research paper */
+                                    authors: string;
+                                    /** @description The title of the research paper */
+                                    title: string;
+                                    /** @description The journal where the paper was published */
+                                    journal: string;
+                                    /** @description The year of publication */
+                                    year: string;
+                                    /** @description The DOI of the paper */
+                                    doi: string;
+                                }[];
+                            }[];
+                            /**
+                             * @description Whether the plan is publicly accessible via share link
+                             * @default false
+                             */
+                            isPubliclyShared: boolean;
+                        };
+                    };
+                };
+            };
+            /** @description 401 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "UNAUTHORIZED";
+                        /** @constant */
+                        status: 401;
+                        /** @default Unauthorized */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 403 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_AN_ADMIN";
+                        /** @constant */
+                        status: 403;
+                        /** @default NOT_AN_ADMIN */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 404 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_FOUND";
+                        /** @constant */
+                        status: 404;
+                        /** @default Family risk plan not found */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 429 */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "RATE_LIMIT_EXCEEDED";
+                        /** @constant */
+                        status: 429;
+                        /** @default RATE_LIMIT_EXCEEDED */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 500 */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "INTERNAL_SERVER_ERROR";
+                        /** @constant */
+                        status: 500;
+                        /** @default Internal Server Error */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+        };
+    };
+    "familyRisk.getFamilyRiskPlanById": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        plan: {
+                            id: string;
+                            /**
+                             * Format: date-time
+                             * @description When the assessment was created
+                             */
+                            created: string;
+                            /** @description ID of the related care plan */
+                            carePlanId?: string;
+                            /** @description ID of the related service request */
+                            serviceRequestId?: string;
+                            subject: {
+                                id: string;
+                                name: string;
+                            };
+                            /** @default [] */
+                            basisBiomarkers: {
+                                /** @description The observation ID */
+                                id: string;
+                                /** @description The biomarker display name */
+                                name: string;
+                            }[];
+                            /** @default [] */
+                            risks: {
+                                /** @description Prediction ID (e.g., prediction-1) */
+                                id: string;
+                                /** @description Title of the family risk (from outcome.text) */
+                                title: string;
+                                /** @description Description/rationale of the risk */
+                                description: string;
+                                /** @description Markdown bullets explaining family relevance */
+                                whyThisMattersForFamily: string;
+                                /** @description Actions family members can consider */
+                                whatFamilyMembersCanConsider: string;
+                                /** @description 1-10 scale: 1=lifestyle, 10=inherited */
+                                inheritedRiskScore: number;
+                                /**
+                                 * @description Biomarkers associated with this risk
+                                 * @default []
+                                 */
+                                biomarkers: {
+                                    /** @description The observation ID */
+                                    id: string;
+                                    /** @description The biomarker display name */
+                                    name: string;
+                                }[];
+                                /**
+                                 * @description Research citations
+                                 * @default []
+                                 */
+                                citations: {
+                                    /** @description The author(s) of the research paper */
+                                    authors: string;
+                                    /** @description The title of the research paper */
+                                    title: string;
+                                    /** @description The journal where the paper was published */
+                                    journal: string;
+                                    /** @description The year of publication */
+                                    year: string;
+                                    /** @description The DOI of the paper */
+                                    doi: string;
+                                }[];
+                            }[];
+                            /**
+                             * @description Whether the plan is publicly accessible via share link
+                             * @default false
+                             */
+                            isPubliclyShared: boolean;
+                        };
+                    };
+                };
+            };
+            /** @description 401 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "UNAUTHORIZED";
+                        /** @constant */
+                        status: 401;
+                        /** @default Unauthorized */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 403 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_AN_ADMIN";
+                        /** @constant */
+                        status: 403;
+                        /** @default NOT_AN_ADMIN */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 404 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_FOUND";
+                        /** @constant */
+                        status: 404;
+                        /** @default Family risk plan not found */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 429 */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "RATE_LIMIT_EXCEEDED";
+                        /** @constant */
+                        status: 429;
+                        /** @default RATE_LIMIT_EXCEEDED */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 500 */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "INTERNAL_SERVER_ERROR";
+                        /** @constant */
+                        status: 500;
+                        /** @default Internal Server Error */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+        };
+    };
+    "familyRisk.setPublicSharing": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Whether to enable or disable public sharing */
+                    enabled: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        success: true;
+                    };
+                };
+            };
+            /** @description 401 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "UNAUTHORIZED";
+                        /** @constant */
+                        status: 401;
+                        /** @default Unauthorized */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 403 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_AN_ADMIN";
+                        /** @constant */
+                        status: 403;
+                        /** @default NOT_AN_ADMIN */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 404 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_FOUND";
+                        /** @constant */
+                        status: 404;
+                        /** @default Family risk plan not found */
                         message: string;
                         data?: unknown;
                     } | {

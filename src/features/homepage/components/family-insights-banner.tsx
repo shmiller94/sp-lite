@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogTrigger, DialogContent } from '@/components/ui/dialog';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 import { Body1, Body2, H3 } from '@/components/ui/typography';
+import { useLatestFamilyRiskPlan } from '@/features/family-risks';
 import { useQuestionnaireInsights } from '@/features/questionnaires/api/get-questionnaire-insights';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
@@ -59,6 +60,13 @@ const MOCK_INSIGHTS: QuestionnaireInsights[] = [
 // TODO: god damn it we should standarize fonts across the app
 // TODO 2: I didnt find better way to use that background image...
 export const FamilyInsightsBanner = () => {
+  const { data: familyRiskPlan } = useLatestFamilyRiskPlan();
+
+  // Don't show intake insights banner if family risk plan is available
+  if (familyRiskPlan?.risks?.length) {
+    return null;
+  }
+
   return (
     <FamilyInsightsDialog>
       <div className="mb-6">

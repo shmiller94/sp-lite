@@ -65,7 +65,7 @@ const profileDropdownItems = [
 export const Navbar = () => {
   const { pathname } = useLocation();
 
-  const hideNavbarPaths = [`/protocol/reveal/`];
+  const hideNavbarPaths = ['/protocol/reveal/', '/family-risk/plan'];
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });

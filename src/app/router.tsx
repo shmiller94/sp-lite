@@ -153,6 +153,21 @@ export const createRouter = () =>
         },
         // Protocol routes (see protocol-router.tsx for details)
         protocolRoutes,
+        // Family risk routes
+        {
+          path: 'family-risk',
+          children: [
+            {
+              path: 'plan',
+              lazy: async () => {
+                const { FamilyRiskPlanRoute } = await import(
+                  './routes/app/family-risk/family-risk-plan'
+                );
+                return { Component: FamilyRiskPlanRoute };
+              },
+            },
+          ],
+        },
         {
           path: 'settings',
           lazy: async () => {
