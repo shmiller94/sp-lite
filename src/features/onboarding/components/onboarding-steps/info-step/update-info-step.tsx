@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
 import { AlertCircle, ArrowRight, Check } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -101,6 +101,7 @@ const UpdateInfoContent = () => {
   const { next } = useOnboardingStepper();
   const { data: claimedBenefitsData } = useHasClaimedBenefits();
   const hasClaimedBenefits = claimedBenefitsData?.hasClaimedBenefits ?? false;
+  const userHasGenderSet = user?.gender === 'MALE' || user?.gender === 'FEMALE';
   const { needsBackup } = useNeedsBackupPaymentMethod();
   const {
     handleAddPaymentMethod,
@@ -117,10 +118,7 @@ const UpdateInfoContent = () => {
     defaultValues: {
       firstName: user?.firstName,
       lastName: user?.lastName,
-      gender:
-        user?.gender === 'MALE' || user?.gender === 'FEMALE'
-          ? user.gender
-          : undefined,
+      gender: userHasGenderSet ? (user.gender as 'MALE' | 'FEMALE') : undefined,
       address: user?.primaryAddress
         ? {
             line1: user.primaryAddress.line?.[0] ?? undefined,
@@ -132,6 +130,12 @@ const UpdateInfoContent = () => {
         : undefined,
     },
   });
+
+  useEffect(() => {
+    if (userHasGenderSet) {
+      form.setValue('gender', user.gender as 'MALE' | 'FEMALE');
+    }
+  }, [userHasGenderSet, user?.gender, form]);
 
   const updateUserMutation = useUpdateUser();
   const addAddressMutation = useCreateAddress();
@@ -232,50 +236,52 @@ const UpdateInfoContent = () => {
                   )}
                 />
               </div>
-              <FormField
-                control={form.control}
-                name="gender"
-                render={({ field, fieldState }) => (
-                  <FormItem>
-                    <FormLabel>Biological Sex</FormLabel>
-                    <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <SelectTrigger
-                          className={cn(
-                            ` px-6 py-4`,
-                            field.value
-                              ? 'text-primary'
-                              : fieldState.error
-                                ? 'text-pink-700'
-                                : 'text-muted-foreground',
-                          )}
-                          variant={fieldState.error ? 'error' : 'default'}
+              {!userHasGenderSet && (
+                <FormField
+                  control={form.control}
+                  name="gender"
+                  render={({ field, fieldState }) => (
+                    <FormItem>
+                      <FormLabel>Biological Sex</FormLabel>
+                      <FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
                         >
-                          <SelectValue placeholder="Select biological sex" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem
-                            value="MALE"
-                            data-testid="gender-option-male"
+                          <SelectTrigger
+                            className={cn(
+                              ` px-6 py-4`,
+                              field.value
+                                ? 'text-primary'
+                                : fieldState.error
+                                  ? 'text-pink-700'
+                                  : 'text-muted-foreground',
+                            )}
+                            variant={fieldState.error ? 'error' : 'default'}
                           >
-                            Male
-                          </SelectItem>
-                          <SelectItem
-                            value="FEMALE"
-                            data-testid="gender-option-female"
-                          >
-                            Female
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                            <SelectValue placeholder="Select biological sex" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem
+                              value="MALE"
+                              data-testid="gender-option-male"
+                            >
+                              Male
+                            </SelectItem>
+                            <SelectItem
+                              value="FEMALE"
+                              data-testid="gender-option-female"
+                            >
+                              Female
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
               <PrimaryAddressForm />
               {!hasClaimedBenefits && (
                 <BackupPaymentMethod
