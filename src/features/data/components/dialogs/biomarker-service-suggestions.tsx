@@ -1,7 +1,7 @@
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { SelectableCard } from '@/components/shared/selectable-card';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useServices } from '@/features/services/api';
 import { BiomarkerRecommendedTests } from '@/types/api';
@@ -41,6 +41,10 @@ const SuggestedServices = ({ serviceIds }: { serviceIds: Set<string> }) => {
 
   if (filteredServices.length === 0) return null;
 
+  const handleServiceClick = (serviceId: string) => {
+    navigate(`/services/${serviceId}`);
+  };
+
   return filteredServices.map((s) => (
     <SelectableCard
       key={s.id}
@@ -48,9 +52,16 @@ const SuggestedServices = ({ serviceIds }: { serviceIds: Set<string> }) => {
       imageSrc={getServiceImage(s.name)}
       description={s.description}
       onToggle={() => {
-        navigate(`/services/${s.id}`);
+        handleServiceClick(s.id);
       }}
-      trigger={<Button size="small">Test now</Button>}
+      trigger={
+        <Link
+          to={`/services/${s.id}`}
+          className={buttonVariants({ size: 'small' })}
+        >
+          Test now
+        </Link>
+      }
     />
   ));
 };
