@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+import { getMarketplaceQueryOptions } from '@/features/marketplace/api/get-marketplace';
 import { getServicesQueryOptions } from '@/features/services/api';
 import { api } from '@/lib/api-client';
 import { useUser } from '@/lib/auth';
@@ -40,6 +41,11 @@ export const useEditAddress = ({
       queryClient.refetchQueries({
         queryKey: ['service'],
       });
+
+      queryClient.invalidateQueries({
+        queryKey: getMarketplaceQueryOptions().queryKey,
+      });
+
       onSuccess?.(...args);
     },
     ...restConfig,
