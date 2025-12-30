@@ -328,7 +328,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     shouldRedirectToReveal &&
     !onPermissiblePath &&
     taskQuery.data?.task.status === 'completed' &&
-    !userQuery.data.admin
+    !userQuery.data?.adminActor
   ) {
     const target = '/protocol/reveal';
     console.warn(
@@ -371,13 +371,12 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
       ['in-progress', 'stopped'].includes(
         intakeData.questionnaireResponse.status,
       );
-    const isAdminActor = !!userQuery.data?.admin;
 
     if (
       !isTaskIncomplete &&
       hasIncompleteIntake &&
       !onQuestionnaire &&
-      !isAdminActor
+      !userQuery.data?.adminActor
     ) {
       return <Navigate to="/questionnaire/intake" replace />;
     }
