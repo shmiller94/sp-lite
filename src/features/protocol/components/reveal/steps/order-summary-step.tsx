@@ -18,6 +18,7 @@ import {
   type Goal,
 } from '@/features/protocol/api';
 import { useProtocolCheckout } from '@/features/protocol/hooks/use-protocol-checkout';
+import { useShippingFee } from '@/features/protocol/hooks/use-shipping-fee';
 import { getActivityPricing } from '@/features/protocol/utils/get-activity-pricing';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useUser } from '@/lib/auth';
@@ -100,6 +101,20 @@ export function OrderSummaryStep({
         memberDiscount: original - discounted,
       };
     }, [items]);
+
+  const productsDiscountedSubtotal = React.useMemo(() => {
+    let discounted = 0;
+    for (const item of items) {
+      if (item.data.type !== 'product') continue;
+      const { finalCents } = getActivityPricing(item.data, null);
+      discounted += finalCents;
+    }
+    return discounted;
+  }, [items]);
+
+  const { shippingCents } = useShippingFee(productsDiscountedSubtotal);
+
+  const totalWithShipping = subtotalDiscounted + shippingCents;
 
   const handleToggleItem = (
     activity: Activity,
@@ -236,13 +251,19 @@ export function OrderSummaryStep({
             </div>
             <div className="flex items-center justify-between">
               <Body2 className="text-secondary">Shipping</Body2>
-              <Body2>Free</Body2>
+              <Body2>
+                {shippingCents === 0 ? (
+                  'Free'
+                ) : (
+                  <NumberFlow prefix="$" value={shippingCents / 100} />
+                )}
+              </Body2>
             </div>
           </div>
           <div className="mt-3 flex items-center justify-between border-t border-zinc-200 pt-3">
             <Body2 className="text-secondary">Total</Body2>
             <Body2>
-              <NumberFlow prefix="$" value={subtotalDiscounted / 100} />
+              <NumberFlow prefix="$" value={totalWithShipping / 100} />
             </Body2>
           </div>
         </div>

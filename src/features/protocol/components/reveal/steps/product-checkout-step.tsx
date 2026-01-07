@@ -13,6 +13,7 @@ import {
 import { CheckoutLayout } from '@/features/protocol/components/layouts/checkout-layout';
 import { REVEAL_STEPS } from '@/features/protocol/components/reveal/reveal-stepper';
 import { useProtocolCheckout } from '@/features/protocol/hooks/use-protocol-checkout';
+import { useShippingFee } from '@/features/protocol/hooks/use-shipping-fee';
 import { getActivityPricing } from '@/features/protocol/utils/get-activity-pricing';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { formatMoney } from '@/utils/format-money';
@@ -40,6 +41,19 @@ export const ProductCheckoutStep = ({
   const checkoutQuery = useProductCheckoutUrl(carePlanId, {
     enabled: started,
   });
+
+  const productItems = useMemo(() => {
+    return items.filter((it) => it.data?.type === 'product');
+  }, [items]);
+
+  const totalCents = useMemo(() => {
+    return productItems.reduce((sum, it) => {
+      const pricing = getActivityPricing(it.data, null);
+      return sum + pricing.finalCents;
+    }, 0);
+  }, [productItems]);
+
+  const { shippingCents } = useShippingFee(totalCents);
 
   const checkoutUrl = checkoutQuery.data?.checkoutUrl ?? null;
   const shopifyOrderId = checkoutQuery.data?.shopifyOrderId ?? null;
@@ -73,17 +87,6 @@ export const ProductCheckoutStep = ({
     }
     checkoutQuery.refetch();
   };
-
-  const productItems = useMemo(() => {
-    return items.filter((it) => it.data?.type === 'product');
-  }, [items]);
-
-  const totalCents = useMemo(() => {
-    return productItems.reduce((sum, it) => {
-      const pricing = getActivityPricing(it.data, null);
-      return sum + pricing.finalCents;
-    }, 0);
-  }, [productItems]);
 
   const handleCompleteWithoutAction = async () => {
     track('protocol_reveal_quit', {
@@ -151,9 +154,21 @@ export const ProductCheckoutStep = ({
               );
             })}
           </div>
-          <div className="flex items-center justify-between rounded-xl p-4 pb-0">
-            <Body1 className="text-secondary">Total</Body1>
-            <Body1>{formatMoney(totalCents)}</Body1>
+          <div className="space-y-2 rounded-xl p-4 pb-0">
+            <div className="flex items-center justify-between">
+              <Body1 className="text-secondary">Subtotal</Body1>
+              <Body1>{formatMoney(totalCents)}</Body1>
+            </div>
+            <div className="flex items-center justify-between">
+              <Body1 className="text-secondary">Shipping</Body1>
+              <Body1>
+                {shippingCents === 0 ? 'Free' : formatMoney(shippingCents)}
+              </Body1>
+            </div>
+            <div className="mt-3 flex items-center justify-between border-t border-zinc-200 pt-3">
+              <Body1 className="text-secondary">Total</Body1>
+              <Body1>{formatMoney(totalCents + shippingCents)}</Body1>
+            </div>
           </div>
         </div>
         <div className="w-full space-y-8">
