@@ -265,7 +265,6 @@ export function ChatHistoryContainer({ className }: { className?: string }) {
                       variant="ghost"
                       size="medium"
                       className="justify-start gap-2 px-3 py-2 text-zinc-400"
-                      disabled={!id}
                       onClick={() => {
                         navigate('/concierge');
                       }}

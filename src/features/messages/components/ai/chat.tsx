@@ -155,16 +155,11 @@ export function Chat({
 
   return (
     <>
-      <div
-        className={cn(
-          'mx-auto flex w-full min-w-0 max-w-3xl flex-1 flex-col',
-          messages.length > 0 ? 'justify-start' : 'justify-between',
-        )}
-      >
-        {/* Top content area: messages and, if empty, centered greeting/suggestions */}
+      <div className="mx-auto flex w-full min-w-0 max-w-3xl flex-1 flex-col h-full">
+        {/* Scrollable content area */}
         <div
           className={cn(
-            'flex flex-1 flex-col',
+            'flex flex-1 flex-col overflow-y-auto',
             messages.length > 0 ? 'justify-start' : 'justify-center',
           )}
         >
@@ -195,28 +190,31 @@ export function Chat({
           )}
         </div>
 
-        <form className="mx-auto w-full pb-2">
-          <MultimodalInput
-            chatId={id}
-            input={input}
-            setInput={setInput}
-            sendMessage={handleSendMessage}
-            status={status}
-            stop={stop}
-            attachments={attachments}
-            setAttachments={setAttachments}
-            messages={messages}
-            setMessages={setMessages}
-          />
-        </form>
+        {/* Sticky bottom area */}
+        <div className="flex-shrink-0 sticky bottom-0">
+          <form className="mx-auto w-full pb-2">
+            <MultimodalInput
+              chatId={id}
+              input={input}
+              setInput={setInput}
+              sendMessage={handleSendMessage}
+              status={status}
+              stop={stop}
+              attachments={attachments}
+              setAttachments={setAttachments}
+              messages={messages}
+              setMessages={setMessages}
+            />
+          </form>
 
-        <p className="mx-auto max-w-xl pb-2 text-center text-[10px] text-zinc-400">
-          Your Superpower AI is not intended to replace medical advice, and
-          solely provided solely to offer suggestions and education. Always seek
-          the advice of a licensed human healthcare provider for any medical
-          questions and call 911 or go to the emergency room if you are
-          experiencing an emergent medical issue.
-        </p>
+          <p className="mx-auto max-w-xl pb-2 text-center text-[10px] text-zinc-400">
+            Your Superpower AI is not intended to replace medical advice, and
+            solely provided solely to offer suggestions and education. Always
+            seek the advice of a licensed human healthcare provider for any
+            medical questions and call 911 or go to the emergency room if you
+            are experiencing an emergent medical issue.
+          </p>
+        </div>
       </div>
     </>
   );
