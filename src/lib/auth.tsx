@@ -347,7 +347,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     if (isTaskIncomplete) {
       // If a user isn't subscribed, send them to checkout
       if (!isSubscribed) {
-        window.location.href = env.CHECKOUT_URL;
+        window.location.href = `${env.MARKETING_SITE_URL}/checkout`;
         return null;
       }
       // otherwise, send to onboarding (but not if already there)

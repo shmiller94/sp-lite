@@ -114,7 +114,7 @@ export const LoginForm = ({
         <div className="flex flex-col gap-1 sm:flex-row sm:items-center">
           <Body2 className="text-zinc-500">Don&apos;t have an account?</Body2>
           <a
-            href={env.CHECKOUT_URL}
+            href={`${env.MARKETING_SITE_URL}/checkout`}
             className="cursor-pointer text-sm text-vermillion-900"
           >
             Create an account

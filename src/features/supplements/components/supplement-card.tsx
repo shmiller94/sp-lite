@@ -3,6 +3,7 @@ import { useInView } from 'react-intersection-observer';
 import { Button } from '@/components/ui/button';
 import { ProgressiveImage } from '@/components/ui/progressive-image';
 import { Body1, Body2, Body3, H4 } from '@/components/ui/typography';
+import { env } from '@/config/env';
 import { getPricingDetails } from '@/features/supplements/utils/get-pricing-details';
 import { Product } from '@/types/api';
 
@@ -35,10 +36,14 @@ const DesktopCard = ({
 }) => {
   const { hasDiscount, discountedPrice } = getPricingDetails(product);
 
+  const url = product.url.startsWith('/marketplace')
+    ? `${env.MARKETING_SITE_URL}${product.url}`
+    : product.url;
+
   return (
     <a
       className="group relative hidden cursor-pointer flex-col gap-4 overflow-hidden sm:flex"
-      href={product.url}
+      href={url}
       target="_blank"
       rel="noreferrer"
     >
@@ -100,9 +105,13 @@ const MobileCard = ({
 }) => {
   const { hasDiscount, discountedPrice } = getPricingDetails(product);
 
+  const url = product.url.startsWith('/marketplace')
+    ? `${env.MARKETING_SITE_URL}${product.url}`
+    : product.url;
+
   return (
     <a
-      href={product.url}
+      href={url}
       target="_blank"
       rel="noreferrer"
       className="flex flex-col gap-2 sm:hidden"

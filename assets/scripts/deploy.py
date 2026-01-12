@@ -24,6 +24,7 @@ fetch_images_command = """
 aws ecr describe-images \
   --repository-name {} \
   --query 'imageDetails[?imageTags[0]!=`null`].[imageTags[0],imagePushedAt]' \
+  --region us-east-1 \
   --output json | \
   jq 'map(select(.[0] | test("makefile") | not)) | sort_by(.[1]) | reverse | .[:{}]'
 """

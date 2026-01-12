@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Link } from '@/components/ui/link';
 import { Body1, Body2 } from '@/components/ui/typography';
+import { env } from '@/config/env';
 import { cn } from '@/lib/utils';
 import { formatMoney } from '@/utils/format-money';
 
@@ -22,6 +23,10 @@ export function ProtocolItemRow({
 }: ProtocolItemRowProps) {
   const item = getItemDetails(activity);
 
+  const url = item?.url?.startsWith('/marketplace')
+    ? `${env.MARKETING_SITE_URL}${item?.url}`
+    : item?.url;
+
   return (
     <div
       className={cn(
@@ -40,8 +45,8 @@ export function ProtocolItemRow({
       )}
       <div className="flex min-w-0 flex-1 items-center justify-between gap-4">
         <div className="min-w-0 flex-1">
-          {item?.url ? (
-            <Link to={item.url} className="shrink-0" target="_blank">
+          {url ? (
+            <Link to={url} className="shrink-0" target="_blank">
               <Body1 className="mb-1 truncate hover:underline">
                 {item?.title}
               </Body1>
@@ -63,8 +68,8 @@ export function ProtocolItemRow({
             />
           )}
         </div>
-        {showPurchase && item?.url && (
-          <Link to={item.url} className="shrink-0" target="_blank">
+        {showPurchase && url && (
+          <Link to={url} className="shrink-0" target="_blank">
             <Button variant="default" size="small" className="shrink-0">
               Buy
             </Button>

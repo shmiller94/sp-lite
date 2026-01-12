@@ -24,6 +24,10 @@ check_vars "${REQUIRED_VARS[@]}"
 info "Fetching Doppler secrets for staging..."
 doppler secrets download -p superpower-app -c stg --no-file --format=env > .env
 
+set -a
+source .env
+set +a
+
 info "Overriding API URL for feature: ${FEATURE_NAME}"
 echo "VITE_APP_API_URL=https://api-${FEATURE_NAME}.superpower-staging.com" >> .env
 
