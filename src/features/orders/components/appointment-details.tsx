@@ -119,9 +119,9 @@ export function AppointmentDetails({
   })();
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-6">
       <H4>{isTestKit ? 'Shipping details' : 'Appointment details'}</H4>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-6">
         {orderIds ? <OrderFileLinkFromFiles orderIds={orderIds} /> : null}
         {slot && timezone ? (
           <div className="flex gap-4">

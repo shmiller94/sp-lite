@@ -4,9 +4,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
 import { TransactionSpinner } from '@/components/ui/spinner/transaction-spinner';
-import { useAuthorization } from '@/lib/authorization';
 import { cn } from '@/lib/utils';
-import { OrderStatus, RequestGroup } from '@/types/api';
+import { RequestGroup } from '@/types/api';
 
 import { useUpdateOrder } from '../../api';
 
@@ -25,23 +24,6 @@ export const HealthcareServiceRescheduleFooter = ({
   const [isProcessing, setIsProcessing] = useState(false);
 
   const updateOrderMutation = useUpdateOrder({});
-
-  const isPastAppointment = requestGroup.startTimestamp
-    ? new Date(requestGroup.startTimestamp) < new Date()
-    : false;
-
-  const canReschedule = requestGroup.appointmentType !== undefined;
-  const isRevokedOrCompleted = [
-    OrderStatus.revoked,
-    OrderStatus.completed,
-  ].includes(requestGroup.status);
-
-  const { checkAdminActorAccess } = useAuthorization();
-  const isAdminActor = checkAdminActorAccess();
-
-  const showDefaultActions =
-    (!isPastAppointment && !isRevokedOrCompleted && canReschedule) ||
-    isAdminActor;
 
   const handleConfirm = async () => {
     await updateOrderMutation.mutateAsync({
@@ -73,25 +55,6 @@ export const HealthcareServiceRescheduleFooter = ({
         'backdrop-blur-sm flex items-center md:justify-end gap-4 px-4 py-4 md:py-8',
       )}
     >
-      {mode === 'default' && showDefaultActions ? (
-        <>
-          <Button
-            variant="outline"
-            className="w-full bg-white md:w-auto"
-            onClick={() => setMode('cancel')}
-          >
-            Cancel appointment
-          </Button>
-
-          <Button
-            className="w-full md:w-auto"
-            onClick={() => setMode('reschedule')}
-          >
-            Reschedule
-          </Button>
-        </>
-      ) : null}
-
       {mode === 'cancel' ? (
         <>
           <Button

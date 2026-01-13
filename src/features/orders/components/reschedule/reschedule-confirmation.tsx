@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 
+import { ProgressiveImage } from '@/components/ui/progressive-image';
 import { Body1, H2 } from '@/components/ui/typography';
 import { RequestGroup } from '@/types/api';
 import { formatMoney } from '@/utils/format-money';
@@ -46,14 +47,15 @@ export const RescheduleConfirmation = ({
 
   return (
     <div className="flex flex-col justify-center gap-4 px-4 md:max-w-none">
-      <img
+      {/* The bg-zinc-50 helps prevent strobing on transparent images; see comment in progressive-image.tsx */}
+      <ProgressiveImage
         src={
           serviceName
             ? getServiceImage(serviceName)
             : '/services/custom_blood_panel.png'
         }
-        className="block size-[70px] rounded-2xl border border-zinc-200 bg-white  object-cover"
         alt={'Superpower service'}
+        className="h-[337px] w-full rounded-[20px] bg-zinc-50 object-contain"
       />
       <div className="max-w-[220px] space-y-4 md:max-w-none">
         <H2 className="text-zinc-900">

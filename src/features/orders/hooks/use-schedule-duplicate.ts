@@ -8,7 +8,7 @@ import { useOrders } from '../api';
 import { useCredits } from '../api/credits';
 import { useScheduleStore } from '../stores/schedule-store';
 
-const DAYS_14_MS = 14 * 24 * 60 * 60 * 1000;
+const DAYS_30_MS = 30 * 24 * 60 * 60 * 1000;
 
 function normalizeServiceName(name: string): string {
   if (name === SUPERPOWER_BLOOD_PANEL || name === ADVANCED_BLOOD_PANEL)
@@ -51,7 +51,7 @@ export const useScheduleDuplicate = () => {
       const rgStartMs = new Date(rg.startTimestamp).getTime();
 
       const delta = Math.abs(rgStartMs - slotStartMs);
-      if (delta > DAYS_14_MS) continue;
+      if (delta > DAYS_30_MS) continue;
 
       const orders = rg?.orders ?? [];
       const matches = orders.some((o) => {

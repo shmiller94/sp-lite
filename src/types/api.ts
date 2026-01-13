@@ -390,11 +390,14 @@ export type Order = Entity<{
   timezone?: string;
   createdAt?: string;
   appointmentType?: AppointmentType;
+  extendedStatus?: string;
+  extendedStatusDate?: string;
 }>;
 
 export type RequestGroup = Entity<{
   id: string;
   status: OrderStatus;
+  extendedStatus?: string;
   orders: Order[];
   collectionMethod?: CollectionMethodType;
   startTimestamp?: string;
