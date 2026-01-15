@@ -7,11 +7,13 @@ import { useLogin } from '@/lib/auth';
 import { AdminUser } from '@/types/api';
 
 import { DeleteUserModal } from './delete-user-modal';
+import { ReactivateUserModal } from './reactivate-user-modal';
 import { UpdateUserForm } from './update-user-form';
 
 const ActionsCell = ({ user }: { user: AdminUser }) => {
   const [isUpdateFormOpen, setIsUpdateFormOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isReactivateModalOpen, setIsReactivateModalOpen] = useState(false);
   const isDeleted = user.isDeleted;
 
   return (
@@ -24,13 +26,18 @@ const ActionsCell = ({ user }: { user: AdminUser }) => {
         >
           Edit
         </Button>
-        <Button
-          variant="destructive"
-          onClick={() => setIsDeleteModalOpen(true)}
-          disabled={isDeleted}
-        >
-          Delete
-        </Button>
+        {isDeleted ? (
+          <Button onClick={() => setIsReactivateModalOpen(true)}>
+            Reactivate
+          </Button>
+        ) : (
+          <Button
+            variant="destructive"
+            onClick={() => setIsDeleteModalOpen(true)}
+          >
+            Delete
+          </Button>
+        )}
       </div>
       <UpdateUserForm
         user={user}
@@ -41,6 +48,11 @@ const ActionsCell = ({ user }: { user: AdminUser }) => {
         user={user}
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
+      />
+      <ReactivateUserModal
+        user={user}
+        isOpen={isReactivateModalOpen}
+        onClose={() => setIsReactivateModalOpen(false)}
       />
     </>
   );
