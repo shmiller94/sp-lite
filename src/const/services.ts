@@ -5,7 +5,7 @@ export const GRAIL_GALLERI_MULTI_CANCER_TEST_ID =
 export const GUT_MICROBIOME_ANALYSIS = 'Gut Microbiome Analysis';
 export const GUT_MICROBIOME_ANALYSIS_ID = 'gut-microbiome-analysis';
 export const TOTAL_TOXIN_TEST = 'Total Toxins';
-export const TOTAL_TOXIN_TEST_ID = 'total-toxins';
+export const TOTAL_TOXIN_TEST_ID = 'mosaic-toxdetect';
 export const SUPERPOWER_BLOOD_PANEL = 'Superpower Blood Panel';
 export const ADVISORY_CALL = '1-1 Advisory Call';
 export const PFAS_CHEMICALS = 'PFAS Chemicals';
@@ -27,14 +27,14 @@ export const FULL_BODY_MRI = 'Full Body MRI';
 export const CONTINUOUS_GLUCOSE_MONITOR = 'Continuous Glucose Monitor';
 
 export const MYCOTOXINS_TEST = 'Mycotoxins';
-export const MYCOTOXINS_TEST_ID = 'mycotoxins';
+export const MYCOTOXINS_TEST_ID = 'mosaic-mycotox';
 
 export const ENVIRONMENTAL_TOXIN_TEST = 'Environmental Toxin';
-export const ENVIRONMENTAL_TOXIN_TEST_ID = 'environmental-toxin';
+export const ENVIRONMENTAL_TOXIN_TEST_ID = 'mosaic-envirotox';
 
 export const ENVIRONMENTAL_TOXINS = 'Environmental Toxins';
 export const HEAVY_METALS_TEST = 'Heavy Metals';
-export const HEAVY_METALS_TEST_ID = 'heavy-metals';
+export const HEAVY_METALS_TEST_ID = 'mosaic-toxic-metals';
 
 export const ADVANCED_BLOOD_PANEL = 'Advanced Blood Panel';
 export const IV_DRIP = 'IV Drip';

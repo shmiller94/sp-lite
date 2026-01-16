@@ -343,7 +343,7 @@ export const services = [
     items: [],
   },
   {
-    id: 'e3c1becb-f390-498d-92a5-aec61ff152b6',
+    id: 'mosaic-toxdetect',
     name: 'Total Toxins',
     description:
       'Know how heavy metals, mycotoxins, and other environmental toxins may be harming your health.',
@@ -354,10 +354,10 @@ export const services = [
     items: [],
   },
   {
-    id: 'bae9cfdc-ec4e-4b2a-925f-049205f2f382',
+    id: 'mosaic-toxic-metals',
     name: 'Heavy Metals',
     description:
-      'Learn how heavy metals may be affecting your body’s function and harming your health.',
+      "Learn how heavy metals may be affecting your body's function and harming your health.",
     price: 19900,
     active: true,
     image: '/services/heavy_metals.png',
@@ -365,7 +365,7 @@ export const services = [
     items: [],
   },
   {
-    id: '4995f636-25c5-4973-8f83-8e64ec92de6f',
+    id: 'mosaic-envirotox',
     name: 'Environmental Toxin',
     description:
       'Uncover hidden chemical exposures that could be draining your health.',
@@ -376,7 +376,7 @@ export const services = [
     items: [],
   },
   {
-    id: '9c6f170e-0717-48ad-9cb5-a9092da71288',
+    id: 'mosaic-mycotox',
     name: 'Mycotoxins',
     description:
       'Learn how mold levels from environmental or dietary may be harming your health.',
