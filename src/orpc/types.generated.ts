@@ -47,6 +47,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/b2b/organizations/{organizationId}/eligible-benefits": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["b2b.getEligibleBenefits"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/b2b/benefit-claims": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["b2b.getBenefitClaims"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/b2b/organizations/{organizationId}/benefit-claims": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["b2b.createBenefitClaim"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/b2b/organizations/{organizationId}/verify-eligibility": {
         parameters: {
             query?: never;
@@ -500,7 +548,7 @@ export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         /** @enum {unknown} */
-        CheckoutProductId: "v2-baseline-membership-20250801" | "v2-advanced-membership-20251212" | "v2-premium-membership-20251212" | "v2-membership-advanced-upgrade-20250801" | "at-home-sample-collection-20251016" | "membership-gift-20251125" | "membership-gift-nynj-20251128" | "free-membership-gift-20251207" | "free-membership-gift-nynj-20251207" | "v2-autoimmunity-bundle-20250929" | "v2-cardiovascular-bundle-20250929" | "v2-metabolic-bundle-20250929" | "v2-fertility-bundle-20250929" | "v2-methylation-bundle-20250929" | "v2-nutrients-bundle-20250929" | "v2-baseline-blood-panel-20250801" | "v2-advanced-blood-panel-20250801" | "v2-custom-blood-panel-20251002" | "gut-microbiome-analysis-20240513" | "grail-galleri-multi-cancer-test-20240513" | "heavy-metals-20240513" | "mycotoxins-20240513" | "environmental-toxin-20240513" | "total-toxins-20240513" | "rx-semaglutide-90day-20251022" | "rx-semaglutide-180day-20251022" | "rx-semaglutide-60day-20251124";
+        CheckoutProductId: "v2-baseline-membership-20250801" | "v2-advanced-membership-20251212" | "v2-premium-membership-20251212" | "baseline-membership-experiment-299-20260107" | "v2-membership-advanced-upgrade-20250801" | "at-home-sample-collection-20251016" | "membership-gift-20251125" | "membership-gift-nynj-20251128" | "free-membership-gift-20251207" | "free-membership-gift-nynj-20251207" | "v2-autoimmunity-bundle-20250929" | "v2-cardiovascular-bundle-20250929" | "v2-metabolic-bundle-20250929" | "v2-fertility-bundle-20250929" | "v2-methylation-bundle-20250929" | "v2-nutrients-bundle-20250929" | "v2-baseline-blood-panel-20250801" | "v2-advanced-blood-panel-20250801" | "v2-custom-blood-panel-20251002" | "gut-microbiome-analysis-20240513" | "grail-galleri-multi-cancer-test-20240513" | "mosaic-toxic-metals-20260107" | "mosaic-mycotox-20260107" | "mosaic-envirotox-20260107" | "mosaic-toxdetect-20260107" | "rx-semaglutide-90day-20251022" | "rx-semaglutide-180day-20251022" | "rx-semaglutide-60day-20251124";
         CheckoutSessionLineItem: {
             id: string;
             slug: components["schemas"]["CheckoutProductId"];
@@ -583,6 +631,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 400 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "BAD_REQUEST";
+                        /** @constant */
+                        status: 400;
+                        /** @default Bad Request */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 401 */
             401: {
                 headers: {
@@ -619,10 +693,62 @@ export interface operations {
                         /** @constant */
                         defined: true;
                         /** @constant */
-                        code: "NOT_AN_ADMIN";
+                        code: "FORBIDDEN";
                         /** @constant */
                         status: 403;
-                        /** @default NOT_AN_ADMIN */
+                        /** @default Forbidden */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 404 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_FOUND";
+                        /** @constant */
+                        status: 404;
+                        /** @default Not found */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
                         message: string;
                         data?: unknown;
                     } | {
@@ -648,7 +774,33 @@ export interface operations {
                         code: "RATE_LIMIT_EXCEEDED";
                         /** @constant */
                         status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
+                        /** @default Rate limit exceeded */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 500 */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "INTERNAL_SERVER_ERROR";
+                        /** @constant */
+                        status: 500;
+                        /** @default Internal server error */
                         message: string;
                         data?: unknown;
                     } | {
@@ -686,6 +838,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 400 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "BAD_REQUEST";
+                        /** @constant */
+                        status: 400;
+                        /** @default Bad Request */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 401 */
             401: {
                 headers: {
@@ -722,10 +900,62 @@ export interface operations {
                         /** @constant */
                         defined: true;
                         /** @constant */
-                        code: "NOT_AN_ADMIN";
+                        code: "FORBIDDEN";
                         /** @constant */
                         status: 403;
-                        /** @default NOT_AN_ADMIN */
+                        /** @default Forbidden */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 404 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_FOUND";
+                        /** @constant */
+                        status: 404;
+                        /** @default Not found */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
                         message: string;
                         data?: unknown;
                     } | {
@@ -751,7 +981,33 @@ export interface operations {
                         code: "RATE_LIMIT_EXCEEDED";
                         /** @constant */
                         status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
+                        /** @default Rate limit exceeded */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 500 */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "INTERNAL_SERVER_ERROR";
+                        /** @constant */
+                        status: 500;
+                        /** @default Internal server error */
                         message: string;
                         data?: unknown;
                     } | {
@@ -788,15 +1044,37 @@ export interface operations {
                         id: string;
                         name: string;
                         defaultBenefit: {
-                            productId: string;
+                            productId: components["schemas"]["CheckoutProductId"];
                             quantity: number;
                             /** @enum {unknown} */
                             collectionMethod: "AT_HOME" | "IN_LAB" | "PHLEBOTOMY_KIT" | "EVENT";
                         }[];
-                        /** Format: date-time */
-                        createdAt: string;
-                        /** Format: date-time */
-                        updatedAt: string;
+                    };
+                };
+            };
+            /** @description 400 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "BAD_REQUEST";
+                        /** @constant */
+                        status: 400;
+                        /** @default Bad Request */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
                     };
                 };
             };
@@ -836,10 +1114,10 @@ export interface operations {
                         /** @constant */
                         defined: true;
                         /** @constant */
-                        code: "NOT_AN_ADMIN";
+                        code: "FORBIDDEN";
                         /** @constant */
                         status: 403;
-                        /** @default NOT_AN_ADMIN */
+                        /** @default Forbidden */
                         message: string;
                         data?: unknown;
                     } | {
@@ -865,7 +1143,33 @@ export interface operations {
                         code: "NOT_FOUND";
                         /** @constant */
                         status: 404;
-                        /** @default Organization not found */
+                        /** @default Not found */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
                         message: string;
                         data?: unknown;
                     } | {
@@ -891,7 +1195,7 @@ export interface operations {
                         code: "RATE_LIMIT_EXCEEDED";
                         /** @constant */
                         status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
+                        /** @default Rate limit exceeded */
                         message: string;
                         data?: unknown;
                     } | {
@@ -917,7 +1221,680 @@ export interface operations {
                         code: "INTERNAL_SERVER_ERROR";
                         /** @constant */
                         status: 500;
-                        /** @default Internal Server Error */
+                        /** @default Internal server error */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+        };
+    };
+    "b2b.getEligibleBenefits": {
+        parameters: {
+            query: {
+                email: string;
+            };
+            header?: never;
+            path: {
+                organizationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** Format: uuid */
+                        id: string;
+                        /** Format: uuid */
+                        organizationId: string;
+                        /** Format: email */
+                        email: string;
+                        userId: string | null;
+                        benefit: {
+                            productId: components["schemas"]["CheckoutProductId"];
+                            quantity: number;
+                            /** @enum {unknown} */
+                            collectionMethod: "AT_HOME" | "IN_LAB" | "PHLEBOTOMY_KIT" | "EVENT";
+                        }[];
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    }[];
+                };
+            };
+            /** @description 400 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "BAD_REQUEST";
+                        /** @constant */
+                        status: 400;
+                        /** @default Bad Request */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 401 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "UNAUTHORIZED";
+                        /** @constant */
+                        status: 401;
+                        /** @default Unauthorized */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 403 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "FORBIDDEN";
+                        /** @constant */
+                        status: 403;
+                        /** @default Forbidden */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 404 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_FOUND";
+                        /** @constant */
+                        status: 404;
+                        /** @default Not found */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 429 */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "RATE_LIMIT_EXCEEDED";
+                        /** @constant */
+                        status: 429;
+                        /** @default Rate limit exceeded */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 500 */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "INTERNAL_SERVER_ERROR";
+                        /** @constant */
+                        status: 500;
+                        /** @default Internal server error */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+        };
+    };
+    "b2b.getBenefitClaims": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** Format: uuid */
+                        id: string;
+                        /** Format: uuid */
+                        organizationId: string;
+                        /** Format: email */
+                        email: string;
+                        userId: string | null;
+                        benefit: {
+                            productId: components["schemas"]["CheckoutProductId"];
+                            quantity: number;
+                            /** @enum {unknown} */
+                            collectionMethod: "AT_HOME" | "IN_LAB" | "PHLEBOTOMY_KIT" | "EVENT";
+                        }[];
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    }[];
+                };
+            };
+            /** @description 400 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "BAD_REQUEST";
+                        /** @constant */
+                        status: 400;
+                        /** @default Bad Request */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 401 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "UNAUTHORIZED";
+                        /** @constant */
+                        status: 401;
+                        /** @default Unauthorized */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 403 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "FORBIDDEN";
+                        /** @constant */
+                        status: 403;
+                        /** @default Forbidden */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 404 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_FOUND";
+                        /** @constant */
+                        status: 404;
+                        /** @default Not found */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 429 */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "RATE_LIMIT_EXCEEDED";
+                        /** @constant */
+                        status: 429;
+                        /** @default Rate limit exceeded */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 500 */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "INTERNAL_SERVER_ERROR";
+                        /** @constant */
+                        status: 500;
+                        /** @default Internal server error */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+        };
+    };
+    "b2b.createBenefitClaim": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                organizationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description The IDs of the benefits to claim */
+                    benefitIds: string[];
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** Format: uuid */
+                        id: string;
+                        /** Format: uuid */
+                        organizationId: string;
+                        /** Format: email */
+                        email: string;
+                        userId: string | null;
+                        benefit: {
+                            productId: components["schemas"]["CheckoutProductId"];
+                            quantity: number;
+                            /** @enum {unknown} */
+                            collectionMethod: "AT_HOME" | "IN_LAB" | "PHLEBOTOMY_KIT" | "EVENT";
+                        }[];
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    }[];
+                };
+            };
+            /** @description 400 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "BAD_REQUEST";
+                        /** @constant */
+                        status: 400;
+                        /** @default Bad Request */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 401 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "UNAUTHORIZED";
+                        /** @constant */
+                        status: 401;
+                        /** @default Unauthorized */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 403 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "FORBIDDEN";
+                        /** @constant */
+                        status: 403;
+                        /** @default Forbidden */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 404 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_FOUND";
+                        /** @constant */
+                        status: 404;
+                        /** @default Not found */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 429 */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "RATE_LIMIT_EXCEEDED";
+                        /** @constant */
+                        status: 429;
+                        /** @default Rate limit exceeded */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 500 */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "INTERNAL_SERVER_ERROR";
+                        /** @constant */
+                        status: 500;
+                        /** @default Internal server error */
                         message: string;
                         data?: unknown;
                     } | {
@@ -944,7 +1921,10 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    /** Format: email */
+                    /**
+                     * Format: email
+                     * @description The email of the user to check eligibility for
+                     */
                     email: string;
                 };
             };
@@ -967,7 +1947,7 @@ export interface operations {
                             email: string;
                             userId: string | null;
                             benefit: {
-                                productId: string;
+                                productId: components["schemas"]["CheckoutProductId"];
                                 quantity: number;
                                 /** @enum {unknown} */
                                 collectionMethod: "AT_HOME" | "IN_LAB" | "PHLEBOTOMY_KIT" | "EVENT";
@@ -1042,10 +2022,10 @@ export interface operations {
                         /** @constant */
                         defined: true;
                         /** @constant */
-                        code: "NOT_AN_ADMIN";
+                        code: "FORBIDDEN";
                         /** @constant */
                         status: 403;
-                        /** @default NOT_AN_ADMIN */
+                        /** @default Forbidden */
                         message: string;
                         data?: unknown;
                     } | {
@@ -1071,7 +2051,33 @@ export interface operations {
                         code: "NOT_FOUND";
                         /** @constant */
                         status: 404;
-                        /** @default Organization not found */
+                        /** @default Not found */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
                         message: string;
                         data?: unknown;
                     } | {
@@ -1097,7 +2103,7 @@ export interface operations {
                         code: "RATE_LIMIT_EXCEEDED";
                         /** @constant */
                         status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
+                        /** @default Rate limit exceeded */
                         message: string;
                         data?: unknown;
                     } | {
@@ -1123,7 +2129,7 @@ export interface operations {
                         code: "INTERNAL_SERVER_ERROR";
                         /** @constant */
                         status: 500;
-                        /** @default Internal Server Error */
+                        /** @default Internal server error */
                         message: string;
                         data?: unknown;
                     } | {
@@ -1155,6 +2161,32 @@ export interface operations {
                 content: {
                     "application/json": {
                         hasClaimedBenefits: boolean;
+                    };
+                };
+            };
+            /** @description 400 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "BAD_REQUEST";
+                        /** @constant */
+                        status: 400;
+                        /** @default Bad Request */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
                     };
                 };
             };
@@ -1194,10 +2226,62 @@ export interface operations {
                         /** @constant */
                         defined: true;
                         /** @constant */
-                        code: "NOT_AN_ADMIN";
+                        code: "FORBIDDEN";
                         /** @constant */
                         status: 403;
-                        /** @default NOT_AN_ADMIN */
+                        /** @default Forbidden */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 404 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_FOUND";
+                        /** @constant */
+                        status: 404;
+                        /** @default Not found */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
                         message: string;
                         data?: unknown;
                     } | {
@@ -1223,7 +2307,7 @@ export interface operations {
                         code: "RATE_LIMIT_EXCEEDED";
                         /** @constant */
                         status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
+                        /** @default Rate limit exceeded */
                         message: string;
                         data?: unknown;
                     } | {
@@ -1249,7 +2333,7 @@ export interface operations {
                         code: "INTERNAL_SERVER_ERROR";
                         /** @constant */
                         status: 500;
-                        /** @default Internal Server Error */
+                        /** @default Internal server error */
                         message: string;
                         data?: unknown;
                     } | {
@@ -1306,7 +2390,7 @@ export interface operations {
                         code: "BAD_REQUEST";
                         /** @constant */
                         status: 400;
-                        /** @default No unclaimed benefits found */
+                        /** @default Bad Request */
                         message: string;
                         data?: unknown;
                     } | {
@@ -1355,10 +2439,62 @@ export interface operations {
                         /** @constant */
                         defined: true;
                         /** @constant */
-                        code: "NOT_AN_ADMIN";
+                        code: "FORBIDDEN";
                         /** @constant */
                         status: 403;
-                        /** @default NOT_AN_ADMIN */
+                        /** @default Forbidden */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 404 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_FOUND";
+                        /** @constant */
+                        status: 404;
+                        /** @default Not found */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
                         message: string;
                         data?: unknown;
                     } | {
@@ -1384,7 +2520,7 @@ export interface operations {
                         code: "RATE_LIMIT_EXCEEDED";
                         /** @constant */
                         status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
+                        /** @default Rate limit exceeded */
                         message: string;
                         data?: unknown;
                     } | {
@@ -1410,7 +2546,7 @@ export interface operations {
                         code: "INTERNAL_SERVER_ERROR";
                         /** @constant */
                         status: 500;
-                        /** @default Internal Server Error */
+                        /** @default Internal server error */
                         message: string;
                         data?: unknown;
                     } | {
@@ -1513,10 +2649,10 @@ export interface operations {
                         /** @constant */
                         defined: true;
                         /** @constant */
-                        code: "NOT_AN_ADMIN";
+                        code: "FORBIDDEN";
                         /** @constant */
                         status: 403;
-                        /** @default NOT_AN_ADMIN */
+                        /** @default Forbidden */
                         message: string;
                         data?: unknown;
                     } | {
@@ -1555,6 +2691,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 429 */
             429: {
                 headers: {
@@ -1568,7 +2730,7 @@ export interface operations {
                         code: "RATE_LIMIT_EXCEEDED";
                         /** @constant */
                         status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
+                        /** @default Rate limit exceeded */
                         message: string;
                         data?: unknown;
                     } | {
@@ -1699,10 +2861,10 @@ export interface operations {
                         /** @constant */
                         defined: true;
                         /** @constant */
-                        code: "NOT_AN_ADMIN";
+                        code: "FORBIDDEN";
                         /** @constant */
                         status: 403;
-                        /** @default NOT_AN_ADMIN */
+                        /** @default Forbidden */
                         message: string;
                         data?: unknown;
                     } | {
@@ -1741,6 +2903,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 429 */
             429: {
                 headers: {
@@ -1754,7 +2942,7 @@ export interface operations {
                         code: "RATE_LIMIT_EXCEEDED";
                         /** @constant */
                         status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
+                        /** @default Rate limit exceeded */
                         message: string;
                         data?: unknown;
                     } | {
@@ -1902,10 +3090,10 @@ export interface operations {
                         /** @constant */
                         defined: true;
                         /** @constant */
-                        code: "NOT_AN_ADMIN";
+                        code: "FORBIDDEN";
                         /** @constant */
                         status: 403;
-                        /** @default NOT_AN_ADMIN */
+                        /** @default Forbidden */
                         message: string;
                         data?: unknown;
                     } | {
@@ -1944,6 +3132,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 429 */
             429: {
                 headers: {
@@ -1957,7 +3171,7 @@ export interface operations {
                         code: "RATE_LIMIT_EXCEEDED";
                         /** @constant */
                         status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
+                        /** @default Rate limit exceeded */
                         message: string;
                         data?: unknown;
                     } | {
@@ -2089,10 +3303,10 @@ export interface operations {
                         /** @constant */
                         defined: true;
                         /** @constant */
-                        code: "NOT_AN_ADMIN";
+                        code: "FORBIDDEN";
                         /** @constant */
                         status: 403;
-                        /** @default NOT_AN_ADMIN */
+                        /** @default Forbidden */
                         message: string;
                         data?: unknown;
                     } | {
@@ -2131,6 +3345,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 429 */
             429: {
                 headers: {
@@ -2144,7 +3384,7 @@ export interface operations {
                         code: "RATE_LIMIT_EXCEEDED";
                         /** @constant */
                         status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
+                        /** @default Rate limit exceeded */
                         message: string;
                         data?: unknown;
                     } | {
@@ -2275,10 +3515,10 @@ export interface operations {
                         /** @constant */
                         defined: true;
                         /** @constant */
-                        code: "NOT_AN_ADMIN";
+                        code: "FORBIDDEN";
                         /** @constant */
                         status: 403;
-                        /** @default NOT_AN_ADMIN */
+                        /** @default Forbidden */
                         message: string;
                         data?: unknown;
                     } | {
@@ -2317,6 +3557,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 429 */
             429: {
                 headers: {
@@ -2330,7 +3596,7 @@ export interface operations {
                         code: "RATE_LIMIT_EXCEEDED";
                         /** @constant */
                         status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
+                        /** @default Rate limit exceeded */
                         message: string;
                         data?: unknown;
                     } | {
@@ -2490,10 +3756,10 @@ export interface operations {
                         /** @constant */
                         defined: true;
                         /** @constant */
-                        code: "NOT_AN_ADMIN";
+                        code: "FORBIDDEN";
                         /** @constant */
                         status: 403;
-                        /** @default NOT_AN_ADMIN */
+                        /** @default Forbidden */
                         message: string;
                         data?: unknown;
                     } | {
@@ -2532,6 +3798,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 429 */
             429: {
                 headers: {
@@ -2545,7 +3837,7 @@ export interface operations {
                         code: "RATE_LIMIT_EXCEEDED";
                         /** @constant */
                         status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
+                        /** @default Rate limit exceeded */
                         message: string;
                         data?: unknown;
                     } | {
@@ -2672,10 +3964,10 @@ export interface operations {
                         /** @constant */
                         defined: true;
                         /** @constant */
-                        code: "NOT_AN_ADMIN";
+                        code: "FORBIDDEN";
                         /** @constant */
                         status: 403;
-                        /** @default NOT_AN_ADMIN */
+                        /** @default Forbidden */
                         message: string;
                         data?: unknown;
                     } | {
@@ -2714,6 +4006,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 429 */
             429: {
                 headers: {
@@ -2727,7 +4045,7 @@ export interface operations {
                         code: "RATE_LIMIT_EXCEEDED";
                         /** @constant */
                         status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
+                        /** @default Rate limit exceeded */
                         message: string;
                         data?: unknown;
                     } | {
@@ -2854,10 +4172,10 @@ export interface operations {
                         /** @constant */
                         defined: true;
                         /** @constant */
-                        code: "NOT_AN_ADMIN";
+                        code: "FORBIDDEN";
                         /** @constant */
                         status: 403;
-                        /** @default NOT_AN_ADMIN */
+                        /** @default Forbidden */
                         message: string;
                         data?: unknown;
                     } | {
@@ -2896,6 +4214,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 429 */
             429: {
                 headers: {
@@ -2909,7 +4253,7 @@ export interface operations {
                         code: "RATE_LIMIT_EXCEEDED";
                         /** @constant */
                         status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
+                        /** @default Rate limit exceeded */
                         message: string;
                         data?: unknown;
                     } | {
@@ -3034,10 +4378,10 @@ export interface operations {
                         /** @constant */
                         defined: true;
                         /** @constant */
-                        code: "NOT_AN_ADMIN";
+                        code: "FORBIDDEN";
                         /** @constant */
                         status: 403;
-                        /** @default NOT_AN_ADMIN */
+                        /** @default Forbidden */
                         message: string;
                         data?: unknown;
                     } | {
@@ -3076,6 +4420,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 429 */
             429: {
                 headers: {
@@ -3089,7 +4459,7 @@ export interface operations {
                         code: "RATE_LIMIT_EXCEEDED";
                         /** @constant */
                         status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
+                        /** @default Rate limit exceeded */
                         message: string;
                         data?: unknown;
                     } | {
@@ -3226,10 +4596,10 @@ export interface operations {
                         /** @constant */
                         defined: true;
                         /** @constant */
-                        code: "NOT_AN_ADMIN";
+                        code: "FORBIDDEN";
                         /** @constant */
                         status: 403;
-                        /** @default NOT_AN_ADMIN */
+                        /** @default Forbidden */
                         message: string;
                         data?: unknown;
                     } | {
@@ -3268,6 +4638,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 429 */
             429: {
                 headers: {
@@ -3281,7 +4677,7 @@ export interface operations {
                         code: "RATE_LIMIT_EXCEEDED";
                         /** @constant */
                         status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
+                        /** @default Rate limit exceeded */
                         message: string;
                         data?: unknown;
                     } | {
@@ -3410,6 +4806,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 400 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "BAD_REQUEST";
+                        /** @constant */
+                        status: 400;
+                        /** @default Bad Request */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 401 */
             401: {
                 headers: {
@@ -3446,10 +4868,10 @@ export interface operations {
                         /** @constant */
                         defined: true;
                         /** @constant */
-                        code: "NOT_AN_ADMIN";
+                        code: "FORBIDDEN";
                         /** @constant */
                         status: 403;
-                        /** @default NOT_AN_ADMIN */
+                        /** @default Forbidden */
                         message: string;
                         data?: unknown;
                     } | {
@@ -3488,6 +4910,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 429 */
             429: {
                 headers: {
@@ -3501,7 +4949,7 @@ export interface operations {
                         code: "RATE_LIMIT_EXCEEDED";
                         /** @constant */
                         status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
+                        /** @default Rate limit exceeded */
                         message: string;
                         data?: unknown;
                     } | {
@@ -3632,6 +5080,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 400 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "BAD_REQUEST";
+                        /** @constant */
+                        status: 400;
+                        /** @default Bad Request */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 401 */
             401: {
                 headers: {
@@ -3668,10 +5142,10 @@ export interface operations {
                         /** @constant */
                         defined: true;
                         /** @constant */
-                        code: "NOT_AN_ADMIN";
+                        code: "FORBIDDEN";
                         /** @constant */
                         status: 403;
-                        /** @default NOT_AN_ADMIN */
+                        /** @default Forbidden */
                         message: string;
                         data?: unknown;
                     } | {
@@ -3710,6 +5184,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 429 */
             429: {
                 headers: {
@@ -3723,7 +5223,7 @@ export interface operations {
                         code: "RATE_LIMIT_EXCEEDED";
                         /** @constant */
                         status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
+                        /** @default Rate limit exceeded */
                         message: string;
                         data?: unknown;
                     } | {
@@ -3794,6 +5294,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 400 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "BAD_REQUEST";
+                        /** @constant */
+                        status: 400;
+                        /** @default Bad Request */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 401 */
             401: {
                 headers: {
@@ -3830,10 +5356,10 @@ export interface operations {
                         /** @constant */
                         defined: true;
                         /** @constant */
-                        code: "NOT_AN_ADMIN";
+                        code: "FORBIDDEN";
                         /** @constant */
                         status: 403;
-                        /** @default NOT_AN_ADMIN */
+                        /** @default Forbidden */
                         message: string;
                         data?: unknown;
                     } | {
@@ -3872,6 +5398,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 429 */
             429: {
                 headers: {
@@ -3885,7 +5437,7 @@ export interface operations {
                         code: "RATE_LIMIT_EXCEEDED";
                         /** @constant */
                         status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
+                        /** @default Rate limit exceeded */
                         message: string;
                         data?: unknown;
                     } | {
@@ -3971,6 +5523,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 400 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "BAD_REQUEST";
+                        /** @constant */
+                        status: 400;
+                        /** @default Bad Request */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 401 */
             401: {
                 headers: {
@@ -4007,10 +5585,62 @@ export interface operations {
                         /** @constant */
                         defined: true;
                         /** @constant */
-                        code: "NOT_AN_ADMIN";
+                        code: "FORBIDDEN";
                         /** @constant */
                         status: 403;
-                        /** @default NOT_AN_ADMIN */
+                        /** @default Forbidden */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 404 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_FOUND";
+                        /** @constant */
+                        status: 404;
+                        /** @default Not found */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
                         message: string;
                         data?: unknown;
                     } | {
@@ -4036,7 +5666,7 @@ export interface operations {
                         code: "RATE_LIMIT_EXCEEDED";
                         /** @constant */
                         status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
+                        /** @default Rate limit exceeded */
                         message: string;
                         data?: unknown;
                     } | {
@@ -4089,6 +5719,7 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
+                    senderName?: string;
                     recipientFirstName: string;
                     recipientLastName: string;
                     /** Format: email */
@@ -4206,16 +5837,6 @@ export interface operations {
                         /** @constant */
                         defined: true;
                         /** @constant */
-                        code: "NOT_AN_ADMIN";
-                        /** @constant */
-                        status: 403;
-                        /** @default NOT_AN_ADMIN */
-                        message: string;
-                        data?: unknown;
-                    } | {
-                        /** @constant */
-                        defined: true;
-                        /** @constant */
                         code: "FORBIDDEN";
                         /** @constant */
                         status: 403;
@@ -4258,6 +5879,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 429 */
             429: {
                 headers: {
@@ -4271,7 +5918,7 @@ export interface operations {
                         code: "RATE_LIMIT_EXCEEDED";
                         /** @constant */
                         status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
+                        /** @default Rate limit exceeded */
                         message: string;
                         data?: unknown;
                     } | {
@@ -4663,6 +6310,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 400 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "BAD_REQUEST";
+                        /** @constant */
+                        status: 400;
+                        /** @default Bad Request */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 401 */
             401: {
                 headers: {
@@ -4699,10 +6372,62 @@ export interface operations {
                         /** @constant */
                         defined: true;
                         /** @constant */
-                        code: "NOT_AN_ADMIN";
+                        code: "FORBIDDEN";
                         /** @constant */
                         status: 403;
-                        /** @default NOT_AN_ADMIN */
+                        /** @default Forbidden */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 404 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_FOUND";
+                        /** @constant */
+                        status: 404;
+                        /** @default Not found */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
                         message: string;
                         data?: unknown;
                     } | {
@@ -4728,7 +6453,7 @@ export interface operations {
                         code: "RATE_LIMIT_EXCEEDED";
                         /** @constant */
                         status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
+                        /** @default Rate limit exceeded */
                         message: string;
                         data?: unknown;
                     } | {
@@ -5122,6 +6847,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 400 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "BAD_REQUEST";
+                        /** @constant */
+                        status: 400;
+                        /** @default Bad Request */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 401 */
             401: {
                 headers: {
@@ -5158,10 +6909,10 @@ export interface operations {
                         /** @constant */
                         defined: true;
                         /** @constant */
-                        code: "NOT_AN_ADMIN";
+                        code: "FORBIDDEN";
                         /** @constant */
                         status: 403;
-                        /** @default NOT_AN_ADMIN */
+                        /** @default Forbidden */
                         message: string;
                         data?: unknown;
                     } | {
@@ -5200,6 +6951,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 429 */
             429: {
                 headers: {
@@ -5213,7 +6990,7 @@ export interface operations {
                         code: "RATE_LIMIT_EXCEEDED";
                         /** @constant */
                         status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
+                        /** @default Rate limit exceeded */
                         message: string;
                         data?: unknown;
                     } | {
@@ -5276,6 +7053,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 400 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "BAD_REQUEST";
+                        /** @constant */
+                        status: 400;
+                        /** @default Bad Request */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 401 */
             401: {
                 headers: {
@@ -5312,10 +7115,62 @@ export interface operations {
                         /** @constant */
                         defined: true;
                         /** @constant */
-                        code: "NOT_AN_ADMIN";
+                        code: "FORBIDDEN";
                         /** @constant */
                         status: 403;
-                        /** @default NOT_AN_ADMIN */
+                        /** @default Forbidden */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 404 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_FOUND";
+                        /** @constant */
+                        status: 404;
+                        /** @default Not found */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
                         message: string;
                         data?: unknown;
                     } | {
@@ -5341,7 +7196,7 @@ export interface operations {
                         code: "RATE_LIMIT_EXCEEDED";
                         /** @constant */
                         status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
+                        /** @default Rate limit exceeded */
                         message: string;
                         data?: unknown;
                     } | {
@@ -5469,6 +7324,32 @@ export interface operations {
                     } | null;
                 };
             };
+            /** @description 400 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "BAD_REQUEST";
+                        /** @constant */
+                        status: 400;
+                        /** @default Bad Request */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 401 */
             401: {
                 headers: {
@@ -5505,10 +7386,62 @@ export interface operations {
                         /** @constant */
                         defined: true;
                         /** @constant */
-                        code: "NOT_AN_ADMIN";
+                        code: "FORBIDDEN";
                         /** @constant */
                         status: 403;
-                        /** @default NOT_AN_ADMIN */
+                        /** @default Forbidden */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 404 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_FOUND";
+                        /** @constant */
+                        status: 404;
+                        /** @default Not found */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
                         message: string;
                         data?: unknown;
                     } | {
@@ -5534,7 +7467,7 @@ export interface operations {
                         code: "RATE_LIMIT_EXCEEDED";
                         /** @constant */
                         status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
+                        /** @default Rate limit exceeded */
                         message: string;
                         data?: unknown;
                     } | {
@@ -5660,6 +7593,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 400 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "BAD_REQUEST";
+                        /** @constant */
+                        status: 400;
+                        /** @default Bad Request */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 401 */
             401: {
                 headers: {
@@ -5696,10 +7655,62 @@ export interface operations {
                         /** @constant */
                         defined: true;
                         /** @constant */
-                        code: "NOT_AN_ADMIN";
+                        code: "FORBIDDEN";
                         /** @constant */
                         status: 403;
-                        /** @default NOT_AN_ADMIN */
+                        /** @default Forbidden */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 404 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_FOUND";
+                        /** @constant */
+                        status: 404;
+                        /** @default Not found */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
                         message: string;
                         data?: unknown;
                     } | {
@@ -5725,7 +7736,7 @@ export interface operations {
                         code: "RATE_LIMIT_EXCEEDED";
                         /** @constant */
                         status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
+                        /** @default Rate limit exceeded */
                         message: string;
                         data?: unknown;
                     } | {
@@ -5789,6 +7800,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 400 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "BAD_REQUEST";
+                        /** @constant */
+                        status: 400;
+                        /** @default Bad Request */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 401 */
             401: {
                 headers: {
@@ -5825,10 +7862,10 @@ export interface operations {
                         /** @constant */
                         defined: true;
                         /** @constant */
-                        code: "NOT_AN_ADMIN";
+                        code: "FORBIDDEN";
                         /** @constant */
                         status: 403;
-                        /** @default NOT_AN_ADMIN */
+                        /** @default Forbidden */
                         message: string;
                         data?: unknown;
                     } | {
@@ -5867,6 +7904,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 429 */
             429: {
                 headers: {
@@ -5880,7 +7943,7 @@ export interface operations {
                         code: "RATE_LIMIT_EXCEEDED";
                         /** @constant */
                         status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
+                        /** @default Rate limit exceeded */
                         message: string;
                         data?: unknown;
                     } | {
@@ -5949,6 +8012,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 400 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "BAD_REQUEST";
+                        /** @constant */
+                        status: 400;
+                        /** @default Bad Request */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 401 */
             401: {
                 headers: {
@@ -5985,10 +8074,62 @@ export interface operations {
                         /** @constant */
                         defined: true;
                         /** @constant */
-                        code: "NOT_AN_ADMIN";
+                        code: "FORBIDDEN";
                         /** @constant */
                         status: 403;
-                        /** @default NOT_AN_ADMIN */
+                        /** @default Forbidden */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 404 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_FOUND";
+                        /** @constant */
+                        status: 404;
+                        /** @default Not found */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
                         message: string;
                         data?: unknown;
                     } | {
@@ -6014,7 +8155,7 @@ export interface operations {
                         code: "RATE_LIMIT_EXCEEDED";
                         /** @constant */
                         status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
+                        /** @default Rate limit exceeded */
                         message: string;
                         data?: unknown;
                     } | {
@@ -6089,6 +8230,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 400 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "BAD_REQUEST";
+                        /** @constant */
+                        status: 400;
+                        /** @default Bad Request */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 401 */
             401: {
                 headers: {
@@ -6125,10 +8292,62 @@ export interface operations {
                         /** @constant */
                         defined: true;
                         /** @constant */
-                        code: "NOT_AN_ADMIN";
+                        code: "FORBIDDEN";
                         /** @constant */
                         status: 403;
-                        /** @default NOT_AN_ADMIN */
+                        /** @default Forbidden */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 404 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_FOUND";
+                        /** @constant */
+                        status: 404;
+                        /** @default Not found */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
                         message: string;
                         data?: unknown;
                     } | {
@@ -6154,7 +8373,7 @@ export interface operations {
                         code: "RATE_LIMIT_EXCEEDED";
                         /** @constant */
                         status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
+                        /** @default Rate limit exceeded */
                         message: string;
                         data?: unknown;
                     } | {
@@ -6228,6 +8447,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 400 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "BAD_REQUEST";
+                        /** @constant */
+                        status: 400;
+                        /** @default Bad Request */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 401 */
             401: {
                 headers: {
@@ -6264,10 +8509,62 @@ export interface operations {
                         /** @constant */
                         defined: true;
                         /** @constant */
-                        code: "NOT_AN_ADMIN";
+                        code: "FORBIDDEN";
                         /** @constant */
                         status: 403;
-                        /** @default NOT_AN_ADMIN */
+                        /** @default Forbidden */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 404 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_FOUND";
+                        /** @constant */
+                        status: 404;
+                        /** @default Not found */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
                         message: string;
                         data?: unknown;
                     } | {
@@ -6293,7 +8590,7 @@ export interface operations {
                         code: "RATE_LIMIT_EXCEEDED";
                         /** @constant */
                         status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
+                        /** @default Rate limit exceeded */
                         message: string;
                         data?: unknown;
                     } | {
@@ -6364,6 +8661,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 400 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "BAD_REQUEST";
+                        /** @constant */
+                        status: 400;
+                        /** @default Bad Request */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 401 */
             401: {
                 headers: {
@@ -6400,10 +8723,10 @@ export interface operations {
                         /** @constant */
                         defined: true;
                         /** @constant */
-                        code: "NOT_AN_ADMIN";
+                        code: "FORBIDDEN";
                         /** @constant */
                         status: 403;
-                        /** @default NOT_AN_ADMIN */
+                        /** @default Forbidden */
                         message: string;
                         data?: unknown;
                     } | {
@@ -6442,6 +8765,32 @@ export interface operations {
                     };
                 };
             };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
             /** @description 429 */
             429: {
                 headers: {
@@ -6455,7 +8804,7 @@ export interface operations {
                         code: "RATE_LIMIT_EXCEEDED";
                         /** @constant */
                         status: 429;
-                        /** @default RATE_LIMIT_EXCEEDED */
+                        /** @default Rate limit exceeded */
                         message: string;
                         data?: unknown;
                     } | {
