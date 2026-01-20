@@ -4,7 +4,7 @@ import {
   GUT_MICROBIOME_ANALYSIS,
   SUPERPOWER_BLOOD_PANEL,
   TOTAL_TOXIN_TEST,
-  ENVIRONMENTAL_TOXIN_TEST,
+  ENVIRONMENTAL_TOXINS_TEST,
   FOOD_ENVIRONMENTAL_ALLERGY,
   HEAVY_METALS_TEST,
   MYCOTOXINS_TEST,
@@ -361,7 +361,7 @@ export const SERVICE_DETAILS: Record<string, ServiceDetails> = {
     ],
   },
 
-  [ENVIRONMENTAL_TOXIN_TEST]: {
+  [ENVIRONMENTAL_TOXINS_TEST]: {
     image: '/services/transparent/environmental_toxin_test.png',
     faqs: [
       {

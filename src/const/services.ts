@@ -5,7 +5,7 @@ export const GRAIL_GALLERI_MULTI_CANCER_TEST_ID =
 export const GUT_MICROBIOME_ANALYSIS = 'Gut Microbiome Analysis';
 export const GUT_MICROBIOME_ANALYSIS_ID = 'gut-microbiome-analysis';
 export const TOTAL_TOXIN_TEST = 'Total Toxins';
-export const TOTAL_TOXIN_TEST_ID = 'mosaic-toxdetect';
+export const TOTAL_TOXIN_TEST_ID = 'mosaic-envirotox';
 export const SUPERPOWER_BLOOD_PANEL = 'Superpower Blood Panel';
 export const ADVISORY_CALL = '1-1 Advisory Call';
 export const PFAS_CHEMICALS = 'PFAS Chemicals';
@@ -29,8 +29,8 @@ export const CONTINUOUS_GLUCOSE_MONITOR = 'Continuous Glucose Monitor';
 export const MYCOTOXINS_TEST = 'Mycotoxins';
 export const MYCOTOXINS_TEST_ID = 'mosaic-mycotox';
 
-export const ENVIRONMENTAL_TOXIN_TEST = 'Environmental Toxin';
-export const ENVIRONMENTAL_TOXIN_TEST_ID = 'mosaic-envirotox';
+export const ENVIRONMENTAL_TOXINS_TEST = 'Environmental Toxins';
+export const ENVIRONMENTAL_TOXINS_TEST_ID = 'mosaic-toxdetect';
 
 export const ENVIRONMENTAL_TOXINS = 'Environmental Toxins';
 export const HEAVY_METALS_TEST = 'Heavy Metals';
@@ -63,16 +63,23 @@ export const RECOMMENDED_SERVICES = [
   SUPERPOWER_BLOOD_PANEL,
   ADVANCED_BLOOD_PANEL,
   GUT_MICROBIOME_ANALYSIS,
-  ENVIRONMENTAL_TOXIN_TEST,
+  ENVIRONMENTAL_TOXINS_TEST,
   MYCOTOXINS_TEST,
 ];
 
 export const KIT_SERVICES = new Set([
   GUT_MICROBIOME_ANALYSIS,
-  ENVIRONMENTAL_TOXIN_TEST,
+  ENVIRONMENTAL_TOXINS_TEST,
   MYCOTOXINS_TEST,
   HEAVY_METALS_TEST,
 ]);
+
+export const TOXIN_SERVICES = [
+  TOTAL_TOXIN_TEST,
+  MYCOTOXINS_TEST,
+  ENVIRONMENTAL_TOXINS_TEST,
+  HEAVY_METALS_TEST,
+];
 
 export const MAX_TUBE_COUNT = 14;
 export const BASELINE_TUBE_COUNT = 6;

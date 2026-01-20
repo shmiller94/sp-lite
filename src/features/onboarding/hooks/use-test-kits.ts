@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 
 import {
-  ENVIRONMENTAL_TOXIN_TEST_ID,
+  ENVIRONMENTAL_TOXINS_TEST_ID,
   GUT_MICROBIOME_ANALYSIS_ID,
   HEAVY_METALS_TEST_ID,
   MYCOTOXINS_TEST_ID,
@@ -28,7 +28,7 @@ export const SERVICE_METADATA = {
     image_transparent: '/onboarding/upsell/transparent/mercury_poisoning.webp',
     image_shadow: '/onboarding/upsell/shadow/mercury_poisoning.webp',
   },
-  [ENVIRONMENTAL_TOXIN_TEST_ID]: {
+  [ENVIRONMENTAL_TOXINS_TEST_ID]: {
     displayName: 'BPA Plastics and Pesticides',
     description:
       'Uncover hidden chemical exposures that could be draining your health.',
@@ -62,7 +62,7 @@ type UseTestKitServicesReturn = {
 export const TOXIN_TEST_IDS = [
   MYCOTOXINS_TEST_ID,
   HEAVY_METALS_TEST_ID,
-  ENVIRONMENTAL_TOXIN_TEST_ID,
+  ENVIRONMENTAL_TOXINS_TEST_ID,
 ];
 
 export const UPSELL_SERVICE_IDS = [
@@ -105,7 +105,7 @@ export const useTestKitServices = (): UseTestKitServicesReturn => {
         [TOTAL_TOXIN_TEST_ID]: 1,
         [MYCOTOXINS_TEST_ID]: 2,
         [HEAVY_METALS_TEST_ID]: 3,
-        [ENVIRONMENTAL_TOXIN_TEST_ID]: 4,
+        [ENVIRONMENTAL_TOXINS_TEST_ID]: 4,
       };
 
       const aOrd = sortOrder[a.id as keyof typeof sortOrder] ?? 999;

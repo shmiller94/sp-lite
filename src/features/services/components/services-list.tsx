@@ -1,3 +1,4 @@
+import { TOXIN_SERVICES } from '@/const/services';
 import { MarketplaceSkeleton } from '@/features/marketplace/components/marketplace-skeleton';
 import { MarketplaceFilter } from '@/features/marketplace/const/categories';
 import { getFilterDisplayLabel } from '@/features/marketplace/utils/category-utils';
@@ -71,9 +72,20 @@ export const ServicesList = ({
         ),
       },
       {
+        title: 'Toxin tests',
+        services: filteredServices
+          .filter((service) => TOXIN_SERVICES.includes(service.name))
+          .sort(
+            (a, b) =>
+              TOXIN_SERVICES.indexOf(a.name) - TOXIN_SERVICES.indexOf(b.name),
+          ),
+      },
+      {
         title: 'Other tests',
         services: filteredServices.filter(
-          (service) => service.group !== 'phlebotomy',
+          (service) =>
+            service.group !== 'phlebotomy' &&
+            !TOXIN_SERVICES.includes(service.name),
         ),
       },
     ].filter(({ services }) => services.length > 0);

@@ -5,7 +5,7 @@ import {
   CONTINUOUS_GLUCOSE_MONITOR,
   GUT_MICROBIOME_ANALYSIS,
   TOTAL_TOXIN_TEST,
-  ENVIRONMENTAL_TOXIN_TEST,
+  ENVIRONMENTAL_TOXINS_TEST,
   MYCOTOXINS_TEST,
   HEAVY_METALS_TEST,
 } from '@/const';
@@ -51,7 +51,7 @@ export const usePurchaseDialogStepper = (): UsePurchaseDialogStepperType => {
     case CONTINUOUS_GLUCOSE_MONITOR:
     case GUT_MICROBIOME_ANALYSIS:
     case TOTAL_TOXIN_TEST:
-    case ENVIRONMENTAL_TOXIN_TEST:
+    case ENVIRONMENTAL_TOXINS_TEST:
     case MYCOTOXINS_TEST:
     case HEAVY_METALS_TEST:
       steps = [

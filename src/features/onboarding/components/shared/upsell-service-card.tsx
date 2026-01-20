@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { DialogClose } from '@/components/ui/dialog';
 import { Body2 } from '@/components/ui/typography';
 import {
-  ENVIRONMENTAL_TOXIN_TEST_ID,
+  ENVIRONMENTAL_TOXINS_TEST_ID,
   HEAVY_METALS_TEST_ID,
   MYCOTOXINS_TEST_ID,
   TOTAL_TOXIN_TEST_ID,
@@ -18,7 +18,7 @@ import { getServiceImage } from '@/utils/service';
 const INDIVIDUAL_TOXIN_TEST_IDS = [
   MYCOTOXINS_TEST_ID,
   HEAVY_METALS_TEST_ID,
-  ENVIRONMENTAL_TOXIN_TEST_ID,
+  ENVIRONMENTAL_TOXINS_TEST_ID,
 ];
 
 export const UpsellServiceCard = ({

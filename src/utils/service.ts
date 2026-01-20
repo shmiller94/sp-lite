@@ -6,7 +6,7 @@ import {
   CARDIOVASCULAR_PANEL,
   CONTINUOUS_GLUCOSE_MONITOR,
   DEXA_SCAN,
-  ENVIRONMENTAL_TOXIN_TEST,
+  ENVIRONMENTAL_TOXINS_TEST,
   ENVIRONMENTAL_TOXINS,
   FEMALE_FERTILITY_PANEL,
   FOOD_ENVIRONMENTAL_ALLERGY,
@@ -50,11 +50,23 @@ export const getSampleReportLinkForService = (service: string) => {
         pdf: '/sample-reports/gut-microbiome-analysis.pdf',
         preview: '/sample-reports/gut-microbiome-analysis-placeholder.webp',
       };
-    case ENVIRONMENTAL_TOXIN_TEST:
+    case HEAVY_METALS_TEST:
       return {
-        pdf: '/sample-reports/environmental-toxin-test.pdf',
-        preview: '/sample-reports/environmental-toxin-test-placeholder.webp',
+        pdf: '/sample-reports/heavy-metals-sample-report.pdf',
+        preview: '/sample-reports/heavy-metals-sample-report-placeholder.webp',
       };
+    case ENVIRONMENTAL_TOXINS:
+      return {
+        pdf: '/sample-reports/environmental-toxins-sample-report.pdf',
+        preview:
+          '/sample-reports/environmental-toxins-sample-report-placeholder.webp',
+      };
+    case MYCOTOXINS_TEST:
+      return {
+        pdf: '/sample-reports/mycotoxins-sample-report.pdf',
+        preview: '/sample-reports/mycotoxins-sample-report-placeholder.webp',
+      };
+
     default:
       return undefined;
   }
@@ -86,7 +98,7 @@ export const getInformedConsentForService = (service: string): JSX.Element => {
   switch (service) {
     case GRAIL_GALLERI_MULTI_CANCER_TEST:
       return LEGAL_DESCLAIMERS.grail;
-    case ENVIRONMENTAL_TOXIN_TEST ||
+    case ENVIRONMENTAL_TOXINS_TEST ||
       HEAVY_METALS_TEST ||
       MYCOTOXINS_TEST ||
       TOTAL_TOXIN_TEST:
@@ -169,7 +181,7 @@ export const getServiceImage = (name: string): string => {
     case TOTAL_TOXIN_TEST:
       return serviceImages.TotalToxins;
 
-    case ENVIRONMENTAL_TOXIN_TEST:
+    case ENVIRONMENTAL_TOXINS_TEST:
       return serviceImages.EnvironmentToxin;
 
     case ENVIRONMENTAL_TOXINS:

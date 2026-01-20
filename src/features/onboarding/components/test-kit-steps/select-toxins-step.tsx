@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/sonner';
 import { Body1, H3, H4 } from '@/components/ui/typography';
 import {
-  ENVIRONMENTAL_TOXIN_TEST_ID,
+  ENVIRONMENTAL_TOXINS_TEST_ID,
   HEAVY_METALS_TEST_ID,
   MYCOTOXINS_TEST_ID,
 } from '@/const/services';
@@ -34,7 +34,7 @@ const SelectToxinsStepContent = () => {
       [
         MYCOTOXINS_TEST_ID,
         HEAVY_METALS_TEST_ID,
-        ENVIRONMENTAL_TOXIN_TEST_ID,
+        ENVIRONMENTAL_TOXINS_TEST_ID,
       ].includes(service.id),
     );
   }, [services]);
@@ -44,7 +44,7 @@ const SelectToxinsStepContent = () => {
       [
         MYCOTOXINS_TEST_ID,
         HEAVY_METALS_TEST_ID,
-        ENVIRONMENTAL_TOXIN_TEST_ID,
+        ENVIRONMENTAL_TOXINS_TEST_ID,
       ].includes(service.id),
     );
   }, [selectedServices]);
