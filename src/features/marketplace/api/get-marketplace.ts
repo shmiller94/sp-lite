@@ -60,7 +60,10 @@ export const getMarketplace = async (): Promise<MarketplaceData> => {
   return {
     supplements: response.supplements.map(toProduct),
     prescriptions: response.prescriptions.map(toRx),
-    services: response.services.map(toHealthcareService),
+    services: response.services
+      // Do not display total tox on main page (NOTE: Mosaic's envirotox == Vibrant's total tox)
+      .filter((s) => s.id !== 'mosaic-envirotox')
+      .map(toHealthcareService),
   };
 };
 
