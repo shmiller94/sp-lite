@@ -4,11 +4,19 @@ import {
   QuestionnaireResponseItem,
   QuestionnaireResponseItemAnswer,
 } from '@medplum/fhirtypes';
+import { format, parse } from 'date-fns';
+import { CalendarIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { Textarea } from '@/components/ui/textarea';
 import { Body1 } from '@/components/ui/typography';
 import { cn } from '@/lib/utils';
@@ -409,24 +417,42 @@ export const QuestionnaireFormItem = ({
       );
     }
     // Date item type, used for date questions
-    case QuestionnaireItemType.date:
+    case QuestionnaireItemType.date: {
+      const dateValue = defaultValue?.value
+        ? parse(defaultValue.value, 'yyyy-MM-dd', new Date())
+        : undefined;
       return (
         <QuestionnaireErrorWrapper isError={localError}>
-          <Input
-            placeholder="Tell us here..."
-            className="h-14 w-full"
-            type="date"
-            id={name}
-            name={name}
-            required={item.required}
-            defaultValue={defaultValue?.value}
-            onChange={(e) =>
-              onChangeAnswer({ valueDate: e.currentTarget.value })
-            }
-            onKeyDown={onKeyDown}
-          />
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                id={name}
+                variant="white"
+                className={cn(
+                  'h-14 w-full justify-start text-left font-normal',
+                  !dateValue && 'text-muted-foreground',
+                )}
+              >
+                <CalendarIcon className="mr-2 size-4" />
+                {dateValue ? format(dateValue, 'MM/dd/yyyy') : 'Select a date'}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={dateValue}
+                onSelect={(date) => {
+                  if (date) {
+                    onChangeAnswer({ valueDate: format(date, 'yyyy-MM-dd') });
+                  }
+                }}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
         </QuestionnaireErrorWrapper>
       );
+    }
     // Date and time item type, used for date and time questions
     case QuestionnaireItemType.dateTime:
       return (
