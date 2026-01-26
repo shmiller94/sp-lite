@@ -69,7 +69,9 @@ export function RescheduleDetails({
                           'MMM Do, YYYY',
                         )}
                       </Body1>
-                    ) : null}
+                    ) : (
+                      <Body1>Walk-In</Body1>
+                    )}
                   </div>
                   <ChevronRight className="size-4 text-secondary" />
                 </button>
