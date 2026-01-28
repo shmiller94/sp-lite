@@ -45,9 +45,7 @@ export const SchedulerDaySlot = ({
         role="presentation"
       >
         <H4>{moment(day).tz(tz).format('DD')}</H4>
-        <Body3 className={'text-nowrap text-secondary'}>
-          {numSlots && numSlots > 0 ? `${numSlots} slots` : 'Closed'}
-        </Body3>
+        <Body3 className={'text-nowrap text-secondary'}>{numSlots} slots</Body3>
       </div>
     </div>
   );
