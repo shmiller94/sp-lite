@@ -186,8 +186,7 @@ const VerifyEligibilityStep = ({
       <div className="space-y-3">
         <H1 className="text-3xl md:text-5xl">Claim your benefit</H1>
         <Body1 className="whitespace-pre-line text-zinc-500">
-          {`Enter your work email to claim your benefit.
-          You can register with your personal email in the next step.`}
+          Enter the email associated with your benefit to verify eligibility.
         </Body1>
       </div>
       <div className="space-y-4">
@@ -199,7 +198,7 @@ const VerifyEligibilityStep = ({
               <FormControl>
                 <Input
                   variant={fieldState.error ? 'error' : 'default'}
-                  placeholder="Work email"
+                  placeholder="Email"
                   autoCapitalize="none"
                   autoComplete="email"
                   autoCorrect="off"
