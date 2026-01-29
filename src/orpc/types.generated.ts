@@ -543,6 +543,70 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/questionnaires/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["questionnaire.getById"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/questionnaires": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["questionnaire.getByName"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/questionnaire-responses/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["questionnaireResponse.getById"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["questionnaireResponse.update"];
+        trace?: never;
+    };
+    "/questionnaire-responses": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["questionnaireResponse.list"];
+        put?: never;
+        post: operations["questionnaireResponse.create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -8831,6 +8895,9830 @@ export interface operations {
                         /** @constant */
                         status: 500;
                         /** @default Internal Server Error */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+        };
+    };
+    "questionnaire.getById": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        resourceType: "Questionnaire";
+                        id?: string;
+                        name?: string;
+                        status?: string;
+                    } & {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description 400 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "BAD_REQUEST";
+                        /** @constant */
+                        status: 400;
+                        /** @default Bad Request */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 401 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "UNAUTHORIZED";
+                        /** @constant */
+                        status: 401;
+                        /** @default Unauthorized */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 403 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "FORBIDDEN";
+                        /** @constant */
+                        status: 403;
+                        /** @default Forbidden */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 404 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_FOUND";
+                        /** @constant */
+                        status: 404;
+                        /** @default Not found */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 429 */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "RATE_LIMIT_EXCEEDED";
+                        /** @constant */
+                        status: 429;
+                        /** @default Rate limit exceeded */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 500 */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "INTERNAL_SERVER_ERROR";
+                        /** @constant */
+                        status: 500;
+                        /** @default Internal server error */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+        };
+    };
+    "questionnaire.getByName": {
+        parameters: {
+            query?: {
+                name?: "onboarding-intake" | "onboarding-screening" | "rx-assessment-ghk-cu" | "rx-assessment-ghk-cu-symptom-tracker" | "rx-assessment-semaglutide" | "rx-assessment-semaglutide-symptom-tracker" | "rx-assessment-sermorelin-injectable" | "rx-assessment-sermorelin-injectable-symptom-tracker" | "rx-assessment-sermorelin-troche" | "rx-assessment-sermorelin-troche-symptom-tracker" | "rx-assessment-vip-nasal-spray" | "rx-assessment-vip-nasal-spray-symptom-tracker" | "rx-assessment-metformin" | "rx-assessment-metformin-symptom-tracker" | "rx-assessment-olympus-male-max" | "rx-assessment-olympus-male-max-symptom-tracker" | "rx-assessment-hcg-pregnyl" | "rx-assessment-hcg-pregnyl-symptom-tracker" | "rx-assessment-gonadorelin" | "rx-assessment-gonadorelin-symptom-tracker" | "rx-assessment-nad-injectable" | "rx-assessment-nad-injectable-symptom-tracker" | "rx-assessment-nad-nasal-spray" | "rx-assessment-nad-nasal-spray-symptom-tracker" | "rx-assessment-aloe-vera-tretinoin" | "rx-assessment-aloe-vera-tretinoin-symptom-tracker" | "rx-assessment-elamipretide" | "rx-assessment-elamipretide-symptom-tracker" | "rx-assessment-enclomiphene" | "rx-assessment-enclomiphene-symptom-tracker" | "rx-assessment-tadalafil" | "rx-assessment-tadalafil-symptom-tracker" | "rx-assessment-low-dose-naltrexone" | "rx-assessment-low-dose-naltrexone-symptom-tracker" | "rx-assessment-methylcobalamin-b12" | "rx-assessment-methylcobalamin-b12-symptom-tracker" | "rx-assessment-trt-injectable" | "rx-assessment-trt-injectable-symptom-tracker" | "rx-assessment-tirzepatide" | "rx-assessment-tirzepatide-symptom-tracker" | "glp-frontdoor-experiment";
+                status?: "draft" | "active" | "retired";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": ({
+                        /** @constant */
+                        resourceType: "Questionnaire";
+                        id?: string;
+                        name?: string;
+                        status?: string;
+                    } & {
+                        [key: string]: unknown;
+                    })[];
+                };
+            };
+            /** @description 400 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "BAD_REQUEST";
+                        /** @constant */
+                        status: 400;
+                        /** @default Bad Request */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 401 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "UNAUTHORIZED";
+                        /** @constant */
+                        status: 401;
+                        /** @default Unauthorized */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 403 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "FORBIDDEN";
+                        /** @constant */
+                        status: 403;
+                        /** @default Forbidden */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 404 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_FOUND";
+                        /** @constant */
+                        status: 404;
+                        /** @default Not found */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 429 */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "RATE_LIMIT_EXCEEDED";
+                        /** @constant */
+                        status: 429;
+                        /** @default Rate limit exceeded */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 500 */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "INTERNAL_SERVER_ERROR";
+                        /** @constant */
+                        status: 500;
+                        /** @default Internal server error */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+        };
+    };
+    "questionnaireResponse.getById": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        resourceType: "QuestionnaireResponse";
+                        id?: string;
+                        meta?: {
+                            [key: string]: unknown;
+                        };
+                        implicitRules?: string;
+                        language?: string;
+                        text?: {
+                            /** @enum {unknown} */
+                            status: "generated" | "extensions" | "additional" | "empty";
+                            div: string;
+                        };
+                        contained?: (unknown | null)[];
+                        extension?: {
+                            url: string;
+                            valueBoolean?: boolean;
+                            valueInteger?: number;
+                            valueDecimal?: number;
+                            valueString?: string;
+                            valueUri?: string;
+                            /** Format: date */
+                            valueDate?: string;
+                            /** Format: date-time */
+                            valueDateTime?: string;
+                            /** Format: time */
+                            valueTime?: string;
+                            valueCoding?: {
+                                system?: string;
+                                version?: string;
+                                code?: string;
+                                display?: string;
+                                userSelected?: boolean;
+                            };
+                            valueQuantity?: {
+                                value?: number;
+                                /** @enum {unknown} */
+                                comparator?: "<" | "<=" | ">=" | ">";
+                                unit?: string;
+                                system?: string;
+                                code?: string;
+                            };
+                            valueReference?: {
+                                reference?: string;
+                                /** @enum {unknown} */
+                                type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                identifier?: {
+                                    [key: string]: unknown;
+                                };
+                                display?: string;
+                            };
+                            valueAttachment?: {
+                                contentType?: string;
+                                language?: string;
+                                data?: string;
+                                url?: string;
+                                size?: number;
+                                hash?: string;
+                                title?: string;
+                                /** Format: date-time */
+                                creation?: string;
+                            };
+                            extension?: {
+                                url: string;
+                                valueBoolean?: boolean;
+                                valueInteger?: number;
+                                valueDecimal?: number;
+                                valueString?: string;
+                                valueUri?: string;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                }[];
+                            }[];
+                        }[];
+                        modifierExtension?: {
+                            url: string;
+                            valueBoolean?: boolean;
+                            valueInteger?: number;
+                            valueDecimal?: number;
+                            valueString?: string;
+                            valueUri?: string;
+                            /** Format: date */
+                            valueDate?: string;
+                            /** Format: date-time */
+                            valueDateTime?: string;
+                            /** Format: time */
+                            valueTime?: string;
+                            valueCoding?: {
+                                system?: string;
+                                version?: string;
+                                code?: string;
+                                display?: string;
+                                userSelected?: boolean;
+                            };
+                            valueQuantity?: {
+                                value?: number;
+                                /** @enum {unknown} */
+                                comparator?: "<" | "<=" | ">=" | ">";
+                                unit?: string;
+                                system?: string;
+                                code?: string;
+                            };
+                            valueReference?: {
+                                reference?: string;
+                                /** @enum {unknown} */
+                                type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                identifier?: {
+                                    [key: string]: unknown;
+                                };
+                                display?: string;
+                            };
+                            valueAttachment?: {
+                                contentType?: string;
+                                language?: string;
+                                data?: string;
+                                url?: string;
+                                size?: number;
+                                hash?: string;
+                                title?: string;
+                                /** Format: date-time */
+                                creation?: string;
+                            };
+                            extension?: {
+                                url: string;
+                                valueBoolean?: boolean;
+                                valueInteger?: number;
+                                valueDecimal?: number;
+                                valueString?: string;
+                                valueUri?: string;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                }[];
+                            }[];
+                        }[];
+                        identifier?: {
+                            /** @enum {unknown} */
+                            use?: "usual" | "official" | "temp" | "secondary" | "old";
+                            type?: {
+                                coding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                }[];
+                                text?: string;
+                            };
+                            system?: string;
+                            value?: string;
+                            period?: {
+                                /** Format: date-time */
+                                start?: string;
+                                /** Format: date-time */
+                                end?: string;
+                            };
+                            assigner?: {
+                                reference?: string;
+                                /** @enum {unknown} */
+                                type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                identifier?: {
+                                    [key: string]: unknown;
+                                };
+                                display?: string;
+                            };
+                        };
+                        basedOn?: {
+                            reference?: string;
+                            /** @enum {unknown} */
+                            type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                            identifier?: {
+                                [key: string]: unknown;
+                            };
+                            display?: string;
+                        }[];
+                        partOf?: {
+                            reference?: string;
+                            /** @enum {unknown} */
+                            type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                            identifier?: {
+                                [key: string]: unknown;
+                            };
+                            display?: string;
+                        }[];
+                        /** Format: uuid */
+                        questionnaire?: string;
+                        /** @enum {unknown} */
+                        status: "in-progress" | "completed" | "amended" | "entered-in-error" | "stopped";
+                        subject?: {
+                            reference?: string;
+                            /** @enum {unknown} */
+                            type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                            identifier?: {
+                                [key: string]: unknown;
+                            };
+                            display?: string;
+                        };
+                        encounter?: {
+                            reference?: string;
+                            /** @enum {unknown} */
+                            type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                            identifier?: {
+                                [key: string]: unknown;
+                            };
+                            display?: string;
+                        };
+                        /** Format: date-time */
+                        authored?: string;
+                        author?: {
+                            reference?: string;
+                            /** @enum {unknown} */
+                            type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                            identifier?: {
+                                [key: string]: unknown;
+                            };
+                            display?: string;
+                        };
+                        source?: {
+                            reference?: string;
+                            /** @enum {unknown} */
+                            type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                            identifier?: {
+                                [key: string]: unknown;
+                            };
+                            display?: string;
+                        };
+                        item?: {
+                            id?: string;
+                            extension?: {
+                                url: string;
+                                valueBoolean?: boolean;
+                                valueInteger?: number;
+                                valueDecimal?: number;
+                                valueString?: string;
+                                valueUri?: string;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                }[];
+                            }[];
+                            modifierExtension?: {
+                                url: string;
+                                valueBoolean?: boolean;
+                                valueInteger?: number;
+                                valueDecimal?: number;
+                                valueString?: string;
+                                valueUri?: string;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                }[];
+                            }[];
+                            linkId: string;
+                            definition?: string;
+                            text?: string;
+                            answer?: {
+                                id?: string;
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                }[];
+                                modifierExtension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                }[];
+                                valueBoolean?: boolean;
+                                valueDecimal?: number;
+                                valueInteger?: number;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueString?: string;
+                                valueUri?: string;
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                item?: {
+                                    id?: string;
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                    modifierExtension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                    linkId: string;
+                                    definition?: string;
+                                    text?: string;
+                                    answer?: {
+                                        id?: string;
+                                        extension?: (unknown | null)[];
+                                        modifierExtension?: (unknown | null)[];
+                                        valueBoolean?: boolean;
+                                        valueDecimal?: number;
+                                        valueInteger?: number;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        item?: (unknown | null)[];
+                                    }[];
+                                    item?: {
+                                        id?: string;
+                                        extension?: (unknown | null)[];
+                                        modifierExtension?: (unknown | null)[];
+                                        linkId: string;
+                                        definition?: string;
+                                        text?: string;
+                                        answer?: (unknown | null)[];
+                                        item?: (unknown | null)[];
+                                    }[];
+                                }[];
+                            }[];
+                            item?: {
+                                id?: string;
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                }[];
+                                modifierExtension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                }[];
+                                linkId: string;
+                                definition?: string;
+                                text?: string;
+                                answer?: {
+                                    id?: string;
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                    modifierExtension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                    valueBoolean?: boolean;
+                                    valueDecimal?: number;
+                                    valueInteger?: number;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    item?: {
+                                        id?: string;
+                                        extension?: (unknown | null)[];
+                                        modifierExtension?: (unknown | null)[];
+                                        linkId: string;
+                                        definition?: string;
+                                        text?: string;
+                                        answer?: (unknown | null)[];
+                                        item?: (unknown | null)[];
+                                    }[];
+                                }[];
+                                item?: {
+                                    id?: string;
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                    modifierExtension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                    linkId: string;
+                                    definition?: string;
+                                    text?: string;
+                                    answer?: {
+                                        id?: string;
+                                        extension?: (unknown | null)[];
+                                        modifierExtension?: (unknown | null)[];
+                                        valueBoolean?: boolean;
+                                        valueDecimal?: number;
+                                        valueInteger?: number;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        item?: (unknown | null)[];
+                                    }[];
+                                    item?: {
+                                        id?: string;
+                                        extension?: (unknown | null)[];
+                                        modifierExtension?: (unknown | null)[];
+                                        linkId: string;
+                                        definition?: string;
+                                        text?: string;
+                                        answer?: (unknown | null)[];
+                                        item?: (unknown | null)[];
+                                    }[];
+                                }[];
+                            }[];
+                        }[];
+                    };
+                };
+            };
+            /** @description 400 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "BAD_REQUEST";
+                        /** @constant */
+                        status: 400;
+                        /** @default Bad Request */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 401 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "UNAUTHORIZED";
+                        /** @constant */
+                        status: 401;
+                        /** @default Unauthorized */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 403 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "FORBIDDEN";
+                        /** @constant */
+                        status: 403;
+                        /** @default Forbidden */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 404 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_FOUND";
+                        /** @constant */
+                        status: 404;
+                        /** @default Not found */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 429 */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "RATE_LIMIT_EXCEEDED";
+                        /** @constant */
+                        status: 429;
+                        /** @default Rate limit exceeded */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 500 */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "INTERNAL_SERVER_ERROR";
+                        /** @constant */
+                        status: 500;
+                        /** @default Internal server error */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+        };
+    };
+    "questionnaireResponse.update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    item?: {
+                        id?: string;
+                        extension?: {
+                            url: string;
+                            valueBoolean?: boolean;
+                            valueInteger?: number;
+                            valueDecimal?: number;
+                            valueString?: string;
+                            valueUri?: string;
+                            /** Format: date */
+                            valueDate?: string;
+                            /** Format: date-time */
+                            valueDateTime?: string;
+                            /** Format: time */
+                            valueTime?: string;
+                            valueCoding?: {
+                                system?: string;
+                                version?: string;
+                                code?: string;
+                                display?: string;
+                                userSelected?: boolean;
+                            };
+                            valueQuantity?: {
+                                value?: number;
+                                /** @enum {unknown} */
+                                comparator?: "<" | "<=" | ">=" | ">";
+                                unit?: string;
+                                system?: string;
+                                code?: string;
+                            };
+                            valueReference?: {
+                                reference?: string;
+                                /** @enum {unknown} */
+                                type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                identifier?: {
+                                    [key: string]: unknown;
+                                };
+                                display?: string;
+                            };
+                            valueAttachment?: {
+                                contentType?: string;
+                                language?: string;
+                                data?: string;
+                                url?: string;
+                                size?: number;
+                                hash?: string;
+                                title?: string;
+                                /** Format: date-time */
+                                creation?: string;
+                            };
+                            extension?: {
+                                url: string;
+                                valueBoolean?: boolean;
+                                valueInteger?: number;
+                                valueDecimal?: number;
+                                valueString?: string;
+                                valueUri?: string;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: unknown;
+                                        version?: unknown;
+                                        code?: unknown;
+                                        display?: unknown;
+                                        userSelected?: unknown;
+                                    };
+                                    valueQuantity?: {
+                                        value?: unknown;
+                                        comparator?: unknown;
+                                        unit?: unknown;
+                                        system?: unknown;
+                                        code?: unknown;
+                                    };
+                                    valueReference?: {
+                                        reference?: unknown;
+                                        type?: unknown;
+                                        identifier?: unknown;
+                                        display?: unknown;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: unknown;
+                                        language?: unknown;
+                                        data?: unknown;
+                                        url?: unknown;
+                                        size?: unknown;
+                                        hash?: unknown;
+                                        title?: unknown;
+                                        creation?: unknown;
+                                    };
+                                    extension?: unknown[];
+                                }[];
+                            }[];
+                        }[];
+                        modifierExtension?: {
+                            url: string;
+                            valueBoolean?: boolean;
+                            valueInteger?: number;
+                            valueDecimal?: number;
+                            valueString?: string;
+                            valueUri?: string;
+                            /** Format: date */
+                            valueDate?: string;
+                            /** Format: date-time */
+                            valueDateTime?: string;
+                            /** Format: time */
+                            valueTime?: string;
+                            valueCoding?: {
+                                system?: string;
+                                version?: string;
+                                code?: string;
+                                display?: string;
+                                userSelected?: boolean;
+                            };
+                            valueQuantity?: {
+                                value?: number;
+                                /** @enum {unknown} */
+                                comparator?: "<" | "<=" | ">=" | ">";
+                                unit?: string;
+                                system?: string;
+                                code?: string;
+                            };
+                            valueReference?: {
+                                reference?: string;
+                                /** @enum {unknown} */
+                                type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                identifier?: {
+                                    [key: string]: unknown;
+                                };
+                                display?: string;
+                            };
+                            valueAttachment?: {
+                                contentType?: string;
+                                language?: string;
+                                data?: string;
+                                url?: string;
+                                size?: number;
+                                hash?: string;
+                                title?: string;
+                                /** Format: date-time */
+                                creation?: string;
+                            };
+                            extension?: {
+                                url: string;
+                                valueBoolean?: boolean;
+                                valueInteger?: number;
+                                valueDecimal?: number;
+                                valueString?: string;
+                                valueUri?: string;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: unknown;
+                                        version?: unknown;
+                                        code?: unknown;
+                                        display?: unknown;
+                                        userSelected?: unknown;
+                                    };
+                                    valueQuantity?: {
+                                        value?: unknown;
+                                        comparator?: unknown;
+                                        unit?: unknown;
+                                        system?: unknown;
+                                        code?: unknown;
+                                    };
+                                    valueReference?: {
+                                        reference?: unknown;
+                                        type?: unknown;
+                                        identifier?: unknown;
+                                        display?: unknown;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: unknown;
+                                        language?: unknown;
+                                        data?: unknown;
+                                        url?: unknown;
+                                        size?: unknown;
+                                        hash?: unknown;
+                                        title?: unknown;
+                                        creation?: unknown;
+                                    };
+                                    extension?: unknown[];
+                                }[];
+                            }[];
+                        }[];
+                        linkId: string;
+                        definition?: string;
+                        text?: string;
+                        answer?: {
+                            id?: string;
+                            extension?: {
+                                url: string;
+                                valueBoolean?: boolean;
+                                valueInteger?: number;
+                                valueDecimal?: number;
+                                valueString?: string;
+                                valueUri?: string;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: unknown;
+                                        version?: unknown;
+                                        code?: unknown;
+                                        display?: unknown;
+                                        userSelected?: unknown;
+                                    };
+                                    valueQuantity?: {
+                                        value?: unknown;
+                                        comparator?: unknown;
+                                        unit?: unknown;
+                                        system?: unknown;
+                                        code?: unknown;
+                                    };
+                                    valueReference?: {
+                                        reference?: unknown;
+                                        type?: unknown;
+                                        identifier?: unknown;
+                                        display?: unknown;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: unknown;
+                                        language?: unknown;
+                                        data?: unknown;
+                                        url?: unknown;
+                                        size?: unknown;
+                                        hash?: unknown;
+                                        title?: unknown;
+                                        creation?: unknown;
+                                    };
+                                    extension?: unknown[];
+                                }[];
+                            }[];
+                            modifierExtension?: {
+                                url: string;
+                                valueBoolean?: boolean;
+                                valueInteger?: number;
+                                valueDecimal?: number;
+                                valueString?: string;
+                                valueUri?: string;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: unknown;
+                                        version?: unknown;
+                                        code?: unknown;
+                                        display?: unknown;
+                                        userSelected?: unknown;
+                                    };
+                                    valueQuantity?: {
+                                        value?: unknown;
+                                        comparator?: unknown;
+                                        unit?: unknown;
+                                        system?: unknown;
+                                        code?: unknown;
+                                    };
+                                    valueReference?: {
+                                        reference?: unknown;
+                                        type?: unknown;
+                                        identifier?: unknown;
+                                        display?: unknown;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: unknown;
+                                        language?: unknown;
+                                        data?: unknown;
+                                        url?: unknown;
+                                        size?: unknown;
+                                        hash?: unknown;
+                                        title?: unknown;
+                                        creation?: unknown;
+                                    };
+                                    extension?: unknown[];
+                                }[];
+                            }[];
+                            valueBoolean?: boolean;
+                            valueDecimal?: number;
+                            valueInteger?: number;
+                            /** Format: date */
+                            valueDate?: string;
+                            /** Format: date-time */
+                            valueDateTime?: string;
+                            /** Format: time */
+                            valueTime?: string;
+                            valueString?: string;
+                            valueUri?: string;
+                            valueAttachment?: {
+                                contentType?: string;
+                                language?: string;
+                                data?: string;
+                                url?: string;
+                                size?: number;
+                                hash?: string;
+                                title?: string;
+                                /** Format: date-time */
+                                creation?: string;
+                            };
+                            valueCoding?: {
+                                system?: string;
+                                version?: string;
+                                code?: string;
+                                display?: string;
+                                userSelected?: boolean;
+                            };
+                            valueQuantity?: {
+                                value?: number;
+                                /** @enum {unknown} */
+                                comparator?: "<" | "<=" | ">=" | ">";
+                                unit?: string;
+                                system?: string;
+                                code?: string;
+                            };
+                            valueReference?: {
+                                reference?: string;
+                                /** @enum {unknown} */
+                                type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                identifier?: {
+                                    [key: string]: unknown;
+                                };
+                                display?: string;
+                            };
+                            item?: {
+                                id?: string;
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: unknown;
+                                        version?: unknown;
+                                        code?: unknown;
+                                        display?: unknown;
+                                        userSelected?: unknown;
+                                    };
+                                    valueQuantity?: {
+                                        value?: unknown;
+                                        comparator?: unknown;
+                                        unit?: unknown;
+                                        system?: unknown;
+                                        code?: unknown;
+                                    };
+                                    valueReference?: {
+                                        reference?: unknown;
+                                        type?: unknown;
+                                        identifier?: unknown;
+                                        display?: unknown;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: unknown;
+                                        language?: unknown;
+                                        data?: unknown;
+                                        url?: unknown;
+                                        size?: unknown;
+                                        hash?: unknown;
+                                        title?: unknown;
+                                        creation?: unknown;
+                                    };
+                                    extension?: unknown[];
+                                }[];
+                                modifierExtension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: unknown;
+                                        version?: unknown;
+                                        code?: unknown;
+                                        display?: unknown;
+                                        userSelected?: unknown;
+                                    };
+                                    valueQuantity?: {
+                                        value?: unknown;
+                                        comparator?: unknown;
+                                        unit?: unknown;
+                                        system?: unknown;
+                                        code?: unknown;
+                                    };
+                                    valueReference?: {
+                                        reference?: unknown;
+                                        type?: unknown;
+                                        identifier?: unknown;
+                                        display?: unknown;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: unknown;
+                                        language?: unknown;
+                                        data?: unknown;
+                                        url?: unknown;
+                                        size?: unknown;
+                                        hash?: unknown;
+                                        title?: unknown;
+                                        creation?: unknown;
+                                    };
+                                    extension?: unknown[];
+                                }[];
+                                linkId: string;
+                                definition?: string;
+                                text?: string;
+                                answer?: {
+                                    id?: string;
+                                    extension?: unknown[];
+                                    modifierExtension?: unknown[];
+                                    valueBoolean?: boolean;
+                                    valueDecimal?: number;
+                                    valueInteger?: number;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    valueAttachment?: {
+                                        contentType?: unknown;
+                                        language?: unknown;
+                                        data?: unknown;
+                                        url?: unknown;
+                                        size?: unknown;
+                                        hash?: unknown;
+                                        title?: unknown;
+                                        creation?: unknown;
+                                    };
+                                    valueCoding?: {
+                                        system?: unknown;
+                                        version?: unknown;
+                                        code?: unknown;
+                                        display?: unknown;
+                                        userSelected?: unknown;
+                                    };
+                                    valueQuantity?: {
+                                        value?: unknown;
+                                        comparator?: unknown;
+                                        unit?: unknown;
+                                        system?: unknown;
+                                        code?: unknown;
+                                    };
+                                    valueReference?: {
+                                        reference?: unknown;
+                                        type?: unknown;
+                                        identifier?: unknown;
+                                        display?: unknown;
+                                    };
+                                    item?: unknown[];
+                                }[];
+                                item?: {
+                                    id?: string;
+                                    extension?: unknown[];
+                                    modifierExtension?: unknown[];
+                                    linkId: string;
+                                    definition?: string;
+                                    text?: string;
+                                    answer?: unknown[];
+                                    item?: unknown[];
+                                }[];
+                            }[];
+                        }[];
+                        item?: {
+                            id?: string;
+                            extension?: {
+                                url: string;
+                                valueBoolean?: boolean;
+                                valueInteger?: number;
+                                valueDecimal?: number;
+                                valueString?: string;
+                                valueUri?: string;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: unknown;
+                                        version?: unknown;
+                                        code?: unknown;
+                                        display?: unknown;
+                                        userSelected?: unknown;
+                                    };
+                                    valueQuantity?: {
+                                        value?: unknown;
+                                        comparator?: unknown;
+                                        unit?: unknown;
+                                        system?: unknown;
+                                        code?: unknown;
+                                    };
+                                    valueReference?: {
+                                        reference?: unknown;
+                                        type?: unknown;
+                                        identifier?: unknown;
+                                        display?: unknown;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: unknown;
+                                        language?: unknown;
+                                        data?: unknown;
+                                        url?: unknown;
+                                        size?: unknown;
+                                        hash?: unknown;
+                                        title?: unknown;
+                                        creation?: unknown;
+                                    };
+                                    extension?: unknown[];
+                                }[];
+                            }[];
+                            modifierExtension?: {
+                                url: string;
+                                valueBoolean?: boolean;
+                                valueInteger?: number;
+                                valueDecimal?: number;
+                                valueString?: string;
+                                valueUri?: string;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: unknown;
+                                        version?: unknown;
+                                        code?: unknown;
+                                        display?: unknown;
+                                        userSelected?: unknown;
+                                    };
+                                    valueQuantity?: {
+                                        value?: unknown;
+                                        comparator?: unknown;
+                                        unit?: unknown;
+                                        system?: unknown;
+                                        code?: unknown;
+                                    };
+                                    valueReference?: {
+                                        reference?: unknown;
+                                        type?: unknown;
+                                        identifier?: unknown;
+                                        display?: unknown;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: unknown;
+                                        language?: unknown;
+                                        data?: unknown;
+                                        url?: unknown;
+                                        size?: unknown;
+                                        hash?: unknown;
+                                        title?: unknown;
+                                        creation?: unknown;
+                                    };
+                                    extension?: unknown[];
+                                }[];
+                            }[];
+                            linkId: string;
+                            definition?: string;
+                            text?: string;
+                            answer?: {
+                                id?: string;
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: unknown;
+                                        version?: unknown;
+                                        code?: unknown;
+                                        display?: unknown;
+                                        userSelected?: unknown;
+                                    };
+                                    valueQuantity?: {
+                                        value?: unknown;
+                                        comparator?: unknown;
+                                        unit?: unknown;
+                                        system?: unknown;
+                                        code?: unknown;
+                                    };
+                                    valueReference?: {
+                                        reference?: unknown;
+                                        type?: unknown;
+                                        identifier?: unknown;
+                                        display?: unknown;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: unknown;
+                                        language?: unknown;
+                                        data?: unknown;
+                                        url?: unknown;
+                                        size?: unknown;
+                                        hash?: unknown;
+                                        title?: unknown;
+                                        creation?: unknown;
+                                    };
+                                    extension?: unknown[];
+                                }[];
+                                modifierExtension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: unknown;
+                                        version?: unknown;
+                                        code?: unknown;
+                                        display?: unknown;
+                                        userSelected?: unknown;
+                                    };
+                                    valueQuantity?: {
+                                        value?: unknown;
+                                        comparator?: unknown;
+                                        unit?: unknown;
+                                        system?: unknown;
+                                        code?: unknown;
+                                    };
+                                    valueReference?: {
+                                        reference?: unknown;
+                                        type?: unknown;
+                                        identifier?: unknown;
+                                        display?: unknown;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: unknown;
+                                        language?: unknown;
+                                        data?: unknown;
+                                        url?: unknown;
+                                        size?: unknown;
+                                        hash?: unknown;
+                                        title?: unknown;
+                                        creation?: unknown;
+                                    };
+                                    extension?: unknown[];
+                                }[];
+                                valueBoolean?: boolean;
+                                valueDecimal?: number;
+                                valueInteger?: number;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueString?: string;
+                                valueUri?: string;
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                item?: {
+                                    id?: string;
+                                    extension?: unknown[];
+                                    modifierExtension?: unknown[];
+                                    linkId: string;
+                                    definition?: string;
+                                    text?: string;
+                                    answer?: unknown[];
+                                    item?: unknown[];
+                                }[];
+                            }[];
+                            item?: {
+                                id?: string;
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: unknown;
+                                        version?: unknown;
+                                        code?: unknown;
+                                        display?: unknown;
+                                        userSelected?: unknown;
+                                    };
+                                    valueQuantity?: {
+                                        value?: unknown;
+                                        comparator?: unknown;
+                                        unit?: unknown;
+                                        system?: unknown;
+                                        code?: unknown;
+                                    };
+                                    valueReference?: {
+                                        reference?: unknown;
+                                        type?: unknown;
+                                        identifier?: unknown;
+                                        display?: unknown;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: unknown;
+                                        language?: unknown;
+                                        data?: unknown;
+                                        url?: unknown;
+                                        size?: unknown;
+                                        hash?: unknown;
+                                        title?: unknown;
+                                        creation?: unknown;
+                                    };
+                                    extension?: unknown[];
+                                }[];
+                                modifierExtension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: unknown;
+                                        version?: unknown;
+                                        code?: unknown;
+                                        display?: unknown;
+                                        userSelected?: unknown;
+                                    };
+                                    valueQuantity?: {
+                                        value?: unknown;
+                                        comparator?: unknown;
+                                        unit?: unknown;
+                                        system?: unknown;
+                                        code?: unknown;
+                                    };
+                                    valueReference?: {
+                                        reference?: unknown;
+                                        type?: unknown;
+                                        identifier?: unknown;
+                                        display?: unknown;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: unknown;
+                                        language?: unknown;
+                                        data?: unknown;
+                                        url?: unknown;
+                                        size?: unknown;
+                                        hash?: unknown;
+                                        title?: unknown;
+                                        creation?: unknown;
+                                    };
+                                    extension?: unknown[];
+                                }[];
+                                linkId: string;
+                                definition?: string;
+                                text?: string;
+                                answer?: {
+                                    id?: string;
+                                    extension?: unknown[];
+                                    modifierExtension?: unknown[];
+                                    valueBoolean?: boolean;
+                                    valueDecimal?: number;
+                                    valueInteger?: number;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    valueAttachment?: {
+                                        contentType?: unknown;
+                                        language?: unknown;
+                                        data?: unknown;
+                                        url?: unknown;
+                                        size?: unknown;
+                                        hash?: unknown;
+                                        title?: unknown;
+                                        creation?: unknown;
+                                    };
+                                    valueCoding?: {
+                                        system?: unknown;
+                                        version?: unknown;
+                                        code?: unknown;
+                                        display?: unknown;
+                                        userSelected?: unknown;
+                                    };
+                                    valueQuantity?: {
+                                        value?: unknown;
+                                        comparator?: unknown;
+                                        unit?: unknown;
+                                        system?: unknown;
+                                        code?: unknown;
+                                    };
+                                    valueReference?: {
+                                        reference?: unknown;
+                                        type?: unknown;
+                                        identifier?: unknown;
+                                        display?: unknown;
+                                    };
+                                    item?: unknown[];
+                                }[];
+                                item?: {
+                                    id?: string;
+                                    extension?: unknown[];
+                                    modifierExtension?: unknown[];
+                                    linkId: string;
+                                    definition?: string;
+                                    text?: string;
+                                    answer?: unknown[];
+                                    item?: unknown[];
+                                }[];
+                            }[];
+                        }[];
+                    }[];
+                    /** @enum {unknown} */
+                    status?: "in-progress" | "completed" | "amended" | "entered-in-error" | "stopped";
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        resourceType: "QuestionnaireResponse";
+                        id?: string;
+                        meta?: {
+                            [key: string]: unknown;
+                        };
+                        implicitRules?: string;
+                        language?: string;
+                        text?: {
+                            /** @enum {unknown} */
+                            status: "generated" | "extensions" | "additional" | "empty";
+                            div: string;
+                        };
+                        contained?: (unknown | null)[];
+                        extension?: {
+                            url: string;
+                            valueBoolean?: boolean;
+                            valueInteger?: number;
+                            valueDecimal?: number;
+                            valueString?: string;
+                            valueUri?: string;
+                            /** Format: date */
+                            valueDate?: string;
+                            /** Format: date-time */
+                            valueDateTime?: string;
+                            /** Format: time */
+                            valueTime?: string;
+                            valueCoding?: {
+                                system?: string;
+                                version?: string;
+                                code?: string;
+                                display?: string;
+                                userSelected?: boolean;
+                            };
+                            valueQuantity?: {
+                                value?: number;
+                                /** @enum {unknown} */
+                                comparator?: "<" | "<=" | ">=" | ">";
+                                unit?: string;
+                                system?: string;
+                                code?: string;
+                            };
+                            valueReference?: {
+                                reference?: string;
+                                /** @enum {unknown} */
+                                type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                identifier?: {
+                                    [key: string]: unknown;
+                                };
+                                display?: string;
+                            };
+                            valueAttachment?: {
+                                contentType?: string;
+                                language?: string;
+                                data?: string;
+                                url?: string;
+                                size?: number;
+                                hash?: string;
+                                title?: string;
+                                /** Format: date-time */
+                                creation?: string;
+                            };
+                            extension?: {
+                                url: string;
+                                valueBoolean?: boolean;
+                                valueInteger?: number;
+                                valueDecimal?: number;
+                                valueString?: string;
+                                valueUri?: string;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                }[];
+                            }[];
+                        }[];
+                        modifierExtension?: {
+                            url: string;
+                            valueBoolean?: boolean;
+                            valueInteger?: number;
+                            valueDecimal?: number;
+                            valueString?: string;
+                            valueUri?: string;
+                            /** Format: date */
+                            valueDate?: string;
+                            /** Format: date-time */
+                            valueDateTime?: string;
+                            /** Format: time */
+                            valueTime?: string;
+                            valueCoding?: {
+                                system?: string;
+                                version?: string;
+                                code?: string;
+                                display?: string;
+                                userSelected?: boolean;
+                            };
+                            valueQuantity?: {
+                                value?: number;
+                                /** @enum {unknown} */
+                                comparator?: "<" | "<=" | ">=" | ">";
+                                unit?: string;
+                                system?: string;
+                                code?: string;
+                            };
+                            valueReference?: {
+                                reference?: string;
+                                /** @enum {unknown} */
+                                type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                identifier?: {
+                                    [key: string]: unknown;
+                                };
+                                display?: string;
+                            };
+                            valueAttachment?: {
+                                contentType?: string;
+                                language?: string;
+                                data?: string;
+                                url?: string;
+                                size?: number;
+                                hash?: string;
+                                title?: string;
+                                /** Format: date-time */
+                                creation?: string;
+                            };
+                            extension?: {
+                                url: string;
+                                valueBoolean?: boolean;
+                                valueInteger?: number;
+                                valueDecimal?: number;
+                                valueString?: string;
+                                valueUri?: string;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                }[];
+                            }[];
+                        }[];
+                        identifier?: {
+                            /** @enum {unknown} */
+                            use?: "usual" | "official" | "temp" | "secondary" | "old";
+                            type?: {
+                                coding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                }[];
+                                text?: string;
+                            };
+                            system?: string;
+                            value?: string;
+                            period?: {
+                                /** Format: date-time */
+                                start?: string;
+                                /** Format: date-time */
+                                end?: string;
+                            };
+                            assigner?: {
+                                reference?: string;
+                                /** @enum {unknown} */
+                                type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                identifier?: {
+                                    [key: string]: unknown;
+                                };
+                                display?: string;
+                            };
+                        };
+                        basedOn?: {
+                            reference?: string;
+                            /** @enum {unknown} */
+                            type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                            identifier?: {
+                                [key: string]: unknown;
+                            };
+                            display?: string;
+                        }[];
+                        partOf?: {
+                            reference?: string;
+                            /** @enum {unknown} */
+                            type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                            identifier?: {
+                                [key: string]: unknown;
+                            };
+                            display?: string;
+                        }[];
+                        /** Format: uuid */
+                        questionnaire?: string;
+                        /** @enum {unknown} */
+                        status: "in-progress" | "completed" | "amended" | "entered-in-error" | "stopped";
+                        subject?: {
+                            reference?: string;
+                            /** @enum {unknown} */
+                            type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                            identifier?: {
+                                [key: string]: unknown;
+                            };
+                            display?: string;
+                        };
+                        encounter?: {
+                            reference?: string;
+                            /** @enum {unknown} */
+                            type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                            identifier?: {
+                                [key: string]: unknown;
+                            };
+                            display?: string;
+                        };
+                        /** Format: date-time */
+                        authored?: string;
+                        author?: {
+                            reference?: string;
+                            /** @enum {unknown} */
+                            type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                            identifier?: {
+                                [key: string]: unknown;
+                            };
+                            display?: string;
+                        };
+                        source?: {
+                            reference?: string;
+                            /** @enum {unknown} */
+                            type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                            identifier?: {
+                                [key: string]: unknown;
+                            };
+                            display?: string;
+                        };
+                        item?: {
+                            id?: string;
+                            extension?: {
+                                url: string;
+                                valueBoolean?: boolean;
+                                valueInteger?: number;
+                                valueDecimal?: number;
+                                valueString?: string;
+                                valueUri?: string;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                }[];
+                            }[];
+                            modifierExtension?: {
+                                url: string;
+                                valueBoolean?: boolean;
+                                valueInteger?: number;
+                                valueDecimal?: number;
+                                valueString?: string;
+                                valueUri?: string;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                }[];
+                            }[];
+                            linkId: string;
+                            definition?: string;
+                            text?: string;
+                            answer?: {
+                                id?: string;
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                }[];
+                                modifierExtension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                }[];
+                                valueBoolean?: boolean;
+                                valueDecimal?: number;
+                                valueInteger?: number;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueString?: string;
+                                valueUri?: string;
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                item?: {
+                                    id?: string;
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                    modifierExtension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                    linkId: string;
+                                    definition?: string;
+                                    text?: string;
+                                    answer?: {
+                                        id?: string;
+                                        extension?: (unknown | null)[];
+                                        modifierExtension?: (unknown | null)[];
+                                        valueBoolean?: boolean;
+                                        valueDecimal?: number;
+                                        valueInteger?: number;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        item?: (unknown | null)[];
+                                    }[];
+                                    item?: {
+                                        id?: string;
+                                        extension?: (unknown | null)[];
+                                        modifierExtension?: (unknown | null)[];
+                                        linkId: string;
+                                        definition?: string;
+                                        text?: string;
+                                        answer?: (unknown | null)[];
+                                        item?: (unknown | null)[];
+                                    }[];
+                                }[];
+                            }[];
+                            item?: {
+                                id?: string;
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                }[];
+                                modifierExtension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                }[];
+                                linkId: string;
+                                definition?: string;
+                                text?: string;
+                                answer?: {
+                                    id?: string;
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                    modifierExtension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                    valueBoolean?: boolean;
+                                    valueDecimal?: number;
+                                    valueInteger?: number;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    item?: {
+                                        id?: string;
+                                        extension?: (unknown | null)[];
+                                        modifierExtension?: (unknown | null)[];
+                                        linkId: string;
+                                        definition?: string;
+                                        text?: string;
+                                        answer?: (unknown | null)[];
+                                        item?: (unknown | null)[];
+                                    }[];
+                                }[];
+                                item?: {
+                                    id?: string;
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                    modifierExtension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                    linkId: string;
+                                    definition?: string;
+                                    text?: string;
+                                    answer?: {
+                                        id?: string;
+                                        extension?: (unknown | null)[];
+                                        modifierExtension?: (unknown | null)[];
+                                        valueBoolean?: boolean;
+                                        valueDecimal?: number;
+                                        valueInteger?: number;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        item?: (unknown | null)[];
+                                    }[];
+                                    item?: {
+                                        id?: string;
+                                        extension?: (unknown | null)[];
+                                        modifierExtension?: (unknown | null)[];
+                                        linkId: string;
+                                        definition?: string;
+                                        text?: string;
+                                        answer?: (unknown | null)[];
+                                        item?: (unknown | null)[];
+                                    }[];
+                                }[];
+                            }[];
+                        }[];
+                    };
+                };
+            };
+            /** @description 400 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "BAD_REQUEST";
+                        /** @constant */
+                        status: 400;
+                        /** @default Bad Request */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 401 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "UNAUTHORIZED";
+                        /** @constant */
+                        status: 401;
+                        /** @default Unauthorized */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 403 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "FORBIDDEN";
+                        /** @constant */
+                        status: 403;
+                        /** @default Forbidden */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 404 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_FOUND";
+                        /** @constant */
+                        status: 404;
+                        /** @default Not found */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 429 */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "RATE_LIMIT_EXCEEDED";
+                        /** @constant */
+                        status: 429;
+                        /** @default Rate limit exceeded */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 500 */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "INTERNAL_SERVER_ERROR";
+                        /** @constant */
+                        status: 500;
+                        /** @default Internal server error */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+        };
+    };
+    "questionnaireResponse.list": {
+        parameters: {
+            query?: {
+                questionnaireName?: string;
+                status?: string;
+                _sort?: "_lastUpdated" | "-_lastUpdated" | "authored" | "-authored";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        resourceType: "QuestionnaireResponse";
+                        id?: string;
+                        meta?: {
+                            [key: string]: unknown;
+                        };
+                        implicitRules?: string;
+                        language?: string;
+                        text?: {
+                            /** @enum {unknown} */
+                            status: "generated" | "extensions" | "additional" | "empty";
+                            div: string;
+                        };
+                        contained?: (unknown | null)[];
+                        extension?: {
+                            url: string;
+                            valueBoolean?: boolean;
+                            valueInteger?: number;
+                            valueDecimal?: number;
+                            valueString?: string;
+                            valueUri?: string;
+                            /** Format: date */
+                            valueDate?: string;
+                            /** Format: date-time */
+                            valueDateTime?: string;
+                            /** Format: time */
+                            valueTime?: string;
+                            valueCoding?: {
+                                system?: string;
+                                version?: string;
+                                code?: string;
+                                display?: string;
+                                userSelected?: boolean;
+                            };
+                            valueQuantity?: {
+                                value?: number;
+                                /** @enum {unknown} */
+                                comparator?: "<" | "<=" | ">=" | ">";
+                                unit?: string;
+                                system?: string;
+                                code?: string;
+                            };
+                            valueReference?: {
+                                reference?: string;
+                                /** @enum {unknown} */
+                                type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                identifier?: {
+                                    [key: string]: unknown;
+                                };
+                                display?: string;
+                            };
+                            valueAttachment?: {
+                                contentType?: string;
+                                language?: string;
+                                data?: string;
+                                url?: string;
+                                size?: number;
+                                hash?: string;
+                                title?: string;
+                                /** Format: date-time */
+                                creation?: string;
+                            };
+                            extension?: {
+                                url: string;
+                                valueBoolean?: boolean;
+                                valueInteger?: number;
+                                valueDecimal?: number;
+                                valueString?: string;
+                                valueUri?: string;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url?: unknown;
+                                        valueBoolean?: unknown;
+                                        valueInteger?: unknown;
+                                        valueDecimal?: unknown;
+                                        valueString?: unknown;
+                                        valueUri?: unknown;
+                                        valueDate?: unknown;
+                                        valueDateTime?: unknown;
+                                        valueTime?: unknown;
+                                        valueCoding?: unknown;
+                                        valueQuantity?: unknown;
+                                        valueReference?: unknown;
+                                        valueAttachment?: unknown;
+                                        extension?: unknown;
+                                    }[];
+                                }[];
+                            }[];
+                        }[];
+                        modifierExtension?: {
+                            url: string;
+                            valueBoolean?: boolean;
+                            valueInteger?: number;
+                            valueDecimal?: number;
+                            valueString?: string;
+                            valueUri?: string;
+                            /** Format: date */
+                            valueDate?: string;
+                            /** Format: date-time */
+                            valueDateTime?: string;
+                            /** Format: time */
+                            valueTime?: string;
+                            valueCoding?: {
+                                system?: string;
+                                version?: string;
+                                code?: string;
+                                display?: string;
+                                userSelected?: boolean;
+                            };
+                            valueQuantity?: {
+                                value?: number;
+                                /** @enum {unknown} */
+                                comparator?: "<" | "<=" | ">=" | ">";
+                                unit?: string;
+                                system?: string;
+                                code?: string;
+                            };
+                            valueReference?: {
+                                reference?: string;
+                                /** @enum {unknown} */
+                                type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                identifier?: {
+                                    [key: string]: unknown;
+                                };
+                                display?: string;
+                            };
+                            valueAttachment?: {
+                                contentType?: string;
+                                language?: string;
+                                data?: string;
+                                url?: string;
+                                size?: number;
+                                hash?: string;
+                                title?: string;
+                                /** Format: date-time */
+                                creation?: string;
+                            };
+                            extension?: {
+                                url: string;
+                                valueBoolean?: boolean;
+                                valueInteger?: number;
+                                valueDecimal?: number;
+                                valueString?: string;
+                                valueUri?: string;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url?: unknown;
+                                        valueBoolean?: unknown;
+                                        valueInteger?: unknown;
+                                        valueDecimal?: unknown;
+                                        valueString?: unknown;
+                                        valueUri?: unknown;
+                                        valueDate?: unknown;
+                                        valueDateTime?: unknown;
+                                        valueTime?: unknown;
+                                        valueCoding?: unknown;
+                                        valueQuantity?: unknown;
+                                        valueReference?: unknown;
+                                        valueAttachment?: unknown;
+                                        extension?: unknown;
+                                    }[];
+                                }[];
+                            }[];
+                        }[];
+                        identifier?: {
+                            /** @enum {unknown} */
+                            use?: "usual" | "official" | "temp" | "secondary" | "old";
+                            type?: {
+                                coding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                }[];
+                                text?: string;
+                            };
+                            system?: string;
+                            value?: string;
+                            period?: {
+                                /** Format: date-time */
+                                start?: string;
+                                /** Format: date-time */
+                                end?: string;
+                            };
+                            assigner?: {
+                                reference?: string;
+                                /** @enum {unknown} */
+                                type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                identifier?: {
+                                    [key: string]: unknown;
+                                };
+                                display?: string;
+                            };
+                        };
+                        basedOn?: {
+                            reference?: string;
+                            /** @enum {unknown} */
+                            type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                            identifier?: {
+                                [key: string]: unknown;
+                            };
+                            display?: string;
+                        }[];
+                        partOf?: {
+                            reference?: string;
+                            /** @enum {unknown} */
+                            type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                            identifier?: {
+                                [key: string]: unknown;
+                            };
+                            display?: string;
+                        }[];
+                        /** Format: uuid */
+                        questionnaire?: string;
+                        /** @enum {unknown} */
+                        status: "in-progress" | "completed" | "amended" | "entered-in-error" | "stopped";
+                        subject?: {
+                            reference?: string;
+                            /** @enum {unknown} */
+                            type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                            identifier?: {
+                                [key: string]: unknown;
+                            };
+                            display?: string;
+                        };
+                        encounter?: {
+                            reference?: string;
+                            /** @enum {unknown} */
+                            type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                            identifier?: {
+                                [key: string]: unknown;
+                            };
+                            display?: string;
+                        };
+                        /** Format: date-time */
+                        authored?: string;
+                        author?: {
+                            reference?: string;
+                            /** @enum {unknown} */
+                            type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                            identifier?: {
+                                [key: string]: unknown;
+                            };
+                            display?: string;
+                        };
+                        source?: {
+                            reference?: string;
+                            /** @enum {unknown} */
+                            type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                            identifier?: {
+                                [key: string]: unknown;
+                            };
+                            display?: string;
+                        };
+                        item?: {
+                            id?: string;
+                            extension?: {
+                                url: string;
+                                valueBoolean?: boolean;
+                                valueInteger?: number;
+                                valueDecimal?: number;
+                                valueString?: string;
+                                valueUri?: string;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url?: unknown;
+                                        valueBoolean?: unknown;
+                                        valueInteger?: unknown;
+                                        valueDecimal?: unknown;
+                                        valueString?: unknown;
+                                        valueUri?: unknown;
+                                        valueDate?: unknown;
+                                        valueDateTime?: unknown;
+                                        valueTime?: unknown;
+                                        valueCoding?: unknown;
+                                        valueQuantity?: unknown;
+                                        valueReference?: unknown;
+                                        valueAttachment?: unknown;
+                                        extension?: unknown;
+                                    }[];
+                                }[];
+                            }[];
+                            modifierExtension?: {
+                                url: string;
+                                valueBoolean?: boolean;
+                                valueInteger?: number;
+                                valueDecimal?: number;
+                                valueString?: string;
+                                valueUri?: string;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url?: unknown;
+                                        valueBoolean?: unknown;
+                                        valueInteger?: unknown;
+                                        valueDecimal?: unknown;
+                                        valueString?: unknown;
+                                        valueUri?: unknown;
+                                        valueDate?: unknown;
+                                        valueDateTime?: unknown;
+                                        valueTime?: unknown;
+                                        valueCoding?: unknown;
+                                        valueQuantity?: unknown;
+                                        valueReference?: unknown;
+                                        valueAttachment?: unknown;
+                                        extension?: unknown;
+                                    }[];
+                                }[];
+                            }[];
+                            linkId: string;
+                            definition?: string;
+                            text?: string;
+                            answer?: {
+                                id?: string;
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url?: unknown;
+                                        valueBoolean?: unknown;
+                                        valueInteger?: unknown;
+                                        valueDecimal?: unknown;
+                                        valueString?: unknown;
+                                        valueUri?: unknown;
+                                        valueDate?: unknown;
+                                        valueDateTime?: unknown;
+                                        valueTime?: unknown;
+                                        valueCoding?: unknown;
+                                        valueQuantity?: unknown;
+                                        valueReference?: unknown;
+                                        valueAttachment?: unknown;
+                                        extension?: unknown;
+                                    }[];
+                                }[];
+                                modifierExtension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url?: unknown;
+                                        valueBoolean?: unknown;
+                                        valueInteger?: unknown;
+                                        valueDecimal?: unknown;
+                                        valueString?: unknown;
+                                        valueUri?: unknown;
+                                        valueDate?: unknown;
+                                        valueDateTime?: unknown;
+                                        valueTime?: unknown;
+                                        valueCoding?: unknown;
+                                        valueQuantity?: unknown;
+                                        valueReference?: unknown;
+                                        valueAttachment?: unknown;
+                                        extension?: unknown;
+                                    }[];
+                                }[];
+                                valueBoolean?: boolean;
+                                valueDecimal?: number;
+                                valueInteger?: number;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueString?: string;
+                                valueUri?: string;
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                item?: {
+                                    id?: string;
+                                    extension?: {
+                                        url?: unknown;
+                                        valueBoolean?: unknown;
+                                        valueInteger?: unknown;
+                                        valueDecimal?: unknown;
+                                        valueString?: unknown;
+                                        valueUri?: unknown;
+                                        valueDate?: unknown;
+                                        valueDateTime?: unknown;
+                                        valueTime?: unknown;
+                                        valueCoding?: unknown;
+                                        valueQuantity?: unknown;
+                                        valueReference?: unknown;
+                                        valueAttachment?: unknown;
+                                        extension?: unknown;
+                                    }[];
+                                    modifierExtension?: {
+                                        url?: unknown;
+                                        valueBoolean?: unknown;
+                                        valueInteger?: unknown;
+                                        valueDecimal?: unknown;
+                                        valueString?: unknown;
+                                        valueUri?: unknown;
+                                        valueDate?: unknown;
+                                        valueDateTime?: unknown;
+                                        valueTime?: unknown;
+                                        valueCoding?: unknown;
+                                        valueQuantity?: unknown;
+                                        valueReference?: unknown;
+                                        valueAttachment?: unknown;
+                                        extension?: unknown;
+                                    }[];
+                                    linkId: string;
+                                    definition?: string;
+                                    text?: string;
+                                    answer?: {
+                                        id?: unknown;
+                                        extension?: unknown;
+                                        modifierExtension?: unknown;
+                                        valueBoolean?: unknown;
+                                        valueDecimal?: unknown;
+                                        valueInteger?: unknown;
+                                        valueDate?: unknown;
+                                        valueDateTime?: unknown;
+                                        valueTime?: unknown;
+                                        valueString?: unknown;
+                                        valueUri?: unknown;
+                                        valueAttachment?: unknown;
+                                        valueCoding?: unknown;
+                                        valueQuantity?: unknown;
+                                        valueReference?: unknown;
+                                        item?: unknown;
+                                    }[];
+                                    item?: {
+                                        id?: unknown;
+                                        extension?: unknown;
+                                        modifierExtension?: unknown;
+                                        linkId?: unknown;
+                                        definition?: unknown;
+                                        text?: unknown;
+                                        answer?: unknown;
+                                        item?: unknown;
+                                    }[];
+                                }[];
+                            }[];
+                            item?: {
+                                id?: string;
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url?: unknown;
+                                        valueBoolean?: unknown;
+                                        valueInteger?: unknown;
+                                        valueDecimal?: unknown;
+                                        valueString?: unknown;
+                                        valueUri?: unknown;
+                                        valueDate?: unknown;
+                                        valueDateTime?: unknown;
+                                        valueTime?: unknown;
+                                        valueCoding?: unknown;
+                                        valueQuantity?: unknown;
+                                        valueReference?: unknown;
+                                        valueAttachment?: unknown;
+                                        extension?: unknown;
+                                    }[];
+                                }[];
+                                modifierExtension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url?: unknown;
+                                        valueBoolean?: unknown;
+                                        valueInteger?: unknown;
+                                        valueDecimal?: unknown;
+                                        valueString?: unknown;
+                                        valueUri?: unknown;
+                                        valueDate?: unknown;
+                                        valueDateTime?: unknown;
+                                        valueTime?: unknown;
+                                        valueCoding?: unknown;
+                                        valueQuantity?: unknown;
+                                        valueReference?: unknown;
+                                        valueAttachment?: unknown;
+                                        extension?: unknown;
+                                    }[];
+                                }[];
+                                linkId: string;
+                                definition?: string;
+                                text?: string;
+                                answer?: {
+                                    id?: string;
+                                    extension?: {
+                                        url?: unknown;
+                                        valueBoolean?: unknown;
+                                        valueInteger?: unknown;
+                                        valueDecimal?: unknown;
+                                        valueString?: unknown;
+                                        valueUri?: unknown;
+                                        valueDate?: unknown;
+                                        valueDateTime?: unknown;
+                                        valueTime?: unknown;
+                                        valueCoding?: unknown;
+                                        valueQuantity?: unknown;
+                                        valueReference?: unknown;
+                                        valueAttachment?: unknown;
+                                        extension?: unknown;
+                                    }[];
+                                    modifierExtension?: {
+                                        url?: unknown;
+                                        valueBoolean?: unknown;
+                                        valueInteger?: unknown;
+                                        valueDecimal?: unknown;
+                                        valueString?: unknown;
+                                        valueUri?: unknown;
+                                        valueDate?: unknown;
+                                        valueDateTime?: unknown;
+                                        valueTime?: unknown;
+                                        valueCoding?: unknown;
+                                        valueQuantity?: unknown;
+                                        valueReference?: unknown;
+                                        valueAttachment?: unknown;
+                                        extension?: unknown;
+                                    }[];
+                                    valueBoolean?: boolean;
+                                    valueDecimal?: number;
+                                    valueInteger?: number;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    item?: {
+                                        id?: unknown;
+                                        extension?: unknown;
+                                        modifierExtension?: unknown;
+                                        linkId?: unknown;
+                                        definition?: unknown;
+                                        text?: unknown;
+                                        answer?: unknown;
+                                        item?: unknown;
+                                    }[];
+                                }[];
+                                item?: {
+                                    id?: string;
+                                    extension?: {
+                                        url?: unknown;
+                                        valueBoolean?: unknown;
+                                        valueInteger?: unknown;
+                                        valueDecimal?: unknown;
+                                        valueString?: unknown;
+                                        valueUri?: unknown;
+                                        valueDate?: unknown;
+                                        valueDateTime?: unknown;
+                                        valueTime?: unknown;
+                                        valueCoding?: unknown;
+                                        valueQuantity?: unknown;
+                                        valueReference?: unknown;
+                                        valueAttachment?: unknown;
+                                        extension?: unknown;
+                                    }[];
+                                    modifierExtension?: {
+                                        url?: unknown;
+                                        valueBoolean?: unknown;
+                                        valueInteger?: unknown;
+                                        valueDecimal?: unknown;
+                                        valueString?: unknown;
+                                        valueUri?: unknown;
+                                        valueDate?: unknown;
+                                        valueDateTime?: unknown;
+                                        valueTime?: unknown;
+                                        valueCoding?: unknown;
+                                        valueQuantity?: unknown;
+                                        valueReference?: unknown;
+                                        valueAttachment?: unknown;
+                                        extension?: unknown;
+                                    }[];
+                                    linkId: string;
+                                    definition?: string;
+                                    text?: string;
+                                    answer?: {
+                                        id?: unknown;
+                                        extension?: unknown;
+                                        modifierExtension?: unknown;
+                                        valueBoolean?: unknown;
+                                        valueDecimal?: unknown;
+                                        valueInteger?: unknown;
+                                        valueDate?: unknown;
+                                        valueDateTime?: unknown;
+                                        valueTime?: unknown;
+                                        valueString?: unknown;
+                                        valueUri?: unknown;
+                                        valueAttachment?: unknown;
+                                        valueCoding?: unknown;
+                                        valueQuantity?: unknown;
+                                        valueReference?: unknown;
+                                        item?: unknown;
+                                    }[];
+                                    item?: {
+                                        id?: unknown;
+                                        extension?: unknown;
+                                        modifierExtension?: unknown;
+                                        linkId?: unknown;
+                                        definition?: unknown;
+                                        text?: unknown;
+                                        answer?: unknown;
+                                        item?: unknown;
+                                    }[];
+                                }[];
+                            }[];
+                        }[];
+                    }[];
+                };
+            };
+            /** @description 400 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "BAD_REQUEST";
+                        /** @constant */
+                        status: 400;
+                        /** @default Bad Request */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 401 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "UNAUTHORIZED";
+                        /** @constant */
+                        status: 401;
+                        /** @default Unauthorized */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 403 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "FORBIDDEN";
+                        /** @constant */
+                        status: 403;
+                        /** @default Forbidden */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 404 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_FOUND";
+                        /** @constant */
+                        status: 404;
+                        /** @default Not found */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 429 */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "RATE_LIMIT_EXCEEDED";
+                        /** @constant */
+                        status: 429;
+                        /** @default Rate limit exceeded */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 500 */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "INTERNAL_SERVER_ERROR";
+                        /** @constant */
+                        status: 500;
+                        /** @default Internal server error */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+        };
+    };
+    "questionnaireResponse.create": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: uuid */
+                    questionnaire: string;
+                    item?: {
+                        id?: string;
+                        extension?: {
+                            url: string;
+                            valueBoolean?: boolean;
+                            valueInteger?: number;
+                            valueDecimal?: number;
+                            valueString?: string;
+                            valueUri?: string;
+                            /** Format: date */
+                            valueDate?: string;
+                            /** Format: date-time */
+                            valueDateTime?: string;
+                            /** Format: time */
+                            valueTime?: string;
+                            valueCoding?: {
+                                system?: string;
+                                version?: string;
+                                code?: string;
+                                display?: string;
+                                userSelected?: boolean;
+                            };
+                            valueQuantity?: {
+                                value?: number;
+                                /** @enum {unknown} */
+                                comparator?: "<" | "<=" | ">=" | ">";
+                                unit?: string;
+                                system?: string;
+                                code?: string;
+                            };
+                            valueReference?: {
+                                reference?: string;
+                                /** @enum {unknown} */
+                                type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                identifier?: {
+                                    [key: string]: unknown;
+                                };
+                                display?: string;
+                            };
+                            valueAttachment?: {
+                                contentType?: string;
+                                language?: string;
+                                data?: string;
+                                url?: string;
+                                size?: number;
+                                hash?: string;
+                                title?: string;
+                                /** Format: date-time */
+                                creation?: string;
+                            };
+                            extension?: {
+                                url: string;
+                                valueBoolean?: boolean;
+                                valueInteger?: number;
+                                valueDecimal?: number;
+                                valueString?: string;
+                                valueUri?: string;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: unknown;
+                                        version?: unknown;
+                                        code?: unknown;
+                                        display?: unknown;
+                                        userSelected?: unknown;
+                                    };
+                                    valueQuantity?: {
+                                        value?: unknown;
+                                        comparator?: unknown;
+                                        unit?: unknown;
+                                        system?: unknown;
+                                        code?: unknown;
+                                    };
+                                    valueReference?: {
+                                        reference?: unknown;
+                                        type?: unknown;
+                                        identifier?: unknown;
+                                        display?: unknown;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: unknown;
+                                        language?: unknown;
+                                        data?: unknown;
+                                        url?: unknown;
+                                        size?: unknown;
+                                        hash?: unknown;
+                                        title?: unknown;
+                                        creation?: unknown;
+                                    };
+                                    extension?: unknown[];
+                                }[];
+                            }[];
+                        }[];
+                        modifierExtension?: {
+                            url: string;
+                            valueBoolean?: boolean;
+                            valueInteger?: number;
+                            valueDecimal?: number;
+                            valueString?: string;
+                            valueUri?: string;
+                            /** Format: date */
+                            valueDate?: string;
+                            /** Format: date-time */
+                            valueDateTime?: string;
+                            /** Format: time */
+                            valueTime?: string;
+                            valueCoding?: {
+                                system?: string;
+                                version?: string;
+                                code?: string;
+                                display?: string;
+                                userSelected?: boolean;
+                            };
+                            valueQuantity?: {
+                                value?: number;
+                                /** @enum {unknown} */
+                                comparator?: "<" | "<=" | ">=" | ">";
+                                unit?: string;
+                                system?: string;
+                                code?: string;
+                            };
+                            valueReference?: {
+                                reference?: string;
+                                /** @enum {unknown} */
+                                type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                identifier?: {
+                                    [key: string]: unknown;
+                                };
+                                display?: string;
+                            };
+                            valueAttachment?: {
+                                contentType?: string;
+                                language?: string;
+                                data?: string;
+                                url?: string;
+                                size?: number;
+                                hash?: string;
+                                title?: string;
+                                /** Format: date-time */
+                                creation?: string;
+                            };
+                            extension?: {
+                                url: string;
+                                valueBoolean?: boolean;
+                                valueInteger?: number;
+                                valueDecimal?: number;
+                                valueString?: string;
+                                valueUri?: string;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: unknown;
+                                        version?: unknown;
+                                        code?: unknown;
+                                        display?: unknown;
+                                        userSelected?: unknown;
+                                    };
+                                    valueQuantity?: {
+                                        value?: unknown;
+                                        comparator?: unknown;
+                                        unit?: unknown;
+                                        system?: unknown;
+                                        code?: unknown;
+                                    };
+                                    valueReference?: {
+                                        reference?: unknown;
+                                        type?: unknown;
+                                        identifier?: unknown;
+                                        display?: unknown;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: unknown;
+                                        language?: unknown;
+                                        data?: unknown;
+                                        url?: unknown;
+                                        size?: unknown;
+                                        hash?: unknown;
+                                        title?: unknown;
+                                        creation?: unknown;
+                                    };
+                                    extension?: unknown[];
+                                }[];
+                            }[];
+                        }[];
+                        linkId: string;
+                        definition?: string;
+                        text?: string;
+                        answer?: {
+                            id?: string;
+                            extension?: {
+                                url: string;
+                                valueBoolean?: boolean;
+                                valueInteger?: number;
+                                valueDecimal?: number;
+                                valueString?: string;
+                                valueUri?: string;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: unknown;
+                                        version?: unknown;
+                                        code?: unknown;
+                                        display?: unknown;
+                                        userSelected?: unknown;
+                                    };
+                                    valueQuantity?: {
+                                        value?: unknown;
+                                        comparator?: unknown;
+                                        unit?: unknown;
+                                        system?: unknown;
+                                        code?: unknown;
+                                    };
+                                    valueReference?: {
+                                        reference?: unknown;
+                                        type?: unknown;
+                                        identifier?: unknown;
+                                        display?: unknown;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: unknown;
+                                        language?: unknown;
+                                        data?: unknown;
+                                        url?: unknown;
+                                        size?: unknown;
+                                        hash?: unknown;
+                                        title?: unknown;
+                                        creation?: unknown;
+                                    };
+                                    extension?: unknown[];
+                                }[];
+                            }[];
+                            modifierExtension?: {
+                                url: string;
+                                valueBoolean?: boolean;
+                                valueInteger?: number;
+                                valueDecimal?: number;
+                                valueString?: string;
+                                valueUri?: string;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: unknown;
+                                        version?: unknown;
+                                        code?: unknown;
+                                        display?: unknown;
+                                        userSelected?: unknown;
+                                    };
+                                    valueQuantity?: {
+                                        value?: unknown;
+                                        comparator?: unknown;
+                                        unit?: unknown;
+                                        system?: unknown;
+                                        code?: unknown;
+                                    };
+                                    valueReference?: {
+                                        reference?: unknown;
+                                        type?: unknown;
+                                        identifier?: unknown;
+                                        display?: unknown;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: unknown;
+                                        language?: unknown;
+                                        data?: unknown;
+                                        url?: unknown;
+                                        size?: unknown;
+                                        hash?: unknown;
+                                        title?: unknown;
+                                        creation?: unknown;
+                                    };
+                                    extension?: unknown[];
+                                }[];
+                            }[];
+                            valueBoolean?: boolean;
+                            valueDecimal?: number;
+                            valueInteger?: number;
+                            /** Format: date */
+                            valueDate?: string;
+                            /** Format: date-time */
+                            valueDateTime?: string;
+                            /** Format: time */
+                            valueTime?: string;
+                            valueString?: string;
+                            valueUri?: string;
+                            valueAttachment?: {
+                                contentType?: string;
+                                language?: string;
+                                data?: string;
+                                url?: string;
+                                size?: number;
+                                hash?: string;
+                                title?: string;
+                                /** Format: date-time */
+                                creation?: string;
+                            };
+                            valueCoding?: {
+                                system?: string;
+                                version?: string;
+                                code?: string;
+                                display?: string;
+                                userSelected?: boolean;
+                            };
+                            valueQuantity?: {
+                                value?: number;
+                                /** @enum {unknown} */
+                                comparator?: "<" | "<=" | ">=" | ">";
+                                unit?: string;
+                                system?: string;
+                                code?: string;
+                            };
+                            valueReference?: {
+                                reference?: string;
+                                /** @enum {unknown} */
+                                type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                identifier?: {
+                                    [key: string]: unknown;
+                                };
+                                display?: string;
+                            };
+                            item?: {
+                                id?: string;
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: unknown;
+                                        version?: unknown;
+                                        code?: unknown;
+                                        display?: unknown;
+                                        userSelected?: unknown;
+                                    };
+                                    valueQuantity?: {
+                                        value?: unknown;
+                                        comparator?: unknown;
+                                        unit?: unknown;
+                                        system?: unknown;
+                                        code?: unknown;
+                                    };
+                                    valueReference?: {
+                                        reference?: unknown;
+                                        type?: unknown;
+                                        identifier?: unknown;
+                                        display?: unknown;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: unknown;
+                                        language?: unknown;
+                                        data?: unknown;
+                                        url?: unknown;
+                                        size?: unknown;
+                                        hash?: unknown;
+                                        title?: unknown;
+                                        creation?: unknown;
+                                    };
+                                    extension?: unknown[];
+                                }[];
+                                modifierExtension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: unknown;
+                                        version?: unknown;
+                                        code?: unknown;
+                                        display?: unknown;
+                                        userSelected?: unknown;
+                                    };
+                                    valueQuantity?: {
+                                        value?: unknown;
+                                        comparator?: unknown;
+                                        unit?: unknown;
+                                        system?: unknown;
+                                        code?: unknown;
+                                    };
+                                    valueReference?: {
+                                        reference?: unknown;
+                                        type?: unknown;
+                                        identifier?: unknown;
+                                        display?: unknown;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: unknown;
+                                        language?: unknown;
+                                        data?: unknown;
+                                        url?: unknown;
+                                        size?: unknown;
+                                        hash?: unknown;
+                                        title?: unknown;
+                                        creation?: unknown;
+                                    };
+                                    extension?: unknown[];
+                                }[];
+                                linkId: string;
+                                definition?: string;
+                                text?: string;
+                                answer?: {
+                                    id?: string;
+                                    extension?: unknown[];
+                                    modifierExtension?: unknown[];
+                                    valueBoolean?: boolean;
+                                    valueDecimal?: number;
+                                    valueInteger?: number;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    valueAttachment?: {
+                                        contentType?: unknown;
+                                        language?: unknown;
+                                        data?: unknown;
+                                        url?: unknown;
+                                        size?: unknown;
+                                        hash?: unknown;
+                                        title?: unknown;
+                                        creation?: unknown;
+                                    };
+                                    valueCoding?: {
+                                        system?: unknown;
+                                        version?: unknown;
+                                        code?: unknown;
+                                        display?: unknown;
+                                        userSelected?: unknown;
+                                    };
+                                    valueQuantity?: {
+                                        value?: unknown;
+                                        comparator?: unknown;
+                                        unit?: unknown;
+                                        system?: unknown;
+                                        code?: unknown;
+                                    };
+                                    valueReference?: {
+                                        reference?: unknown;
+                                        type?: unknown;
+                                        identifier?: unknown;
+                                        display?: unknown;
+                                    };
+                                    item?: unknown[];
+                                }[];
+                                item?: {
+                                    id?: string;
+                                    extension?: unknown[];
+                                    modifierExtension?: unknown[];
+                                    linkId: string;
+                                    definition?: string;
+                                    text?: string;
+                                    answer?: unknown[];
+                                    item?: unknown[];
+                                }[];
+                            }[];
+                        }[];
+                        item?: {
+                            id?: string;
+                            extension?: {
+                                url: string;
+                                valueBoolean?: boolean;
+                                valueInteger?: number;
+                                valueDecimal?: number;
+                                valueString?: string;
+                                valueUri?: string;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: unknown;
+                                        version?: unknown;
+                                        code?: unknown;
+                                        display?: unknown;
+                                        userSelected?: unknown;
+                                    };
+                                    valueQuantity?: {
+                                        value?: unknown;
+                                        comparator?: unknown;
+                                        unit?: unknown;
+                                        system?: unknown;
+                                        code?: unknown;
+                                    };
+                                    valueReference?: {
+                                        reference?: unknown;
+                                        type?: unknown;
+                                        identifier?: unknown;
+                                        display?: unknown;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: unknown;
+                                        language?: unknown;
+                                        data?: unknown;
+                                        url?: unknown;
+                                        size?: unknown;
+                                        hash?: unknown;
+                                        title?: unknown;
+                                        creation?: unknown;
+                                    };
+                                    extension?: unknown[];
+                                }[];
+                            }[];
+                            modifierExtension?: {
+                                url: string;
+                                valueBoolean?: boolean;
+                                valueInteger?: number;
+                                valueDecimal?: number;
+                                valueString?: string;
+                                valueUri?: string;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: unknown;
+                                        version?: unknown;
+                                        code?: unknown;
+                                        display?: unknown;
+                                        userSelected?: unknown;
+                                    };
+                                    valueQuantity?: {
+                                        value?: unknown;
+                                        comparator?: unknown;
+                                        unit?: unknown;
+                                        system?: unknown;
+                                        code?: unknown;
+                                    };
+                                    valueReference?: {
+                                        reference?: unknown;
+                                        type?: unknown;
+                                        identifier?: unknown;
+                                        display?: unknown;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: unknown;
+                                        language?: unknown;
+                                        data?: unknown;
+                                        url?: unknown;
+                                        size?: unknown;
+                                        hash?: unknown;
+                                        title?: unknown;
+                                        creation?: unknown;
+                                    };
+                                    extension?: unknown[];
+                                }[];
+                            }[];
+                            linkId: string;
+                            definition?: string;
+                            text?: string;
+                            answer?: {
+                                id?: string;
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: unknown;
+                                        version?: unknown;
+                                        code?: unknown;
+                                        display?: unknown;
+                                        userSelected?: unknown;
+                                    };
+                                    valueQuantity?: {
+                                        value?: unknown;
+                                        comparator?: unknown;
+                                        unit?: unknown;
+                                        system?: unknown;
+                                        code?: unknown;
+                                    };
+                                    valueReference?: {
+                                        reference?: unknown;
+                                        type?: unknown;
+                                        identifier?: unknown;
+                                        display?: unknown;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: unknown;
+                                        language?: unknown;
+                                        data?: unknown;
+                                        url?: unknown;
+                                        size?: unknown;
+                                        hash?: unknown;
+                                        title?: unknown;
+                                        creation?: unknown;
+                                    };
+                                    extension?: unknown[];
+                                }[];
+                                modifierExtension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: unknown;
+                                        version?: unknown;
+                                        code?: unknown;
+                                        display?: unknown;
+                                        userSelected?: unknown;
+                                    };
+                                    valueQuantity?: {
+                                        value?: unknown;
+                                        comparator?: unknown;
+                                        unit?: unknown;
+                                        system?: unknown;
+                                        code?: unknown;
+                                    };
+                                    valueReference?: {
+                                        reference?: unknown;
+                                        type?: unknown;
+                                        identifier?: unknown;
+                                        display?: unknown;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: unknown;
+                                        language?: unknown;
+                                        data?: unknown;
+                                        url?: unknown;
+                                        size?: unknown;
+                                        hash?: unknown;
+                                        title?: unknown;
+                                        creation?: unknown;
+                                    };
+                                    extension?: unknown[];
+                                }[];
+                                valueBoolean?: boolean;
+                                valueDecimal?: number;
+                                valueInteger?: number;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueString?: string;
+                                valueUri?: string;
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                item?: {
+                                    id?: string;
+                                    extension?: unknown[];
+                                    modifierExtension?: unknown[];
+                                    linkId: string;
+                                    definition?: string;
+                                    text?: string;
+                                    answer?: unknown[];
+                                    item?: unknown[];
+                                }[];
+                            }[];
+                            item?: {
+                                id?: string;
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: unknown;
+                                        version?: unknown;
+                                        code?: unknown;
+                                        display?: unknown;
+                                        userSelected?: unknown;
+                                    };
+                                    valueQuantity?: {
+                                        value?: unknown;
+                                        comparator?: unknown;
+                                        unit?: unknown;
+                                        system?: unknown;
+                                        code?: unknown;
+                                    };
+                                    valueReference?: {
+                                        reference?: unknown;
+                                        type?: unknown;
+                                        identifier?: unknown;
+                                        display?: unknown;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: unknown;
+                                        language?: unknown;
+                                        data?: unknown;
+                                        url?: unknown;
+                                        size?: unknown;
+                                        hash?: unknown;
+                                        title?: unknown;
+                                        creation?: unknown;
+                                    };
+                                    extension?: unknown[];
+                                }[];
+                                modifierExtension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: unknown;
+                                        version?: unknown;
+                                        code?: unknown;
+                                        display?: unknown;
+                                        userSelected?: unknown;
+                                    };
+                                    valueQuantity?: {
+                                        value?: unknown;
+                                        comparator?: unknown;
+                                        unit?: unknown;
+                                        system?: unknown;
+                                        code?: unknown;
+                                    };
+                                    valueReference?: {
+                                        reference?: unknown;
+                                        type?: unknown;
+                                        identifier?: unknown;
+                                        display?: unknown;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: unknown;
+                                        language?: unknown;
+                                        data?: unknown;
+                                        url?: unknown;
+                                        size?: unknown;
+                                        hash?: unknown;
+                                        title?: unknown;
+                                        creation?: unknown;
+                                    };
+                                    extension?: unknown[];
+                                }[];
+                                linkId: string;
+                                definition?: string;
+                                text?: string;
+                                answer?: {
+                                    id?: string;
+                                    extension?: unknown[];
+                                    modifierExtension?: unknown[];
+                                    valueBoolean?: boolean;
+                                    valueDecimal?: number;
+                                    valueInteger?: number;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    valueAttachment?: {
+                                        contentType?: unknown;
+                                        language?: unknown;
+                                        data?: unknown;
+                                        url?: unknown;
+                                        size?: unknown;
+                                        hash?: unknown;
+                                        title?: unknown;
+                                        creation?: unknown;
+                                    };
+                                    valueCoding?: {
+                                        system?: unknown;
+                                        version?: unknown;
+                                        code?: unknown;
+                                        display?: unknown;
+                                        userSelected?: unknown;
+                                    };
+                                    valueQuantity?: {
+                                        value?: unknown;
+                                        comparator?: unknown;
+                                        unit?: unknown;
+                                        system?: unknown;
+                                        code?: unknown;
+                                    };
+                                    valueReference?: {
+                                        reference?: unknown;
+                                        type?: unknown;
+                                        identifier?: unknown;
+                                        display?: unknown;
+                                    };
+                                    item?: unknown[];
+                                }[];
+                                item?: {
+                                    id?: string;
+                                    extension?: unknown[];
+                                    modifierExtension?: unknown[];
+                                    linkId: string;
+                                    definition?: string;
+                                    text?: string;
+                                    answer?: unknown[];
+                                    item?: unknown[];
+                                }[];
+                            }[];
+                        }[];
+                    }[];
+                    /**
+                     * @default in-progress
+                     * @enum {unknown}
+                     */
+                    status?: "in-progress" | "completed" | "amended" | "entered-in-error" | "stopped";
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        resourceType: "QuestionnaireResponse";
+                        id?: string;
+                        meta?: {
+                            [key: string]: unknown;
+                        };
+                        implicitRules?: string;
+                        language?: string;
+                        text?: {
+                            /** @enum {unknown} */
+                            status: "generated" | "extensions" | "additional" | "empty";
+                            div: string;
+                        };
+                        contained?: (unknown | null)[];
+                        extension?: {
+                            url: string;
+                            valueBoolean?: boolean;
+                            valueInteger?: number;
+                            valueDecimal?: number;
+                            valueString?: string;
+                            valueUri?: string;
+                            /** Format: date */
+                            valueDate?: string;
+                            /** Format: date-time */
+                            valueDateTime?: string;
+                            /** Format: time */
+                            valueTime?: string;
+                            valueCoding?: {
+                                system?: string;
+                                version?: string;
+                                code?: string;
+                                display?: string;
+                                userSelected?: boolean;
+                            };
+                            valueQuantity?: {
+                                value?: number;
+                                /** @enum {unknown} */
+                                comparator?: "<" | "<=" | ">=" | ">";
+                                unit?: string;
+                                system?: string;
+                                code?: string;
+                            };
+                            valueReference?: {
+                                reference?: string;
+                                /** @enum {unknown} */
+                                type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                identifier?: {
+                                    [key: string]: unknown;
+                                };
+                                display?: string;
+                            };
+                            valueAttachment?: {
+                                contentType?: string;
+                                language?: string;
+                                data?: string;
+                                url?: string;
+                                size?: number;
+                                hash?: string;
+                                title?: string;
+                                /** Format: date-time */
+                                creation?: string;
+                            };
+                            extension?: {
+                                url: string;
+                                valueBoolean?: boolean;
+                                valueInteger?: number;
+                                valueDecimal?: number;
+                                valueString?: string;
+                                valueUri?: string;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                }[];
+                            }[];
+                        }[];
+                        modifierExtension?: {
+                            url: string;
+                            valueBoolean?: boolean;
+                            valueInteger?: number;
+                            valueDecimal?: number;
+                            valueString?: string;
+                            valueUri?: string;
+                            /** Format: date */
+                            valueDate?: string;
+                            /** Format: date-time */
+                            valueDateTime?: string;
+                            /** Format: time */
+                            valueTime?: string;
+                            valueCoding?: {
+                                system?: string;
+                                version?: string;
+                                code?: string;
+                                display?: string;
+                                userSelected?: boolean;
+                            };
+                            valueQuantity?: {
+                                value?: number;
+                                /** @enum {unknown} */
+                                comparator?: "<" | "<=" | ">=" | ">";
+                                unit?: string;
+                                system?: string;
+                                code?: string;
+                            };
+                            valueReference?: {
+                                reference?: string;
+                                /** @enum {unknown} */
+                                type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                identifier?: {
+                                    [key: string]: unknown;
+                                };
+                                display?: string;
+                            };
+                            valueAttachment?: {
+                                contentType?: string;
+                                language?: string;
+                                data?: string;
+                                url?: string;
+                                size?: number;
+                                hash?: string;
+                                title?: string;
+                                /** Format: date-time */
+                                creation?: string;
+                            };
+                            extension?: {
+                                url: string;
+                                valueBoolean?: boolean;
+                                valueInteger?: number;
+                                valueDecimal?: number;
+                                valueString?: string;
+                                valueUri?: string;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                }[];
+                            }[];
+                        }[];
+                        identifier?: {
+                            /** @enum {unknown} */
+                            use?: "usual" | "official" | "temp" | "secondary" | "old";
+                            type?: {
+                                coding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                }[];
+                                text?: string;
+                            };
+                            system?: string;
+                            value?: string;
+                            period?: {
+                                /** Format: date-time */
+                                start?: string;
+                                /** Format: date-time */
+                                end?: string;
+                            };
+                            assigner?: {
+                                reference?: string;
+                                /** @enum {unknown} */
+                                type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                identifier?: {
+                                    [key: string]: unknown;
+                                };
+                                display?: string;
+                            };
+                        };
+                        basedOn?: {
+                            reference?: string;
+                            /** @enum {unknown} */
+                            type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                            identifier?: {
+                                [key: string]: unknown;
+                            };
+                            display?: string;
+                        }[];
+                        partOf?: {
+                            reference?: string;
+                            /** @enum {unknown} */
+                            type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                            identifier?: {
+                                [key: string]: unknown;
+                            };
+                            display?: string;
+                        }[];
+                        /** Format: uuid */
+                        questionnaire?: string;
+                        /** @enum {unknown} */
+                        status: "in-progress" | "completed" | "amended" | "entered-in-error" | "stopped";
+                        subject?: {
+                            reference?: string;
+                            /** @enum {unknown} */
+                            type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                            identifier?: {
+                                [key: string]: unknown;
+                            };
+                            display?: string;
+                        };
+                        encounter?: {
+                            reference?: string;
+                            /** @enum {unknown} */
+                            type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                            identifier?: {
+                                [key: string]: unknown;
+                            };
+                            display?: string;
+                        };
+                        /** Format: date-time */
+                        authored?: string;
+                        author?: {
+                            reference?: string;
+                            /** @enum {unknown} */
+                            type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                            identifier?: {
+                                [key: string]: unknown;
+                            };
+                            display?: string;
+                        };
+                        source?: {
+                            reference?: string;
+                            /** @enum {unknown} */
+                            type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                            identifier?: {
+                                [key: string]: unknown;
+                            };
+                            display?: string;
+                        };
+                        item?: {
+                            id?: string;
+                            extension?: {
+                                url: string;
+                                valueBoolean?: boolean;
+                                valueInteger?: number;
+                                valueDecimal?: number;
+                                valueString?: string;
+                                valueUri?: string;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                }[];
+                            }[];
+                            modifierExtension?: {
+                                url: string;
+                                valueBoolean?: boolean;
+                                valueInteger?: number;
+                                valueDecimal?: number;
+                                valueString?: string;
+                                valueUri?: string;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                }[];
+                            }[];
+                            linkId: string;
+                            definition?: string;
+                            text?: string;
+                            answer?: {
+                                id?: string;
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                }[];
+                                modifierExtension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                }[];
+                                valueBoolean?: boolean;
+                                valueDecimal?: number;
+                                valueInteger?: number;
+                                /** Format: date */
+                                valueDate?: string;
+                                /** Format: date-time */
+                                valueDateTime?: string;
+                                /** Format: time */
+                                valueTime?: string;
+                                valueString?: string;
+                                valueUri?: string;
+                                valueAttachment?: {
+                                    contentType?: string;
+                                    language?: string;
+                                    data?: string;
+                                    url?: string;
+                                    size?: number;
+                                    hash?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    creation?: string;
+                                };
+                                valueCoding?: {
+                                    system?: string;
+                                    version?: string;
+                                    code?: string;
+                                    display?: string;
+                                    userSelected?: boolean;
+                                };
+                                valueQuantity?: {
+                                    value?: number;
+                                    /** @enum {unknown} */
+                                    comparator?: "<" | "<=" | ">=" | ">";
+                                    unit?: string;
+                                    system?: string;
+                                    code?: string;
+                                };
+                                valueReference?: {
+                                    reference?: string;
+                                    /** @enum {unknown} */
+                                    type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                    identifier?: {
+                                        [key: string]: unknown;
+                                    };
+                                    display?: string;
+                                };
+                                item?: {
+                                    id?: string;
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                    modifierExtension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                    linkId: string;
+                                    definition?: string;
+                                    text?: string;
+                                    answer?: {
+                                        id?: string;
+                                        extension?: (unknown | null)[];
+                                        modifierExtension?: (unknown | null)[];
+                                        valueBoolean?: boolean;
+                                        valueDecimal?: number;
+                                        valueInteger?: number;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        item?: (unknown | null)[];
+                                    }[];
+                                    item?: {
+                                        id?: string;
+                                        extension?: (unknown | null)[];
+                                        modifierExtension?: (unknown | null)[];
+                                        linkId: string;
+                                        definition?: string;
+                                        text?: string;
+                                        answer?: (unknown | null)[];
+                                        item?: (unknown | null)[];
+                                    }[];
+                                }[];
+                            }[];
+                            item?: {
+                                id?: string;
+                                extension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                }[];
+                                modifierExtension?: {
+                                    url: string;
+                                    valueBoolean?: boolean;
+                                    valueInteger?: number;
+                                    valueDecimal?: number;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                }[];
+                                linkId: string;
+                                definition?: string;
+                                text?: string;
+                                answer?: {
+                                    id?: string;
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                    modifierExtension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                    valueBoolean?: boolean;
+                                    valueDecimal?: number;
+                                    valueInteger?: number;
+                                    /** Format: date */
+                                    valueDate?: string;
+                                    /** Format: date-time */
+                                    valueDateTime?: string;
+                                    /** Format: time */
+                                    valueTime?: string;
+                                    valueString?: string;
+                                    valueUri?: string;
+                                    valueAttachment?: {
+                                        contentType?: string;
+                                        language?: string;
+                                        data?: string;
+                                        url?: string;
+                                        size?: number;
+                                        hash?: string;
+                                        title?: string;
+                                        /** Format: date-time */
+                                        creation?: string;
+                                    };
+                                    valueCoding?: {
+                                        system?: string;
+                                        version?: string;
+                                        code?: string;
+                                        display?: string;
+                                        userSelected?: boolean;
+                                    };
+                                    valueQuantity?: {
+                                        value?: number;
+                                        /** @enum {unknown} */
+                                        comparator?: "<" | "<=" | ">=" | ">";
+                                        unit?: string;
+                                        system?: string;
+                                        code?: string;
+                                    };
+                                    valueReference?: {
+                                        reference?: string;
+                                        /** @enum {unknown} */
+                                        type?: "AccessPolicy" | "Account" | "ActivityDefinition" | "AdverseEvent" | "Agent" | "AllergyIntolerance" | "Appointment" | "AppointmentResponse" | "AsyncJob" | "AuditEvent" | "Basic" | "Binary" | "BiologicallyDerivedProduct" | "BodyStructure" | "Bot" | "BulkDataExport" | "Bundle" | "CapabilityStatement" | "CarePlan" | "CareTeam" | "CatalogEntry" | "ChargeItem" | "ChargeItemDefinition" | "Claim" | "ClaimResponse" | "ClientApplication" | "ClinicalImpression" | "CodeSystem" | "Communication" | "CommunicationRequest" | "CompartmentDefinition" | "Composition" | "ConceptMap" | "Condition" | "Consent" | "Contract" | "Coverage" | "CoverageEligibilityRequest" | "CoverageEligibilityResponse" | "DetectedIssue" | "Device" | "DeviceDefinition" | "DeviceMetric" | "DeviceRequest" | "DeviceUseStatement" | "DiagnosticReport" | "DocumentManifest" | "DocumentReference" | "DomainConfiguration" | "EffectEvidenceSynthesis" | "Encounter" | "Endpoint" | "EnrollmentRequest" | "EnrollmentResponse" | "EpisodeOfCare" | "EventDefinition" | "Evidence" | "EvidenceVariable" | "ExampleScenario" | "ExplanationOfBenefit" | "FamilyMemberHistory" | "Flag" | "Goal" | "GraphDefinition" | "Group" | "GuidanceResponse" | "HealthcareService" | "ImagingStudy" | "Immunization" | "ImmunizationEvaluation" | "ImmunizationRecommendation" | "ImplementationGuide" | "InsurancePlan" | "Invoice" | "JsonWebKey" | "Library" | "Linkage" | "List" | "Location" | "Login" | "Measure" | "MeasureReport" | "Media" | "Medication" | "MedicationAdministration" | "MedicationDispense" | "MedicationKnowledge" | "MedicationRequest" | "MedicationStatement" | "MedicinalProduct" | "MedicinalProductAuthorization" | "MedicinalProductContraindication" | "MedicinalProductIndication" | "MedicinalProductIngredient" | "MedicinalProductInteraction" | "MedicinalProductManufactured" | "MedicinalProductPackaged" | "MedicinalProductPharmaceutical" | "MedicinalProductUndesirableEffect" | "MessageDefinition" | "MessageHeader" | "MolecularSequence" | "NamingSystem" | "NutritionOrder" | "Observation" | "ObservationDefinition" | "OperationDefinition" | "OperationOutcome" | "Organization" | "OrganizationAffiliation" | "Parameters" | "PasswordChangeRequest" | "Patient" | "PaymentNotice" | "PaymentReconciliation" | "Person" | "PlanDefinition" | "Practitioner" | "PractitionerRole" | "Procedure" | "Project" | "ProjectMembership" | "Provenance" | "Questionnaire" | "QuestionnaireResponse" | "RelatedPerson" | "RequestGroup" | "ResearchDefinition" | "ResearchElementDefinition" | "ResearchStudy" | "ResearchSubject" | "RiskAssessment" | "RiskEvidenceSynthesis" | "Schedule" | "SearchParameter" | "ServiceRequest" | "Slot" | "SmartAppLaunch" | "Specimen" | "SpecimenDefinition" | "StructureDefinition" | "StructureMap" | "Subscription" | "SubscriptionStatus" | "Substance" | "SubstanceNucleicAcid" | "SubstancePolymer" | "SubstanceProtein" | "SubstanceReferenceInformation" | "SubstanceSourceMaterial" | "SubstanceSpecification" | "SupplyDelivery" | "SupplyRequest" | "Task" | "TerminologyCapabilities" | "TestReport" | "TestScript" | "User" | "UserConfiguration" | "UserSecurityRequest" | "ValueSet" | "VerificationResult" | "VisionPrescription";
+                                        identifier?: {
+                                            [key: string]: unknown;
+                                        };
+                                        display?: string;
+                                    };
+                                    item?: {
+                                        id?: string;
+                                        extension?: (unknown | null)[];
+                                        modifierExtension?: (unknown | null)[];
+                                        linkId: string;
+                                        definition?: string;
+                                        text?: string;
+                                        answer?: (unknown | null)[];
+                                        item?: (unknown | null)[];
+                                    }[];
+                                }[];
+                                item?: {
+                                    id?: string;
+                                    extension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                    modifierExtension?: {
+                                        url: string;
+                                        valueBoolean?: boolean;
+                                        valueInteger?: number;
+                                        valueDecimal?: number;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        extension?: (unknown | null)[];
+                                    }[];
+                                    linkId: string;
+                                    definition?: string;
+                                    text?: string;
+                                    answer?: {
+                                        id?: string;
+                                        extension?: (unknown | null)[];
+                                        modifierExtension?: (unknown | null)[];
+                                        valueBoolean?: boolean;
+                                        valueDecimal?: number;
+                                        valueInteger?: number;
+                                        /** Format: date */
+                                        valueDate?: string;
+                                        /** Format: date-time */
+                                        valueDateTime?: string;
+                                        /** Format: time */
+                                        valueTime?: string;
+                                        valueString?: string;
+                                        valueUri?: string;
+                                        valueAttachment?: {
+                                            contentType?: unknown;
+                                            language?: unknown;
+                                            data?: unknown;
+                                            url?: unknown;
+                                            size?: unknown;
+                                            hash?: unknown;
+                                            title?: unknown;
+                                            creation?: unknown;
+                                        };
+                                        valueCoding?: {
+                                            system?: unknown;
+                                            version?: unknown;
+                                            code?: unknown;
+                                            display?: unknown;
+                                            userSelected?: unknown;
+                                        };
+                                        valueQuantity?: {
+                                            value?: unknown;
+                                            comparator?: unknown;
+                                            unit?: unknown;
+                                            system?: unknown;
+                                            code?: unknown;
+                                        };
+                                        valueReference?: {
+                                            reference?: unknown;
+                                            type?: unknown;
+                                            identifier?: unknown;
+                                            display?: unknown;
+                                        };
+                                        item?: (unknown | null)[];
+                                    }[];
+                                    item?: {
+                                        id?: string;
+                                        extension?: (unknown | null)[];
+                                        modifierExtension?: (unknown | null)[];
+                                        linkId: string;
+                                        definition?: string;
+                                        text?: string;
+                                        answer?: (unknown | null)[];
+                                        item?: (unknown | null)[];
+                                    }[];
+                                }[];
+                            }[];
+                        }[];
+                    };
+                };
+            };
+            /** @description 400 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "BAD_REQUEST";
+                        /** @constant */
+                        status: 400;
+                        /** @default Bad Request */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 401 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "UNAUTHORIZED";
+                        /** @constant */
+                        status: 401;
+                        /** @default Unauthorized */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 403 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "FORBIDDEN";
+                        /** @constant */
+                        status: 403;
+                        /** @default Forbidden */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 404 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "NOT_FOUND";
+                        /** @constant */
+                        status: 404;
+                        /** @default Not found */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 409 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "CONFLICT";
+                        /** @constant */
+                        status: 409;
+                        /** @default Conflict */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 429 */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "RATE_LIMIT_EXCEEDED";
+                        /** @constant */
+                        status: 429;
+                        /** @default Rate limit exceeded */
+                        message: string;
+                        data?: unknown;
+                    } | {
+                        /** @constant */
+                        defined: false;
+                        code: string;
+                        status: number;
+                        message: string;
+                        data?: unknown;
+                    };
+                };
+            };
+            /** @description 500 */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        defined: true;
+                        /** @constant */
+                        code: "INTERNAL_SERVER_ERROR";
+                        /** @constant */
+                        status: 500;
+                        /** @default Internal server error */
                         message: string;
                         data?: unknown;
                     } | {
