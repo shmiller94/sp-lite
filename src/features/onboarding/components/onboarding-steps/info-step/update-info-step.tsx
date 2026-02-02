@@ -291,7 +291,10 @@ const UpdateInfoContent = () => {
                   setStripeError={setStripeError}
                 />
               )}
-              <Button type="submit" disabled={isLoading || !form.formState.isValid}>
+              <Button
+                type="submit"
+                disabled={isLoading || !form.formState.isValid}
+              >
                 {isLoading ? <TransactionSpinner /> : 'Update'}
               </Button>
             </div>

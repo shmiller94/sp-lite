@@ -114,7 +114,13 @@ export const AddressAutocomplete = forwardRef<
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
       // Don't handle keyboard navigation when dropdown is hidden or loading
       // selectedPlaceId check prevents duplicate selections after dropdown closes
-      if (!isFocused || selectedPlaceId || placePredictions.length === 0 || isPlacePredictionsLoading) return;
+      if (
+        !isFocused ||
+        selectedPlaceId ||
+        placePredictions.length === 0 ||
+        isPlacePredictionsLoading
+      )
+        return;
 
       switch (e.key) {
         case 'ArrowDown':
@@ -131,7 +137,10 @@ export const AddressAutocomplete = forwardRef<
           break;
         case 'Enter':
           // Only prevent default if we have a highlighted item to select
-          if (highlightedIndex >= 0 && highlightedIndex < placePredictions.length) {
+          if (
+            highlightedIndex >= 0 &&
+            highlightedIndex < placePredictions.length
+          ) {
             e.preventDefault();
             handleSelect(placePredictions[highlightedIndex].place_id);
           }
@@ -139,7 +148,10 @@ export const AddressAutocomplete = forwardRef<
           break;
         case 'Tab':
           // If user navigated to a highlighted item, select it before tabbing away
-          if (highlightedIndex >= 0 && highlightedIndex < placePredictions.length) {
+          if (
+            highlightedIndex >= 0 &&
+            highlightedIndex < placePredictions.length
+          ) {
             handleSelect(placePredictions[highlightedIndex].place_id);
           }
           // Don't preventDefault - let Tab move focus naturally
@@ -274,7 +286,9 @@ export const AddressAutocomplete = forwardRef<
                               onMouseEnter={() => setHighlightedIndex(index)}
                               className={cn(
                                 'flex w-full py-4 rounded-[10px] px-[28px] flex-col items-start cursor-pointer data-[disabled]:opacity-100 hover:bg-zinc-50 hover:rounded-[10px] data-[disabled]:pointer-events-auto',
-                                isHighlighted || isSelected ? 'bg-zinc-50' : null,
+                                isHighlighted || isSelected
+                                  ? 'bg-zinc-50'
+                                  : null,
                               )}
                             >
                               <Body1>
