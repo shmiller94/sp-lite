@@ -39,7 +39,7 @@ export interface AddressAutocompleteProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   placeholder?: string;
   onFormSubmit: (address: FormAddressInput) => void;
-  value: string;
+  value: string | undefined;
   onChange: (...event: any[]) => void;
   onBlur: () => void;
   variant?: 'default' | 'error' | 'glass';
@@ -106,6 +106,10 @@ export const AddressAutocomplete = forwardRef<
       return new places.PlacesService(div);
     }, [places]);
 
+    const showPredictions = useMemo((): boolean => {
+      return isFocused && !!value && value.trim().length > 3;
+    }, [isFocused, value]);
+
     const {
       data: placePredictions = [],
       isFetching: isPlacePredictionsLoading,
@@ -135,7 +139,7 @@ export const AddressAutocomplete = forwardRef<
           );
         });
       },
-      enabled: !!places && !!value && value.trim().length > 3,
+      enabled: !!places && showPredictions,
       staleTime: 5000, // Cache predictions for 5 seconds
       placeholderData: (previousData) => previousData, // Keep previous data while fetching
     });
@@ -262,13 +266,13 @@ export const AddressAutocomplete = forwardRef<
             }
           }}
           role="combobox"
-          aria-expanded={isFocused && placePredictions.length > 0}
+          aria-expanded={showPredictions}
           aria-haspopup="listbox"
           aria-autocomplete="list"
           {...rest}
         />
         <AnimatePresence>
-          {isFocused && !selectedPlaceId && value.trim().length > 3 ? (
+          {showPredictions && !selectedPlaceId ? (
             <motion.div
               className="relative"
               variants={container}
