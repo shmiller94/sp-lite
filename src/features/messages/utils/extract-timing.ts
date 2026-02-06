@@ -40,10 +40,12 @@ export function formatDurationMs(ms: number): string {
 
   const s = ms / 1000;
   if (s < 10) return `${s.toFixed(1)}s`;
-  if (s < 60) return `${Math.round(s)}s`;
 
-  const m = Math.floor(s / 60);
-  const rs = Math.round(s % 60);
+  const totalSeconds = Math.round(s);
+  if (totalSeconds < 60) return `${totalSeconds}s`;
+
+  const m = Math.floor(totalSeconds / 60);
+  const rs = totalSeconds % 60;
   if (m < 60) return `${m}m ${String(rs).padStart(2, '0')}s`;
 
   const h = Math.floor(m / 60);
@@ -173,7 +175,5 @@ export function extractTiming(
  */
 export function getCombinedTimingMs(timing: TimingInfo): number | null {
   const thinking = timing.thinkingMs ?? 0;
-  const tools = timing.toolsMs ?? 0;
-  const combined = thinking + tools;
-  return combined > 0 ? combined : null;
+  return thinking > 0 ? thinking : null;
 }

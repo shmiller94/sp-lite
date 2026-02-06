@@ -1,13 +1,18 @@
 import { useChat } from '@ai-sdk/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { DefaultChatTransport, FileUIPart, type UIMessage } from 'ai';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { toast } from '@/components/ui/sonner';
 import { env } from '@/config/env';
 import { useHistory } from '@/features/messages/api/get-history';
+import {
+  getMessages,
+  getMessagesQueryOptions,
+} from '@/features/messages/api/get-messages';
 import { useChatStore } from '@/features/messages/stores/chat-store';
+import { extractTiming } from '@/features/messages/utils/extract-timing';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { cn, getActiveLogin } from '@/lib/utils';
 import { generateUUID } from '@/utils/generate-uiud';
@@ -22,6 +27,14 @@ const publicErrors = [
   'This chat has ended. Please start a new chat.',
 ];
 
+/** Check if an assistant message has actual text content */
+const hasAssistantContent = (message: UIMessage | undefined): boolean => {
+  if (!message || message.role !== 'assistant') return false;
+  return (message.parts ?? []).some(
+    (p) => p.type === 'text' && p.text && p.text.length > 0,
+  );
+};
+
 export function Chat({
   id,
   initialMessages,
@@ -34,13 +47,6 @@ export function Chat({
   const { refetch } = useHistory();
   const { track } = useAnalytics();
   const navigate = useNavigate();
-
-  const [lastUserMessageTime, setLastUserMessageTime] = useState<number | null>(
-    null,
-  );
-  const [lastSentMessageTime, setLastSentMessageTime] = useState<number | null>(
-    null,
-  );
 
   const initialMessage = searchParams.get('defaultMessage');
   const [input, setInput] = useState(initialMessage ?? '');
@@ -90,99 +96,188 @@ export function Chat({
     [], // Intentionally empty - uses fresh data via getActiveLoginData()
   );
 
-  const { messages, setMessages, sendMessage, status, stop } = useChat({
-    id,
-    transport,
-    messages: initialMessages,
-    resume: true, // Enable auto-resume for durable streams
-    generateId: generateUUID,
-    onFinish: ({ message }) => {
-      refetch();
+  const recoveryInProgressRef = useRef(false);
 
-      // make sure that the chat message cache is fresh here
-      // e.g. so that navigating away and back shows the latest messages.
-      queryClient.invalidateQueries({ queryKey: ['chat', id] });
+  const recoverFromServer = useCallback(
+    async (setMessages: (messages: UIMessage[]) => void) => {
+      if (recoveryInProgressRef.current) return false;
+      recoveryInProgressRef.current = true;
 
-      // Track AI message events
-      if (message.role === 'user') {
-        const currentTime = Date.now();
-        setLastSentMessageTime(currentTime);
-
-        const messageLength = message.parts?.reduce((acc, part) => {
-          if (part.type === 'text') {
-            acc += part.text.length;
+      try {
+        const serverMessages = await getMessages({ chatId: id });
+        if (serverMessages && serverMessages.length > 0) {
+          const lastMessage = serverMessages[serverMessages.length - 1];
+          if (hasAssistantContent(lastMessage)) {
+            setMessages(serverMessages);
+            queryClient.setQueryData(
+              getMessagesQueryOptions(id).queryKey,
+              serverMessages,
+            );
+            recoveryInProgressRef.current = false;
+            return true;
           }
-          return acc;
-        }, 0);
-
-        track('sent_message_ai', {
-          message_length: messageLength ?? 0,
-        });
-      } else if (message.role === 'assistant') {
-        const responseTime = lastSentMessageTime
-          ? Date.now() - lastSentMessageTime
-          : null;
-
-        track('received_message_ai', {
-          response_time: responseTime,
-        });
-      }
-
-      // Calculate response time
-      const responseTime = lastUserMessageTime
-        ? Date.now() - lastUserMessageTime
-        : null;
-
-      // Track response time for average calculation
-      if (responseTime) {
-        addResponseTime(responseTime);
+        }
+        recoveryInProgressRef.current = false;
+        return false;
+      } catch (err) {
+        // Recovery fetch failed — swallow silently
+        recoveryInProgressRef.current = false;
+        return false;
       }
     },
-    onError: (err) => {
-      console.error(err);
+    [id, queryClient],
+  );
 
-      const safeMessage =
-        typeof (err as Error & { message?: string })?.message === 'string'
-          ? (err as Error).message
-          : '';
+  const { messages, setMessages, sendMessage, resumeStream, status, stop } =
+    useChat({
+      id,
+      transport,
+      messages: initialMessages,
+      generateId: generateUUID,
+      onFinish: ({ message }) => {
+        refetch();
 
-      const isValidationError =
-        err.name === 'AI_TypeValidationError' ||
-        safeMessage.includes('Type validation failed') ||
-        (safeMessage.includes('finish') &&
-          safeMessage.includes('finishReason'));
+        // make sure that the chat message cache is fresh here
+        // e.g. so that navigating away and back shows the latest messages.
+        queryClient.invalidateQueries({ queryKey: ['chat', id] });
 
-      const isPublicError = publicErrors.some(
-        (publicError) => publicError === err.message,
-      );
+        if (message.role === 'user') {
+          const messageLength = message.parts?.reduce((acc, part) => {
+            if (part.type === 'text') {
+              acc += part.text.length;
+            }
+            return acc;
+          }, 0);
 
-      if (isValidationError) {
-        console.warn(
-          'AI SDK type validation error - likely due to unrecognized message type from backend:',
-          {
-            error: err.message,
-            name: err.name,
-            timestamp: new Date().toISOString(),
-          },
+          track('sent_message_ai', {
+            message_length: messageLength ?? 0,
+          });
+        } else if (message.role === 'assistant') {
+          const timing = extractTiming(message, false);
+
+          track('received_message_ai', {
+            response_time: timing.totalMs,
+          });
+
+          if (timing.totalMs) {
+            addResponseTime(timing.totalMs);
+          }
+        }
+      },
+      onError: (err) => {
+        const safeMessage =
+          typeof (err as Error & { message?: string })?.message === 'string'
+            ? (err as Error).message
+            : '';
+
+        const isValidationError =
+          err.name === 'AI_TypeValidationError' ||
+          safeMessage.includes('Type validation failed') ||
+          (safeMessage.includes('finish') &&
+            safeMessage.includes('finishReason'));
+
+        const isPublicError = publicErrors.some(
+          (publicError) => publicError === err.message,
         );
 
-        // Don't show these validation errors to the user as they're internal SDK issues
-        refetch();
-        navigate(`/concierge/${id}`);
+        if (isValidationError) {
+          track('ai_sdk_validation_error', {
+            error_message: err.message,
+            error_name: err.name,
+            chat_id: id,
+          });
 
-        return;
-      }
+          // Don't show these validation errors to the user as they're internal SDK issues
+          refetch();
+          navigate(`/concierge/${id}`);
 
-      if (isPublicError) {
-        toast(err.message);
-      } else {
-        // refetch to trigger api client if its non requests issue
-        // for example if its dead access token issue it would refresh the token
-        // this is hack
-        refetch();
-      }
-    },
-  });
+          return;
+        }
+
+        if (isPublicError) {
+          toast(err.message);
+          return;
+        }
+
+        // Fall back to server-side message recovery after a delay
+        setTimeout(() => recoverFromServer(setMessages), 1000);
+      },
+    });
+
+  // Resume stream on page load for existing chats.
+  // Always attempt for non-new chats with messages — if no stream is active,
+  // the SDK gracefully handles it as a no-op.
+  const resumeAttemptedRef = useRef(false);
+  useEffect(() => {
+    if (resumeAttemptedRef.current) return;
+    if (initialMessages.length === 0) return;
+    if (status !== 'ready') return;
+
+    resumeAttemptedRef.current = true;
+    resumeStream().catch(() => {});
+  }, [initialMessages.length, resumeStream, status]);
+
+  // Safety net: detect "ready but empty assistant" state and attempt recovery.
+  // Catches edge cases where onFinish might not fire or status transitions unexpectedly.
+  const recoveryAttemptedRef = useRef(false);
+  const [recoveryFailed, setRecoveryFailed] = useState(false);
+
+  useEffect(() => {
+    if (status !== 'ready') {
+      recoveryAttemptedRef.current = false;
+      setRecoveryFailed(false);
+      return;
+    }
+
+    const lastMessage = messages[messages.length - 1];
+    const needsRecovery =
+      messages.length > 0 &&
+      (lastMessage?.role === 'user' ||
+        (lastMessage?.role === 'assistant' &&
+          !hasAssistantContent(lastMessage)));
+
+    if (needsRecovery && !recoveryAttemptedRef.current) {
+      recoveryAttemptedRef.current = true;
+
+      recoverFromServer(setMessages).then((success) => {
+        if (!success) {
+          setRecoveryFailed(true);
+        }
+      });
+    }
+  }, [status, messages, recoverFromServer, setMessages]);
+
+  // Treat recovery failure as error so UI shows retry option
+  const effectiveStatus =
+    recoveryFailed && status === 'ready' ? 'error' : status;
+
+  // Sync messages to React Query cache when message count changes.
+  // This ensures navigating away mid-stream and returning gets the latest
+  // messages (including the user's sent message), so resumeStream() works correctly.
+  // IMPORTANT: Exclude the partial streaming assistant message from cache.
+  // The server's reconnect endpoint replays the full stream, so caching
+  // partial content would cause duplicates when resumeStream() runs.
+  const lastSyncedCountRef = useRef(0);
+
+  useEffect(() => {
+    if (messages.length === 0 || messages.length === lastSyncedCountRef.current)
+      return;
+    lastSyncedCountRef.current = messages.length;
+
+    // Exclude partial streaming assistant response — resumeStream replays
+    // the full stream, so caching partial content causes duplicates.
+    const lastMsg = messages[messages.length - 1];
+    const isPartialAssistant =
+      lastMsg?.role === 'assistant' && status !== 'ready';
+    const messagesToCache = isPartialAssistant
+      ? messages.slice(0, -1)
+      : messages;
+
+    queryClient.setQueryData(
+      getMessagesQueryOptions(id).queryKey,
+      messagesToCache,
+    );
+  }, [messages.length, messages, id, queryClient, status]);
 
   const sessionStartTime = useChatStore((s) => s.sessionStartTime);
   const setSessionStartTime = useChatStore((s) => s.setSessionStartTime);
@@ -202,7 +297,6 @@ export function Chat({
         { replace: true },
       );
     }
-    setLastUserMessageTime(Date.now());
     incrementMessageCount();
     setInput('');
     return sendMessage(message, options);
@@ -228,7 +322,7 @@ export function Chat({
             chatId={id}
             messages={messages}
             setMessages={setMessages}
-            status={status}
+            status={effectiveStatus}
           />
 
           {messages.length === 0 && (
@@ -253,7 +347,7 @@ export function Chat({
               input={input}
               setInput={setInput}
               sendMessage={handleSendMessage}
-              status={status}
+              status={effectiveStatus}
               stop={stop}
               attachments={attachments}
               setAttachments={setAttachments}
