@@ -14,14 +14,13 @@ import {
 import { INTAKE_QUESTIONNAIRE } from '@/const/questionnaire';
 import { STEP_IDS } from '@/features/onboarding/config/step-config';
 import { useOnboardingFlowStore } from '@/features/onboarding/stores/onboarding-flow-store';
-import { useQuestionnaireResponse } from '@/features/questionnaires/api/get-questionnaire-response';
 import { useQuestionnaire } from '@/features/questionnaires/api/questionnaire';
 import {
   useCreateQuestionnaireResponse,
+  useQuestionnaireResponse,
   useQuestionnaireResponseList,
   useUpdateQuestionnaireResponse,
 } from '@/features/questionnaires/api/questionnaire-response';
-import { useUpdateQuestionnaireResponse as useUpdateIntakeQuestionnaireResponse } from '@/features/questionnaires/api/update-questionnaire-response';
 import { DEV_BYPASS_CARE_PLAN_KEY } from '@/features/summary/api/get-summary';
 
 import { toast } from '../ui/sonner';
@@ -48,23 +47,13 @@ export function DevHelper() {
   const goToStep = useOnboardingFlowStore((state) => state.goTo);
   const updateQuestionnaireResponseMutation = useUpdateQuestionnaireResponse();
   const createQuestionnaireResponseMutation = useCreateQuestionnaireResponse();
-  const updateIntakeQuestionnaireResponseMutation =
-    useUpdateIntakeQuestionnaireResponse({
-      mutationConfig: {
-        onSuccess: () => {
-          toast.success('Completed intake, refreshing...');
-          window.location.reload();
-        },
-      },
-    });
   const getQuestionnaireResponseQuery = useQuestionnaireResponse({
     identifier: INTAKE_QUESTIONNAIRE,
     statuses: ['in-progress', 'stopped'],
   });
 
-  const questionnaireResponseId =
-    getQuestionnaireResponseQuery.data?.questionnaireResponse?.id ||
-    INTAKE_QUESTIONNAIRE;
+  const intakeResponseId =
+    getQuestionnaireResponseQuery.data?.questionnaireResponse?.id;
 
   const onboardingPrimerQuery = useQuestionnaire({
     identifier: ONBOARDING_QUESTIONNAIRES[0],
@@ -130,11 +119,23 @@ export function DevHelper() {
       return;
     }
 
-    updateIntakeQuestionnaireResponseMutation.mutate({
-      data: { status: 'completed', item: [] },
-      identifier: questionnaireResponseId,
-      invalidateIdentifiers: [INTAKE_QUESTIONNAIRE],
-    });
+    if (!intakeResponseId) {
+      toast.error('No intake questionnaire response found');
+      return;
+    }
+
+    updateQuestionnaireResponseMutation.mutate(
+      {
+        id: intakeResponseId,
+        data: { status: 'completed', item: [] },
+      },
+      {
+        onSuccess: () => {
+          toast.success('Completed intake, refreshing...');
+          window.location.reload();
+        },
+      },
+    );
   };
 
   const onCompleteAllQuestionnaires = async () => {
