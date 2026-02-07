@@ -353,6 +353,7 @@ export function Chat({
               setAttachments={setAttachments}
               messages={messages}
               setMessages={setMessages}
+              disableFileUpload
             />
           </form>
 

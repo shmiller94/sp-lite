@@ -43,6 +43,8 @@ function PureMultimodalInput({
   setMessages,
   sendMessage,
   className,
+  /** TODO: Temporarily disable file upload button for AI concierge */
+  disableFileUpload = false,
 }: {
   chatId: string;
   input: string;
@@ -56,6 +58,7 @@ function PureMultimodalInput({
   sendMessage: UseChatHelpers<UIMessage>['sendMessage'];
   className?: string;
   showSuggestions?: boolean;
+  disableFileUpload?: boolean;
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const inputWrapperRef = useRef<HTMLDivElement>(null);
@@ -246,6 +249,7 @@ function PureMultimodalInput({
     },
     noClick: true,
     noDragEventsBubbling: true,
+    disabled: disableFileUpload,
   });
 
   const handleRemoveAttachment = (url: string) => {
@@ -371,7 +375,9 @@ function PureMultimodalInput({
           </div>
 
           <div className="absolute bottom-[13px] right-4 flex flex-row items-end justify-end">
-            <AttachmentsButton fileInputRef={fileInputRef} status={status} />
+            {!disableFileUpload && (
+              <AttachmentsButton fileInputRef={fileInputRef} status={status} />
+            )}
 
             {status === 'submitted' || status === 'streaming' ? (
               <StopButton stop={stop} setMessages={setMessages} />
@@ -395,6 +401,8 @@ export const MultimodalInput = memo(
     if (prevProps.input !== nextProps.input) return false;
     if (prevProps.status !== nextProps.status) return false;
     if (!equal(prevProps.attachments, nextProps.attachments)) return false;
+    if (prevProps.disableFileUpload !== nextProps.disableFileUpload)
+      return false;
 
     return true;
   },
