@@ -7,6 +7,8 @@ import { useServices } from '@/features/services/api';
 import { usePaymentMethods } from '@/features/settings/api';
 import { HealthcareService } from '@/types/api';
 
+import { useOnboardingAnalytics } from './use-onboarding-analytics';
+
 type UsePanelPurchaseOptions = {
   serviceName: string;
   onSuccess?: () => void;
@@ -41,6 +43,7 @@ export const usePanelPurchase = ({
   const servicesQuery = useServices({ group });
   const paymentMethodsQuery = usePaymentMethods();
   const createCreditMutation = useCreateCredit();
+  const { trackOnboardingCreditPurchase } = useOnboardingAnalytics();
 
   const isLoading = servicesQuery.isLoading || paymentMethodsQuery.isLoading;
 
@@ -61,10 +64,12 @@ export const usePanelPurchase = ({
     };
   }, [service?.price]);
 
-  const paymentMethodId = useMemo(() => {
+  const firstPaymentMethod = useMemo(() => {
     const methods = paymentMethodsQuery.data?.paymentMethods ?? [];
-    return methods[0]?.externalPaymentMethodId;
+    return methods[0];
   }, [paymentMethodsQuery.data?.paymentMethods]);
+
+  const paymentMethodId = firstPaymentMethod?.externalPaymentMethodId;
 
   // Auto-skip when service is unavailable after loading completes
   useEffect(() => {
@@ -93,13 +98,29 @@ export const usePanelPurchase = ({
           paymentMethodId,
         },
       });
-      toast.success('Purchase successful!');
-      onSuccess?.();
     } catch (error) {
       toast.error('Purchase failed. Please try again later.');
       onError?.();
+      return;
     }
-  }, [service?.id, paymentMethodId, createCreditMutation, onSuccess, onError]);
+
+    trackOnboardingCreditPurchase({
+      credits: [{ id: service.id, price: service.price ?? 0 }],
+      totalValue: service.price ?? 0,
+      paymentProvider: firstPaymentMethod?.paymentProvider ?? 'unknown',
+    });
+    toast.success('Purchase successful!');
+    onSuccess?.();
+  }, [
+    service?.id,
+    service?.price,
+    paymentMethodId,
+    firstPaymentMethod?.paymentProvider,
+    createCreditMutation,
+    trackOnboardingCreditPurchase,
+    onSuccess,
+    onError,
+  ]);
 
   return {
     purchase,

@@ -141,6 +141,7 @@ const OrderButtons = ({ price }: { price: number }) => {
     trackOnboardingCreditPurchase({
       credits: [{ id: 'advanced-panel', price }],
       totalValue: price,
+      paymentProvider: firstPaymentMethod?.paymentProvider ?? 'unknown',
     });
     toast.success('One-time Advanced Panel upgrade successful!');
     next();

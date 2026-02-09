@@ -9,6 +9,7 @@ import { Body1, Body2, H2, H3 } from '@/components/ui/typography';
 import { TOTAL_TOXIN_TEST_ID } from '@/const/services';
 import { useCreateCredit, useCredits } from '@/features/orders/api/credits';
 import { useServices } from '@/features/services/api';
+import { usePaymentMethods } from '@/features/settings/api';
 import { cn } from '@/lib/utils';
 import { HealthcareService } from '@/types/api';
 import { formatMoney } from '@/utils/format-money';
@@ -175,6 +176,7 @@ export const AddOnPanelsStep = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<FilterId>('all');
 
+  const { data: paymentMethodsData } = usePaymentMethods();
   const creditsQuery = useCredits();
   const phlebotomyServicesQuery = useServices({ group: 'phlebotomy' });
   const testKitServicesQuery = useServices({ group: 'test-kit' });
@@ -282,6 +284,8 @@ export const AddOnPanelsStep = () => {
       trackOnboardingCreditPurchase({
         credits: purchasedCredits,
         totalValue: totalPrice,
+        paymentProvider:
+          paymentMethodsData?.paymentMethods?.[0]?.paymentProvider ?? 'unknown',
       });
 
       clear();

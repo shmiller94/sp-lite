@@ -281,6 +281,7 @@ const BundledDiscountContent = () => {
           },
         ],
         totalValue: pricing.price,
+        paymentProvider: firstPaymentMethod?.paymentProvider ?? 'unknown',
       });
 
       toast.success(
