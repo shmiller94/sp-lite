@@ -16,6 +16,12 @@ const createEnv = () => {
       .transform((s) => s === 'true')
       .optional()
       .default('false'),
+    IN_LAB_DISABLED: z
+      .string()
+      .refine((s) => s === 'true' || s === 'false')
+      .transform((s) => s === 'true')
+      .optional()
+      .default('false'),
     APP_URL: z.string().optional().default('http://localhost:3000'),
     WEBSITE_URL: z.string().optional().default('http://localhost:2999'),
     APP_MOCK_API_PORT: z.string().optional().default('8080'),

@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { TextShimmer } from '@/components/ui/text-shimmer';
 import { Body1 } from '@/components/ui/typography';
+import { env } from '@/config/env';
 import { cn } from '@/lib/utils';
 import { PhlebotomyLocation, Slot } from '@/types/api';
 
@@ -172,8 +173,10 @@ function LocationsSchedulerConsumer({
   if (locations.length === 0) {
     return (
       <div className="flex items-center justify-center rounded-xl border border-dashed px-3 py-10">
-        <Body1 className="text-secondary">
-          No locations found for this zip code.
+        <Body1 className="text-center text-secondary">
+          {env.IN_LAB_DISABLED
+            ? "In-lab locations are temporarily unavailable. We're working to get back online shortly. At-home visits are available now."
+            : 'No locations found for this zip code.'}
         </Body1>
       </div>
     );
