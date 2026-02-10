@@ -30,8 +30,8 @@ REQUIRED_VARS=(
 check_vars "${REQUIRED_VARS[@]}"
 
 unset NODE_ENV
-yarn
-REACT_APP_GITHUB_SHA=$VERSION yarn run build
+bun install --frozen-lockfile
+REACT_APP_GITHUB_SHA=$VERSION bun run build
 
 # Packages now live in the root
 #pushd packages/app

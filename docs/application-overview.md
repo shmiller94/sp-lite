@@ -23,22 +23,21 @@ The application contains the following models:
 
 Prerequisites:
 
-- Node 20+
-- Yarn 1.22+
+- Bun 1.3+
 
 To set up the app execute the following commands.
 
 ```bash
 cp .env.example .env
-yarn install
+bun install
 ```
 
-##### `yarn dev`
+##### `bun run dev`
 
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-##### `yarn build`
+##### `bun run build`
 
 Builds the app for production to the `dist` folder.\
 It correctly bundles React in production mode and optimizes the build for the best performance.

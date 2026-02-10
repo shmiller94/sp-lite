@@ -3,16 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "engines": {
-    "node": "20.19.4"
-  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build --base=/",
     "preview": "vite preview",
     "test": "vitest",
-    "test-e2e": "npx pm2 start \"yarn run-mock-server\" --name server && yarn playwright test",
-    "prepare": "husky",
+    "test-e2e": "npx pm2 start \"bun run run-mock-server\" --name server && bun run playwright test",
     "lint": "eslint src --ignore-path .gitignore",
     "check-types": "tsc --project tsconfig.json --pretty --noEmit",
     "generate": "plop",
@@ -122,7 +118,7 @@
     "react-query-auth": "^2.4.3",
     "react-resizable": "^3.0.5",
     "react-router-dom": "^6.23.0",
-    "react-scan": "^0.3.3",
+    "react-scan": "^0.3.6",
     "react-signature-canvas": "^1.0.6",
     "react-textarea-autosize": "^8.5.7",
     "react-tweet": "^3.2.1",
@@ -162,7 +158,7 @@
     "@types/js-cookie": "^3.0.6",
     "@types/katex": "^0.16.7",
     "@types/marked": "^6.0.0",
-    "@types/node": "^20.12.7",
+    "@types/node": "^24.0.0",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.0",
     "@types/react-signature-canvas": "^1.0.5",
@@ -188,11 +184,9 @@
     "eslint-plugin-vitest": "^0.5.4",
     "express": "^4.19.2",
     "globals": "^16.2.0",
-    "husky": "^9.0.11",
     "jest-environment-jsdom": "^29.7.0",
     "js-cookie": "^3.0.5",
     "jsdom": "^24.0.0",
-    "lint-staged": "^15.2.2",
     "msw": "^2.2.14",
     "openapi-typescript": "^7.10.1",
     "pino-http": "^10.1.0",
@@ -211,17 +205,10 @@
     "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^1.5.2"
   },
-  "resolutions": {
+  "overrides": {
     "camera-controls": "3.0.0"
   },
   "msw": {
     "workerDirectory": "public"
-  },
-  "lint-staged": {
-    "*.+(ts|tsx)": [
-      "yarn lint",
-      "bash -c 'yarn check-types'"
-    ]
-  },
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+  }
 }

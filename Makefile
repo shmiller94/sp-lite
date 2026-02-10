@@ -50,7 +50,7 @@ help:
 run: description = Run the app locally
 run: prereq util/k8s/context/dev
 	@bash $(SHARED_SCRIPT) info "Running $@ ..."
-	doppler run --project=superpower-app --config=dev -- yarn run dev
+	doppler run --project=superpower-app --config=dev -- bun run dev
 
 .PHONY: run/skaffold
 run/skaffold: description = Run the app with all dependencies via skaffold
@@ -77,12 +77,13 @@ build/env/dev:
 build/local: description = Build the app locally
 build/local: util/install
 	@bash $(SHARED_SCRIPT) info "Running $@ ..."
-	yarn build
+	bun run build
 
 .PHONY: build/docker/app/dev
 build/docker/app/dev: description = Build app/frontend docker image for dev (minikube)
-build/docker/app/dev:
+build/docker/app/dev: prereq util/login-aws-ecr
 	@bash $(SHARED_SCRIPT) info "Running $@ ..."
+	AWS_ECR_URL=$(AWS_ECR_URL) \
 	VERSION=$(VERSION) \
 	bash ./assets/scripts/build-docker-app.sh dev
 
@@ -122,6 +123,17 @@ build/docker/app/feature: util/login-aws-ecr
 	bash ./assets/scripts/build-docker-app-feature.sh
 
 ### Deploy
+
+.PHONY: deploy/app/dev
+deploy/app/dev: description = Deploy app to dev (minikube)
+deploy/app/dev: prereq util/k8s/context/dev
+	@bash $(SHARED_SCRIPT) info "Running $@ ..."
+	minikube status || minikube start
+	kubectl create namespace superpower --dry-run=client -o yaml | kubectl apply -f -
+	doppler secrets substitute -p superpower-app -c dev deployment/deploy.dev.yaml | \
+	sed "s/__VERSION__/$(VERSION)/g" | \
+	kubectl apply -f -
+	kubectl rollout restart deployment/react-app -n superpower
 
 .PHONY: deploy/app/stg
 deploy/app/stg: description = Deploy app to staging
@@ -238,13 +250,13 @@ test: util/install build/local test/lint test/type-check test/unit
 test/lint: description = Run linting
 test/lint: util/install
 	@echo "Running linting..."
-	yarn lint
+	bun run lint
 
 .PHONY: test/type-check
 test/type-check: description = Run type checks
 test/type-check: util/install
 	@echo "Running type checks..."
-	yarn check-types
+	bun run check-types
 
 .PHONY: test/unit
 test/unit: description = Run unit tests
@@ -255,7 +267,7 @@ test/unit: util/install
 	    cp .env .env.bak; \
 	fi && \
 	cp .env.example .env && \
-	yarn test --run'
+	bun run test --run'
 
 .PHONY: test/e2e
 test/e2e: description = Run end-to-end tests
@@ -267,8 +279,8 @@ test/e2e: util/install
 	fi && \
 	cp .env.example-e2e .env && \
         rm -f mocked-db.json && \
-	yarn playwright install --with-deps && \
-	yarn test-e2e'
+	bun run playwright install --with-deps && \
+	bun run test-e2e'
 
 ### Utility
 
@@ -294,7 +306,22 @@ util/k8s/context/stg:
 .PHONY: util/install
 util/install: description = Fetch and install Node.js dependencies
 util/install:
-	yarn install --network-timeout=1000000
+	bun install --frozen-lockfile
+
+.PHONY: util/dev/start
+util/dev/start: description = Start minikube
+util/dev/start:
+	minikube status || minikube start
+
+.PHONY: util/dev/stop
+util/dev/stop: description = Stop minikube
+util/dev/stop:
+	minikube status && minikube stop
+
+.PHONY: util/dev/reset
+util/dev/reset: description = Reset minikube (delete all imgs, pods, etc)
+util/dev/reset:
+	minikube status && minikube delete
 
 # ------------------- "Hidden" / non-public targets --------------------
 

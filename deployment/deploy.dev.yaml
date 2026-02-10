@@ -20,8 +20,8 @@ spec:
     spec:
       containers:
         - name: react-app
-          image: react-app:latest
-          # imagePullPolicy: Always # or IfNotPresent
+          image: superpower-app:__VERSION__
+          imagePullPolicy: Never
           ports:
             - containerPort: 3000
           env:

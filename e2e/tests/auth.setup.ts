@@ -139,7 +139,7 @@
 //   await page.context().storageState({ path: authFile });
 // });
 
-import { test as setup } from 'playwright/types/test';
+import { test as setup } from '@playwright/test';
 import { expect } from '@playwright/test';
 
 setup('authenticate', async ({ page }) => {});

@@ -49,7 +49,7 @@ if [ "${BUILD_ENV}" == "dev" ]; then
     (eval $(minikube docker-env) && docker build \
         --build-arg CENTRAL_LICENSE_KEY=${CENTRAL_LICENSE_KEY} \
         -t ${SERVICE}:${VERSION} \
-        -f ./deployment/superpower/app/Dockerfile .)
+        -f ./Dockerfile .)
 else
     docker buildx build --push \
         --platform=linux/arm64 \
