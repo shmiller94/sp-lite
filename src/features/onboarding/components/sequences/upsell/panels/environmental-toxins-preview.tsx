@@ -35,9 +35,6 @@ export const EnvironmentalToxinsPreview = () => {
         >
           See testing option
         </Button>
-        <Preview.SkipButton>
-          I&apos;m fine with ignoring this
-        </Preview.SkipButton>
       </Preview.Footer>
     </Preview.Layout>
   );

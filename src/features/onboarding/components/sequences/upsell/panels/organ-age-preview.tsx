@@ -14,7 +14,7 @@ import { Sequence } from '../../../sequence';
  * Desktop: Unconstrained centered image
  */
 export const OrganAgePreview = () => {
-  const { next, skipNext } = useSequence();
+  const { next } = useSequence();
   const { gender } = useGender();
 
   const imageSrc =
@@ -60,14 +60,6 @@ export const OrganAgePreview = () => {
       <Sequence.StepFooter className="flex-col gap-2 md:mx-auto md:mt-6 md:w-full md:max-w-md md:px-0">
         <Button onClick={next} className="w-full">
           Go deeper than biological age
-        </Button>
-        <Button
-          type="button"
-          onClick={skipNext}
-          variant="outline"
-          className="hidden w-full md:block"
-        >
-          I&apos;m fine with ignoring this
         </Button>
       </Sequence.StepFooter>
     </Sequence.StepLayout>

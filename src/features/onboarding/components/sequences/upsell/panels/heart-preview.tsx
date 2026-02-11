@@ -32,9 +32,6 @@ export const HeartPreview = () => {
         >
           See testing options
         </Button>
-        <Preview.SkipButton>
-          I&apos;m fine with ignoring this
-        </Preview.SkipButton>
       </Preview.Footer>
     </Preview.Layout>
   );
