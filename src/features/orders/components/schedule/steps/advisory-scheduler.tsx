@@ -32,9 +32,9 @@ export const AdvisorySchedulerStep = () => {
     return <Body1 className="text-pink-500">No primary address found</Body1>;
   }
 
-  const onSlotUpdate = (selectedSlot: Slot | null, tz?: string) => {
-    if (selectedSlot) updateSlot(selectedSlot);
-    if (tz) updateTz(tz);
+  const handleSelectionChange = (slot: Slot | null, tz: string) => {
+    updateSlot(slot);
+    updateTz(tz);
   };
 
   return (
@@ -47,7 +47,8 @@ export const AdvisorySchedulerStep = () => {
           <Scheduler
             collectionMethod={'AT_HOME'}
             address={addressToUse}
-            onSlotUpdate={onSlotUpdate}
+            selectedSlot={slot}
+            onSlotUpdate={handleSelectionChange}
             isAdvisory={true}
           />
         </div>
