@@ -27,7 +27,11 @@ export const CreditsSelectStep = () => {
     (s) => s,
   );
 
-  const isDisabled = [...selectedCreditIds].length === 0;
+  const [totalTubes, setTotalTubes] = React.useState(0);
+
+  const noneSelected = [...selectedCreditIds].length === 0;
+  const noTubesForPhlebotomy = mode === 'phlebotomy' && totalTubes === 0;
+  const isDisabled = noneSelected || noTubesForPhlebotomy;
   const isTestKit = mode === 'test-kit';
 
   return (
@@ -54,6 +58,7 @@ export const CreditsSelectStep = () => {
         <CreditsSelectContent
           selectedIds={selectedCreditIds}
           setSelectedIds={updateSelectedCreditIds}
+          onTotalTubesChange={setTotalTubes}
         />
       </div>
       <ScheduleFlowFooter nextBtnDisabled={isDisabled} />
@@ -66,6 +71,7 @@ type CreditsSelectContentProps = {
   setSelectedIds: React.Dispatch<React.SetStateAction<Set<string>>>;
   className?: string;
   isLoading?: boolean;
+  onTotalTubesChange?: (totalTubes: number) => void;
 };
 
 const CreditsSelectContent = ({
@@ -73,6 +79,7 @@ const CreditsSelectContent = ({
   setSelectedIds,
   className,
   isLoading = false,
+  onTotalTubesChange,
 }: CreditsSelectContentProps) => {
   const mode = useScheduleStore((s) => s.mode);
   const servicesQuery = useServices({ group: mode, includeUnorderable: true });
@@ -111,8 +118,9 @@ const CreditsSelectContent = ({
       sum += tubeCount;
     });
 
+    onTotalTubesChange?.(sum);
     return sum;
-  }, [selectedIds, uniqueCredits, tubeCountByServiceId]);
+  }, [selectedIds, uniqueCredits, tubeCountByServiceId, onTotalTubesChange]);
 
   const anyWouldExceed = useMemo(() => {
     return services.some((service) => {
