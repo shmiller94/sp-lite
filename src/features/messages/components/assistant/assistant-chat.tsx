@@ -55,6 +55,7 @@ export function AssistantChat({
     () =>
       new DefaultChatTransport({
         api: `${env.API_URL}/chat/chatv2`,
+        credentials: 'include',
         headers: () => {
           const activeLogin = getActiveLogin();
           const accessToken = activeLogin?.accessToken;
