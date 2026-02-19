@@ -2,19 +2,14 @@
 #
 # Usage: make help
 #
-# NOTE: Staging and feature branches are deployed via Vercel.
-#       Production is deployed to AWS CloudFront via `make deploy/app/prd`.
+# Staging and preview deployments are handled automatically by Vercel.
+# Production deployments are promoted via the Vercel dashboard.
 #
 
 export VERSION ?= $(shell git rev-parse --short=7 HEAD)
 export SERVICE = superpower-app
-export ORG = superpowerdotcom
-export USER ?= $(shell whoami)
 
 SHELL := /bin/bash
-AWS_REGION ?= us-east-1
-PRD_DEPLOYMENT_MSG = ":large_green_circle: *[PRD]* Deployment :large_green_circle:"
-SHARED_SCRIPT=./assets/scripts/shared.sh
 
 # Pattern #1 example: "example : description = Description for example target"
 # Pattern #2 example: "### Example separator text
@@ -41,30 +36,25 @@ run:
 .PHONY: build/local
 build/local: description = Build the app locally
 build/local: util/install
-	@bash $(SHARED_SCRIPT) info "Running $@ ..."
 	bun run build
 
 ### Deploy
 
+.PHONY: deploy/app/stg
+deploy/app/stg: description = Deploy app to staging (via Vercel)
+deploy/app/stg:
+	@echo ""
+	@echo "  Staging deploys are automatic -- open a PR and merge to 'main'."
+	@echo "  https://vercel.com/dashboard"
+	@echo ""
+
 .PHONY: deploy/app/prd
-deploy/app/prd: description = Deploy app to prd (production)
+deploy/app/prd: description = Deploy app to production (via Vercel)
 deploy/app/prd:
-	@bash $(SHARED_SCRIPT) info "Checking git branch and working tree ..."
-	@if [ "$$(git rev-parse --abbrev-ref HEAD)" != "main" ]; then \
-		bash $(SHARED_SCRIPT) fatal "Must be on 'main' branch to deploy to production. Current branch: $$(git rev-parse --abbrev-ref HEAD)"; \
-	fi
-	@if [ -n "$$(git status --porcelain)" ]; then \
-		bash $(SHARED_SCRIPT) fatal "Working tree is not clean. Please commit or stash your changes before deploying to production."; \
-	fi
-	@bash $(SHARED_SCRIPT) info "Checking if local main is up to date with origin/main ..."
-	@git fetch origin main --quiet
-	@if [ "$$(git rev-parse HEAD)" != "$$(git rev-parse origin/main)" ]; then \
-		bash $(SHARED_SCRIPT) fatal "Local main is not up to date with origin/main. Please pull the latest changes."; \
-	fi
-	@bash $(SHARED_SCRIPT) info "Deploying app to cloudfront ..."
-	doppler run -p $(SERVICE) -c prd -- sh ./assets/scripts/deploy-app-cloudfront.sh
-	@bash $(SHARED_SCRIPT) info "Creating deployment notification in Slack ..."
-	@TARGET=$@ bash $(SHARED_SCRIPT) notify $(PRD_DEPLOYMENT_MSG)
+	@echo ""
+	@echo "  Production deploys are done by promoting a staging deployment in the Vercel dashboard."
+	@echo "  https://vercel.com/dashboard"
+	@echo ""
 
 ### Test
 
