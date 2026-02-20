@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 import { Pie, PieChart } from 'recharts';
 
 import NumberFlow from '@/components/shared/number-flow';
@@ -54,7 +54,7 @@ export const GaugeChart = ({
     },
   ];
 
-  const textVariants = {
+  const textVariants: Variants = {
     hidden: { opacity: 0, y: 10 },
     visible: {
       opacity: 1,
@@ -67,7 +67,7 @@ export const GaugeChart = ({
     },
   };
 
-  const chartVariants = {
+  const chartVariants: Variants = {
     hidden: { opacity: 0, scale: 0.9 },
     visible: {
       opacity: 1,

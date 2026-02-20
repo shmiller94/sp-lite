@@ -22,7 +22,7 @@ export const ReferralCard: React.FC = () => {
               initial={{ y: 12 }}
               animate={{ y: 0 }}
               transition={{
-                type: 'easeInOut',
+                type: 'spring',
                 stiffness: 220,
                 damping: 20,
                 mass: 0.9,

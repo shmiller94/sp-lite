@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 
 import { SuperpowerLogo } from '@/components/icons/superpower-logo';
 import { ShimmerDune } from '@/components/ui/shimmer-dune';
@@ -12,7 +12,7 @@ import { Sequence } from '../../sequence';
 export const IntroStep = () => {
   const { next } = useSequence();
 
-  const contentVariants = {
+  const contentVariants: Variants = {
     initial: { opacity: 0, filter: 'blur(10px)' },
     animate: {
       opacity: 1,
@@ -25,7 +25,7 @@ export const IntroStep = () => {
     },
   };
 
-  const footerVariants = {
+  const footerVariants: Variants = {
     initial: { opacity: 0 },
     animate: {
       opacity: 1,
@@ -55,25 +55,16 @@ export const IntroStep = () => {
                 maskRepeat: 'no-repeat',
                 WebkitMaskPosition: 'center',
                 maskPosition: 'center',
+                WebkitMaskSize: 'var(--logo-mask-size)',
+                maskSize: 'var(--logo-mask-size)',
               }}
               initial={{
-                WebkitMaskSize: '0% 0%',
-                maskSize: '0% 0%',
+                '--logo-mask-size': '0% 0%',
                 opacity: 0,
                 scale: 0.95,
               }}
               animate={{
-                WebkitMaskSize: [
-                  '0% 0%',
-                  '40% 40%',
-                  '180% 180%',
-                  '220% 220%',
-                  '220% 220%',
-                  '280% 280%',
-                  '350% 350%',
-                  '450% 450%',
-                ],
-                maskSize: [
+                '--logo-mask-size': [
                   '0% 0%',
                   '40% 40%',
                   '180% 180%',

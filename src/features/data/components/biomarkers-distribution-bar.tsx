@@ -15,7 +15,7 @@ type FilterTarget = 'all' | 'optimal' | 'normal' | 'out of range';
 
 type ValueKey = 'total' | 'optimal' | 'normal' | 'outOfRange';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 const BIOMARKER_FILTERS = [
   { target: 'all' as const, label: 'Total', valueKey: 'total' as const },
