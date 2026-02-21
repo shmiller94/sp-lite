@@ -18,12 +18,14 @@ export default function NumberFlow({
   className,
   ...rest
 }: NumberFlowProps) {
-  const [counter, setCounter] = useState<Value>(initialValue ?? 0);
+  const initialCounter = initialValue ?? 0;
+  const [hasMounted, setHasMounted] = useState(() => value === initialCounter);
 
-  // Only update the counter after first render
   useEffect(() => {
-    setCounter(value);
-  }, [value]);
+    setHasMounted(true);
+  }, []);
+
+  const counter: Value = hasMounted ? value : initialCounter;
 
   return (
     <NumberFlowRaw
