@@ -225,20 +225,28 @@ function LocationsSchedulerConsumer({
               Available locations near you
             </Body1>
             <div className="h-[188px] w-full overflow-hidden rounded-2xl">
-              <Map
-                defaultZoom={12}
-                gestureHandling="greedy"
-                disableDefaultUI
-                defaultCenter={locationCenter ? locationCenter : undefined}
-                className="size-full"
-              >
-                {locationRefs.map((lr) => (
-                  <Marker
-                    key={`${lr.lat}-${lr.lng}`}
-                    position={{ lat: lr.lat, lng: lr.lng }}
-                  />
-                ))}
-              </Map>
+              {locationCenter ? (
+                <Map
+                  defaultZoom={12}
+                  gestureHandling="greedy"
+                  disableDefaultUI
+                  defaultCenter={locationCenter}
+                  className="size-full"
+                >
+                  {locationRefs.map((lr) => (
+                    <Marker
+                      key={`${lr.lat}-${lr.lng}`}
+                      position={{ lat: lr.lat, lng: lr.lng }}
+                    />
+                  ))}
+                </Map>
+              ) : (
+                <div className="flex size-full items-center justify-center bg-zinc-100">
+                  <Body1 className="text-secondary">
+                    Map preview unavailable.
+                  </Body1>
+                </div>
+              )}
             </div>
           </div>
 
