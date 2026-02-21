@@ -27,6 +27,9 @@ const LOCATIONS_SCHEDULER_DAY_SKELETON_KEYS = [
 
 const LOCATIONS_SCHEDULER_LOCATION_SKELETON_KEYS = ['loc-1', 'loc-2', 'loc-3'];
 
+const DEFAULT_MAP_CENTER = { lat: 39.8283, lng: -98.5795 };
+const DEFAULT_MAP_ZOOM = 4;
+
 function LocationsSchedulerLoader({ className }: { className?: string }) {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
@@ -197,6 +200,9 @@ function LocationsSchedulerConsumer({
     locationRefs.length > 0
       ? { lat: locationRefs[0].lat, lng: locationRefs[0].lng }
       : undefined;
+  const hasLocationCenter = locationCenter != null;
+  const mapCenter = locationCenter ?? DEFAULT_MAP_CENTER;
+  const mapZoom = hasLocationCenter ? 12 : DEFAULT_MAP_ZOOM;
 
   return (
     <div className={cn('space-y-6', className)}>
@@ -225,28 +231,20 @@ function LocationsSchedulerConsumer({
               Available locations near you
             </Body1>
             <div className="h-[188px] w-full overflow-hidden rounded-2xl">
-              {locationCenter ? (
-                <Map
-                  defaultZoom={12}
-                  gestureHandling="greedy"
-                  disableDefaultUI
-                  defaultCenter={locationCenter}
-                  className="size-full"
-                >
-                  {locationRefs.map((lr) => (
-                    <Marker
-                      key={`${lr.lat}-${lr.lng}`}
-                      position={{ lat: lr.lat, lng: lr.lng }}
-                    />
-                  ))}
-                </Map>
-              ) : (
-                <div className="flex size-full items-center justify-center bg-zinc-100">
-                  <Body1 className="text-secondary">
-                    Map preview unavailable.
-                  </Body1>
-                </div>
-              )}
+              <Map
+                defaultZoom={mapZoom}
+                gestureHandling="greedy"
+                disableDefaultUI
+                defaultCenter={mapCenter}
+                className="size-full"
+              >
+                {locationRefs.map((lr) => (
+                  <Marker
+                    key={`${lr.lat}-${lr.lng}`}
+                    position={{ lat: lr.lat, lng: lr.lng }}
+                  />
+                ))}
+              </Map>
             </div>
           </div>
 
