@@ -48,25 +48,22 @@ export const PdfViewer = ({
   const [containerWidth, setContainerWidth] = useState<number>();
   const firstPageRenderedRef = useRef(false);
 
-  const { mutate: fetchPdf } = useMutation({
+  const { mutate: fetchPdf } = useMutation<Blob, Error, FetchPdfVariables>({
     mutationFn: async ({ url }: FetchPdfVariables) => {
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          return undefined;
-        }
-        return await response.blob();
-      } catch (error) {
-        console.error('Failed to load PDF:', error);
-        return undefined;
-      }
-    },
-    onSuccess: (data) => {
-      if (data == null) {
-        return;
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch PDF (${response.status} ${response.statusText})`,
+        );
       }
 
+      return await response.blob();
+    },
+    onSuccess: (data) => {
       setFile(data);
+    },
+    onError: (error) => {
+      console.error('Failed to load PDF:', error);
     },
   });
 
