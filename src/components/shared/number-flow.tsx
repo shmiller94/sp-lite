@@ -19,7 +19,7 @@ export default function NumberFlow({
   ...rest
 }: NumberFlowProps) {
   const initialCounter = initialValue ?? 0;
-  const [hasMounted, setHasMounted] = useState(() => value === initialCounter);
+  const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
     setHasMounted(true);
