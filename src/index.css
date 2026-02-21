@@ -312,4 +312,11 @@
     transition-delay: 0ms !important;
     scroll-behavior: auto !important;
   }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    transition-duration: 5000s !important;
+  }
 }
