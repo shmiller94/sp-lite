@@ -1,6 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table';
+import { format } from 'date-fns';
 import { ChevronDown, MoreHorizontal } from 'lucide-react';
-import moment from 'moment';
 
 import { Button } from '@/components/ui/button';
 import { ViewPdfDialog } from '@/features/files/components/file-dialogs/view-pdf-dialog';
@@ -85,7 +85,9 @@ export const columns: ColumnDef<File>[] = [
       );
     },
     cell: ({ row }) => {
-      return <div>{moment(row.original.uploadedAt).format('MMM D, YYYY')}</div>;
+      return (
+        <div>{format(new Date(row.original.uploadedAt), 'MMM d, yyyy')}</div>
+      );
     },
   },
   {

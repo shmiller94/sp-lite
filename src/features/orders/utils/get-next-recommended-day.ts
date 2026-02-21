@@ -1,10 +1,14 @@
-import moment from 'moment';
+import { addDays, format, getDay } from 'date-fns';
 
 // It is recommended to take first actions 72 hours before the appointment
 export const getNextRecommendedDay = () => {
-  let nextDay = moment().add(3, 'day');
-  while (nextDay.day() === 0 || nextDay.day() === 6) {
-    nextDay = nextDay.add(1, 'day');
+  let nextDay = addDays(new Date(), 3);
+  let day = getDay(nextDay);
+
+  while (day === 0 || day === 6) {
+    nextDay = addDays(nextDay, 1);
+    day = getDay(nextDay);
   }
-  return nextDay.format('dddd, D MMMM');
+
+  return format(nextDay, 'EEEE, d MMMM');
 };

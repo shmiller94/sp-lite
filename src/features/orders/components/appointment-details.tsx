@@ -1,3 +1,5 @@
+import { TZDateMini, tzName } from '@date-fns/tz';
+import { format } from 'date-fns';
 import {
   MapPin,
   HomeIcon,
@@ -6,7 +8,6 @@ import {
   DollarSign,
   Calendar,
 } from 'lucide-react';
-import moment from 'moment-timezone';
 import React from 'react';
 
 import { PdfFileIcon } from '@/components/icons';
@@ -21,6 +22,7 @@ import { openInMaps } from '@/features/orders/utils/open-in-maps';
 import { CollectionMethodType, Slot, PhlebotomyLocation } from '@/types/api';
 import { isIOS } from '@/utils/browser-detection';
 import { formatMoney } from '@/utils/format-money';
+import { resolveTimeZone } from '@/utils/timezone';
 
 interface AppointmentDetailsProps {
   slot?: Slot;
@@ -86,6 +88,9 @@ export function AppointmentDetails({
     return null;
   }
 
+  const effectiveTimeZone =
+    timezone != null ? resolveTimeZone(timezone) : undefined;
+
   const collectionMethodLabel = (() => {
     if (isAdvisory === true) return 'Video call';
     if (isTestKit === true) return 'Shipping address';
@@ -108,7 +113,7 @@ export function AppointmentDetails({
       <H4>{isTestKit ? 'Shipping details' : 'Appointment details'}</H4>
       <div className="flex flex-col gap-6">
         {orderIds ? <OrderFileLinkFromFiles orderIds={orderIds} /> : null}
-        {slot && timezone ? (
+        {slot && effectiveTimeZone != null ? (
           <div className="flex gap-2">
             <div className="flex size-6 items-center justify-center rounded-full bg-vermillion-100">
               <Calendar className="size-4 text-vermillion-900" />
@@ -126,15 +131,30 @@ export function AppointmentDetails({
                 <div className="space-y-2">
                   <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center">
                     <Body1 className="text-secondary">
-                      {moment(slot.start).tz(timezone).format('MMM Do, YYYY')}
+                      {format(
+                        new TZDateMini(slot.start, effectiveTimeZone),
+                        'MMM do, yyyy',
+                      )}
                     </Body1>
                     <DotIcon
                       fill="currentColor"
                       className="hidden text-zinc-300 sm:block"
                     />
                     <Body1 className="text-secondary">
-                      {moment(slot.start).tz(timezone).format('h:mma')}-{' '}
-                      {moment(slot.end).tz(timezone).format('h:mma z')}
+                      {format(
+                        new TZDateMini(slot.start, effectiveTimeZone),
+                        'h:mmaaa',
+                      )}
+                      -{' '}
+                      {format(
+                        new TZDateMini(slot.end, effectiveTimeZone),
+                        'h:mmaaa',
+                      )}{' '}
+                      {tzName(
+                        effectiveTimeZone,
+                        new TZDateMini(slot.end, effectiveTimeZone),
+                        'short',
+                      )}
                     </Body1>
                   </div>
                   {collectionMethod ? (

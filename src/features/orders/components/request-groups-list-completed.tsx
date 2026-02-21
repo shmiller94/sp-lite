@@ -1,5 +1,5 @@
+import { format } from 'date-fns';
 import { ChevronDown } from 'lucide-react';
-import moment from 'moment-timezone';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -31,12 +31,24 @@ function groupByMonth(items: RequestGroup[]): Group[] {
 
   for (const rg of items) {
     const ts = getCompletedTimestamp(rg);
-    const bucket = ts ? moment(ts).format('YYYY-MM') : 'unknown';
+    let bucket = 'unknown';
+
+    if (ts != null) {
+      const date = new Date(ts);
+      if (!Number.isNaN(date.getTime())) {
+        bucket = format(date, 'yyyy-MM');
+      }
+    }
+
     if (!groups[bucket]) groups[bucket] = [];
     groups[bucket].push(rg);
   }
 
-  return Object.values(groups).map((value) => ({ items: value }));
+  const result: Group[] = [];
+  for (const value of Object.values(groups)) {
+    result.push({ items: value });
+  }
+  return result;
 }
 
 export const CompletedRequestGroupsList = () => {
@@ -70,14 +82,22 @@ export const CompletedRequestGroupsList = () => {
         <div className="space-y-6">
           {visibleGroups.map((group) => {
             const ts = getCompletedTimestamp(group.items[0]);
+            let monthLabel = 'Unknown';
+            let yearLabel = '';
+
+            if (ts != null) {
+              const date = new Date(ts);
+              if (!Number.isNaN(date.getTime())) {
+                monthLabel = format(date, 'MMMM');
+                yearLabel = format(date, 'yyyy');
+              }
+            }
 
             return (
               <div key={ts} className="space-y-2">
                 <H4>
-                  {moment(ts).format('MMMM')}{' '}
-                  <span className="text-secondary">
-                    {moment(ts).format('YYYY')}
-                  </span>
+                  {monthLabel}{' '}
+                  <span className="text-secondary">{yearLabel}</span>
                 </H4>
                 <div className="grid gap-5">
                   <RequestGroupCard requestGroups={group.items} />
@@ -91,14 +111,22 @@ export const CompletedRequestGroupsList = () => {
           <div className="mt-6 space-y-6">
             {restGroups.map((group) => {
               const ts = getCompletedTimestamp(group.items[0]);
+              let monthLabel = 'Unknown';
+              let yearLabel = '';
+
+              if (ts != null) {
+                const date = new Date(ts);
+                if (!Number.isNaN(date.getTime())) {
+                  monthLabel = format(date, 'MMMM');
+                  yearLabel = format(date, 'yyyy');
+                }
+              }
 
               return (
                 <div key={ts} className="space-y-2">
                   <H4>
-                    {moment(ts).format('MMMM')}{' '}
-                    <span className="text-secondary">
-                      {moment(ts).format('YYYY')}
-                    </span>
+                    {monthLabel}{' '}
+                    <span className="text-secondary">{yearLabel}</span>
                   </H4>
                   <div className="grid gap-5">
                     <RequestGroupCard requestGroups={group.items} />

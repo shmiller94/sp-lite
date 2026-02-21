@@ -1,9 +1,10 @@
-import moment, { Moment } from 'moment';
-import 'moment-timezone';
+import { TZDateMini, type TZDate } from '@date-fns/tz';
+import { isAfter } from 'date-fns';
 import { createStore } from 'zustand';
 
 import { api } from '@/lib/api-client';
 import { Address, CollectionMethodType, Slot } from '@/types/api';
+import { resolveTimeZone } from '@/utils/timezone';
 
 const URL = '/phlebotomy/availability';
 
@@ -21,15 +22,16 @@ export interface SchedulerStore extends SchedulerProps {
   error: string | null;
   tz: string;
   fetchSlots: () => Promise<void>;
-  selectedDay: Moment | undefined;
-  updateSelectedDay: (day: Moment | undefined) => void;
-  startRange: Moment | undefined;
-  updateStartRange: (date: Moment) => void;
+  selectedDay: TZDate | undefined;
+  updateSelectedDay: (day: TZDate | undefined) => void;
+  startRange: TZDate | undefined;
+  updateStartRange: (date: TZDate) => void;
 }
 
 export type SchedulerStoreApi = ReturnType<typeof schedulerStoreCreator>;
 
 export const schedulerStoreCreator = (initProps: SchedulerProps) => {
+  const initialTimeZone = resolveTimeZone(undefined);
   const DEFAULT_PROPS: SchedulerProps = {
     onSlotUpdate: initProps.onSlotUpdate,
     collectionMethod: initProps.collectionMethod,
@@ -40,7 +42,7 @@ export const schedulerStoreCreator = (initProps: SchedulerProps) => {
   return createStore<SchedulerStore>()((set, get) => ({
     ...DEFAULT_PROPS,
     slots: [],
-    tz: moment.tz.guess(),
+    tz: initialTimeZone,
     loading: false,
     error: null,
     fetchSlots: async () => {
@@ -56,24 +58,45 @@ export const schedulerStoreCreator = (initProps: SchedulerProps) => {
           await api.post(URL, {
             collectionMethod,
             address,
-            start: startRange ? startRange.toDate() : new Date(),
+            start: startRange ? new Date(startRange.getTime()) : new Date(),
             isAdvisory,
           });
 
-        const tz = response.timezone ?? state.tz;
+        const tz = resolveTimeZone(response.timezone ?? state.tz);
 
         // find earliest slot to set initial startRange
         const allSlots = response.slots;
-        let newStartRange = state.startRange;
+        let newStartRange = state.startRange
+          ? new TZDateMini(state.startRange.getTime(), tz)
+          : undefined;
 
         if (allSlots.length > 0) {
-          const earliestSlot = allSlots.reduce((min, slot) => {
-            return moment(slot.start).isBefore(moment(min.start)) ? slot : min;
-          }, allSlots[0]);
+          let earliestSlot = allSlots[0];
+          let earliestStartTime = new Date(earliestSlot.start).getTime();
 
-          const earliestMoment = moment.utc(earliestSlot.start).tz(tz);
-          if (earliestMoment.isAfter(newStartRange)) {
-            newStartRange = earliestMoment;
+          for (const slot of allSlots) {
+            const slotStartTime = new Date(slot.start).getTime();
+
+            if (Number.isNaN(slotStartTime)) {
+              continue;
+            }
+
+            if (
+              Number.isNaN(earliestStartTime) ||
+              slotStartTime < earliestStartTime
+            ) {
+              earliestSlot = slot;
+              earliestStartTime = slotStartTime;
+            }
+          }
+
+          const earliestStart = new Date(earliestSlot.start);
+          if (!Number.isNaN(earliestStart.getTime())) {
+            const earliestInTz = new TZDateMini(earliestStart.getTime(), tz);
+
+            if (newStartRange == null || isAfter(earliestInTz, newStartRange)) {
+              newStartRange = earliestInTz;
+            }
           }
         }
 
@@ -91,9 +114,8 @@ export const schedulerStoreCreator = (initProps: SchedulerProps) => {
       }
     },
     selectedDay: undefined,
-    updateSelectedDay: (day) =>
-      set((state) => ({ ...state, selectedDay: day })),
-    startRange: moment().tz(moment.tz.guess()),
+    updateSelectedDay: (day) => set({ selectedDay: day }),
+    startRange: new TZDateMini(Date.now(), initialTimeZone),
     updateStartRange: (date) => {
       set({ startRange: date, selectedDay: undefined });
       get().fetchSlots();

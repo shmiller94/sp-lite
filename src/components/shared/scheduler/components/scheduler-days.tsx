@@ -1,5 +1,5 @@
-import { Moment } from 'moment';
-import 'moment-timezone';
+import type { TZDate } from '@date-fns/tz';
+
 import { Skeleton } from '@/components/ui/skeleton';
 import { Body1 } from '@/components/ui/typography';
 import { Slot } from '@/types/api';
@@ -11,12 +11,12 @@ import { SchedulerDaySlot } from './scheduler-day-slot';
 
 interface SchedulerDaysProps {
   slots: Slot[];
-  startRange?: Moment;
+  startRange?: TZDate;
   loading: boolean;
-  selectedDay?: Moment;
+  selectedDay?: TZDate;
   tz: string;
   numDays?: number;
-  onDaySelect: (day: Moment) => void;
+  onDaySelect: (day: TZDate) => void;
 }
 
 export const SchedulerDays = ({
@@ -41,29 +41,36 @@ export const SchedulerDays = ({
     );
   }
 
+  const skeletonNodes: JSX.Element[] = [];
+  if (loading) {
+    for (let i = 0; i < numDays; i++) {
+      skeletonNodes.push(
+        <Skeleton className="h-[70px] w-full rounded-xl" key={i} />,
+      );
+    }
+  }
+
+  const dayNodes: JSX.Element[] = [];
+  if (renderDays) {
+    for (const day of dayArray(startRange, numDays)) {
+      dayNodes.push(
+        <div key={day.toISOString()} className="flex w-full">
+          <SchedulerDaySlot
+            day={day}
+            selectedDay={selectedDay}
+            slots={slots}
+            tz={tz}
+            onDaySelect={onDaySelect}
+          />
+        </div>,
+      );
+    }
+  }
+
   return (
     <div className="flex justify-start gap-2 overflow-x-auto">
-      {loading &&
-        Array(numDays)
-          .fill(0)
-          .map((_, indx) => (
-            <Skeleton className="h-[70px] w-full rounded-xl" key={indx} />
-          ))}
-      {renderDays
-        ? dayArray(startRange, numDays).map((day: Moment): JSX.Element => {
-            return (
-              <div key={day.format()} className="flex w-full">
-                <SchedulerDaySlot
-                  day={day}
-                  selectedDay={selectedDay}
-                  slots={slots}
-                  tz={tz}
-                  onDaySelect={onDaySelect}
-                />
-              </div>
-            );
-          })
-        : null}
+      {skeletonNodes}
+      {dayNodes}
     </div>
   );
 };

@@ -1,4 +1,5 @@
-import moment from 'moment';
+import { TZDateMini } from '@date-fns/tz';
+import { format } from 'date-fns';
 import { useState } from 'react';
 
 import { AIIcon } from '@/components/icons/ai-icon';
@@ -150,7 +151,10 @@ export const ProtocolTabs = ({
             <div className="flex flex-wrap items-center gap-2">
               {/* Server renders in UTC, we should be consistent with this */}
               <Body2 className="m-0 leading-none text-zinc-400">
-                {moment.utc(protocol.created).format('MMM Do, YYYY')}
+                {format(
+                  new TZDateMini(protocol.created, 'UTC'),
+                  'MMM do, yyyy',
+                )}
               </Body2>
               <div className="-mt-px size-[3px] rounded-full bg-zinc-400" />
               <div className="flex items-center gap-1">
@@ -198,8 +202,9 @@ export const ProtocolTabs = ({
                       date={
                         isMobile
                           ? undefined
-                          : moment(historicalProtocol.created).format(
-                              'DD MMM, YYYY',
+                          : format(
+                              new Date(historicalProtocol.created),
+                              'dd MMM, yyyy',
                             )
                       }
                       // TODO: figure out image when there are > 1 supporting info elements
@@ -209,7 +214,10 @@ export const ProtocolTabs = ({
                   <div className="lg:hidden">
                     <Body2>{historicalProtocol.title}</Body2>
                     <Body2 className="text-secondary">
-                      {moment(historicalProtocol.created).format('DD MMM YYYY')}
+                      {format(
+                        new Date(historicalProtocol.created),
+                        'dd MMM yyyy',
+                      )}
                     </Body2>
                     {supportingInfo.length > 0 && (
                       <Body2 className="text-secondary">

@@ -1,4 +1,4 @@
-import moment from 'moment';
+import { format } from 'date-fns';
 import { useParams, useSearchParams } from 'react-router';
 
 import { ChevronLeft } from '@/components/icons/chevron-left-icon';
@@ -134,7 +134,7 @@ export const ProtocolOverview = ({
         </div>
         {id && (
           <Body2 className="text-secondary">
-            {moment(protocol.created).format('MMMM DD, YYYY')}
+            {format(new Date(protocol.created), 'MMMM dd, yyyy')}
           </Body2>
         )}
       </div>
@@ -146,7 +146,7 @@ export const ProtocolOverview = ({
             <H3>{name}</H3>
             {id && (
               <Body2 className="text-secondary">
-                {moment(protocol.created).format('MMMM DD, YYYY')}
+                {format(new Date(protocol.created), 'MMMM dd, yyyy')}
               </Body2>
             )}
           </div>

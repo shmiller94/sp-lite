@@ -1,14 +1,15 @@
-import moment, { Moment } from 'moment/moment';
+import type { TZDate } from '@date-fns/tz';
+import { addDays, isBefore } from 'date-fns';
 
-export const dayArray = (start: Moment, numDays: number): Moment[] => {
-  const days: moment.Moment[] = [];
+export const dayArray = (start: TZDate, numDays: number): TZDate[] => {
+  const days: TZDate[] = [];
   let day = start;
 
-  const end = start.clone().add(numDays, 'days');
+  const end = addDays(start, numDays);
 
-  while (day.isBefore(end)) {
+  while (isBefore(day, end)) {
     days.push(day);
-    day = day.clone().add(1, 'd');
+    day = addDays(day, 1);
   }
 
   return days;

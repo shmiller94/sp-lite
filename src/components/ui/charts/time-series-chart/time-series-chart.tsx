@@ -1,5 +1,5 @@
 import NumberFlow from '@number-flow/react';
-import moment from 'moment';
+import { format } from 'date-fns';
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router';
@@ -522,8 +522,9 @@ export const TimeSeriesChart = ({
                     {displayedPoint.value.toFixed(2)} {biomarker.unit}
                   </div>
                   <div className="text-muted-foreground">
-                    {moment(displayedPoint.timestamp).format('MMM DD, YYYY')} (
-                    <span className="capitalize">{displayedPoint.source}</span>)
+                    {format(new Date(displayedPoint.timestamp), 'MMM dd, yyyy')}{' '}
+                    (<span className="capitalize">{displayedPoint.source}</span>
+                    )
                   </div>
                 </div>
               </div>

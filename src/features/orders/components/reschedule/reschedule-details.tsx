@@ -1,5 +1,5 @@
+import { format } from 'date-fns';
 import { Calendar, CalendarX, ChevronRight } from 'lucide-react';
-import moment from 'moment';
 import { Dispatch, SetStateAction } from 'react';
 
 import { ProgressiveImage } from '@/components/ui/progressive-image';
@@ -65,8 +65,9 @@ export function RescheduleDetails({
                     </div>
                     {requestGroup.startTimestamp ? (
                       <Body1>
-                        {moment(requestGroup.startTimestamp).format(
-                          'MMM Do, YYYY',
+                        {format(
+                          new Date(requestGroup.startTimestamp),
+                          'MMM do, yyyy',
                         )}
                       </Body1>
                     ) : (
@@ -99,7 +100,7 @@ export function RescheduleDetails({
             <div className="flex flex-col justify-between md:flex-row md:items-center">
               <Body1>Purchase date</Body1>
               <Body1 className="text-secondary">
-                {moment(requestGroup.createdAt).format('MMM Do, YYYY')}
+                {format(new Date(requestGroup.createdAt), 'MMM do, yyyy')}
               </Body1>
             </div>
           ) : null}

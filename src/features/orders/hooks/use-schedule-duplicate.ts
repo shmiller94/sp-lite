@@ -1,8 +1,10 @@
-import moment from 'moment-timezone';
+import { TZDateMini } from '@date-fns/tz';
+import { format } from 'date-fns';
 import { useMemo } from 'react';
 
 import { ADVANCED_BLOOD_PANEL, SUPERPOWER_BLOOD_PANEL } from '@/const';
 import { Credit, RequestGroup } from '@/types/api';
+import { resolveTimeZone } from '@/utils/timezone';
 
 import { useOrders } from '../api';
 import { useCredits } from '../api/credits';
@@ -71,12 +73,18 @@ export const useScheduleDuplicate = () => {
     return best;
   }, [requestGroups, slot?.start, selectedServiceNamesSet]);
 
-  const dupeDate =
-    nearestMatchingDupe?.startTimestamp && nearestMatchingDupe?.timezone
-      ? moment(nearestMatchingDupe.startTimestamp)
-          .tz(nearestMatchingDupe.timezone)
-          .format('MMM D, YYYY')
-      : null;
+  let dupeDate: string | null = null;
+
+  if (
+    nearestMatchingDupe?.startTimestamp != null &&
+    nearestMatchingDupe?.timezone != null
+  ) {
+    const timeZone = resolveTimeZone(nearestMatchingDupe.timezone);
+    dupeDate = format(
+      new TZDateMini(nearestMatchingDupe.startTimestamp, timeZone),
+      'MMM d, yyyy',
+    );
+  }
 
   return {
     dupeDate,

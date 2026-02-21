@@ -1,5 +1,7 @@
-import moment from 'moment';
-import 'moment-timezone';
+import { TZDateMini, tzName } from '@date-fns/tz';
+import { format } from 'date-fns';
+
+import { resolveTimeZone } from '@/utils/timezone';
 
 export interface TimestampDisplayProps {
   timestamp: Date;
@@ -12,17 +14,14 @@ export function TimestampDisplay({
   timezone,
   dayOnly = false,
 }: TimestampDisplayProps): JSX.Element {
-  if (!timestamp) return <></>;
+  if (timestamp == null) return <></>;
 
-  if (!timezone || !isValidTimeZone(timezone)) {
-    timezone = moment.tz.guess();
-  }
+  const timeZone = resolveTimeZone(timezone);
+  const dateInTz = new TZDateMini(timestamp.getTime(), timeZone);
 
   return (
     <span className="flex">
-      <span className="line-clamp-1">
-        {moment(timestamp).tz(timezone).format('MMM D, YYYY')}
-      </span>
+      <span className="line-clamp-1">{format(dateInTz, 'MMM d, yyyy')}</span>
       {!dayOnly && (
         <>
           <svg
@@ -33,21 +32,10 @@ export function TimestampDisplay({
             <circle cx={1} cy={1} r={1} />
           </svg>
           <span className="line-clamp-1">
-            {moment(timestamp).tz(timezone).format('h:mm a z')}
+            {format(dateInTz, 'h:mm aaa')} {tzName(timeZone, dateInTz, 'short')}
           </span>
         </>
       )}
     </span>
   );
-}
-
-function isValidTimeZone(tz: string) {
-  if (!moment) throw Error('MomentJS is not loaded.');
-
-  try {
-    const exists = moment.tz.zone(tz);
-    return exists !== null;
-  } catch (ex) {
-    return false;
-  }
 }

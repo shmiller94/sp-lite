@@ -1,9 +1,10 @@
-import moment, { Moment } from 'moment';
-import 'moment-timezone';
+import { TZDateMini, type TZDate } from '@date-fns/tz';
+import { format, isAfter } from 'date-fns';
 import { createStore } from 'zustand';
 
 import { api } from '@/lib/api-client';
 import { PhlebotomyLocation, Slot } from '@/types/api';
+import { resolveTimeZone } from '@/utils/timezone';
 
 const URL = '/phlebotomy/search';
 
@@ -24,10 +25,10 @@ export interface LocationsSchedulerStore extends LocationsSchedulerProps {
   tz: string;
   postalCode: string | undefined;
   fetchLocations: (postalCode: string) => Promise<void>;
-  selectedDay: Moment | undefined;
-  updateSelectedDay: (day: Moment | undefined) => void;
-  startRange: Moment | undefined;
-  updateStartRange: (date: Moment) => void;
+  selectedDay: TZDate | undefined;
+  updateSelectedDay: (day: TZDate | undefined) => void;
+  startRange: TZDate | undefined;
+  updateStartRange: (date: TZDate) => void;
   getAllSlots: () => Slot[];
 }
 
@@ -38,6 +39,8 @@ export type LocationsSchedulerStoreApi = ReturnType<
 export const locationsSchedulerStoreCreator = (
   initProps: LocationsSchedulerProps,
 ) => {
+  const initialTimeZone = resolveTimeZone(undefined);
+
   return createStore<LocationsSchedulerStore>()((set, get) => ({
     onSelectionChange: initProps.onSelectionChange,
     selectedLocation: initProps.selectedLocation ?? null,
@@ -45,15 +48,17 @@ export const locationsSchedulerStoreCreator = (
     locations: [],
     loading: false,
     error: null,
-    tz: moment.tz.guess(),
+    tz: initialTimeZone,
     postalCode: '',
     selectedDay: undefined,
-    startRange: moment().tz(moment.tz.guess()),
+    startRange: new TZDateMini(Date.now(), initialTimeZone),
     fetchLocations: async (postalCode: string) => {
       const state = get();
 
       const startRange = state.startRange;
-      const start = startRange ? startRange.format('YYYY-MM-DD') : new Date();
+      const start = startRange
+        ? format(startRange, 'yyyy-MM-dd')
+        : format(new TZDateMini(Date.now(), state.tz), 'yyyy-MM-dd');
 
       state.onSelectionChange?.(null, null, state.tz);
 
@@ -63,20 +68,35 @@ export const locationsSchedulerStoreCreator = (
         const response: { locations: PhlebotomyLocation[]; timezone?: string } =
           await api.get(`${URL}?postalCode=${postalCode}&start=${start}`);
 
-        const tz = response.timezone ?? get().tz;
+        const tz = resolveTimeZone(response.timezone ?? get().tz);
 
         // find earliest slot to set initial startRange
-        const allSlots = response.locations.flatMap((loc) => loc.slots);
-        let newStartRange = get().startRange;
+        const previousStartRange = get().startRange;
+        let newStartRange = previousStartRange
+          ? new TZDateMini(previousStartRange.getTime(), tz)
+          : undefined;
 
-        if (allSlots.length > 0) {
-          const earliestSlot = allSlots.reduce((min, slot) => {
-            return moment(slot.start).isBefore(moment(min.start)) ? slot : min;
-          }, allSlots[0]);
+        let earliestStartTime: number | null = null;
 
-          const earliestMoment = moment.utc(earliestSlot.start).tz(tz);
-          if (earliestMoment.isAfter(newStartRange)) {
-            newStartRange = earliestMoment;
+        for (const location of response.locations) {
+          for (const slot of location.slots) {
+            const slotStartTime = new Date(slot.start).getTime();
+            if (Number.isNaN(slotStartTime)) continue;
+
+            if (
+              earliestStartTime === null ||
+              slotStartTime < earliestStartTime
+            ) {
+              earliestStartTime = slotStartTime;
+            }
+          }
+        }
+
+        if (earliestStartTime !== null) {
+          const earliestInTz = new TZDateMini(earliestStartTime, tz);
+
+          if (newStartRange == null || isAfter(earliestInTz, newStartRange)) {
+            newStartRange = earliestInTz;
           }
         }
 
@@ -102,7 +122,15 @@ export const locationsSchedulerStoreCreator = (
       }
     },
     getAllSlots: () => {
-      return get().locations.flatMap((loc) => loc.slots);
+      const allSlots: Slot[] = [];
+
+      for (const loc of get().locations) {
+        for (const slot of loc.slots) {
+          allSlots.push(slot);
+        }
+      }
+
+      return allSlots;
     },
   }));
 };

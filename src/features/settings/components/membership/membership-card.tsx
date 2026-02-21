@@ -1,5 +1,5 @@
 import { cva } from 'class-variance-authority';
-import moment from 'moment';
+import { format } from 'date-fns';
 
 import { Hover3D } from '@/components/ui/hover-3d';
 import { H2 } from '@/components/ui/typography';
@@ -80,7 +80,7 @@ export const MembershipCard = (): JSX.Element => {
           <div className="relative z-10 flex flex-row justify-between gap-8">
             <div className="flex items-end">
               <span className="text-sm text-white xs:text-lg">
-                Since {moment(createdAt).format('YYYY')}
+                Since {format(new Date(createdAt), 'yyyy')}
               </span>
             </div>
             <BiologicalAgeInfo />

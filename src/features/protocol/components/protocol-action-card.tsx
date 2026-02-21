@@ -1,6 +1,6 @@
 import { cva, VariantProps } from 'class-variance-authority';
+import { format } from 'date-fns';
 import { ChevronRight } from 'lucide-react';
-import moment from 'moment';
 
 import { Link } from '@/components/ui/link';
 import { Body1, Body2 } from '@/components/ui/typography';
@@ -57,7 +57,7 @@ export const ProtocolActionCard = ({
 
           {carePlan.created ? (
             <Body2 className="text-zinc-600">
-              {moment(carePlan.created).format('MMM D, YYYY')}
+              {format(new Date(carePlan.created), 'MMM d, yyyy')}
             </Body2>
           ) : null}
         </div>

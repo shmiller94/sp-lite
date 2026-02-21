@@ -1,7 +1,8 @@
-import moment from 'moment';
+import { tzName } from '@date-fns/tz';
+
+import { resolveTimeZone } from '@/utils/timezone';
 
 import { getFullTimezoneName } from '../utils/get-full-timezone-name';
-import 'moment-timezone';
 
 interface TestCase {
   timezone: string;
@@ -114,11 +115,8 @@ describe('getFullTimezoneName', () => {
 
   testCases.forEach(({ timezone, date, expectedFullName }) => {
     it(`should return "${expectedFullName}" for timezone "${timezone}" at date "${date}"`, () => {
-      // Create a Moment object in the specified timezone and date
-      const startRange = moment.tz(date, timezone);
-
-      // Extract the timezone abbreviation using format('z')
-      const abbreviation = startRange.format('z');
+      const timeZone = resolveTimeZone(timezone);
+      const abbreviation = tzName(timeZone, new Date(date), 'short');
 
       // Call the function with the abbreviation
       const fullName = getFullTimezoneName(abbreviation);

@@ -1,4 +1,5 @@
-import moment from 'moment-timezone';
+import { TZDateMini } from '@date-fns/tz';
+import { format } from 'date-fns';
 import React from 'react';
 import { useNavigate } from 'react-router';
 
@@ -14,6 +15,7 @@ import {
 } from '@/types/api';
 import { formatMoney } from '@/utils/format-money';
 import { getServiceImage } from '@/utils/service';
+import { resolveTimeZone } from '@/utils/timezone';
 
 import { useServices } from '../../services/api';
 
@@ -57,10 +59,14 @@ function RequestGroupItems({
   services: HealthcareService[];
   onManage: () => void;
 }) {
-  const scheduledForWithTz =
-    group.startTimestamp && group.timezone
-      ? moment(group.startTimestamp).tz(group.timezone).format('MMM D, YYYY')
-      : undefined;
+  let scheduledForWithTz: string | undefined = undefined;
+  if (group.startTimestamp != null && group.timezone != null) {
+    const timeZone = resolveTimeZone(group.timezone);
+    scheduledForWithTz = format(
+      new TZDateMini(group.startTimestamp, timeZone),
+      'MMM d, yyyy',
+    );
+  }
 
   const isCompleted = group.status === OrderStatus.completed;
 
@@ -94,10 +100,11 @@ function RequestItemRow({
   onManage?: () => void;
   scheduledFor?: string;
 }) {
-  const timezone = order.timezone ?? moment.tz.guess();
-  const createdWithTz = order.createdAt
-    ? moment(order.createdAt).tz(timezone).format('MMM D, YYYY')
-    : undefined;
+  const timeZone = resolveTimeZone(order.timezone);
+  const createdWithTz =
+    order.createdAt == null
+      ? undefined
+      : format(new TZDateMini(order.createdAt, timeZone), 'MMM d, yyyy');
   const price = services.find((s) => s.id === order.serviceId)?.price;
 
   return (

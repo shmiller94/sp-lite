@@ -1,4 +1,5 @@
-import moment from 'moment-timezone';
+import { TZDateMini } from '@date-fns/tz';
+import { format } from 'date-fns';
 
 import { Body2 } from '@/components/ui/typography';
 import { cn } from '@/lib/utils';
@@ -27,7 +28,6 @@ export const SchedulerTimeSlot = ({
           ? 'border-vermillion-900 shadow-lg shadow-vermillion-900/10'
           : '',
       )}
-      key={timeSlot.start}
       onClick={() => onSlotSelect(timeSlot)}
       role="presentation"
     >
@@ -37,5 +37,8 @@ export const SchedulerTimeSlot = ({
 };
 
 const timeRangeText = (slot: Slot, tz: string): string => {
-  return `${moment(slot.start).tz(tz).format('h:mma')} — ${moment(slot.end).tz(tz).format('h:mma')}`;
+  const start = new TZDateMini(slot.start, tz);
+  const end = new TZDateMini(slot.end, tz);
+
+  return `${format(start, 'h:mmaaa')} — ${format(end, 'h:mmaaa')}`;
 };

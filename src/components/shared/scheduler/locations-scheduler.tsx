@@ -1,4 +1,6 @@
+import { TZDateMini } from '@date-fns/tz';
 import { Map, Marker } from '@vis.gl/react-google-maps';
+import { isSameDay } from 'date-fns';
 import { useEffect, useMemo, useState } from 'react';
 
 import { Skeleton } from '@/components/ui/skeleton';
@@ -138,26 +140,34 @@ function LocationsSchedulerConsumer({
   } = useLocationsScheduler((s) => s);
 
   useEffect(() => {
-    if (postalCode) {
-      fetchLocations(postalCode);
-    }
+    if (postalCode === '') return;
+    fetchLocations(postalCode);
   }, [postalCode, fetchLocations]);
 
   const allSlots = getAllSlots();
 
   // locations to only show those with slots on the selected day
   const filteredLocations = useMemo(() => {
-    if (!selectedDay) return [];
+    if (selectedDay == null) return [];
 
-    return locations
-      .map((location) => ({
-        ...location,
-        slots: location.slots.filter((slot) =>
-          selectedDay.isSame(slot.start, 'day'),
-        ),
-      }))
-      .filter((location) => location.slots.length > 0);
-  }, [locations, selectedDay]);
+    const nextLocations: PhlebotomyLocation[] = [];
+
+    for (const location of locations) {
+      const daySlots: Slot[] = [];
+
+      for (const slot of location.slots) {
+        const slotStart = new TZDateMini(slot.start, tz);
+        if (isSameDay(selectedDay, slotStart)) {
+          daySlots.push(slot);
+        }
+      }
+
+      if (daySlots.length === 0) continue;
+      nextLocations.push({ ...location, slots: daySlots });
+    }
+
+    return nextLocations;
+  }, [locations, selectedDay, tz]);
 
   const handleSelectionClear = () => {
     updateSelectedDay(undefined);
@@ -191,7 +201,7 @@ function LocationsSchedulerConsumer({
   const locationRefs: Array<{ lng: number; lat: number }> = [];
 
   for (const l of locations) {
-    if (l.lng && l.lat) {
+    if (l.lng != null && l.lat != null) {
       locationRefs.push({ lng: l.lng, lat: l.lat });
     }
   }
@@ -203,6 +213,28 @@ function LocationsSchedulerConsumer({
   const hasLocationCenter = locationCenter != null;
   const mapCenter = locationCenter ?? DEFAULT_MAP_CENTER;
   const mapZoom = hasLocationCenter ? 12 : DEFAULT_MAP_ZOOM;
+
+  const locationMarkerNodes: JSX.Element[] = [];
+  for (const lr of locationRefs) {
+    locationMarkerNodes.push(
+      <Marker
+        key={`${lr.lat}-${lr.lng}`}
+        position={{ lat: lr.lat, lng: lr.lng }}
+      />,
+    );
+  }
+
+  const filteredLocationNodes: JSX.Element[] = [];
+  for (const location of filteredLocations) {
+    filteredLocationNodes.push(
+      <SchedulerLocation
+        key={location.address.id}
+        location={location}
+        selectedLocation={selectedLocation}
+        selectedSlot={selectedSlot}
+      />,
+    );
+  }
 
   return (
     <div className={cn('space-y-6', className)}>
@@ -224,7 +256,7 @@ function LocationsSchedulerConsumer({
         />
       </div>
 
-      {selectedDay && (
+      {selectedDay != null && (
         <div className="space-y-6">
           <div className="space-y-4">
             <Body1 className="text-secondary">
@@ -238,12 +270,7 @@ function LocationsSchedulerConsumer({
                 defaultCenter={mapCenter}
                 className="size-full"
               >
-                {locationRefs.map((lr) => (
-                  <Marker
-                    key={`${lr.lat}-${lr.lng}`}
-                    position={{ lat: lr.lat, lng: lr.lng }}
-                  />
-                ))}
+                {locationMarkerNodes}
               </Map>
             </div>
           </div>
@@ -255,16 +282,7 @@ function LocationsSchedulerConsumer({
               </Body1>
             </div>
           ) : (
-            <div className="space-y-3">
-              {filteredLocations.map((location) => (
-                <SchedulerLocation
-                  key={location.address.id}
-                  location={location}
-                  selectedLocation={selectedLocation}
-                  selectedSlot={selectedSlot}
-                />
-              ))}
-            </div>
+            <div className="space-y-3">{filteredLocationNodes}</div>
           )}
         </div>
       )}

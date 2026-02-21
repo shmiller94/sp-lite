@@ -1,5 +1,14 @@
+import { TZDateMini, type TZDate } from '@date-fns/tz';
+import {
+  addDays,
+  format,
+  isAfter,
+  isBefore,
+  startOfDay,
+  startOfISOWeek,
+  subDays,
+} from 'date-fns';
 import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
-import moment from 'moment-timezone';
 import { useState } from 'react';
 import { useLocation } from 'react-router';
 
@@ -19,10 +28,10 @@ import { DEFAULT_DAYS_RANGE } from '../const';
 import { RangeSelectButton } from './range-select-button';
 
 interface SchedulerHeadingProps {
-  startRange?: moment.Moment;
+  startRange?: TZDate;
   tz: string;
   loading: boolean;
-  onRangeChange: (newRange: moment.Moment) => void;
+  onRangeChange: (newRange: TZDate) => void;
   onSelectionClear: () => void;
 }
 
@@ -35,50 +44,50 @@ export const SchedulerHeading = ({
 }: SchedulerHeadingProps) => {
   const { pathname } = useLocation();
 
-  const currentWeekStart = moment().tz(tz).startOf('isoWeek');
-  const isAtInitialWeek = startRange
-    ? startRange.clone().startOf('isoWeek').isSameOrBefore(currentWeekStart)
-    : true;
+  const startRangeInTz =
+    startRange?.timeZone === tz
+      ? startRange
+      : startRange
+        ? new TZDateMini(startRange.getTime(), tz)
+        : undefined;
+
+  const currentWeekStart = startOfISOWeek(new TZDateMini(Date.now(), tz));
+  const isAtInitialWeek =
+    startRangeInTz == null
+      ? true
+      : !isAfter(startOfISOWeek(startRangeInTz), currentWeekStart);
 
   const handlePrev = () => {
-    if (!startRange || isAtInitialWeek) return;
+    if (startRangeInTz == null || isAtInitialWeek) return;
 
-    const today = moment().tz(tz).startOf('day');
-    const target = startRange
-      .clone()
-      .startOf('isoWeek')
-      .subtract(DEFAULT_DAYS_RANGE, 'days')
-      .tz(tz);
+    const today = startOfDay(new TZDateMini(Date.now(), tz));
+    const target = subDays(startOfISOWeek(startRangeInTz), DEFAULT_DAYS_RANGE);
 
     // don't go before today
-    const finalTarget = target.isBefore(today) ? today : target;
+    const finalTarget = isBefore(target, today) ? today : target;
 
-    onRangeChange(finalTarget);
+    onRangeChange(new TZDateMini(finalTarget.getTime(), tz));
     onSelectionClear();
   };
 
   const handleNext = () => {
-    if (!startRange) return;
+    if (startRangeInTz == null) return;
 
-    const target = startRange
-      .clone()
-      .startOf('isoWeek')
-      .add(DEFAULT_DAYS_RANGE, 'days')
-      .tz(tz);
+    const target = addDays(startOfISOWeek(startRangeInTz), DEFAULT_DAYS_RANGE);
 
-    onRangeChange(target);
+    onRangeChange(new TZDateMini(target.getTime(), tz));
     onSelectionClear();
   };
 
   const [open, setOpen] = useState(false);
 
   // tomorrow is the earliest selectable date
-  const tomorrow = moment().tz(tz).add(1, 'day').startOf('day').toDate();
+  const tomorrow = startOfDay(addDays(new TZDateMini(Date.now(), tz), 1));
 
   const handleCalendarSelect = (date: Date | undefined) => {
-    if (!date) return;
+    if (date == null) return;
 
-    const selected = moment(date).tz(tz);
+    const selected = new TZDateMini(date.getTime(), tz);
     onRangeChange(selected);
     onSelectionClear();
     setOpen(false);
@@ -102,9 +111,11 @@ export const SchedulerHeading = ({
               className="group flex items-center gap-1 p-0"
             >
               <H4>
-                {startRange?.tz(tz).format('MMMM')}{' '}
+                {startRangeInTz != null ? format(startRangeInTz, 'MMMM') : null}{' '}
                 <span className="text-secondary">
-                  {startRange?.tz(tz).format('YYYY')}
+                  {startRangeInTz != null
+                    ? format(startRangeInTz, 'yyyy')
+                    : null}
                 </span>
               </H4>
               <ChevronDown
@@ -119,6 +130,7 @@ export const SchedulerHeading = ({
               showOutsideDays
               captionLayout="dropdown"
               disabled={{ before: tomorrow }}
+              timeZone={tz}
               onSelect={handleCalendarSelect}
             />
           </PopoverContent>
@@ -126,9 +138,9 @@ export const SchedulerHeading = ({
       ) : (
         <div className="px-2 py-1">
           <Body1 className="text-sm text-primary sm:text-base">
-            {startRange?.tz(tz).format('MMMM')}{' '}
+            {startRangeInTz != null ? format(startRangeInTz, 'MMMM') : null}{' '}
             <span className="text-secondary">
-              {startRange?.tz(tz).format('YYYY')}
+              {startRangeInTz != null ? format(startRangeInTz, 'yyyy') : null}
             </span>
           </Body1>
         </div>

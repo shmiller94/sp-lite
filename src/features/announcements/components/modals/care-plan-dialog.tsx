@@ -1,4 +1,5 @@
-import moment from 'moment';
+import { TZDateMini } from '@date-fns/tz';
+import { format } from 'date-fns';
 import { useNavigate } from 'react-router';
 
 import { Button } from '@/components/ui/button';
@@ -19,7 +20,7 @@ export const CarePlanDialog = ({ open, onOpenChange }: CarePlanDialogProps) => {
 
   const startDate = latestPlan?.period?.start;
   const formattedDate = startDate
-    ? moment.utc(startDate).format('MMM DD, YYYY')
+    ? format(new TZDateMini(startDate, 'UTC'), 'MMM dd, yyyy')
     : '';
 
   const { track } = useAnalytics();

@@ -1,5 +1,5 @@
+import { format } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import moment from 'moment';
 import { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -99,7 +99,7 @@ export const TimestampCarousel = ({
   onTimestampChange,
 }: TimestampCarouselProps) => {
   const formatTimestamp = (timestamp: string) => {
-    return moment(timestamp).format('MMM D, YYYY');
+    return format(new Date(timestamp), 'MMM d, yyyy');
   };
 
   return (

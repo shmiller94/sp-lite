@@ -1,11 +1,16 @@
-import moment, { Moment } from 'moment/moment';
+import { TZDateMini, type TZDate } from '@date-fns/tz';
+import { isSameDay } from 'date-fns';
 
 import { Slot } from '@/types/api';
 
-export const dayCount = (day: Moment, slots: Slot[]): number => {
+export const dayCount = (day: TZDate, slots: Slot[]): number => {
+  const timeZone = day.timeZone;
+  if (timeZone == null) return 0;
+
   let numSlots = 0;
   for (const slot of slots) {
-    if (day.isSame(moment(slot.start), 'day')) {
+    const slotStart = new TZDateMini(slot.start, timeZone);
+    if (isSameDay(day, slotStart)) {
       numSlots++;
     }
   }

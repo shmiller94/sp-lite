@@ -1,5 +1,6 @@
+import { TZDateMini } from '@date-fns/tz';
+import { format } from 'date-fns';
 import { CornerUpRight } from 'lucide-react';
-import moment from 'moment-timezone';
 import { useState } from 'react';
 
 import { Body2, Body1, Body3 } from '@/components/ui/typography';
@@ -29,13 +30,13 @@ export const SchedulerLocation = ({
     selectedLocation?.address.id === location.address.id;
   const isWalkIn = !location.capabilities.includes('APPOINTMENT_SCHEDULING');
 
-  const streetAddress = location.address.line.map((line) => line).join(', ');
+  const streetAddress = location.address.line.join(', ');
   const city = location.address.city;
 
   const locationDetails = `${streetAddress}, ${city}`;
 
   const handleSlotClick = (slot: Slot) => {
-    if (!onSelectionChange) return;
+    if (onSelectionChange == null) return;
 
     if (isLocationSelected && selectedSlot?.start === slot.start) {
       onSelectionChange(null, null, tz);
@@ -51,8 +52,38 @@ export const SchedulerLocation = ({
   };
 
   const formatTimeSlot = (slot: Slot) => {
-    return `${moment(slot.start).tz(tz).format('h:mma')} — ${moment(slot.end).tz(tz).format('h:mma')}`;
+    const start = new TZDateMini(slot.start, tz);
+    const end = new TZDateMini(slot.end, tz);
+
+    return `${format(start, 'h:mmaaa')} — ${format(end, 'h:mmaaa')}`;
   };
+
+  const slotNodes: JSX.Element[] = [];
+  for (const slot of location.slots) {
+    const isSelected = isLocationSelected && selectedSlot?.start === slot.start;
+
+    slotNodes.push(
+      <div
+        key={slot.start}
+        className={cn(
+          'cursor-pointer text-nowrap rounded-xl border bg-white px-3 py-2 transition-all duration-200',
+          isSelected
+            ? 'border-vermillion-900 shadow-lg shadow-vermillion-900/10'
+            : 'hover:border-zinc-300',
+        )}
+        onClick={() => handleSlotClick(slot)}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            handleSlotClick(slot);
+          }
+        }}
+      >
+        <Body2>{formatTimeSlot(slot)}</Body2>
+      </div>,
+    );
+  }
 
   return (
     <div className="space-y-4 rounded-[20px] border bg-white p-3">
@@ -83,32 +114,7 @@ export const SchedulerLocation = ({
       {location.slots.length > 0 && (
         <div>
           <div className="flex flex-nowrap gap-2 overflow-x-auto sm:flex-wrap">
-            {location.slots.map((slot) => {
-              const isSelected =
-                isLocationSelected && selectedSlot?.start === slot.start;
-
-              return (
-                <div
-                  key={slot.start}
-                  className={cn(
-                    'cursor-pointer text-nowrap rounded-xl border bg-white px-3 py-2 transition-all duration-200',
-                    isSelected
-                      ? 'border-vermillion-900 shadow-lg shadow-vermillion-900/10'
-                      : 'hover:border-zinc-300',
-                  )}
-                  onClick={() => handleSlotClick(slot)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      handleSlotClick(slot);
-                    }
-                  }}
-                >
-                  <Body2>{formatTimeSlot(slot)}</Body2>
-                </div>
-              );
-            })}
+            {slotNodes}
           </div>
         </div>
       )}

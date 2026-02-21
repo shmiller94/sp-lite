@@ -1,4 +1,5 @@
-import moment from 'moment';
+import { TZDateMini } from '@date-fns/tz';
+import { addDays, addHours, addMinutes, startOfDay } from 'date-fns';
 import { http, HttpResponse } from 'msw';
 
 import { env } from '@/config/env';
@@ -19,36 +20,35 @@ export const phlebotomyHandlers = [
       // const data = (await request.json()) as AvailabilityBody;
 
       // Assuming today's date, and the time slot is fixed from 5 AM to 5:30 AM
-      const todayStart = moment()
-        .utc()
-        .add(1, 'days')
-        .startOf('day')
-        .hour(40)
-        .minute(0)
-        .second(0); // Set to +40hours at 5 AM
-      const todayEnd = moment(todayStart).add(30, 'minutes'); // 30 minutes later, at 5:30 AM
+      const tomorrowUtc = addDays(new TZDateMini(Date.now(), 'UTC'), 1);
+      const slotStartUtc = addHours(startOfDay(tomorrowUtc), 5);
+      const slotEndUtc = addMinutes(slotStartUtc, 30);
 
       const slot = {
-        start: todayStart.toISOString(),
-        end: todayEnd.toISOString(),
+        start: slotStartUtc.toISOString(),
+        end: slotEndUtc.toISOString(),
       };
 
       const slots: { start: string; end: string }[] = [];
 
       slots.push(slot);
 
-      const convertedSlots = slots.map((slot) => {
-        const startInPhoenix = moment
-          .tz(slot.start, 'America/Phoenix')
-          .toDate();
-        const endInPhoenix = moment.tz(slot.end, 'America/Phoenix').toDate();
+      const convertedSlots: Array<{
+        start: Date;
+        end: Date;
+        status: 'free';
+      }> = [];
 
-        return {
+      for (const slot of slots) {
+        const startInPhoenix = new TZDateMini(slot.start, 'America/Phoenix');
+        const endInPhoenix = new TZDateMini(slot.end, 'America/Phoenix');
+
+        convertedSlots.push({
           start: startInPhoenix,
           end: endInPhoenix,
           status: 'free',
-        };
-      });
+        });
+      }
 
       return HttpResponse.json({
         slots: convertedSlots,

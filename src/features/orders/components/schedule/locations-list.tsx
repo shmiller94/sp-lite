@@ -1,5 +1,6 @@
+import { TZDateMini } from '@date-fns/tz';
+import { format } from 'date-fns';
 import { CornerUpRight } from 'lucide-react';
-import moment from 'moment-timezone';
 
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -18,6 +19,7 @@ import { PhlebotomyLocation, Slot } from '@/types/api';
 import { isIOS } from '@/utils/browser-detection';
 import { formatAddress, toTitleCase } from '@/utils/format';
 import { formatDistanceText } from '@/utils/format-distance';
+import { resolveTimeZone } from '@/utils/timezone';
 
 import { useScheduleStore } from '../../stores/schedule-store';
 import { openInMaps } from '../../utils/open-in-maps';
@@ -188,34 +190,35 @@ const LocationSlots = ({
   timezone?: string;
 }) => {
   const { slot, updateSlot } = useScheduleStore((s) => s);
-  return (
-    <div className="flex gap-2 overflow-x-auto">
-      {slots.map((s) => {
-        const isSelected = slot?.start === s.start;
+  if (timezone == null) return null;
 
-        const timeRangeText = timezone
-          ? `${moment(s.start).tz(timezone).format('h:mma')} - ${moment(s.end).tz(timezone).format('h:mma')}`
-          : undefined;
+  const timeZone = resolveTimeZone(timezone);
+  const slotNodes: JSX.Element[] = [];
 
-        if (!timeRangeText) return;
+  for (const s of slots) {
+    const isSelected = slot?.start === s.start;
 
-        return (
-          <button
-            key={s.start}
-            type="button"
-            onClick={() => updateSlot(s)}
-            className={cn(
-              'space-y-1 rounded-xl border bg-white p-3 text-left transition',
-              'hover:bg-zinc-50',
-              isSelected ? 'border-vermillion-900' : null,
-            )}
-          >
-            <Body2 className="text-nowrap">{timeRangeText}</Body2>
-          </button>
-        );
-      })}
-    </div>
-  );
+    const start = new TZDateMini(s.start, timeZone);
+    const end = new TZDateMini(s.end, timeZone);
+    const timeRangeText = `${format(start, 'h:mmaaa')} - ${format(end, 'h:mmaaa')}`;
+
+    slotNodes.push(
+      <button
+        key={s.start}
+        type="button"
+        onClick={() => updateSlot(s)}
+        className={cn(
+          'space-y-1 rounded-xl border bg-white p-3 text-left transition',
+          'hover:bg-zinc-50',
+          isSelected ? 'border-vermillion-900' : null,
+        )}
+      >
+        <Body2 className="text-nowrap">{timeRangeText}</Body2>
+      </button>,
+    );
+  }
+
+  return <div className="flex gap-2 overflow-x-auto">{slotNodes}</div>;
 };
 
 export const LocationListSkeleton = () => {
