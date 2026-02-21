@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMapsLibrary } from '@vis.gl/react-google-maps';
 import { AnimatePresence, motion } from 'framer-motion';
-import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
+import { forwardRef, useMemo, useRef, useState } from 'react';
 import * as React from 'react';
 
 import { Input } from '@/components/ui/input';
@@ -87,9 +87,18 @@ export const AddressAutocomplete = forwardRef<
     },
     ref,
   ) => {
+    interface HighlightedIndexState {
+      predictionsKey: string;
+      index: number;
+    }
+
     const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
     const [isFocused, setIsFocused] = useState(false);
-    const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
+    const [highlightedIndexState, setHighlightedIndexState] =
+      useState<HighlightedIndexState>({
+        predictionsKey: '',
+        index: -1,
+      });
     const isSelectingRef = useRef(false);
     const listboxId = React.useId();
     const places = useMapsLibrary('places');
@@ -146,10 +155,17 @@ export const AddressAutocomplete = forwardRef<
 
     // Reset highlighted index when predictions change
     // Use place_ids to detect actual content changes, not just length
-    const predictionsKey = placePredictions.map((p) => p.place_id).join(',');
-    useEffect(() => {
-      setHighlightedIndex(-1);
-    }, [predictionsKey]);
+    let predictionsKey = '';
+    for (const prediction of placePredictions) {
+      if (predictionsKey.length > 0) {
+        predictionsKey += ',';
+      }
+      predictionsKey += prediction.place_id;
+    }
+    const highlightedIndex =
+      highlightedIndexState.predictionsKey === predictionsKey
+        ? highlightedIndexState.index
+        : -1;
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
       // Don't handle keyboard navigation when dropdown is hidden or loading
@@ -165,15 +181,25 @@ export const AddressAutocomplete = forwardRef<
       switch (e.key) {
         case 'ArrowDown':
           e.preventDefault();
-          setHighlightedIndex((prev) =>
-            prev < placePredictions.length - 1 ? prev + 1 : 0,
-          );
+          setHighlightedIndexState((prev) => {
+            const prevIndex =
+              prev.predictionsKey === predictionsKey ? prev.index : -1;
+            return {
+              predictionsKey,
+              index: prevIndex < placePredictions.length - 1 ? prevIndex + 1 : 0,
+            };
+          });
           break;
         case 'ArrowUp':
           e.preventDefault();
-          setHighlightedIndex((prev) =>
-            prev > 0 ? prev - 1 : placePredictions.length - 1,
-          );
+          setHighlightedIndexState((prev) => {
+            const prevIndex =
+              prev.predictionsKey === predictionsKey ? prev.index : -1;
+            return {
+              predictionsKey,
+              index: prevIndex > 0 ? prevIndex - 1 : placePredictions.length - 1,
+            };
+          });
           break;
         case 'Enter':
           // Only prevent default if we have a highlighted item to select
@@ -326,7 +352,9 @@ export const AddressAutocomplete = forwardRef<
                               onClick={() => {
                                 handleSelect(option.place_id);
                               }}
-                              onMouseEnter={() => setHighlightedIndex(index)}
+                              onMouseEnter={() => {
+                                setHighlightedIndexState({ predictionsKey, index });
+                              }}
                               className={cn(
                                 'flex w-full cursor-pointer flex-col items-start rounded-[10px] px-[28px] py-4 data-[disabled]:pointer-events-auto data-[disabled]:opacity-100 hover:rounded-[10px] hover:bg-zinc-50',
                                 isHighlighted || isSelected
