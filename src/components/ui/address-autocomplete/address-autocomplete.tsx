@@ -28,6 +28,11 @@ type PlacePrediction = {
   };
 };
 
+interface HighlightedIndexState {
+  predictionsKey: string;
+  index: number;
+}
+
 /**
  * Note: this intentionally copies input values of
  * ControllerRenderProps<FieldValues, string>
@@ -87,11 +92,6 @@ export const AddressAutocomplete = forwardRef<
     },
     ref,
   ) => {
-    interface HighlightedIndexState {
-      predictionsKey: string;
-      index: number;
-    }
-
     const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
     const [isFocused, setIsFocused] = useState(false);
     const [highlightedIndexState, setHighlightedIndexState] =
@@ -153,8 +153,8 @@ export const AddressAutocomplete = forwardRef<
       placeholderData: (previousData) => previousData, // Keep previous data while fetching
     });
 
-    // Reset highlighted index when predictions change
-    // Use place_ids to detect actual content changes, not just length
+    // Derive highlighted index from a key of prediction place_id values
+    // This effectively resets the index to -1 when that list changes
     let predictionsKey = '';
     for (const prediction of placePredictions) {
       if (predictionsKey.length > 0) {
@@ -186,7 +186,8 @@ export const AddressAutocomplete = forwardRef<
               prev.predictionsKey === predictionsKey ? prev.index : -1;
             return {
               predictionsKey,
-              index: prevIndex < placePredictions.length - 1 ? prevIndex + 1 : 0,
+              index:
+                prevIndex < placePredictions.length - 1 ? prevIndex + 1 : 0,
             };
           });
           break;
@@ -197,7 +198,8 @@ export const AddressAutocomplete = forwardRef<
               prev.predictionsKey === predictionsKey ? prev.index : -1;
             return {
               predictionsKey,
-              index: prevIndex > 0 ? prevIndex - 1 : placePredictions.length - 1,
+              index:
+                prevIndex > 0 ? prevIndex - 1 : placePredictions.length - 1,
             };
           });
           break;
@@ -353,7 +355,10 @@ export const AddressAutocomplete = forwardRef<
                                 handleSelect(option.place_id);
                               }}
                               onMouseEnter={() => {
-                                setHighlightedIndexState({ predictionsKey, index });
+                                setHighlightedIndexState({
+                                  predictionsKey,
+                                  index,
+                                });
                               }}
                               className={cn(
                                 'flex w-full cursor-pointer flex-col items-start rounded-[10px] px-[28px] py-4 data-[disabled]:pointer-events-auto data-[disabled]:opacity-100 hover:rounded-[10px] hover:bg-zinc-50',
