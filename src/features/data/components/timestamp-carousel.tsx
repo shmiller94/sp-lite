@@ -51,6 +51,25 @@ const CarouselContent = ({
     };
   }, [emblaMainApi, onSelect, timestamps.length]);
 
+  const timestampNodes: JSX.Element[] = [];
+  const seen = new Map<string, number>();
+
+  for (let i = timestamps.length - 1; i >= 0; i--) {
+    const timestamp = timestamps[i];
+    const count = seen.get(timestamp) ?? 0;
+    seen.set(timestamp, count + 1);
+
+    const key = count === 0 ? timestamp : `${timestamp}__${count}`;
+
+    timestampNodes.push(
+      <SliderMainItem key={key} className="basis-1/3">
+        <Body1 className="text-center text-sm text-zinc-500 transition-colors">
+          {formatTimestamp(timestamp)}
+        </Body1>
+      </SliderMainItem>,
+    );
+  }
+
   return (
     <div className="relative px-8">
       <Button
@@ -71,15 +90,7 @@ const CarouselContent = ({
             'linear-gradient(to right, transparent, black 10%, black 90%, transparent 100%)',
         }}
       >
-        {timestamps.toReversed().map((timestamp, index) => (
-          <SliderMainItem key={index} className="basis-1/3">
-            <Body1
-              className={'text-center text-sm text-zinc-500 transition-colors'}
-            >
-              {formatTimestamp(timestamp)}
-            </Body1>
-          </SliderMainItem>
-        ))}
+        {timestampNodes}
       </CarouselMainContainer>
       <Button
         variant="ghost"

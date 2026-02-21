@@ -1,4 +1,4 @@
-import type { TZDate } from '@date-fns/tz';
+import { TZDateMini, type TZDate } from '@date-fns/tz';
 
 import { Skeleton } from '@/components/ui/skeleton';
 import { Body1 } from '@/components/ui/typography';
@@ -43,9 +43,15 @@ export const SchedulerDays = ({
 
   const skeletonNodes: JSX.Element[] = [];
   if (loading) {
-    for (let i = 0; i < numDays; i++) {
+    const skeletonStart =
+      startRange == null ? new TZDateMini(Date.now(), tz) : startRange;
+
+    for (const day of dayArray(skeletonStart, numDays)) {
       skeletonNodes.push(
-        <Skeleton className="h-[70px] w-full rounded-xl" key={i} />,
+        <Skeleton
+          className="h-[70px] w-full rounded-xl"
+          key={day.toISOString()}
+        />,
       );
     }
   }

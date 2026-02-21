@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { m } from 'framer-motion';
 import { AlertCircle, ArrowRight, Check } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -101,7 +101,13 @@ const UpdateInfoContent = () => {
   const { next } = useOnboardingNavigation();
   const { data: claimedBenefitsData } = useGetBenefitClaims();
   const hasClaimedBenefits = (claimedBenefitsData?.length ?? 0) > 0;
-  const userHasGenderSet = user?.gender === 'MALE' || user?.gender === 'FEMALE';
+
+  let defaultGender: 'MALE' | 'FEMALE' | undefined = undefined;
+  if (user?.gender === 'MALE' || user?.gender === 'FEMALE') {
+    defaultGender = user.gender;
+  }
+
+  const userHasGenderSet = defaultGender != null;
   const { needsBackup } = useNeedsBackupPaymentMethod();
   const {
     handleAddPaymentMethod,
@@ -119,7 +125,7 @@ const UpdateInfoContent = () => {
     defaultValues: {
       firstName: user?.firstName,
       lastName: user?.lastName,
-      gender: userHasGenderSet ? (user.gender as 'MALE' | 'FEMALE') : undefined,
+      gender: defaultGender,
       address: user?.primaryAddress
         ? {
             line1: user.primaryAddress.line?.[0] ?? undefined,
@@ -131,12 +137,6 @@ const UpdateInfoContent = () => {
         : undefined,
     },
   });
-
-  useEffect(() => {
-    if (userHasGenderSet) {
-      form.setValue('gender', user.gender as 'MALE' | 'FEMALE');
-    }
-  }, [userHasGenderSet, user?.gender, form]);
 
   const updateUserMutation = useUpdateUser();
   const addAddressMutation = useCreateAddress();

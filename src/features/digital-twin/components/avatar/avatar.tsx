@@ -40,13 +40,17 @@ export const Avatar = ({
     }
   }, [modelUrl]);
 
-  const [textures, setTextures] = useState<any>(null);
+  const [texturesState, setTexturesState] = useState<{
+    model: string;
+    textures: any;
+  } | null>(null);
+
+  const textures =
+    texturesState?.model === model ? texturesState.textures : null;
 
   // progressive texture loading: base first for fast paint, rest in batches
   useEffect(() => {
     let cancelled = false;
-
-    setTextures(null);
 
     // load base texture first
     loadBaseTexture({
@@ -57,7 +61,7 @@ export const Avatar = ({
       },
     }).then((base) => {
       if (cancelled) return;
-      setTextures(base);
+      setTexturesState({ model, textures: base });
 
       // then background-load the rest in small batches
       loadRemainingTextures({
@@ -68,7 +72,16 @@ export const Avatar = ({
         },
       }).then((rest) => {
         if (cancelled) return;
-        setTextures((prev: any) => ({ ...(prev || {}), ...rest }));
+        setTexturesState((prev) => {
+          const prevModel = prev?.model;
+          const prevTextures = prev?.textures;
+
+          if (prevModel !== model) {
+            return { model, textures: { ...base, ...rest } };
+          }
+
+          return { model, textures: { ...(prevTextures ?? {}), ...rest } };
+        });
       });
     });
 

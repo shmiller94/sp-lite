@@ -266,14 +266,14 @@ export const TimeSeriesChart = ({
 
   const handlePreviousPage = useCallback(() => {
     if (currentPage < meta.totalPages - 1) {
-      setCurrentPage(currentPage + 1);
+      setCurrentPage((prev) => prev + 1);
       setDisplayedPoint(null);
     }
   }, [currentPage, meta.totalPages]);
 
   const handleNextPage = useCallback(() => {
     if (currentPage > 0) {
-      setCurrentPage(currentPage - 1);
+      setCurrentPage((prev) => prev - 1);
       setDisplayedPoint(null);
     }
   }, [currentPage]);

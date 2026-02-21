@@ -51,20 +51,6 @@ export const LoginForm = ({
     onSuccess: onSuccessWithPassword,
   });
 
-  const sendMagicLinkMutation = useSendMagicLink({
-    mutationConfig: {
-      onSuccess: () => {
-        const email = form.getValues('email');
-        onSuccessWithMagicLink(email);
-      },
-      onError: () => {
-        // Toast will error with message automatically
-        //  We'll switch to password if magic link fails
-        setLoginMode('password');
-      },
-    },
-  });
-
   // Switch the resolver based on the active mode so validation matches the
   // fields we render (email-only for magic link, email+password otherwise).
   const form = useForm<LoginInput>({
@@ -77,10 +63,25 @@ export const LoginForm = ({
     },
   });
 
-  useEffect(() => {
+  const setLoginModeWithReset = (nextMode: 'magic-link' | 'password') => {
     const email = form.getValues('email');
     form.reset({ email, password: '' });
-  }, [form, loginMode]);
+    setLoginMode(nextMode);
+  };
+
+  const sendMagicLinkMutation = useSendMagicLink({
+    mutationConfig: {
+      onSuccess: () => {
+        const email = form.getValues('email');
+        onSuccessWithMagicLink(email);
+      },
+      onError: () => {
+        // Toast will error with message automatically
+        // We'll switch to password if magic link fails
+        setLoginModeWithReset('password');
+      },
+    },
+  });
 
   useEffect(() => {
     if (defaultEmail) {
@@ -179,7 +180,7 @@ export const LoginForm = ({
                 <>
                   <button
                     type="button"
-                    onClick={() => setLoginMode('password')}
+                    onClick={() => setLoginModeWithReset('password')}
                     className="text-sm font-normal text-vermillion-900 hover:underline"
                   >
                     Sign in with password instead.
@@ -200,7 +201,7 @@ export const LoginForm = ({
                   </div>
                   <button
                     type="button"
-                    onClick={() => setLoginMode('magic-link')}
+                    onClick={() => setLoginModeWithReset('magic-link')}
                     className="text-sm font-normal text-vermillion-900 hover:underline"
                   >
                     Sign in with magic link.
