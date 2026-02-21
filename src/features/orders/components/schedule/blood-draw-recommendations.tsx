@@ -37,7 +37,9 @@ export const BloodDrawRecommendations = () => {
         }}
       >
         <SheetContent className="flex max-h-full flex-col rounded-t-[10px] p-6">
-          <SheetTitle className="sr-only">Recommendations for testing</SheetTitle>
+          <SheetTitle className="sr-only">
+            Recommendations for testing
+          </SheetTitle>
           <SheetDescription className="sr-only">
             Book your test on or after {recommendedDay} for the most accurate
             results.
@@ -56,7 +58,9 @@ export const BloodDrawRecommendations = () => {
       }}
     >
       <DialogContent className="w-full max-w-[592px] gap-0 p-10">
-        <DialogTitle className="sr-only">Recommendations for testing</DialogTitle>
+        <DialogTitle className="sr-only">
+          Recommendations for testing
+        </DialogTitle>
         <DialogDescription className="sr-only">
           Book your test on or after {recommendedDay} for the most accurate
           results.
