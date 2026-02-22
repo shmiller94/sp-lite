@@ -190,9 +190,9 @@ export const RangeStack = ({
       height={svgHeight}
       className="overflow-visible"
     >
-      {segments.map((segment, index) => (
+      {segments.map((segment) => (
         <rect
-          key={index}
+          key={`${segment.color}-${segment.y}-${segment.height}`}
           x={0}
           y={segment.y}
           width={CHART_CONFIG.VERTICAL_WIDTH}

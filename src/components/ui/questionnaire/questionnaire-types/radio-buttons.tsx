@@ -82,14 +82,14 @@ export function RadioButtons({
         }}
         name={item.linkId}
       >
-        {formattedOptions.map(([optionName, optionValue], index) => (
+        {formattedOptions.map(([optionName, optionValue]) => (
           <div
             className={cn(
               'relative flex items-center space-x-1 overflow-hidden rounded-xl bg-white py-4 outline-none ring-0 transition-all hover:bg-zinc-50 focus-visible:ring-2 focus-visible:ring-secondary',
               selectedAnswer === optionValue.value && 'ring-2 ring-black',
             )}
             data-radio-group={item.linkId}
-            key={index}
+            key={optionName}
             role="radio"
             tabIndex={0}
             aria-checked={optionName === answerLinkId}

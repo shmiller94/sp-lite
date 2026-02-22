@@ -1,13 +1,24 @@
 import { m, type Variants } from 'framer-motion';
-import { Pie, PieChart } from 'recharts';
+import { lazy } from 'react';
 
 import NumberFlow from '@/components/shared/number-flow';
-import { ChartConfig, ChartContainer } from '@/components/ui/chart';
 import { STATUS_TO_COLOR } from '@/const/status-to-color';
 import { cn } from '@/lib/utils';
 import { getStatusForScore } from '@/utils/get-status-for-score';
 
-type GaugeChartProps = {
+import { ChartConfig, ChartContainer } from '../../chart';
+
+const LazyPieChart = lazy(async () => {
+  const mod = await import('recharts');
+  return { default: mod.PieChart };
+});
+
+const LazyPie = lazy(async () => {
+  const mod = await import('recharts');
+  return { default: mod.Pie };
+});
+
+interface GaugeChartProps {
   gaugePrimaryColor?: string;
   gaugeSecondaryColor?: string;
   labelColor?: string;
@@ -15,7 +26,7 @@ type GaugeChartProps = {
   richColors?: boolean;
   value: number;
   animate?: boolean;
-};
+}
 
 export const GaugeChart = ({
   gaugePrimaryColor = 'white',
@@ -34,22 +45,28 @@ export const GaugeChart = ({
     },
   } satisfies ChartConfig;
 
+  let richColor: string | undefined;
+  if (richColors) {
+    if (status === 'LOW') {
+      richColor = STATUS_TO_COLOR.low;
+    } else if (status === 'NORMAL') {
+      richColor = STATUS_TO_COLOR.normal;
+    } else if (status === 'OPTIMAL') {
+      richColor = STATUS_TO_COLOR.optimal;
+    }
+  }
+
+  const primaryFill = richColor ?? gaugePrimaryColor;
+  const secondaryFill = richColor ?? gaugeSecondaryColor;
+
   const data = [
     {
       score: value,
-      fill: richColors
-        ? STATUS_TO_COLOR[
-            status.toLocaleLowerCase() as keyof typeof STATUS_TO_COLOR
-          ]
-        : gaugePrimaryColor,
+      fill: primaryFill,
     },
     {
       score: 100 - value,
-      fill: richColors
-        ? STATUS_TO_COLOR[
-            status.toLocaleLowerCase() as keyof typeof STATUS_TO_COLOR
-          ]
-        : gaugeSecondaryColor,
+      fill: secondaryFill,
       opacity: 0.3,
     },
   ];
@@ -94,17 +111,16 @@ export const GaugeChart = ({
       >
         <ChartContainer config={chartConfig} className="size-full">
           {/* This is hack: https://github.com/recharts/recharts/discussions/3846#discussioncomment-7278088 */}
-          <PieChart margin={{ bottom: -60 }}>
-            <Pie
+          <LazyPieChart margin={{ bottom: -60 }}>
+            <LazyPie
               startAngle={180}
               endAngle={0}
               innerRadius="75%"
               data={data}
               dataKey="score"
-              blendStroke
               cornerRadius={10}
             />
-          </PieChart>
+          </LazyPieChart>
         </ChartContainer>
       </m.div>
 

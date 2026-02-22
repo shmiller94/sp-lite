@@ -1,11 +1,5 @@
 import { useLayoutEffect, useMemo, useRef } from 'react';
-import {
-  MeshBasicMaterial,
-  BackSide,
-  Mesh,
-  type Group,
-  type Object3DEventMap,
-} from 'three';
+import { MeshBasicMaterial, BackSide, Mesh, type Object3D } from 'three';
 
 import { SCENES, COLORS } from '../../const/constants';
 import type { Area, Level } from '../../types';
@@ -24,7 +18,7 @@ export const AvatarClone = ({
 }: {
   area?: Area;
   level?: Level;
-  object: Group<Object3DEventMap>;
+  object: Object3D;
   layers: number;
 }) => {
   const initialGlowRef = useRef<number>(

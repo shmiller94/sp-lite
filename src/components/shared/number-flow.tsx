@@ -22,7 +22,13 @@ export default function NumberFlow({
   const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
-    setHasMounted(true);
+    const timeoutId = setTimeout(() => {
+      setHasMounted(true);
+    }, 0);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, []);
 
   const counter: Value = hasMounted ? value : initialCounter;

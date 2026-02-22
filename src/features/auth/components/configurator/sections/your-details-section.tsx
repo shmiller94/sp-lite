@@ -1,6 +1,6 @@
 import { Lock } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import PhoneInput from 'react-phone-number-input/input';
 
 import { AtHomeNoticeAlert } from '@/components/shared/at-home-notice-section';
@@ -50,7 +50,11 @@ export const YourDetailsSection = ({
 
   const form = useFormContext<RegisterInput>();
   const processing = useCheckoutContext((s) => s.processing);
-  const postalCode = form.watch('postalCode');
+  const postalCode = useWatch({
+    control: form.control,
+    name: 'postalCode',
+  });
+  const postalCodeValue = postalCode ?? '';
 
   const handleNonServiceableClose = () => {
     setNonServiceabilityReason(undefined);
@@ -58,14 +62,14 @@ export const YourDetailsSection = ({
   };
 
   useEffect(() => {
-    if (postalCode.length !== 5) return;
+    if (postalCodeValue.length !== 5) return;
 
     let cancelled = false;
 
     const checkZipCode = async () => {
       const response = await getServiceabilityMutation.mutateAsync({
         data: {
-          zipCode: postalCode,
+          zipCode: postalCodeValue,
           collectionMethod: 'IN_LAB',
         },
       });
@@ -74,8 +78,8 @@ export const YourDetailsSection = ({
 
       if (response.serviceable === false) {
         track('register_not_serviceable', {
-          postal_code: postalCode,
-          state: getState(postalCode),
+          postal_code: postalCodeValue,
+          state: getState(postalCodeValue),
           reason: response.reason,
         });
 
@@ -88,7 +92,7 @@ export const YourDetailsSection = ({
     return () => {
       cancelled = true;
     };
-  }, [postalCode, getServiceabilityMutation, track]);
+  }, [postalCodeValue, getServiceabilityMutation, track]);
 
   return (
     <>

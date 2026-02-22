@@ -17,10 +17,10 @@ const SimpleTabsList = React.memo(
     });
 
     const tabsRef = React.useRef<HTMLDivElement | null>(null);
-    const animationFrameRef = React.useRef<number>();
+    const animationFrameRef = React.useRef<number | null>(null);
 
     const updateIndicatorPosition = React.useCallback(() => {
-      if (animationFrameRef.current) {
+      if (animationFrameRef.current !== null) {
         cancelAnimationFrame(animationFrameRef.current);
       }
 
@@ -82,8 +82,9 @@ const SimpleTabsList = React.memo(
 
       return () => {
         observer.disconnect();
-        if (animationFrameRef.current) {
+        if (animationFrameRef.current !== null) {
           cancelAnimationFrame(animationFrameRef.current);
+          animationFrameRef.current = null;
         }
       };
     }, [updateIndicatorPosition]);

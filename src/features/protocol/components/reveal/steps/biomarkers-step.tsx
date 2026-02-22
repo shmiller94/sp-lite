@@ -110,7 +110,6 @@ function PersonalProtocolCard({ onContinue }: { onContinue: () => void }) {
           transition: hovering
             ? 'transform 60ms linear'
             : 'transform 180ms ease',
-          willChange: 'transform',
         }}
         className="touch-manipulation space-y-6 rounded-3xl border border-zinc-200 bg-white p-4 pt-10 shadow-2xl"
       >

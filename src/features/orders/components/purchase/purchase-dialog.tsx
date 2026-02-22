@@ -28,7 +28,10 @@ import {
   usePurchaseStore,
 } from '../../stores/purchase-store';
 
-import { PurchaseDialogStepper } from './purchase-dialog-stepper';
+import {
+  PurchaseDialogStepper,
+  usePurchaseDialogStepper,
+} from './purchase-dialog-stepper';
 import { PurchaseDialogSteps } from './purchase-dialog-steps';
 
 /**
@@ -77,10 +80,7 @@ const PurchaseDialogConsumer = ({
   onClose?: () => void;
 }) => {
   const reset = usePurchaseStore((s) => s.reset);
-  const { all, current } = PurchaseDialogStepper.useStepper();
   const { width } = useWindowDimensions();
-
-  const index = PurchaseDialogStepper.utils.getIndex(current.id);
 
   const handleClose = () => {
     reset();
@@ -99,9 +99,11 @@ const PurchaseDialogConsumer = ({
   if (!children) {
     return (
       <Dialog onOpenChange={handleClose}>
-        <div className="mx-auto w-full max-w-3xl py-8">
-          <PurchaseDialogSteps />
-        </div>
+        <PurchaseDialogStepper.Scoped>
+          <div className="mx-auto w-full max-w-3xl py-8">
+            <PurchaseDialogSteps />
+          </div>
+        </PurchaseDialogStepper.Scoped>
       </Dialog>
     );
   }
@@ -111,29 +113,9 @@ const PurchaseDialogConsumer = ({
       <Sheet onOpenChange={handleClose}>
         <SheetTrigger asChild>{children}</SheetTrigger>
         <SheetContent className="flex flex-col overflow-hidden rounded-t-2xl bg-white">
-          <SheetHeader className="sticky top-0 z-50 flex flex-col gap-4 px-6 pb-4 pt-8 backdrop-blur-sm">
-            <div className="flex justify-center">
-              <Progress
-                value={((index + 1) / all.length) * 100}
-                className="h-1 w-32"
-              />
-            </div>
-
-            <SheetTitle className="grid w-full grid-cols-3 items-center">
-              <SheetClose className="flex size-10 items-center justify-center rounded-full bg-zinc-100">
-                <X className="size-5 text-black" />
-              </SheetClose>
-              <span className="text-center">Book a service</span>
-              <div className="size-10" />
-            </SheetTitle>
-          </SheetHeader>
-          <SheetDescription className="sr-only">
-            Dialog for booking healthcare services and managing the scheduling
-            process
-          </SheetDescription>
-          <div className="flex-1 overflow-auto">
-            <PurchaseDialogSteps />
-          </div>
+          <PurchaseDialogStepper.Scoped>
+            <PurchaseDialogSheetContent />
+          </PurchaseDialogStepper.Scoped>
         </SheetContent>
       </Sheet>
     );
@@ -143,37 +125,89 @@ const PurchaseDialogConsumer = ({
     <Dialog onOpenChange={handleClose}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="flex max-h-[90vh] flex-col bg-white px-0.5">
-        <DialogHeader className="sticky top-0 z-50 px-16 backdrop-blur-sm">
-          <div className="flex items-center gap-2">
-            <DialogTitle className="text-zinc-500">
-              Step {index + 1} / {all.length}
-            </DialogTitle>
-            <Progress
-              value={((index + 1) / all.length) * 100}
-              className="ml-2 h-1 w-32"
-            />
-          </div>
-          <DialogDescription className="sr-only">
-            Dialog for booking healthcare services and managing the scheduling
-            process
-          </DialogDescription>
-          <DialogClose>
-            <X className="size-6 cursor-pointer p-1" />
-          </DialogClose>
-        </DialogHeader>
-        {/*
-         * Custom scrollbar psuedo-element styling:
-         * - [overflow:overlay] - Positions scrollbar on top of content without taking up space
-         * - [&::-webkit-scrollbar]:w-2 - Sets the width of the scrollbar track to 2px
-         * - [&::-webkit-scrollbar-thumb]:rounded-full - Makes the scrollbar thumb fully rounded
-         * - [&::-webkit-scrollbar-button:end:increment] - Targets the bottom pseudo-element of the scrollbar
-         *   - block - Makes the pseudo-element visible (but transparent)
-         *   - h-[13vh] - Creates an invisible spacer to offset the scrollbar from the sticky footer
-         */}
-        <div className="flex-1 overflow-y-auto scrollbar scrollbar-thumb-zinc-300 [overflow:overlay] [&::-webkit-scrollbar-button:end:increment]:block [&::-webkit-scrollbar-button:end:increment]:h-[13vh] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar]:w-2">
-          <PurchaseDialogSteps />
-        </div>
+        <PurchaseDialogStepper.Scoped>
+          <PurchaseDialogDialogContent />
+        </PurchaseDialogStepper.Scoped>
       </DialogContent>
     </Dialog>
+  );
+};
+
+const PurchaseDialogSheetContent = () => {
+  const { currentIndex, validSteps } = usePurchaseDialogStepper();
+
+  const totalSteps = validSteps.length;
+  const safeCurrentIndex = currentIndex < 0 ? 0 : currentIndex;
+  const stepNumber = totalSteps > 0 ? safeCurrentIndex + 1 : 0;
+
+  return (
+    <>
+      <SheetHeader className="sticky top-0 z-50 flex flex-col gap-4 px-6 pb-4 pt-8 backdrop-blur-sm">
+        <div className="flex justify-center">
+          <Progress
+            value={totalSteps > 0 ? (stepNumber / totalSteps) * 100 : 0}
+            className="h-1 w-32"
+          />
+        </div>
+
+        <SheetTitle className="grid w-full grid-cols-3 items-center">
+          <SheetClose className="flex size-10 items-center justify-center rounded-full bg-zinc-100">
+            <X className="size-5 text-black" />
+          </SheetClose>
+          <span className="text-center">Book a service</span>
+          <div className="size-10" />
+        </SheetTitle>
+      </SheetHeader>
+      <SheetDescription className="sr-only">
+        Dialog for booking healthcare services and managing the scheduling
+        process
+      </SheetDescription>
+      <div className="flex-1 overflow-auto">
+        <PurchaseDialogSteps />
+      </div>
+    </>
+  );
+};
+
+const PurchaseDialogDialogContent = () => {
+  const { currentIndex, validSteps } = usePurchaseDialogStepper();
+
+  const totalSteps = validSteps.length;
+  const safeCurrentIndex = currentIndex < 0 ? 0 : currentIndex;
+  const stepNumber = totalSteps > 0 ? safeCurrentIndex + 1 : 0;
+
+  return (
+    <>
+      <DialogHeader className="sticky top-0 z-50 px-16 backdrop-blur-sm">
+        <div className="flex items-center gap-2">
+          <DialogTitle className="text-zinc-500">
+            Step {stepNumber} / {totalSteps}
+          </DialogTitle>
+          <Progress
+            value={totalSteps > 0 ? (stepNumber / totalSteps) * 100 : 0}
+            className="ml-2 h-1 w-32"
+          />
+        </div>
+        <DialogDescription className="sr-only">
+          Dialog for booking healthcare services and managing the scheduling
+          process
+        </DialogDescription>
+        <DialogClose>
+          <X className="size-6 cursor-pointer p-1" />
+        </DialogClose>
+      </DialogHeader>
+      {/*
+       * Custom scrollbar psuedo-element styling:
+       * - [overflow:overlay] - Positions scrollbar on top of content without taking up space
+       * - [&::-webkit-scrollbar]:w-2 - Sets the width of the scrollbar track to 2px
+       * - [&::-webkit-scrollbar-thumb]:rounded-full - Makes the scrollbar thumb fully rounded
+       * - [&::-webkit-scrollbar-button:end:increment] - Targets the bottom pseudo-element of the scrollbar
+       *   - block - Makes the pseudo-element visible (but transparent)
+       *   - h-[13vh] - Creates an invisible spacer to offset the scrollbar from the sticky footer
+       */}
+      <div className="flex-1 overflow-y-auto scrollbar scrollbar-thumb-zinc-300 [overflow:overlay] [&::-webkit-scrollbar-button:end:increment]:block [&::-webkit-scrollbar-button:end:increment]:h-[13vh] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar]:w-2">
+        <PurchaseDialogSteps />
+      </div>
+    </>
   );
 };

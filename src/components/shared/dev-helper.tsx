@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/command';
 import { INTAKE_QUESTIONNAIRE } from '@/const/questionnaire';
 import { STEP_IDS } from '@/features/onboarding/config/step-config';
+import type { StepId } from '@/features/onboarding/config/step-config';
 import { useOnboardingFlowStore } from '@/features/onboarding/stores/onboarding-flow-store';
 import { useQuestionnaire } from '@/features/questionnaires/api/questionnaire';
 import {
@@ -31,6 +32,18 @@ const ONBOARDING_QUESTIONNAIRES = [
   'onboarding-female-health',
   'onboarding-lifestyle',
 ] as const;
+
+const SEQUENCE_STEPS: Array<{ id: StepId; label: string }> = [
+  { id: STEP_IDS.INTRODUCTION, label: 'Introduction Sequence' },
+  { id: STEP_IDS.DIGITAL_TWIN, label: 'Digital Twin Sequence' },
+  { id: STEP_IDS.FINISH_TWIN, label: 'Finish Twin Sequence' },
+  { id: STEP_IDS.PRIMER, label: 'Primer Questionnaire' },
+  { id: STEP_IDS.MEDICAL_HISTORY, label: 'Medical History Questionnaire' },
+  { id: STEP_IDS.FEMALE_HEALTH, label: 'Female Health Questionnaire' },
+  { id: STEP_IDS.LIFESTYLE, label: 'Lifestyle Questionnaire' },
+  { id: STEP_IDS.UPSELL_PANELS, label: 'Upsell Sequence' },
+  { id: STEP_IDS.COMMITMENT, label: 'Commitment Sequence' },
+];
 
 export function DevHelper() {
   const isDev = import.meta.env.DEV;
@@ -231,22 +244,10 @@ export function DevHelper() {
     }
   };
 
-  const onJumpToStep = (stepId: string) => {
-    goToStep(stepId as any);
+  const onJumpToStep = (stepId: StepId) => {
+    goToStep(stepId);
     toast.success(`Jumped to ${stepId}`);
   };
-
-  const sequenceSteps = [
-    { id: STEP_IDS.INTRODUCTION, label: 'Introduction Sequence' },
-    { id: STEP_IDS.DIGITAL_TWIN, label: 'Digital Twin Sequence' },
-    { id: STEP_IDS.FINISH_TWIN, label: 'Finish Twin Sequence' },
-    { id: STEP_IDS.PRIMER, label: 'Primer Questionnaire' },
-    { id: STEP_IDS.MEDICAL_HISTORY, label: 'Medical History Questionnaire' },
-    { id: STEP_IDS.FEMALE_HEALTH, label: 'Female Health Questionnaire' },
-    { id: STEP_IDS.LIFESTYLE, label: 'Lifestyle Questionnaire' },
-    { id: STEP_IDS.UPSELL_PANELS, label: 'Upsell Sequence' },
-    { id: STEP_IDS.COMMITMENT, label: 'Commitment Sequence' },
-  ];
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -264,6 +265,55 @@ export function DevHelper() {
 
   if (!isDev) return null;
 
+  return (
+    <DevHelperMenu
+      open={open}
+      setOpen={setOpen}
+      bypassCarePlan={bypassCarePlan}
+      onCompleteIntake={onCompleteIntake}
+      onCompleteAllQuestionnaires={onCompleteAllQuestionnaires}
+      onCompleteQuestionnaire={onCompleteQuestionnaire}
+      isOnboarding={isOnboarding}
+      sequenceSteps={SEQUENCE_STEPS}
+      onJumpToStep={onJumpToStep}
+      onToggleBypassCarePlan={() => {
+        const newValue = !bypassCarePlan;
+        localStorage.setItem(DEV_BYPASS_CARE_PLAN_KEY, newValue.toString());
+        setBypassCarePlan(newValue);
+        toast.success(
+          `Bypass care plan: ${newValue ? 'ON' : 'OFF'}. Refreshing...`,
+        );
+        window.location.reload();
+      }}
+    />
+  );
+}
+
+interface DevHelperMenuProps {
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  bypassCarePlan: boolean;
+  onCompleteIntake: () => void;
+  onToggleBypassCarePlan: () => void;
+  onCompleteAllQuestionnaires: () => Promise<void>;
+  onCompleteQuestionnaire: (questionnaireName: string) => Promise<void>;
+  isOnboarding: boolean;
+  sequenceSteps: Array<{ id: StepId; label: string }>;
+  onJumpToStep: (stepId: StepId) => void;
+}
+
+function DevHelperMenu({
+  open,
+  setOpen,
+  bypassCarePlan,
+  onCompleteIntake,
+  onToggleBypassCarePlan,
+  onCompleteAllQuestionnaires,
+  onCompleteQuestionnaire,
+  isOnboarding,
+  sequenceSteps,
+  onJumpToStep,
+}: DevHelperMenuProps) {
   return (
     <>
       <div className="fixed bottom-3 left-3 z-[9999999] flex items-center gap-2 rounded-md border bg-white p-2">
@@ -289,16 +339,8 @@ export function DevHelper() {
             </CommandItem>
             <CommandItem
               onSelect={() => {
-                const newValue = !bypassCarePlan;
-                localStorage.setItem(
-                  DEV_BYPASS_CARE_PLAN_KEY,
-                  newValue.toString(),
-                );
-                setBypassCarePlan(newValue);
-                toast.success(
-                  `Bypass care plan: ${newValue ? 'ON' : 'OFF'}. Refreshing...`,
-                );
-                window.location.reload();
+                onToggleBypassCarePlan();
+                setOpen(false);
               }}
             >
               <span>
@@ -309,7 +351,7 @@ export function DevHelper() {
           <CommandGroup heading="Questionnaire Actions">
             <CommandItem
               onSelect={() => {
-                onCompleteAllQuestionnaires();
+                void onCompleteAllQuestionnaires();
                 setOpen(false);
               }}
             >
@@ -319,7 +361,7 @@ export function DevHelper() {
               <CommandItem
                 key={name}
                 onSelect={() => {
-                  onCompleteQuestionnaire(name);
+                  void onCompleteQuestionnaire(name);
                   setOpen(false);
                 }}
               >
@@ -329,21 +371,19 @@ export function DevHelper() {
           </CommandGroup>
 
           {isOnboarding && (
-            <>
-              <CommandGroup heading="Jump to Sequences">
-                {sequenceSteps.map((step) => (
-                  <CommandItem
-                    key={step.id}
-                    onSelect={() => {
-                      onJumpToStep(step.id);
-                      setOpen(false);
-                    }}
-                  >
-                    <span>{step.label}</span>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </>
+            <CommandGroup heading="Jump to Sequences">
+              {sequenceSteps.map((step) => (
+                <CommandItem
+                  key={step.id}
+                  onSelect={() => {
+                    onJumpToStep(step.id);
+                    setOpen(false);
+                  }}
+                >
+                  <span>{step.label}</span>
+                </CommandItem>
+              ))}
+            </CommandGroup>
           )}
         </CommandList>
       </CommandDialog>

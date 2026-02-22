@@ -510,7 +510,12 @@ export const questionnaireStoreCreator = (
           item: cleanedItems,
         };
 
-        set({ response: newResponse });
+        set({
+          response: newResponse,
+          checkForQuestionEnabled: (item) => {
+            return isQuestionEnabled(item, cleanedItems, initProps.user);
+          },
+        });
 
         const updatedQuestions = getAllQuestions();
         if (activeStep >= updatedQuestions.length) {
@@ -519,8 +524,11 @@ export const questionnaireStoreCreator = (
       },
 
       checkForQuestionEnabled: (item) => {
-        const { response, user } = get();
-        return isQuestionEnabled(item, response?.item ?? [], user);
+        return isQuestionEnabled(
+          item,
+          initialResponse.item ?? [],
+          initProps.user,
+        );
       },
 
       getNumberOfPages: () => {

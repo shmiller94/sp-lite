@@ -1,3 +1,5 @@
+'use no memo';
+
 import {
   CardNumberElement,
   useElements,
@@ -36,6 +38,8 @@ export const useCheckout = ({
   onSuccess?: () => Promise<void>;
   skipEmailRedirect?: boolean;
 }) => {
+  'use no memo';
+
   const elements = useElements();
   const stripe = useStripe();
   const navigate = useNavigate();
@@ -111,12 +115,25 @@ export const useCheckout = ({
     hsaFsaCheckoutSessionId?: string,
   ) => {
     setProcessing(true);
+
+    const stateLookup = getState(postalCode);
+    let stateValue = 'CA';
+    if (stateLookup?.state != null) {
+      stateValue = stateLookup.state;
+    }
+
+    const accessCode = getAccessCode();
+    const accessCodeValue = accessCode == null ? undefined : accessCode;
+
+    const referralId = getReferralId();
+    const referralIdValue = referralId == null ? undefined : referralId;
+
     try {
       await createSubscriptionMutation.mutateAsync({
         data: {
-          state: getState(postalCode)?.state ?? 'CA',
-          code: getAccessCode() ?? undefined,
-          referralId: getReferralId() ?? undefined,
+          state: stateValue,
+          code: accessCodeValue,
+          referralId: referralIdValue,
           campaignData: undefined,
           paymentMethod,
           hsaFsaCheckoutSessionId,
@@ -124,7 +141,26 @@ export const useCheckout = ({
       });
     } catch (e) {
       console.error(e);
-      toast.error((e as StripeError)?.message ?? 'An error occurred');
+
+      let errorMessage = 'An error occurred';
+      if (typeof e === 'object') {
+        if (e !== null) {
+          if ('message' in e) {
+            const messageValue = e.message;
+            if (typeof messageValue === 'string') {
+              if (messageValue.length > 0) {
+                errorMessage = messageValue;
+              }
+            }
+          }
+        }
+      } else if (typeof e === 'string') {
+        if (e.length > 0) {
+          errorMessage = e;
+        }
+      }
+
+      toast.error(errorMessage);
       setProcessing(false);
     }
   };
@@ -168,13 +204,15 @@ export const useCheckout = ({
    * @param phiMarketingConsent - Optional boolean from the form (undefined if not checked)
    */
   const createPhiMarketingConsent = async (phiMarketingConsent?: boolean) => {
+    const acceptedValue = phiMarketingConsent === true;
+
     try {
       // Create consent record with accepted = true if checked, false otherwise
       await createConsentMutation.mutateAsync({
         data: {
           agreedAt: new Date().toISOString(),
           type: ConsentType.PHI_MARKETING,
-          accepted: phiMarketingConsent ?? false,
+          accepted: acceptedValue,
         },
       });
     } catch (error) {
@@ -224,6 +262,11 @@ export const useCheckout = ({
 
     setProcessing(true);
 
+    let phiMarketingConsent: boolean | undefined = undefined;
+    if (data) {
+      phiMarketingConsent = data.phiMarketingConsent;
+    }
+
     try {
       // first trigger validation & ensure card number is valid
       const { error, paymentMethod } = await stripe.createPaymentMethod({
@@ -233,8 +276,22 @@ export const useCheckout = ({
 
       if (error) {
         setStripeError(error);
-        throw new Error(`Failed adding payment method: ${error.message}`);
+        let errorMessage = 'An error occurred';
+        if (error.message) {
+          errorMessage = error.message;
+        }
+        toast.error(errorMessage);
+        setProcessing(false);
+        return;
       }
+
+      if (!paymentMethod) {
+        toast.error('An error occurred');
+        setProcessing(false);
+        return;
+      }
+
+      const paymentMethodId = paymentMethod.id;
 
       // then do real test if card is valid, not stolen, etc
       const { client_secret } =
@@ -245,23 +302,48 @@ export const useCheckout = ({
           clientSecret: client_secret,
           confirmParams: {
             return_url: `${window.location.origin}`,
-            payment_method: paymentMethod?.id,
+            payment_method: paymentMethodId,
           },
           redirect: 'if_required',
         });
 
-      const isValidSetupIntent =
-        setupIntent?.status === 'succeeded' ||
-        setupIntent?.status === 'processing';
-
-      if (confirmSetupError || !isValidSetupIntent) {
-        throw confirmSetupError;
+      if (confirmSetupError) {
+        setStripeError(confirmSetupError);
+        let errorMessage = 'An error occurred';
+        if (confirmSetupError.message) {
+          errorMessage = confirmSetupError.message;
+        }
+        toast.error(errorMessage);
+        setProcessing(false);
+        return;
       }
 
-      const intentPm = setupIntent?.payment_method as string;
+      if (!setupIntent) {
+        toast.error('Something went wrong. Please try again.');
+        setProcessing(false);
+        return;
+      }
 
-      if (!intentPm) {
-        throw new Error('No payment method found in setup intent');
+      const status = setupIntent.status;
+      if (status !== 'succeeded') {
+        if (status !== 'processing') {
+          toast.error('Something went wrong. Please try again.');
+          setProcessing(false);
+          return;
+        }
+      }
+
+      const intentPaymentMethod = setupIntent.payment_method;
+      if (typeof intentPaymentMethod !== 'string') {
+        toast.error('No payment method found in setup intent');
+        setProcessing(false);
+        return;
+      }
+
+      if (intentPaymentMethod.length === 0) {
+        toast.error('No payment method found in setup intent');
+        setProcessing(false);
+        return;
       }
 
       // create user if data was passed
@@ -269,25 +351,31 @@ export const useCheckout = ({
 
       // create consents (fire-and-forget, non-blocking)
       void createMembershipAgreementConsent();
-      void createPhiMarketingConsent(data?.phiMarketingConsent);
+      void createPhiMarketingConsent(phiMarketingConsent);
 
       // add payment method to user
       const { success } = await addPaymentMethodMutation.mutateAsync({
-        data: { paymentMethodId: intentPm },
+        data: { paymentMethodId: intentPaymentMethod },
       });
 
       if (!success) {
-        throw new Error('Failed adding payment method');
+        toast.error('Failed adding payment method');
+        setProcessing(false);
+        return;
       }
 
       // create subscription
       await createSubscription('card');
-    } catch (e: any) {
-      // this is stripe error
-      if ('type' in e) {
-        console.error(e);
-        toast.error((e as StripeError)?.message ?? 'An error occurred');
+    } catch (e) {
+      console.error(e);
+
+      let errorMessage = 'An error occurred';
+      if (e instanceof Error) {
+        if (e.message) {
+          errorMessage = e.message;
+        }
       }
+      toast.error(errorMessage);
       setProcessing(false);
     }
   };
@@ -311,11 +399,23 @@ export const useCheckout = ({
 
     setProcessing(true);
 
+    let phiMarketingConsent: boolean | undefined = undefined;
+    if (data) {
+      phiMarketingConsent = data.phiMarketingConsent;
+    }
+
     try {
       const { error: submitError } = await elements.submit();
 
       if (submitError) {
-        throw submitError;
+        setStripeError(submitError);
+        let errorMessage = 'An error occurred';
+        if (submitError.message) {
+          errorMessage = submitError.message;
+        }
+        toast.error(errorMessage);
+        setProcessing(false);
+        return;
       }
 
       const { client_secret } =
@@ -331,18 +431,43 @@ export const useCheckout = ({
           redirect: 'if_required',
         });
 
-      const isValidSetupIntent =
-        setupIntent?.status === 'succeeded' ||
-        setupIntent?.status === 'processing';
-
-      if (confirmSetupError || !isValidSetupIntent) {
-        throw confirmSetupError;
+      if (confirmSetupError) {
+        setStripeError(confirmSetupError);
+        let errorMessage = 'An error occurred';
+        if (confirmSetupError.message) {
+          errorMessage = confirmSetupError.message;
+        }
+        toast.error(errorMessage);
+        setProcessing(false);
+        return;
       }
 
-      const paymentMethod = setupIntent?.payment_method as string;
+      if (!setupIntent) {
+        toast.error('Something went wrong. Please try again.');
+        setProcessing(false);
+        return;
+      }
 
-      if (!paymentMethod) {
-        throw new Error('No payment method found in setup intent');
+      const status = setupIntent.status;
+      if (status !== 'succeeded') {
+        if (status !== 'processing') {
+          toast.error('Something went wrong. Please try again.');
+          setProcessing(false);
+          return;
+        }
+      }
+
+      const paymentMethod = setupIntent.payment_method;
+      if (typeof paymentMethod !== 'string') {
+        toast.error('No payment method found in setup intent');
+        setProcessing(false);
+        return;
+      }
+
+      if (paymentMethod.length === 0) {
+        toast.error('No payment method found in setup intent');
+        setProcessing(false);
+        return;
       }
 
       // create user if data was passed
@@ -350,7 +475,7 @@ export const useCheckout = ({
 
       // create consents (fire-and-forget, non-blocking)
       void createMembershipAgreementConsent();
-      void createPhiMarketingConsent(data?.phiMarketingConsent);
+      void createPhiMarketingConsent(phiMarketingConsent);
 
       // add payment method to user
       const { success } = await addPaymentMethodMutation.mutateAsync({
@@ -358,16 +483,22 @@ export const useCheckout = ({
       });
 
       if (!success) {
-        throw new Error('Failed adding payment method');
+        toast.error('Failed adding payment method');
+        setProcessing(false);
+        return;
       }
 
       await createSubscription(event.expressPaymentType);
-    } catch (e: any) {
-      // this is stripe error
-      if ('type' in e) {
-        console.error(e);
-        toast.error((e as StripeError)?.message ?? 'An error occurred');
+    } catch (e) {
+      console.error(e);
+
+      let errorMessage = 'An error occurred';
+      if (e instanceof Error) {
+        if (e.message) {
+          errorMessage = e.message;
+        }
       }
+      toast.error(errorMessage);
       setProcessing(false);
     }
   };
@@ -393,13 +524,18 @@ export const useCheckout = ({
 
     setProcessing(true);
 
+    let phiMarketingConsent: boolean | undefined = undefined;
+    if (data) {
+      phiMarketingConsent = data.phiMarketingConsent;
+    }
+
     try {
       // Create user if data was passed
       await createUserIfRequired(data);
 
       // create consents (fire-and-forget, non-blocking)
       void createMembershipAgreementConsent();
-      void createPhiMarketingConsent(data?.phiMarketingConsent);
+      void createPhiMarketingConsent(phiMarketingConsent);
 
       // Create subscription with HSA/FSA checkout session ID so backend can process accordingly
       await createSubscription('hsa_fsa', checkoutSessionId);
@@ -430,8 +566,17 @@ export const useCheckout = ({
 
       if (error) {
         setStripeError(error);
-        return;
+        setProcessing(false);
+        return false;
       }
+
+      if (!paymentMethod) {
+        toast.error('An error occurred');
+        setProcessing(false);
+        return false;
+      }
+
+      const paymentMethodId = paymentMethod.id;
 
       // Create setup intent to validate the card
       const { client_secret } =
@@ -442,36 +587,63 @@ export const useCheckout = ({
           clientSecret: client_secret,
           confirmParams: {
             return_url: `${window.location.origin}`,
-            payment_method: paymentMethod?.id,
+            payment_method: paymentMethodId,
           },
           redirect: 'if_required',
         });
 
-      const isValidSetupIntent =
-        setupIntent?.status === 'succeeded' ||
-        setupIntent?.status === 'processing';
-
-      if (confirmSetupError || !isValidSetupIntent) {
-        throw confirmSetupError;
+      if (confirmSetupError) {
+        setStripeError(confirmSetupError);
+        let errorMessage = 'An error occurred';
+        if (confirmSetupError.message) {
+          errorMessage = confirmSetupError.message;
+        }
+        toast.error(errorMessage);
+        setProcessing(false);
+        return false;
       }
 
-      const intentPm = setupIntent?.payment_method as string;
+      if (!setupIntent) {
+        toast.error('Something went wrong. Please try again.');
+        setProcessing(false);
+        return false;
+      }
 
-      if (!intentPm) {
-        throw new Error('No payment method found in setup intent');
+      const status = setupIntent.status;
+      if (status !== 'succeeded') {
+        if (status !== 'processing') {
+          toast.error('Something went wrong. Please try again.');
+          setProcessing(false);
+          return false;
+        }
+      }
+
+      const intentPaymentMethod = setupIntent.payment_method;
+      if (typeof intentPaymentMethod !== 'string') {
+        toast.error('No payment method found in setup intent');
+        setProcessing(false);
+        return false;
+      }
+
+      if (intentPaymentMethod.length === 0) {
+        toast.error('No payment method found in setup intent');
+        setProcessing(false);
+        return false;
       }
 
       // Add payment method to user
       const { success } = await addPaymentMethodMutation.mutateAsync({
-        data: { paymentMethodId: intentPm },
+        data: { paymentMethodId: intentPaymentMethod },
       });
 
       if (!success) {
-        throw new Error('Failed to save payment method');
+        toast.error('Failed to save payment method');
+        setProcessing(false);
+        return false;
       }
 
       return true;
-    } catch (error: any) {
+    } catch (error) {
       setProcessing(false);
       console.error('Error adding payment method:', error);
       toast.error(

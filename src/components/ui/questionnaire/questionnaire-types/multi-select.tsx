@@ -113,8 +113,8 @@ export function QuestionnaireChoiceDropDownInput(
         <SelectContent>
           <SelectGroup>
             <SelectLabel>Select one</SelectLabel>
-            {data.map((option, index) => (
-              <SelectItem key={index} value={option}>
+            {data.map((option) => (
+              <SelectItem key={option} value={option}>
                 {option}
               </SelectItem>
             ))}

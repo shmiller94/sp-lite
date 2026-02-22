@@ -96,7 +96,7 @@ export const VideoSequence = ({ onComplete }: { onComplete: () => void }) => {
       {item.title && (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center p-8">
           <div
-            key={index}
+            key={item.source}
             className="mask-reveal-left max-w-3xl text-center text-white/95"
           >
             <p className="text-2xl font-semibold duration-500 animate-in fade-in md:text-3xl">

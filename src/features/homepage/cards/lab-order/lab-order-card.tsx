@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Body1, Body2, H3 } from '@/components/ui/typography';
 import { useCurrentLabOrder } from '@/features/orders/hooks';
+import { useNowMs } from '@/hooks/use-now-ms';
 import { Address } from '@/types/api';
 
 import { LabOrderProgress } from './lab-order-progress';
@@ -46,6 +47,7 @@ const isValidAddress = (address?: Address): boolean => {
 
 export const LabOrderCard = () => {
   const { activeLabOrder, isLoading } = useCurrentLabOrder();
+  const nowMs = useNowMs();
 
   /**
    * Callback to open location in maps
@@ -94,7 +96,7 @@ export const LabOrderCard = () => {
     const start = new Date(activeLabOrder.startTimestamp);
     if (!Number.isNaN(start.getTime())) {
       const oneHourAfter = start.getTime() + 60 * 60 * 1000;
-      if (oneHourAfter < Date.now()) {
+      if (oneHourAfter < nowMs) {
         appointmentStatus = 'processing';
       }
     }

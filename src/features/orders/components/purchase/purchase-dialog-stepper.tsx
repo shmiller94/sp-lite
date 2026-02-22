@@ -28,23 +28,32 @@ export const PurchaseDialogStepper = defineStepper(
   { id: PURCHASE_DIALOG_STEPS.SUCCESS },
 );
 
+type PurchaseDialogStepId =
+  (typeof PURCHASE_DIALOG_STEPS)[keyof typeof PURCHASE_DIALOG_STEPS];
+
+interface PurchaseDialogStep {
+  id: PurchaseDialogStepId;
+}
+
 type PurchaseDialogStepperUseStepperType = ReturnType<
   typeof PurchaseDialogStepper.useStepper
 >;
 
-type PurchaseDialogStepId =
-  (typeof PURCHASE_DIALOG_STEPS)[keyof typeof PURCHASE_DIALOG_STEPS];
-
-type UsePurchaseDialogStepperType = PurchaseDialogStepperUseStepperType & {
-  validSteps: { id: PurchaseDialogStepId }[];
-};
+interface UsePurchaseDialogStepperType extends PurchaseDialogStepperUseStepperType {
+  validSteps: PurchaseDialogStep[];
+  currentIndex: number;
+  isFirst: boolean;
+  isLast: boolean;
+  next: () => void;
+  prev: () => void;
+}
 
 export const usePurchaseDialogStepper = (): UsePurchaseDialogStepperType => {
   const service = usePurchaseStore((s) => s.service);
 
   const methods = PurchaseDialogStepper.useStepper();
 
-  let steps: { id: PurchaseDialogStepId }[] = [];
+  let steps: PurchaseDialogStep[] = [];
 
   switch (service.name) {
     case GRAIL_GALLERI_MULTI_CANCER_TEST:
@@ -69,7 +78,7 @@ export const usePurchaseDialogStepper = (): UsePurchaseDialogStepperType => {
       ];
   }
 
-  const validSteps: { id: PurchaseDialogStepId }[] = service.active
+  const validSteps: PurchaseDialogStep[] = service.active
     ? steps
     : [
         { id: PURCHASE_DIALOG_STEPS.INFO },
@@ -77,7 +86,7 @@ export const usePurchaseDialogStepper = (): UsePurchaseDialogStepperType => {
       ];
 
   const getCurrentIndex = () =>
-    validSteps.findIndex((step) => step.id === methods.current.id);
+    validSteps.findIndex((step) => step.id === methods.state.current.data.id);
 
   const next = () => {
     const idx = getCurrentIndex();
@@ -86,7 +95,7 @@ export const usePurchaseDialogStepper = (): UsePurchaseDialogStepperType => {
     const nextStep = validSteps[idx + 1];
     if (!nextStep) return;
 
-    methods.goTo(nextStep.id);
+    void methods.navigation.goTo(nextStep.id);
   };
 
   const prev = () => {
@@ -96,15 +105,19 @@ export const usePurchaseDialogStepper = (): UsePurchaseDialogStepperType => {
     const prevStep = validSteps[idx - 1];
     if (!prevStep) return;
 
-    methods.goTo(prevStep.id);
+    void methods.navigation.goTo(prevStep.id);
   };
 
-  const isLast = getCurrentIndex() === validSteps.length - 1;
+  const currentIndex = getCurrentIndex();
+  const isLast = currentIndex === validSteps.length - 1;
+  const isFirst = currentIndex <= 0;
 
   return {
     ...methods,
+    currentIndex,
     next,
     prev,
+    isFirst,
     isLast,
     validSteps,
   };

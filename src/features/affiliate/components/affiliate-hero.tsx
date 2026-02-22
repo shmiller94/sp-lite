@@ -47,7 +47,7 @@ export const AffiliateHero = () => {
               <CarouselMainContainer>
                 {PRODUCTS.map((card, index) => (
                   <SliderMainItem
-                    key={index}
+                    key={card.title}
                     className={index > 0 ? 'px-4' : ''}
                   >
                     <ProductCard title={card.title} image={card.image} />
@@ -55,9 +55,9 @@ export const AffiliateHero = () => {
                 ))}
               </CarouselMainContainer>
               <CarouselThumbsContainer className="justify-center gap-x-1.5">
-                {Array.from({ length: PRODUCTS.length }).map((_, index) => (
+                {PRODUCTS.map((card, index) => (
                   <CarouselIndicator
-                    key={index}
+                    key={card.title}
                     index={index}
                     className="size-1.5 data-[active='false']:bg-white/30 data-[active='true']:bg-white hover:bg-white/50"
                   />
@@ -66,8 +66,8 @@ export const AffiliateHero = () => {
             </Carousel>
           ) : (
             <div className="grid w-full grid-cols-4 gap-4">
-              {PRODUCTS.map((card, index) => (
-                <div key={index}>
+              {PRODUCTS.map((card) => (
+                <div key={card.title}>
                   <ProductCard title={card.title} image={card.image} />
                 </div>
               ))}

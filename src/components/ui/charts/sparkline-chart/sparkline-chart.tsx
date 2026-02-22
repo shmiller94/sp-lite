@@ -42,14 +42,14 @@ const SparklineLineChart = ({
 
   const svgRef = useRef<SVGSVGElement>(null);
   const lastPointRef = useRef<number | null>(null);
-  const debounceTimerRef = useRef<number>();
+  const debounceTimerRef = useRef<number | null>(null);
   const isTouchDevice = useRef<boolean>(false);
 
   const handleInteraction = useCallback(
     (clientX: number) => {
       if (!svgRef.current) return;
 
-      if (debounceTimerRef.current) {
+      if (debounceTimerRef.current !== null) {
         window.cancelAnimationFrame(debounceTimerRef.current);
       }
 
@@ -121,9 +121,9 @@ const SparklineLineChart = ({
   const handleTouchEnd = useCallback(
     (e: React.TouchEvent<SVGSVGElement>) => {
       e.preventDefault();
-      if (debounceTimerRef.current) {
+      if (debounceTimerRef.current !== null) {
         window.cancelAnimationFrame(debounceTimerRef.current);
-        debounceTimerRef.current = undefined;
+        debounceTimerRef.current = null;
       }
       lastPointRef.current = null;
       onHoverEnd();
@@ -137,9 +137,9 @@ const SparklineLineChart = ({
 
   const handleMouseLeave = useCallback(() => {
     if (!isTouchDevice.current) {
-      if (debounceTimerRef.current) {
+      if (debounceTimerRef.current !== null) {
         window.cancelAnimationFrame(debounceTimerRef.current);
-        debounceTimerRef.current = undefined;
+        debounceTimerRef.current = null;
       }
       lastPointRef.current = null;
       onHoverEnd();
@@ -148,8 +148,9 @@ const SparklineLineChart = ({
 
   useEffect(() => {
     return () => {
-      if (debounceTimerRef.current) {
+      if (debounceTimerRef.current !== null) {
         window.cancelAnimationFrame(debounceTimerRef.current);
+        debounceTimerRef.current = null;
       }
     };
   }, []);

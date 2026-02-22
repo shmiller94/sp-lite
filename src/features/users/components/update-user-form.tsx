@@ -106,7 +106,8 @@ const updateUserSchema = z.object({
     .optional(),
 });
 
-type UpdateUserFormData = z.infer<typeof updateUserSchema>;
+type UpdateUserFormInput = z.input<typeof updateUserSchema>;
+type UpdateUserFormData = z.output<typeof updateUserSchema>;
 
 interface UpdateUserFormProps {
   user: AdminUser;
@@ -122,7 +123,7 @@ export const UpdateUserForm = ({
   const queryClient = useQueryClient();
   const updateUserMutation = useAdminUpdateUser();
 
-  const form = useForm<UpdateUserFormData>({
+  const form = useForm<UpdateUserFormInput, unknown, UpdateUserFormData>({
     resolver: zodResolver(updateUserSchema),
     mode: 'onSubmit',
     defaultValues: {

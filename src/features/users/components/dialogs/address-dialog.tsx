@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ReactNode, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { type UseFormReturn, useForm } from 'react-hook-form';
 
 import { AddressAutocomplete } from '@/components/ui/address-autocomplete';
 import { Button } from '@/components/ui/button';
@@ -8,6 +8,8 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogDescription,
+  DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
 import {
@@ -28,7 +30,6 @@ import {
 } from '@/components/ui/select';
 import { toast } from '@/components/ui/sonner';
 import { Spinner } from '@/components/ui/spinner';
-import { H2 } from '@/components/ui/typography';
 import { US_STATES } from '@/const';
 import { useGetServiceability } from '@/features/orders/api';
 import { useGeocode } from '@/features/users/api/geocode';
@@ -217,7 +218,12 @@ export function AddressDialog({
     <Dialog open={isDialogClosable ? isOpen : true} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="max-w-[95vw] p-8 sm:max-w-[525px]">
-        <H2>{title}</H2>
+        <DialogTitle className="text-2xl font-normal tracking-[-0.64px] text-zinc-900 md:text-3xl">
+          {title}
+        </DialogTitle>
+        <DialogDescription className="sr-only">
+          Enter your address details, then save to continue.
+        </DialogDescription>
         <NotServiceableDialog
           onClick={() => setReason(undefined)}
           variant="block"
@@ -241,139 +247,152 @@ export function AddressDialog({
           />
         ) : null}
         {!reason && !suggestedAddress ? (
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(handleFormSubmit)}
-              className="space-y-5"
-            >
-              <FormField
-                control={form.control}
-                name="line1"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Address Line 1</FormLabel>
-                    <FormControl>
-                      <AddressAutocomplete
-                        {...field}
-                        placeholder="Street address"
-                        onFormSubmit={(data) => {
-                          form.setValue('line1', data.line1);
-                          form.setValue('line2', data.line2);
-                          form.setValue('state', data.state);
-                          form.setValue('postalCode', data.postalCode);
-                          form.setValue('city', data.city);
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="line2"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Address Line 2</FormLabel>
-                    <FormControl>
-                      <Input
-                        autoComplete="off"
-                        placeholder="Apartment, suite, etc. (optional)"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="grid grid-cols-1 gap-x-4 gap-y-8 md:grid-cols-3">
-                <FormField
-                  control={form.control}
-                  name="city"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>City</FormLabel>
-                      <FormControl>
-                        <Input
-                          autoComplete="off"
-                          placeholder="City"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="state"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>State</FormLabel>
-                      <FormControl>
-                        <Select
-                          onValueChange={field.onChange}
-                          value={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue
-                                placeholder="State"
-                                asChild={false}
-                              />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent className="text-zinc-600">
-                            {US_STATES.map((state) => (
-                              <SelectItem value={state.value} key={state.value}>
-                                {state.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="postalCode"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>ZIP Code</FormLabel>
-                      <FormControl>
-                        <NumericInput
-                          placeholder="ZIP Code"
-                          maxLength={5}
-                          maxDigits={5}
-                          value={field.value}
-                          onBlur={field.onBlur}
-                          name={field.name}
-                          onChange={(value) => field.onChange(value)}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="flex w-full flex-col gap-4 pt-6 md:flex-row md:justify-end">
-                <DialogClose asChild>
-                  <Button type="button" variant="outline" disabled={isPending}>
-                    Cancel
-                  </Button>
-                </DialogClose>
-                {!createAddressMutation.isSuccess ? (
-                  <Button type="submit" className="w-auto">
-                    {isPending ? <Spinner /> : title.split(' ')[0]}
-                  </Button>
-                ) : null}
-              </div>
-            </form>
-          </Form>
+          <AddressDialogForm
+            form={form}
+            onSubmit={handleFormSubmit}
+            isPending={isPending}
+            title={title}
+            hideSubmitButton={createAddressMutation.isSuccess}
+          />
         ) : null}
       </DialogContent>
     </Dialog>
+  );
+}
+
+interface AddressDialogFormProps {
+  form: UseFormReturn<FormAddressInput>;
+  onSubmit: (data: FormAddressInput) => Promise<void>;
+  isPending: boolean;
+  title: string;
+  hideSubmitButton: boolean;
+}
+
+function AddressDialogForm({
+  form,
+  onSubmit,
+  isPending,
+  title,
+  hideSubmitButton,
+}: AddressDialogFormProps) {
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+        <FormField
+          control={form.control}
+          name="line1"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Address Line 1</FormLabel>
+              <FormControl>
+                <AddressAutocomplete
+                  {...field}
+                  placeholder="Street address"
+                  onFormSubmit={(data) => {
+                    form.setValue('line1', data.line1);
+                    form.setValue('line2', data.line2);
+                    form.setValue('state', data.state);
+                    form.setValue('postalCode', data.postalCode);
+                    form.setValue('city', data.city);
+                  }}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="line2"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Address Line 2</FormLabel>
+              <FormControl>
+                <Input
+                  autoComplete="off"
+                  placeholder="Apartment, suite, etc. (optional)"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="grid grid-cols-1 gap-x-4 gap-y-8 md:grid-cols-3">
+          <FormField
+            control={form.control}
+            name="city"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>City</FormLabel>
+                <FormControl>
+                  <Input autoComplete="off" placeholder="City" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="state"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>State</FormLabel>
+                <FormControl>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="State" asChild={false} />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className="text-zinc-600">
+                      {US_STATES.map((state) => (
+                        <SelectItem value={state.value} key={state.value}>
+                          {state.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="postalCode"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>ZIP Code</FormLabel>
+                <FormControl>
+                  <NumericInput
+                    placeholder="ZIP Code"
+                    maxLength={5}
+                    maxDigits={5}
+                    value={field.value}
+                    onBlur={field.onBlur}
+                    name={field.name}
+                    onChange={(value) => field.onChange(value)}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="flex w-full flex-col gap-4 pt-6 md:flex-row md:justify-end">
+          <DialogClose asChild>
+            <Button type="button" variant="outline" disabled={isPending}>
+              Cancel
+            </Button>
+          </DialogClose>
+          {!hideSubmitButton ? (
+            <Button type="submit" className="w-auto">
+              {isPending ? <Spinner /> : title.split(' ')[0]}
+            </Button>
+          ) : null}
+        </div>
+      </form>
+    </Form>
   );
 }

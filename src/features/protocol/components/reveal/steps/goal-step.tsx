@@ -51,20 +51,22 @@ export function GoalStep({
   const handleAddToProtocol = () => {
     let addedCount = 0;
 
-    activities.forEach((activity, index) => {
+    let index = 0;
+    for (const activity of activities) {
       const activityId = getActivityId(activity, goal.id, index);
 
       if (tempSelections.has(activityId)) {
         if (!hasItem(activityId)) {
           addItem(activity, goal.id, index);
-          addedCount++;
+          addedCount = addedCount + 1;
         }
       } else {
         if (hasItem(activityId)) {
           removeItem(activityId);
         }
       }
-    });
+      index = index + 1;
+    }
 
     if (addedCount > 0) {
       toast.info(

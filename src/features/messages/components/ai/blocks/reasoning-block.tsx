@@ -43,10 +43,20 @@ export const ReasoningBlock = memo(function ReasoningBlock({
 
   // Auto-close when thinking completes (but not on initial render for history)
   useEffect(() => {
-    if (hasInitialized.current && !isThinking) {
-      setAccordionValue(undefined);
+    if (!hasInitialized.current) {
+      hasInitialized.current = true;
+      return;
     }
-    hasInitialized.current = true;
+
+    if (isThinking) return;
+
+    const timeoutId = setTimeout(() => {
+      setAccordionValue(undefined);
+    }, 0);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [isThinking]);
 
   return (

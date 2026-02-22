@@ -56,9 +56,9 @@ export function MultipleChoice({
   const nextStep = useQuestionnaireStore((s) => s.nextStep);
   const activeStep = useQuestionnaireStore((s) => s.activeStep);
   const questionnaire = useQuestionnaireStore((s) => s.questionnaire);
-  const getNumberOfPages = useQuestionnaireStore((s) => s.getNumberOfPages);
+  const numberOfPages = useQuestionnaireStore((s) => s.getNumberOfPages());
   const getCurrentQuestion = useQuestionnaireStore((s) => s.getCurrentQuestion);
-  const isLastQuestion = activeStep === getNumberOfPages() - 1;
+  const isLastQuestion = activeStep === numberOfPages - 1;
 
   const autoAdvance = () => {
     // Get fresh current question from store (calls getAllQuestions() each time)
@@ -163,7 +163,7 @@ export function MultipleChoice({
                 role="button"
                 data-item-id={item.linkId}
                 tabIndex={0}
-                key={idx}
+                key={option.valueCoding?.code ?? optionValue}
                 className={cn(
                   'group relative flex w-full cursor-pointer items-center justify-between space-x-2 rounded-xl bg-white outline-none ring-0 transition-all focus-visible:ring-2 focus-visible:ring-secondary',
                   isSelected

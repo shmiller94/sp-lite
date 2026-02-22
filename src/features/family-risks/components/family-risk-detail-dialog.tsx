@@ -3,8 +3,20 @@ import { X } from 'lucide-react';
 import { ReactNode, useCallback, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 import { Body1, H3, H4 } from '@/components/ui/typography';
 import { AiSuggestions } from '@/features/messages/components/ai-suggestions';
 import { ProtocolMarkdown } from '@/features/protocol/components/protocol-markdown';
@@ -50,6 +62,7 @@ export function FamilyRiskDetailDialog({
             className="shrink-0 text-secondary"
           >
             <X className="size-4" />
+            <span className="sr-only">Close</span>
           </Button>
         </DialogClose>
       </div>
@@ -106,8 +119,11 @@ export function FamilyRiskDetailDialog({
         <div className="space-y-3">
           <H4>Research papers</H4>
           <div className="space-y-2">
-            {risk.citations.map((citation, idx) => (
-              <CitationCard key={idx} citation={citation} />
+            {risk.citations.map((citation) => (
+              <CitationCard
+                key={citation.doi ?? citation.title}
+                citation={citation}
+              />
             ))}
           </div>
         </div>
@@ -130,6 +146,10 @@ export function FamilyRiskDetailDialog({
       <Sheet open={open} onOpenChange={handleOpenChange}>
         <SheetTrigger asChild>{children}</SheetTrigger>
         <SheetContent className="flex max-h-full flex-col overflow-y-auto rounded-t-3xl">
+          <SheetTitle className="sr-only">{risk.title}</SheetTitle>
+          <SheetDescription className="sr-only">
+            {risk.description}
+          </SheetDescription>
           {content}
         </SheetContent>
       </Sheet>
@@ -140,6 +160,10 @@ export function FamilyRiskDetailDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto rounded-3xl p-0">
+        <DialogTitle className="sr-only">{risk.title}</DialogTitle>
+        <DialogDescription className="sr-only">
+          {risk.description}
+        </DialogDescription>
         {content}
       </DialogContent>
     </Dialog>

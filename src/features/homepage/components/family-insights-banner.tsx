@@ -4,8 +4,20 @@ import { ReactNode, useState } from 'react';
 
 import { AIIcon } from '@/components/icons/ai-icon';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogTrigger, DialogContent } from '@/components/ui/dialog';
-import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 import { Body1, Body2, H3 } from '@/components/ui/typography';
 import { useLatestFamilyRiskPlan } from '@/features/family-risks';
 import { useQuestionnaireInsights } from '@/features/questionnaires/api/get-questionnaire-insights';
@@ -201,6 +213,11 @@ const FamilyInsightsDialog = ({ children }: { children: ReactNode }) => {
           {children}
         </SheetTrigger>
         <SheetContent className="flex max-h-full flex-col rounded-t-[10px] border-none">
+          <SheetTitle className="sr-only">Family health insights</SheetTitle>
+          <SheetDescription className="sr-only">
+            Review family health insights from your intake and related
+            biomarkers. Use previous and next to navigate insights.
+          </SheetDescription>
           {content}
         </SheetContent>
       </Sheet>
@@ -213,6 +230,11 @@ const FamilyInsightsDialog = ({ children }: { children: ReactNode }) => {
         {children}
       </DialogTrigger>
       <DialogContent className="max-w-[1000px] overflow-y-auto rounded-s-[30px]">
+        <DialogTitle className="sr-only">Family health insights</DialogTitle>
+        <DialogDescription className="sr-only">
+          Review family health insights from your intake and related biomarkers.
+          Use previous and next to navigate insights.
+        </DialogDescription>
         {content}
       </DialogContent>
     </Dialog>

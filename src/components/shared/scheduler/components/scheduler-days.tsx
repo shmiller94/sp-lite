@@ -44,7 +44,7 @@ export const SchedulerDays = ({
   const skeletonNodes: JSX.Element[] = [];
   if (loading) {
     const skeletonStart =
-      startRange == null ? new TZDateMini(Date.now(), tz) : startRange;
+      startRange == null ? new TZDateMini(0, tz) : startRange;
 
     for (const day of dayArray(skeletonStart, numDays)) {
       skeletonNodes.push(

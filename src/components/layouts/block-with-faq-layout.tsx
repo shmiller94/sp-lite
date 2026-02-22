@@ -181,7 +181,7 @@ export const BlockWithFaqLayout = ({
               {MEMBERSHIP_BENEFITS.map((b, i) => (
                 <div
                   className="flex gap-3 rounded-[20px] bg-white p-4 shadow-md shadow-black/[.02] animate-in fade-in slide-in-from-bottom-10"
-                  key={i}
+                  key={b.image}
                   style={{
                     animationDuration: `${(i + 1) * 0.3}s`,
                   }}
@@ -205,8 +205,8 @@ export const BlockWithFaqLayout = ({
             className="w-full"
             defaultValue={MEMBERSHIP_FAQ[0].display}
           >
-            {MEMBERSHIP_FAQ.map((item, i) => (
-              <AccordionItem value={item.display} key={i}>
+            {MEMBERSHIP_FAQ.map((item) => (
+              <AccordionItem value={item.display} key={item.display}>
                 <AccordionTrigger className="py-3 text-left text-sm text-zinc-900 hover:text-zinc-500">
                   {item.display}
                 </AccordionTrigger>

@@ -1,8 +1,8 @@
 import { OrbitControls as DreiOrbitControls } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
-import { useRef, useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MathUtils } from 'three';
-import { OrbitControls } from 'three-stdlib';
+import type { OrbitControls } from 'three-stdlib';
 
 export const SoftLimitedOrbitControls = ({
   target,
@@ -12,29 +12,35 @@ export const SoftLimitedOrbitControls = ({
   const controlsRef = useRef<OrbitControls | null>(null);
 
   const [isUserInteracting, setIsUserInteracting] = useState(false);
-  const radiusRef = useRef(5);
+
+  const radiusRef = useRef<number | null>(null);
 
   const maxAzimuth = MathUtils.degToRad(15);
   const recenterSpeed = 0.05;
 
   useEffect(() => {
-    const controls: any = controlsRef.current;
-    if (!controls) return;
+    const controls = controlsRef.current;
+    if (controls == null) return;
 
     radiusRef.current = controls.getDistance();
   }, []);
 
   useFrame(() => {
-    const controls: any = controlsRef.current;
-    if (!controls) return;
+    const controls = controlsRef.current;
+    if (controls == null) return;
 
-    const radius = radiusRef.current;
+    let radius = radiusRef.current;
+    if (radius === null) {
+      radius = controls.getDistance();
+      radiusRef.current = radius;
+    }
+
     const polar = controls.getPolarAngle();
     const currentAzimuth = controls.getAzimuthalAngle();
 
     let targetAzimuth = currentAzimuth;
 
-    if (!isUserInteracting) {
+    if (isUserInteracting === false) {
       targetAzimuth = MathUtils.lerp(currentAzimuth, 0, recenterSpeed);
     } else {
       if (currentAzimuth > maxAzimuth) {
@@ -50,7 +56,6 @@ export const SoftLimitedOrbitControls = ({
 
     controls.object.position.set(x, y, z);
     controls.object.lookAt(controls.target);
-
     controls.update();
   });
 

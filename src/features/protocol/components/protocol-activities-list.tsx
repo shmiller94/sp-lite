@@ -15,25 +15,6 @@ export function ProtocolActivitiesList({
   onSelectionChange,
   getActivityKey,
 }: ProtocolActivitiesListProps) {
-  const renderActivityChildren = (_activity: Activity) => {
-    // if (activity.type === 'prescription') {
-    //   const { prescription } = activity;
-    //   return (
-    //     <>
-    //       <Body2 className="text-sm text-secondary">
-    //         Starting at ${prescription.price}
-    //       </Body2>
-    //       <Link to={prescription.url}>
-    //         <Button size="medium" className="w-full">
-    //           Get Started
-    //         </Button>
-    //       </Link>
-    //     </>
-    //   );
-    // }
-    return undefined;
-  };
-
   return (
     <div className="grid gap-3 lg:grid-cols-2">
       {activities.map((activity, index) => {
@@ -51,9 +32,7 @@ export function ProtocolActivitiesList({
             activity={activity}
             selected={selected}
             onSelectChange={handleSelectionChange}
-          >
-            {renderActivityChildren(activity)}
-          </ProtocolItemCard>
+          />
         );
       })}
     </div>

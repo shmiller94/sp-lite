@@ -32,9 +32,18 @@ type ScheduleFlowStepperUseStepperType = ReturnType<
 
 type ScheduleFlowStepId = (typeof SCHEDULE_STEPS)[keyof typeof SCHEDULE_STEPS];
 
-type UseScheduleFlowStepperType = ScheduleFlowStepperUseStepperType & {
-  validSteps: { id: ScheduleFlowStepId }[];
-};
+interface ScheduleFlowStep {
+  id: ScheduleFlowStepId;
+}
+
+interface UseScheduleFlowStepperType extends ScheduleFlowStepperUseStepperType {
+  validSteps: ScheduleFlowStep[];
+  currentIndex: number;
+  isFirst: boolean;
+  isLast: boolean;
+  next: () => void;
+  prev: () => void;
+}
 
 export const useScheduleFlowStepper = (): UseScheduleFlowStepperType => {
   const mode = useScheduleStore((s) => s.mode);
@@ -42,7 +51,7 @@ export const useScheduleFlowStepper = (): UseScheduleFlowStepperType => {
 
   const methods = ScheduleFlowStepper.useStepper();
 
-  let steps: { id: ScheduleFlowStepId }[] = [
+  let steps: ScheduleFlowStep[] = [
     { id: SCHEDULE_STEPS.CREDITS_SELECT },
     { id: SCHEDULE_STEPS.PHLEBOTOMY },
     { id: SCHEDULE_STEPS.SCHEDULER },
@@ -85,7 +94,7 @@ export const useScheduleFlowStepper = (): UseScheduleFlowStepperType => {
   }
 
   const getCurrentIndex = () =>
-    steps.findIndex((step) => step.id === methods.current.id);
+    steps.findIndex((step) => step.id === methods.state.current.data.id);
 
   const next = () => {
     const idx = getCurrentIndex();
@@ -94,7 +103,7 @@ export const useScheduleFlowStepper = (): UseScheduleFlowStepperType => {
     const nextStep = steps[idx + 1];
     if (!nextStep) return;
 
-    methods.goTo(nextStep.id);
+    void methods.navigation.goTo(nextStep.id);
   };
 
   const prev = () => {
@@ -104,15 +113,19 @@ export const useScheduleFlowStepper = (): UseScheduleFlowStepperType => {
     const prevStep = steps[idx - 1];
     if (!prevStep) return;
 
-    methods.goTo(prevStep.id);
+    void methods.navigation.goTo(prevStep.id);
   };
 
-  const isLast = getCurrentIndex() === steps.length - 1;
+  const currentIndex = getCurrentIndex();
+  const isLast = currentIndex === steps.length - 1;
+  const isFirst = currentIndex <= 0;
 
   return {
     ...methods,
+    currentIndex,
     next,
     prev,
+    isFirst,
     isLast,
     validSteps: steps,
   };

@@ -248,24 +248,31 @@ export const DatetimePicker = forwardRef<HTMLDivElement, DateTimeInput>(
     });
 
     useEffect(() => {
-      if (!value || isNaN(value.getTime())) {
-        setParts({
+      const timeoutId = setTimeout(() => {
+        let nextParts = {
           month: '',
           day: '',
           year: '',
-        });
-        return;
-      }
+        };
 
-      const nextMonth = String(value.getMonth() + 1);
-      const nextDay = String(value.getDate());
-      const nextYear = String(value.getFullYear());
+        if (value != null && !isNaN(value.getTime())) {
+          const nextMonth = String(value.getMonth() + 1);
+          const nextDay = String(value.getDate());
+          const nextYear = String(value.getFullYear());
 
-      setParts({
-        month: nextMonth,
-        day: nextDay,
-        year: nextYear,
-      });
+          nextParts = {
+            month: nextMonth,
+            day: nextDay,
+            year: nextYear,
+          };
+        }
+
+        setParts(nextParts);
+      }, 0);
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
     }, [value]);
 
     const handleChange = useCallback(

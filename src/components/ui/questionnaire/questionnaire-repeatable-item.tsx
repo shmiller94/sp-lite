@@ -3,6 +3,7 @@ import {
   QuestionnaireResponseItem,
 } from '@medplum/fhirtypes';
 
+import { SanitizedRichText } from '@/components/shared/sanitized-rich-text';
 import { Body1, Body2 } from '@/components/ui/typography';
 import { cn } from '@/lib/utils';
 
@@ -89,17 +90,15 @@ export const QuestionnaireFormRepeatableItem = ({
   return (
     <div className="space-y-2">
       <div className={nested ? 'mb-2 mt-1.5' : 'mb-10'}>
-        <Body1
-          className={cn(
+        <SanitizedRichText
+          content={item.text}
+          textClassName={cn(
             nested
               ? 'mb-2 mt-1.5 text-base'
               : description || isMultipleChoice
                 ? 'mb-3 text-2xl'
                 : 'mb-5 text-2xl',
           )}
-          // This is needed to allow for a underline inside the question text
-          // I don't see a case for XSS because the only way to edit this is in Medplum
-          dangerouslySetInnerHTML={{ __html: item.text ?? '' }}
         />
         {/* NOTE: consider moving to separate component / different approach
          if we continue to have conditional descriptions for the same question. */}
@@ -109,11 +108,10 @@ export const QuestionnaireFormRepeatableItem = ({
           </Body2>
         )}
         {!isFrontdoorExperiment && description && (
-          <Body2
-            className="text-secondary"
-            // This is needed to allow for HTML tags in the description
-            // Again, I don't see a case for XSS because the only way to edit this is in Medplum
-            dangerouslySetInnerHTML={{ __html: description }}
+          <SanitizedRichText
+            content={description}
+            variant="body2"
+            textClassName="text-secondary"
           />
         )}
         {!description && isMultipleChoice && (
@@ -123,22 +121,18 @@ export const QuestionnaireFormRepeatableItem = ({
 
       {isRxConsentPaymentQuestion && <ConsentPaymentSummary />}
 
-      {/*Should be ...Array(number)*/}
-      {[...Array(1)].map((_, index) => (
-        <QuestionnaireFormItem
-          key={`${item.linkId}-${index}`}
-          item={item}
-          response={response}
-          onChange={(r) => {
-            onChange([r]);
-          }}
-          index={index}
-          isError={isError}
-          onKeyDown={onKeyDown}
-          nested={nested}
-          onValidationChange={onValidationChange}
-        />
-      ))}
+      <QuestionnaireFormItem
+        item={item}
+        response={response}
+        onChange={(r) => {
+          onChange([r]);
+        }}
+        index={0}
+        isError={isError}
+        onKeyDown={onKeyDown}
+        nested={nested}
+        onValidationChange={onValidationChange}
+      />
     </div>
   );
 };

@@ -19,10 +19,10 @@ export const useScrollDetection = ({
 }: UseScrollDetectionOptions = {}): ScrollDetectionState => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(false);
-  const rafRef = useRef<number>();
+  const rafRef = useRef<number | null>(null);
 
   const checkScroll = useCallback(() => {
-    if (rafRef.current) {
+    if (rafRef.current !== null) {
       cancelAnimationFrame(rafRef.current);
     }
 
@@ -61,8 +61,9 @@ export const useScrollDetection = ({
     return () => {
       window.removeEventListener('scroll', checkScroll);
       window.removeEventListener('resize', checkScroll);
-      if (rafRef.current) {
+      if (rafRef.current !== null) {
         cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
       }
     };
   }, [checkScroll]);

@@ -16,7 +16,13 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
-import { Dialog, DialogContent, DialogOverlay } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogOverlay,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { useHistory } from '@/features/messages/api/get-history';
 import { Chat } from '@/types/api';
 
@@ -116,6 +122,10 @@ export function ChatSearchCommand({
         className="z-[60] max-w-[calc(100%-1rem)] overflow-hidden rounded-[14px] p-0 shadow-lg md:max-w-3xl"
       >
         <Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:size-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:size-5">
+          <DialogTitle className="sr-only">Search conversations</DialogTitle>
+          <DialogDescription className="sr-only">
+            Search and open your past conversations.
+          </DialogDescription>
           <CommandInput placeholder="Search conversations..." />
           <CommandList className="max-h-80 pb-1">
             <CommandEmpty>No conversations found.</CommandEmpty>

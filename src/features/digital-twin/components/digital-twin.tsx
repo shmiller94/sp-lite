@@ -63,16 +63,21 @@ export const DigitalTwin = ({ category }: { category?: Category }) => {
     return key ? CATEGORY_MAP[key] : undefined;
   }, [category]);
 
+  const markReady = useCallback(() => {
+    setReady(true);
+  }, []);
+
   // defer mounting the heavy 3D scene until the main thread is idle
   useEffect(() => {
     const anyWindow: any = window as any;
     if (typeof anyWindow.requestIdleCallback === 'function') {
-      anyWindow.requestIdleCallback(() => setReady(true), { timeout: 300 });
-    } else {
-      const t = setTimeout(() => setReady(true), 0);
-      return () => clearTimeout(t);
+      anyWindow.requestIdleCallback(markReady, { timeout: 300 });
+      return;
     }
-  }, []);
+
+    const t = setTimeout(markReady, 0);
+    return () => clearTimeout(t);
+  }, [markReady]);
 
   if (isPerformanceLoading) {
     return null;

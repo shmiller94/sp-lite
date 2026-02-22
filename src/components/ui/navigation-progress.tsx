@@ -7,7 +7,13 @@ export const NavigationProgress = () => {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    setProgress(0);
+    const timeoutId = setTimeout(() => {
+      setProgress(0);
+    }, 0);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [location?.pathname]);
 
   useEffect(() => {

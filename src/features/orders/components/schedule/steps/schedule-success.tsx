@@ -27,7 +27,7 @@ export const ScheduleSuccessStep = () => {
     onDone,
     mode,
   } = useScheduleStore((s) => s);
-  const { reset: resetSteps } = ScheduleFlowStepper.useStepper();
+  const { navigation } = ScheduleFlowStepper.useStepper();
   const creditsQuery = useCredits();
   const servicesQuery = useServices({ includeUnorderable: true });
   const navigate = useNavigate();
@@ -35,7 +35,7 @@ export const ScheduleSuccessStep = () => {
 
   const resetEverything = () => {
     resetStore();
-    resetSteps();
+    navigation.reset();
   };
 
   const timelineSteps = getTimeline(collectionMethod ?? undefined, mode);
@@ -52,18 +52,8 @@ export const ScheduleSuccessStep = () => {
     (s) => creditedServiceIds.has(s.id) && s.group === mode,
   );
 
-  const renderCalendarButtons = () => {
-    if (!location?.address) {
-      return null;
-    }
-    if (!collectionMethod) {
-      return null;
-    }
-    if (!slot) {
-      return null;
-    }
-
-    return (
+  const calendarButtons =
+    location?.address && collectionMethod && slot ? (
       <>
         <AppleCalendarButton
           address={location.address}
@@ -78,12 +68,11 @@ export const ScheduleSuccessStep = () => {
           className="justify-center border border-zinc-100 bg-white shadow shadow-black/[.02] transition-all duration-200"
         />
       </>
-    );
-  };
+    ) : null;
 
   const nextBtn = isOnOnboarding ? (
     <div className="w-full space-y-2">
-      {renderCalendarButtons()}
+      {calendarButtons}
 
       <Button
         className="w-full"
@@ -95,7 +84,7 @@ export const ScheduleSuccessStep = () => {
     </div>
   ) : (
     <div className="w-full space-y-2">
-      {renderCalendarButtons()}
+      {calendarButtons}
       {creditedServices.length > 0 ? (
         <Button className="w-full" onClick={resetEverything}>
           Schedule more

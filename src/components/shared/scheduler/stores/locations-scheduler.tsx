@@ -1,8 +1,8 @@
 import {
   createContext,
   useContext,
-  useRef,
   useEffect,
+  useState,
   PropsWithChildren,
 } from 'react';
 import { shallow } from 'zustand/shallow';
@@ -26,22 +26,17 @@ export const LocationsSchedulerStoreProvider = ({
   children,
   ...props
 }: LocationsSchedulerStoreProviderProps) => {
-  const storeRef = useRef<LocationsSchedulerStoreApi>();
-  if (!storeRef.current) {
-    storeRef.current = locationsSchedulerStoreCreator(props);
-  }
+  const [store] = useState(() => locationsSchedulerStoreCreator(props));
 
   // Keep onSelectionChange callback in sync - it captures parent state in closure
   useEffect(() => {
-    if (storeRef.current) {
-      storeRef.current.setState({
-        onSelectionChange: props.onSelectionChange,
-      });
-    }
-  }, [props.onSelectionChange]);
+    store.setState({
+      onSelectionChange: props.onSelectionChange,
+    });
+  }, [props.onSelectionChange, store]);
 
   return (
-    <LocationsSchedulerStoreContext.Provider value={storeRef.current}>
+    <LocationsSchedulerStoreContext.Provider value={store}>
       {children}
     </LocationsSchedulerStoreContext.Provider>
   );

@@ -1,11 +1,10 @@
-import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
-import 'react-pdf/dist/esm/Page/TextLayer.css';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
 import { useResizeObserver } from '@wojtekmaj/react-hooks';
 import { format } from 'date-fns';
 import { Download, Trash2, X } from 'lucide-react';
-import type { PDFDocumentProxy } from 'pdfjs-dist';
 import { useCallback, useEffect, useState } from 'react';
-import { Document, Page, pdfjs } from 'react-pdf';
+import { Document, Page, pdfjs, type DocumentProps } from 'react-pdf';
 
 import {
   AlertDialog,
@@ -37,6 +36,10 @@ const resizeObserverOptions = {};
 
 const maxWidth = 800;
 
+type DocumentLoadSuccessArg = Parameters<
+  NonNullable<DocumentProps['onLoadSuccess']>
+>[0];
+
 export const PdfViewer = ({ id, name }: PdfViewerProps) => {
   const { data } = useGetFileUrl({ fileId: id });
   const [file, setFile] = useState<Blob | undefined>(undefined);
@@ -52,10 +55,8 @@ export const PdfViewer = ({ id, name }: PdfViewerProps) => {
     },
   });
 
-  const onDocumentLoadSuccess = ({
-    numPages: nextNumPages,
-  }: PDFDocumentProxy): void => {
-    setNumPages(nextNumPages);
+  const onDocumentLoadSuccess = (pdf: DocumentLoadSuccessArg) => {
+    setNumPages(pdf.numPages);
   };
 
   const onDownload = async (): Promise<void> => {

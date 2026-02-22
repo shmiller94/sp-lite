@@ -32,9 +32,11 @@ const hasAnswers = (item: QuestionnaireResponseItem): boolean => {
 // Component that renders the questionnaire form page in sequence
 export const QuestionnaireFormPageSequence = ({
   onSave,
+  onFinalSubmit,
   initialProgressPercent,
 }: {
   onSave: (item: QuestionnaireResponseItem[]) => void;
+  onFinalSubmit: () => void;
   initialProgressPercent?: number;
 }) => {
   const [manualActiveStep, setManualActiveStep] = useState<number | null>(null);
@@ -137,7 +139,13 @@ export const QuestionnaireFormPageSequence = ({
 
   useEffect(() => {
     if (manualActiveStep !== null && activeStep !== manualActiveStep) {
-      setManualActiveStep(null);
+      const timeoutId = setTimeout(() => {
+        setManualActiveStep(null);
+      }, 0);
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
     }
   }, [activeStep, manualActiveStep]);
 
@@ -227,6 +235,7 @@ export const QuestionnaireFormPageSequence = ({
                   response={currentQuestion.response}
                   onChange={setItems}
                   onSave={onSave}
+                  onSubmit={onFinalSubmit}
                 />
               </m.div>
             </AnimatePresence>

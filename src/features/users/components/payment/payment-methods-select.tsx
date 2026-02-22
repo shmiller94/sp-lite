@@ -28,7 +28,7 @@ export const PaymentMethodsSelect = () => {
       <div className="rounded-xl border border-zinc-200 bg-white">
         {paymentMethods.length > 0 && (
           <div className="p-2">
-            {paymentMethods.map((paymentMethod, i) => {
+            {paymentMethods.map((paymentMethod) => {
               const isFlexCard =
                 paymentMethod.paymentProvider.toLowerCase() === 'flex';
               const isSelected =
@@ -43,7 +43,7 @@ export const PaymentMethodsSelect = () => {
                       ? 'bg-zinc-100 hover:bg-zinc-100'
                       : 'hover:bg-zinc-100',
                   )}
-                  key={i}
+                  key={paymentMethod.externalPaymentMethodId}
                   onClick={() =>
                     setActivePaymentMethod(
                       paymentMethod.externalPaymentMethodId,

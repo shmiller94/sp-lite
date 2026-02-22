@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -22,25 +23,17 @@ export const PurchaseDialogFooter = ({
 }) => {
   const { isLast, next, prev, isFirst } = usePurchaseDialogStepper();
 
-  const { flow, infoFlowBtn } = usePurchaseStore((s) => ({
-    flow: s.flow,
-    infoFlowBtn: s.infoFlowBtn,
-  }));
+  const { flow, infoFlowBtn } = usePurchaseStore(
+    useShallow((s) => ({
+      flow: s.flow,
+      infoFlowBtn: s.infoFlowBtn,
+    })),
+  );
 
-  const renderButton = (
-    btn: ReactNode | null | undefined,
-    defaultButton: ReactNode,
-  ) => {
-    if (btn === undefined) {
-      return defaultButton;
-    }
-    return btn; // This includes the case when btn is null (renders nothing) or a ReactNode
-  };
-
-  const renderPrevButton = () => {
-    if (!isFirst)
-      return renderButton(
-        prevBtn,
+  let prevButton: ReactNode | null = null;
+  if (!isFirst) {
+    if (prevBtn === undefined) {
+      prevButton = (
         <Button
           variant="outline"
           className="w-full bg-white"
@@ -48,26 +41,25 @@ export const PurchaseDialogFooter = ({
           disabled={prevBtnDisabled}
         >
           Back
-        </Button>,
-      );
-
-    return null;
-  };
-
-  const renderNextButton = () => {
-    if (flow === 'info' && infoFlowBtn) return infoFlowBtn();
-
-    if (nextBtn) return nextBtn;
-
-    if (!isLast)
-      return (
-        <Button onClick={next} className="w-full" disabled={nextBtnDisabled}>
-          Next
         </Button>
       );
+    } else {
+      prevButton = prevBtn;
+    }
+  }
 
-    return null;
-  };
+  let nextButton: ReactNode | null = null;
+  if (flow === 'info' && infoFlowBtn) {
+    nextButton = infoFlowBtn();
+  } else if (nextBtn) {
+    nextButton = nextBtn;
+  } else if (!isLast) {
+    nextButton = (
+      <Button onClick={next} className="w-full" disabled={nextBtnDisabled}>
+        Next
+      </Button>
+    );
+  }
 
   return (
     <div
@@ -78,8 +70,8 @@ export const PurchaseDialogFooter = ({
       )}
     >
       <div className="flex w-full flex-col-reverse justify-end gap-4 md:flex-row md:gap-2">
-        {renderPrevButton()}
-        {renderNextButton()}
+        {prevButton}
+        {nextButton}
       </div>
     </div>
   );

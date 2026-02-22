@@ -23,10 +23,10 @@ export const useRenderSetup = ({
   const { gl, scene, camera, size } = useThree();
   const sizeRef = useRef({ width: size.width, height: size.height });
 
-  const composer = useRef<EffectComposer>();
-  const cameraShadows = useRef<Camera>();
-  const cameraBackground = useRef<Camera>();
-  const cameraForeground = useRef<Camera>();
+  const composer = useRef<EffectComposer | null>(null);
+  const cameraShadows = useRef<Camera | null>(null);
+  const cameraBackground = useRef<Camera | null>(null);
+  const cameraForeground = useRef<Camera | null>(null);
 
   const blurShader = useBlurShader({ area });
 
@@ -44,12 +44,14 @@ export const useRenderSetup = ({
     cameraShadows.current.layers.set(0);
 
     // camera for the model
-    cameraForeground.current = camera.clone();
-    cameraForeground.current.layers.set(2);
+    const foregroundCamera = camera.clone();
+    foregroundCamera.layers.set(2);
+    cameraForeground.current = foregroundCamera;
 
     // camera for blurred background scene
-    cameraBackground.current = camera.clone();
-    cameraBackground.current.layers.set(1);
+    const backgroundCamera = camera.clone();
+    backgroundCamera.layers.set(1);
+    cameraBackground.current = backgroundCamera;
 
     const rtWidth = Math.max(1, Math.floor(width / 1.5));
     const rtHeight = Math.max(1, Math.floor(height / 1.5));
@@ -57,7 +59,9 @@ export const useRenderSetup = ({
       gl,
       new WebGLRenderTarget(rtWidth, rtHeight),
     );
-    nextComposer.addPass(new RenderPass(scene, cameraBackground.current));
+    // Blur is background-only: avoid HiDPI render targets.
+    nextComposer.setPixelRatio(1);
+    nextComposer.addPass(new RenderPass(scene, backgroundCamera));
     composer.current = nextComposer;
 
     const blurAmount = width * 0.0022;
@@ -69,7 +73,7 @@ export const useRenderSetup = ({
 
     return () => {
       if (composer.current === nextComposer) {
-        composer.current = undefined;
+        composer.current = null;
       }
       nextComposer.dispose?.();
     };

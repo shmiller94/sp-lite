@@ -76,6 +76,7 @@ export const CategoryDialog = ({
           <DialogClose asChild>
             <Button variant="ghost" className="text-zinc-400">
               <X strokeWidth={2.5} className="size-4" />
+              <span className="sr-only">Close</span>
             </Button>
           </DialogClose>
         </div>

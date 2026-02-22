@@ -74,7 +74,13 @@ export const SuperpowerScoreDialog = ({
   useEffect(() => {
     const modal = (searchParams.get('modal') || '').toLowerCase();
     const shouldBeOpen = modal === 'superpower-score' && !disabled;
-    setOpen(shouldBeOpen);
+    const timeoutId = setTimeout(() => {
+      setOpen(shouldBeOpen);
+    }, 0);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [searchParams, disabled]);
 
   const handleOpenChange = (nextOpen: boolean) => {
@@ -98,6 +104,7 @@ export const SuperpowerScoreDialog = ({
           <DialogClose asChild>
             <Button variant="ghost" className="text-zinc-400">
               <X strokeWidth={2.5} className="size-4" />
+              <span className="sr-only">Close</span>
             </Button>
           </DialogClose>
         </div>

@@ -11,7 +11,7 @@ export const createConsentInputSchema = z.object({
     .enum([ConsentType.MEMBERSHIP_AGREEMENT, ConsentType.PHI_MARKETING])
     .optional(),
   accepted: z.boolean().optional(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 export type CreateConsentInput = z.infer<typeof createConsentInputSchema>;

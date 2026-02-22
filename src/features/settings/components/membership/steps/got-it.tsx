@@ -26,7 +26,7 @@ export const GotItStep = (): JSX.Element => {
       </div>
 
       <DialogClose>
-        <Button onClick={methods.reset} className="w-full">
+        <Button onClick={methods.navigation.reset} className="w-full">
           Got it
         </Button>
       </DialogClose>

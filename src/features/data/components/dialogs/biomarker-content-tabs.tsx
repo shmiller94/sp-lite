@@ -45,19 +45,19 @@ export function BiomarkerContentTabs({ biomarker }: { biomarker: Biomarker }) {
     <Tabs defaultValue="explanation">
       {tabs.length > 1 && (
         <TabsList className="flex h-auto flex-wrap items-center justify-start">
-          {tabs.map((t, idx) => (
+          {tabs.map((t) => (
             <TabsTrigger
               value={t.value}
               className="text-base lg:text-base"
-              key={idx}
+              key={t.value}
             >
               {capitalize(t.value)}
             </TabsTrigger>
           ))}
         </TabsList>
       )}
-      {tabs.map((t, idx) => (
-        <TabsContent value={t.value} className="mt-10" key={idx}>
+      {tabs.map((t) => (
+        <TabsContent value={t.value} className="mt-10" key={t.value}>
           {t.component}
         </TabsContent>
       ))}
@@ -121,8 +121,8 @@ const ExplanationTab = ({ biomarker }: { biomarker: Biomarker }) => {
           recommendedTests={biomarker.recommendedTests}
         />
       ) : null}
-      {metadata.map((item, idx) => (
-        <div key={idx} className="flex flex-col gap-2">
+      {metadata.map((item) => (
+        <div key={item.title} className="flex flex-col gap-2">
           <H3>{item.title}</H3>
           <StyledMarkdown className="space-y-4 text-secondary" variant="small">
             {typeof item.text === 'string'
@@ -159,8 +159,8 @@ const ExplanationTab = ({ biomarker }: { biomarker: Biomarker }) => {
               </AccordionTrigger>
               <AccordionContent className="pb-0">
                 <ul className="mt-4 flex flex-col gap-2 px-2">
-                  {sources.map((source, idx) => (
-                    <li key={idx}>
+                  {sources.map((source) => (
+                    <li key={source.url}>
                       <a
                         href={source.url}
                         rel="noreferrer"

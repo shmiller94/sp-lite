@@ -9,7 +9,7 @@ export const MembershipBenefits = (props: {
     <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
       {props.benefits.map((benefit, idx) => (
         <Card
-          key={idx}
+          key={benefit.imgPath}
           className={cn(
             'flex flex-1 flex-row items-center space-x-4 rounded-2xl bg-zinc-50 p-4',
             idx === props.benefits.length - 1 &&

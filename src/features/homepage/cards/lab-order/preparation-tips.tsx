@@ -55,7 +55,7 @@ export const PreparationTipsCarousel = () => {
         <CarouselMainContainer>
           {PREPARATION_TIPS.map((tip, index) => (
             <SliderMainItem
-              key={index}
+              key={tip.title}
               className="basis-4/5 pl-0 pr-4 md:basis-3/5 lg:basis-3/5"
             >
               <div className="flex h-full flex-col rounded-2xl bg-white p-6 shadow-sm md:border md:border-zinc-200 md:bg-none md:shadow-none">

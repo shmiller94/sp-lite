@@ -177,10 +177,10 @@ export function AutopilotView({
           src="/action-plan/autopilot.webp"
           alt="Multiple tests in one view"
         />
-        {BENEFITS.map((benefit, index) => {
+        {BENEFITS.map((benefit) => {
           return (
             <div
-              key={index}
+              key={benefit.title}
               className="flex w-full items-center justify-between gap-4 rounded-2xl border border-zinc-200 p-5 shadow-sm shadow-black/[.03]"
             >
               <div className="flex items-center gap-2">
@@ -294,9 +294,9 @@ export function AutopilotView({
         <div className="space-y-3">
           <h2 className="text-xl font-semibold">This month’s protocol</h2>
           <div className="space-y-3">
-            {productItems.map((activity, idx) => (
+            {productItems.map((activity) => (
               <ReadonlyItemCard
-                key={`non-service-${idx}`}
+                key={`product-${activity.product.url ?? activity.product.name}`}
                 activity={activity}
               />
             ))}
@@ -305,8 +305,11 @@ export function AutopilotView({
         <div className="space-y-3">
           <h2 className="text-xl font-semibold">Diagnostics in 6 months</h2>
           <div className="space-y-3">
-            {serviceItems.map((activity, idx) => (
-              <ReadonlyItemCard key={`service-${idx}`} activity={activity} />
+            {serviceItems.map((activity) => (
+              <ReadonlyItemCard
+                key={`service-${activity.service.id}`}
+                activity={activity}
+              />
             ))}
           </div>
         </div>

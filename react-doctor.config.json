@@ -1,0 +1,17 @@
+{
+  "diff": false,
+  "ignore": {
+    "rules": ["knip/exports", "knip/types", "knip/files", "knip/duplicates"],
+    "files": [
+      "src/features/digital-twin/components/ground-shadow.tsx",
+      "src/features/digital-twin/components/avatar/avatar.tsx",
+      "src/features/digital-twin/components/avatar/avatar-clone.tsx",
+      "src/features/digital-twin/components/toxins.tsx",
+      "src/features/digital-twin/components/sleep.tsx",
+      "src/features/users/components/data-table.tsx",
+      "src/features/files/components/desktop/data-table.tsx",
+      "src/features/settings/components/wearables/desktop/data-table.tsx",
+      "src/features/data/components/table/biomarkers-data-table.tsx"
+    ]
+  }
+}

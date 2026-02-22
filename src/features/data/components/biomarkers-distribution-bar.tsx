@@ -38,7 +38,10 @@ type BiomarkerFilterButtonProps = {
   value: number;
   selected: boolean;
   onToggle: (target: FilterTarget) => void;
-} & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onClick' | 'children'>;
+} & Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  'onClick' | 'children' | 'onToggle'
+>;
 
 const BiomarkerFilterButton = forwardRef<
   HTMLButtonElement,

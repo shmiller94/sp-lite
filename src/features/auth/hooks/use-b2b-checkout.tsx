@@ -59,12 +59,14 @@ export const useB2BCheckout = ({
    * This is a non-blocking operation - failures should not prevent checkout.
    */
   const createPhiMarketingConsent = async (phiMarketingConsent?: boolean) => {
+    const accepted = phiMarketingConsent ?? false;
+
     try {
       await createConsentMutation.mutateAsync({
         data: {
           agreedAt: new Date().toISOString(),
           type: ConsentType.PHI_MARKETING,
-          accepted: phiMarketingConsent ?? false,
+          accepted,
         },
       });
     } catch (error) {
@@ -109,13 +111,25 @@ export const useB2BCheckout = ({
 
     setProcessing(true);
 
+    let phiMarketingConsent: boolean | undefined = undefined;
+    if (data) {
+      phiMarketingConsent = data.phiMarketingConsent;
+    }
+
+    let email: string | undefined = undefined;
+    if (user && user.email) {
+      email = user.email;
+    } else if (data && data.email) {
+      email = data.email;
+    }
+
     try {
       // create user if data was passed
       await createUserIfRequired(data);
 
       // create consents (fire-and-forget, non-blocking)
       void createMembershipAgreementConsent();
-      void createPhiMarketingConsent(data?.phiMarketingConsent);
+      void createPhiMarketingConsent(phiMarketingConsent);
 
       // claim benefits
       await claimBenefitsMutation.mutateAsync({
@@ -140,8 +154,6 @@ export const useB2BCheckout = ({
       );
 
       // Get the user's email for magic link
-      const email = user?.email ?? data?.email;
-
       if (email) {
         // Send magic link
         await sendMagicLinkMutation.mutateAsync({
@@ -151,13 +163,19 @@ export const useB2BCheckout = ({
           },
         });
 
-        await onSuccess?.(email);
+        if (onSuccess) {
+          await onSuccess(email);
+        }
       }
 
       setProcessing(false);
-    } catch (e: any) {
+    } catch (e) {
       console.error('Failed to claim benefits:', e);
-      toast.error(e?.message ?? 'Something went wrong. Please try again.');
+      let errorMessage = 'Something went wrong. Please try again.';
+      if (e instanceof Error && e.message) {
+        errorMessage = e.message;
+      }
+      toast.error(errorMessage);
       setProcessing(false);
     }
   };

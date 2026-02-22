@@ -61,7 +61,7 @@ export const ConfirmationStep = (): JSX.Element => {
         <Button
           onClick={async () => {
             await cancelMembershipMutation.mutateAsync(undefined);
-            methods.next();
+            await methods.navigation.next();
           }}
         >
           {cancelMembershipMutation.isPending ? (

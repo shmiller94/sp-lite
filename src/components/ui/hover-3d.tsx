@@ -175,7 +175,6 @@ export const Hover3D = ({
             zIndex: 0,
             opacity: options.shadow.opacity || 0.15,
             filter: `blur(12px)`,
-            willChange: 'transform',
             backfaceVisibility: 'hidden',
             WebkitBackfaceVisibility: 'hidden',
           }}
@@ -187,10 +186,7 @@ export const Hover3D = ({
             'perspective(1000px) rotateX(var(--rotate-x, 0deg)) rotateY(var(--rotate-y, 0deg))',
           transition: `transform var(--duration, ${options?.resetDuration || 500}ms)`,
         }}
-        className={cn(
-          'relative z-10 overflow-hidden will-change-transform',
-          className,
-        )}
+        className={cn('relative z-10 overflow-hidden', className)}
       >
         <div
           style={{

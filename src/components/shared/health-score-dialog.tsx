@@ -1,20 +1,25 @@
 import { Check, X } from 'lucide-react';
 
-import { Dialog, DialogClose, DialogContent } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 
 import { Button } from '../ui/button';
-import { Body2, H2 } from '../ui/typography';
+import { Body2 } from '../ui/typography';
 
 const HealthScoreDialogContent = () => {
   return (
     <div className="p-10">
       <div className="flex w-full flex-col-reverse justify-between text-center md:flex-row md:text-left">
         <div className="w-full space-y-3 py-3 md:w-1/2 md:py-10">
-          <H2 className="mx-auto w-3/4 md:w-full">
+          <DialogTitle className="mx-auto w-3/4 text-2xl font-normal tracking-[-0.64px] text-zinc-900 md:w-full md:text-3xl">
             Introducing the Superpower Score
-          </H2>
+          </DialogTitle>
           <div className="space-y-1.5">
             <div className="flex flex-row space-x-2">
               <Check className="size-2 text-vermillion-900" />
@@ -82,7 +87,7 @@ export const HealthScoreDialog = () => {
       {/* <DialogTrigger asChild>{children}</DialogTrigger> */}
       <DialogContent className="max-w-[740px]">
         <div className="fixed right-10 top-8">
-          <DialogClose>
+          <DialogClose aria-label="Close">
             <X className="size-6 cursor-pointer p-1" />
           </DialogClose>
         </div>

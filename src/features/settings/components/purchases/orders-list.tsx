@@ -4,7 +4,13 @@ import { HTMLAttributes } from 'react';
 import { useNavigate } from 'react-router';
 
 import { Card } from '@/components/ui/card';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 import { Spinner } from '@/components/ui/spinner';
 import { Body1, Body2 } from '@/components/ui/typography';
 import { useMultiPlatformOrders } from '@/features/orders/api';
@@ -50,9 +56,9 @@ export function OrdersList(): JSX.Element {
     groupOrdersByMonthAndYear(multiPlatformOrders);
 
   const content = (): JSX.Element[] =>
-    Object.keys(groupedMultiPlatformOrders).map((date, index) => (
+    Object.keys(groupedMultiPlatformOrders).map((date) => (
       <OrderBlock
-        key={index}
+        key={date}
         multiPlatformOrders={groupedMultiPlatformOrders[date]}
         date={date}
       />
@@ -80,8 +86,15 @@ function OrderBlock({
         <DateHeader occurrence={date} />
       </div>
       <div className="space-y-1 md:space-y-0">
-        {multiPlatformOrders.map((multiPlatformOrder, index) => (
-          <OrderRow multiPlatformOrder={multiPlatformOrder} key={index} />
+        {multiPlatformOrders.map((multiPlatformOrder) => (
+          <OrderRow
+            multiPlatformOrder={multiPlatformOrder}
+            key={
+              multiPlatformOrder.invoiceId ??
+              multiPlatformOrder.invoiceUrl ??
+              `${multiPlatformOrder.type}-${multiPlatformOrder.occurredAt}-${multiPlatformOrder.name}-${multiPlatformOrder.price}`
+            }
+          />
         ))}
       </div>
     </div>
@@ -110,6 +123,10 @@ const OrderRow = ({
         <OrderRowCard multiPlatformOrder={multiPlatformOrder} />
       </SheetTrigger>
       <SheetContent className="flex max-h-full flex-col rounded-t-[10px]">
+        <SheetTitle className="sr-only">Invoice details</SheetTitle>
+        <SheetDescription className="sr-only">
+          View invoice details for this order.
+        </SheetDescription>
         <OrderInvoiceContent multiPlatformOrder={multiPlatformOrder} />
       </SheetContent>
     </Sheet>

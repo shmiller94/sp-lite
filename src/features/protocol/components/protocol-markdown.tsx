@@ -73,91 +73,97 @@ export const ProtocolMarkdown = ({
     });
   }, [citations]);
 
-  try {
-    const sanitizedContent = sanitizeMarkdown(content);
+  const sanitizedContent = useMemo(() => {
+    try {
+      return sanitizeMarkdown(content);
+    } catch (error) {
+      console.error('Error sanitizing markdown', error);
+      return null;
+    }
+  }, [content]);
 
-    return (
-      <div className={cn('text-primary', className)}>
-        <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
-          components={{
-            p: (props) => {
-              return (
-                <Body1 as="div" className="mb-4 break-words text-inherit">
-                  {props.children}
-                </Body1>
-              );
-            },
-            h1: (props) => <H1 className="mb-2 break-words" {...props} />,
-            h2: (props) => <H2 className="mb-2 break-words" {...props} />,
-            h3: (props) => <H3 className="mb-2 break-words" {...props} />,
-            h4: (props) => <H4 className="mb-2 break-words" {...props} />,
-            ul: (props) => (
-              <ul
-                className="relative z-10 mb-4 ml-3 list-outside list-disc space-y-1 font-sans text-base [&_li::marker]:text-zinc-300"
-                {...props}
-              />
-            ),
-            ol: (props) => (
-              <ol
-                className="mb-4 ml-5 list-decimal text-base text-inherit [&_li:has(strong)::marker]:text-vermillion-900 [&_strong]:text-vermillion-900"
-                {...props}
-              />
-            ),
-            li: (props) => (
-              <li className="mb-1 break-words font-sans text-inherit">
-                {props.children}
-              </li>
-            ),
-            strong: (props) => (
-              <strong
-                className={cn(
-                  'break-words font-bold',
-                  boldVermillion && 'text-vermillion-900',
-                )}
-                {...props}
-              />
-            ),
-            a: (props) => (
-              <a
-                className="break-all text-vermillion-900 hover:underline"
-                target="_blank"
-                rel="noreferrer"
-                {...props}
-              >
-                {props.children}
-              </a>
-            ),
-          }}
-        >
-          {sanitizedContent}
-        </ReactMarkdown>
-
-        {sortedCitations.length > 0 && (
-          <Body1 as="div" className="mt-2 break-words text-secondary">
-            <Info size={16} className="mb-1 mr-1.5 inline" />
-            <span>Evidence & Research: </span>
-            {sortedCitations.map((c, idx) => {
-              const label = `Source ${idx + 1}`;
-              return (
-                <span key={c.key}>
-                  <CitationHoverText label={label} content={c.content} />
-                  {idx < sortedCitations.length - 1 ? ', ' : ''}
-                </span>
-              );
-            })}
-          </Body1>
-        )}
-      </div>
-    );
-  } catch (error) {
-    console.error('Error parsing markdown', error);
+  if (sanitizedContent == null) {
     return (
       <Body1 className="whitespace-pre-line break-words text-zinc-500">
         {content}
       </Body1>
     );
   }
+
+  return (
+    <div className={cn('text-primary', className)}>
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        components={{
+          p: (props) => {
+            return (
+              <Body1 as="div" className="mb-4 break-words text-inherit">
+                {props.children}
+              </Body1>
+            );
+          },
+          h1: (props) => <H1 className="mb-2 break-words" {...props} />,
+          h2: (props) => <H2 className="mb-2 break-words" {...props} />,
+          h3: (props) => <H3 className="mb-2 break-words" {...props} />,
+          h4: (props) => <H4 className="mb-2 break-words" {...props} />,
+          ul: (props) => (
+            <ul
+              className="relative z-10 mb-4 ml-3 list-outside list-disc space-y-1 font-sans text-base [&_li::marker]:text-zinc-300"
+              {...props}
+            />
+          ),
+          ol: (props) => (
+            <ol
+              className="mb-4 ml-5 list-decimal text-base text-inherit [&_li:has(strong)::marker]:text-vermillion-900 [&_strong]:text-vermillion-900"
+              {...props}
+            />
+          ),
+          li: (props) => (
+            <li className="mb-1 break-words font-sans text-inherit">
+              {props.children}
+            </li>
+          ),
+          strong: (props) => (
+            <strong
+              className={cn(
+                'break-words font-bold',
+                boldVermillion && 'text-vermillion-900',
+              )}
+              {...props}
+            />
+          ),
+          a: (props) => (
+            <a
+              className="break-all text-vermillion-900 hover:underline"
+              target="_blank"
+              rel="noreferrer"
+              {...props}
+            >
+              {props.children}
+            </a>
+          ),
+        }}
+      >
+        {sanitizedContent}
+      </ReactMarkdown>
+
+      {sortedCitations.length > 0 && (
+        <Body1 as="div" className="mt-2 break-words text-secondary">
+          <Info size={16} className="mb-1 mr-1.5 inline" />
+          <span>Evidence & Research: </span>
+          {sortedCitations.map((c, idx) => {
+            const label = `Source ${idx + 1}`;
+            return (
+              <span key={c.key}>
+                <CitationHoverText label={label} content={c.content} />
+                {idx < sortedCitations.length - 1 ? ', ' : ''}
+              </span>
+            );
+          })}
+        </Body1>
+      )}
+    </div>
+  );
 };
 
 function sanitizeMarkdown(input: string): string {

@@ -88,16 +88,7 @@ export const ClaimBenefitForm = () => {
   return (
     <>
       <Form {...form}>
-        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
-        <form
-          className="space-y-1"
-          onSubmit={(e) => e.preventDefault()}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-            }
-          }}
-        >
+        <div className="space-y-1">
           {step === 1 ? (
             <AuthLayout title="Email" progress={{ current: step, total: 2 }}>
               <VerifyEligibilityStep onNext={onNextCallback} />
@@ -108,7 +99,7 @@ export const ClaimBenefitForm = () => {
               onSubmit={onSubmitCallback}
             />
           )}
-        </form>
+        </div>
       </Form>
     </>
   );
@@ -154,8 +145,10 @@ const VerifyEligibilityStep = ({
 
       toast.success('Eligibility verified successfully');
 
-      if (userQuery.data && userQuery.data.email !== email) {
-        await logout.mutateAsync({});
+      if (userQuery.data) {
+        if (userQuery.data.email !== email) {
+          await logout.mutateAsync({});
+        }
       }
 
       const benefitIds = result.map((benefit) => benefit.id);
@@ -169,10 +162,12 @@ const VerifyEligibilityStep = ({
         benefit_ids: benefitIds,
       });
       onNext(benefitIds);
-    } catch (error: any) {
-      toast.error(
-        error?.message ?? 'Failed to verify eligibility. Please try again.',
-      );
+    } catch (error) {
+      let errorMessage = 'Failed to verify eligibility. Please try again.';
+      if (error instanceof Error && error.message) {
+        errorMessage = error.message;
+      }
+      toast.error(errorMessage);
     }
   };
 

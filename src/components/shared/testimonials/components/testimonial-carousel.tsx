@@ -28,8 +28,10 @@ export const TestimonialCarousel = ({ darkMode }: { darkMode: boolean }) => {
         }}
       >
         <CarouselMainContainer>
-          {TESTIMONIALS.map((testimonial, index) => (
-            <SliderMainItem key={index}>
+          {TESTIMONIALS.map((testimonial) => (
+            <SliderMainItem
+              key={`${testimonial.name}-${testimonial.location}-${testimonial.age}`}
+            >
               <Card className="mx-auto flex h-auto max-w-sm flex-col items-center rounded-none border-none bg-transparent p-4 shadow-none">
                 <div className="relative mb-4 size-12 overflow-hidden rounded-full border border-white/10">
                   <img
@@ -59,9 +61,9 @@ export const TestimonialCarousel = ({ darkMode }: { darkMode: boolean }) => {
           ))}
         </CarouselMainContainer>
         <CarouselThumbsContainer className="mb-2 justify-center gap-x-2">
-          {TESTIMONIALS.map((_, index) => (
+          {TESTIMONIALS.map((testimonial, index) => (
             <CarouselIndicator
-              key={index}
+              key={`${testimonial.name}-${testimonial.location}-${testimonial.age}`}
               index={index}
               className={cn(
                 'size-2 shadow-none data-[active="true"]:!bg-vermillion-900',

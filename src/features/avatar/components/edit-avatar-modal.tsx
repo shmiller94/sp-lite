@@ -81,9 +81,9 @@ export const EditAvatarModal = ({
       });
     } catch (error) {
       console.error(error);
-    } finally {
-      setIsUploading(false);
     }
+
+    setIsUploading(false);
   };
 
   const originalAvatarSrc = originalAvatar
@@ -224,11 +224,9 @@ const CircleLoadingIndicator = () => {
           const y1 = 24 + Math.sin((angle * Math.PI) / 180) * 19;
           const baseX2 = 24 + Math.cos((angle * Math.PI) / 180) * 20;
           const baseY2 = 24 + Math.sin((angle * Math.PI) / 180) * 20;
-          const randomRadius = 18 + Math.random() * 4;
-          const extendedX2 =
-            24 + Math.cos((angle * Math.PI) / 180) * randomRadius;
-          const extendedY2 =
-            24 + Math.sin((angle * Math.PI) / 180) * randomRadius;
+          const radius = 18 + ((i * 29) % 40) / 10;
+          const extendedX2 = 24 + Math.cos((angle * Math.PI) / 180) * radius;
+          const extendedY2 = 24 + Math.sin((angle * Math.PI) / 180) * radius;
           return (
             <m.line
               key={i}

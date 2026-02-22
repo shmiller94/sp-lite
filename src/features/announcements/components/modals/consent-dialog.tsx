@@ -31,7 +31,7 @@ export const ConsentDialog = ({
   children,
   initialStep = 0,
 }: ConsentDialogProps) => {
-  const [step, setStep] = useState<0 | 1>(initialStep);
+  const [step, setStep] = useState<0 | 1>(() => initialStep);
   const { data: user } = useUser();
 
   const { data } = useGetConsent({
@@ -39,6 +39,13 @@ export const ConsentDialog = ({
   });
 
   const hasConsent = data?.exists === true;
+
+  const handleOpenChange = (next: boolean) => {
+    if (next) {
+      setStep(initialStep);
+    }
+    onOpenChange(next);
+  };
 
   const onConsentSubmit = () => {
     onFinished?.();
@@ -48,7 +55,7 @@ export const ConsentDialog = ({
   if (hasConsent) return children;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       {children ? <DialogTrigger asChild>{children}</DialogTrigger> : null}
       <DialogContent
         className="overflow-scroll px-6 pt-6 md:px-14 md:pt-16"

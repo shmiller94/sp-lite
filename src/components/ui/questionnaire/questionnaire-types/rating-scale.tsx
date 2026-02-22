@@ -87,7 +87,7 @@ export function RatingScale({
         }}
         name={item.linkId}
       >
-        {options.map(([optionName, optionValue], index) => (
+        {options.map(([optionName, optionValue]) => (
           <div
             className={cn(
               'relative flex flex-1 items-center space-x-1 overflow-hidden rounded-xl bg-white outline-none ring-0 transition-all hover:bg-zinc-50 focus-visible:ring-2 focus-visible:ring-secondary md:h-16',
@@ -95,7 +95,7 @@ export function RatingScale({
             )}
             data-scale-id={item.linkId}
             tabIndex={0}
-            key={index}
+            key={optionName}
             role="radio"
             aria-checked={optionName === (answerLinkId ?? defaultValue)}
             onKeyDown={(e) => {

@@ -102,9 +102,13 @@ export const TotalInfo = () => {
   const { membership, couponMetadata } = useCheckoutContext();
 
   if (!membership) {
-    return Array(3)
-      .fill(0)
-      .map((_, i) => <Skeleton key={i} className="h-6 w-full rounded-md" />);
+    return (
+      <>
+        <Skeleton className="h-6 w-full rounded-md" />
+        <Skeleton className="h-6 w-full rounded-md" />
+        <Skeleton className="h-6 w-full rounded-md" />
+      </>
+    );
   }
 
   return (

@@ -17,65 +17,84 @@ import { useOnboardingFlowStore } from '@/features/onboarding/stores/onboarding-
 export const StepRenderer = () => {
   const currentStep = useOnboardingFlowStore((state) => state.currentStep);
 
-  const renderStep = () => {
-    switch (currentStep) {
-      case STEP_IDS.UPDATE_INFO:
-        return <Steps.UpdateInfoStep />;
-      case STEP_IDS.HEARD_ABOUT_US:
-        return <HeardAboutUsSequence />;
-      case STEP_IDS.INTRODUCTION:
-        return <IntroductionSequence />;
-      case STEP_IDS.DIGITAL_TWIN:
-        return <DigitalTwinSequence />;
-      case STEP_IDS.BUNDLED_DISCOUNT:
-        return <Steps.BundledDiscountStep />;
-      case STEP_IDS.ORGAN_AGE:
-        return <OrganAgeSequence />;
-      case STEP_IDS.ADVANCED_UPGRADE:
-        return <Steps.AdvancedPanelUpgradeStep />;
-      case STEP_IDS.FINISH_TWIN:
-        return <FinishTwinSequence />;
-      case STEP_IDS.PRIMER_INTRO:
-        return <QuestionnaireSequence.OnboardingPrimerIntroStep />;
-      case STEP_IDS.PRIMER:
-        return (
-          <QuestionnaireSequence.OnboardingQuestionnaireStep questionnaireName="onboarding-primer" />
-        );
-      case STEP_IDS.MEDICAL_HISTORY_INTRO:
-        return <QuestionnaireSequence.OnboardingMedicalHistoryIntroStep />;
-      case STEP_IDS.MEDICAL_HISTORY:
-        return (
-          <QuestionnaireSequence.OnboardingQuestionnaireStep questionnaireName="onboarding-medical-history" />
-        );
-      case STEP_IDS.FEMALE_HEALTH_INTRO:
-        return <QuestionnaireSequence.OnboardingFemaleHealthIntroStep />;
-      case STEP_IDS.FEMALE_HEALTH:
-        return (
-          <QuestionnaireSequence.OnboardingQuestionnaireStep questionnaireName="onboarding-female-health" />
-        );
-      case STEP_IDS.LIFESTYLE_INTRO:
-        return <QuestionnaireSequence.OnboardingLifestyleIntroStep />;
-      case STEP_IDS.LIFESTYLE:
-        return (
-          <QuestionnaireSequence.OnboardingQuestionnaireStep questionnaireName="onboarding-lifestyle" />
-        );
-      case STEP_IDS.ADD_ON_PANELS:
-        return <Steps.AddOnPanelsStep />;
-      case STEP_IDS.UPSELL_PANELS:
-        return <UpsellSequence />;
-      case STEP_IDS.PHLEBOTOMY_BOOKING:
-        return <Steps.PhlebotomyBookingStep />;
-      case STEP_IDS.COMMITMENT:
-        return <CommitmentSequence />;
-      default:
-        throw new Error(`Unknown onboarding step: ${currentStep}`);
-    }
-  };
+  let content: JSX.Element;
+  switch (currentStep) {
+    case STEP_IDS.UPDATE_INFO:
+      content = <Steps.UpdateInfoStep />;
+      break;
+    case STEP_IDS.HEARD_ABOUT_US:
+      content = <HeardAboutUsSequence />;
+      break;
+    case STEP_IDS.INTRODUCTION:
+      content = <IntroductionSequence />;
+      break;
+    case STEP_IDS.DIGITAL_TWIN:
+      content = <DigitalTwinSequence />;
+      break;
+    case STEP_IDS.BUNDLED_DISCOUNT:
+      content = <Steps.BundledDiscountStep />;
+      break;
+    case STEP_IDS.ORGAN_AGE:
+      content = <OrganAgeSequence />;
+      break;
+    case STEP_IDS.ADVANCED_UPGRADE:
+      content = <Steps.AdvancedPanelUpgradeStep />;
+      break;
+    case STEP_IDS.FINISH_TWIN:
+      content = <FinishTwinSequence />;
+      break;
+    case STEP_IDS.PRIMER_INTRO:
+      content = <QuestionnaireSequence.OnboardingPrimerIntroStep />;
+      break;
+    case STEP_IDS.PRIMER:
+      content = (
+        <QuestionnaireSequence.OnboardingQuestionnaireStep questionnaireName="onboarding-primer" />
+      );
+      break;
+    case STEP_IDS.MEDICAL_HISTORY_INTRO:
+      content = <QuestionnaireSequence.OnboardingMedicalHistoryIntroStep />;
+      break;
+    case STEP_IDS.MEDICAL_HISTORY:
+      content = (
+        <QuestionnaireSequence.OnboardingQuestionnaireStep questionnaireName="onboarding-medical-history" />
+      );
+      break;
+    case STEP_IDS.FEMALE_HEALTH_INTRO:
+      content = <QuestionnaireSequence.OnboardingFemaleHealthIntroStep />;
+      break;
+    case STEP_IDS.FEMALE_HEALTH:
+      content = (
+        <QuestionnaireSequence.OnboardingQuestionnaireStep questionnaireName="onboarding-female-health" />
+      );
+      break;
+    case STEP_IDS.LIFESTYLE_INTRO:
+      content = <QuestionnaireSequence.OnboardingLifestyleIntroStep />;
+      break;
+    case STEP_IDS.LIFESTYLE:
+      content = (
+        <QuestionnaireSequence.OnboardingQuestionnaireStep questionnaireName="onboarding-lifestyle" />
+      );
+      break;
+    case STEP_IDS.ADD_ON_PANELS:
+      content = <Steps.AddOnPanelsStep />;
+      break;
+    case STEP_IDS.UPSELL_PANELS:
+      content = <UpsellSequence />;
+      break;
+    case STEP_IDS.PHLEBOTOMY_BOOKING:
+      content = <Steps.PhlebotomyBookingStep />;
+      break;
+    case STEP_IDS.COMMITMENT:
+      content = <CommitmentSequence />;
+      break;
+    default:
+      throw new Error(`Unknown onboarding step: ${currentStep}`);
+  }
 
   return (
     <AnimatePresence mode="wait">
       <div key={currentStep} className="flex min-h-dvh flex-col">
-        {renderStep()}
+        {content}
       </div>
     </AnimatePresence>
   );

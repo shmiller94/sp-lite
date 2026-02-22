@@ -1,4 +1,4 @@
-import { createContext, useContext, useRef, PropsWithChildren } from 'react';
+import { createContext, useContext, useState, PropsWithChildren } from 'react';
 import { shallow } from 'zustand/shallow';
 import { useStoreWithEqualityFn } from 'zustand/traditional';
 
@@ -20,13 +20,10 @@ export const QuestionnaireStoreProvider = ({
   children,
   ...props
 }: QuestionnaireStoreProviderProps) => {
-  const questionnaireStoreRef = useRef<QuestionnaireStoreApi>();
-  if (!questionnaireStoreRef.current) {
-    questionnaireStoreRef.current = questionnaireStoreCreator(props);
-  }
+  const [store] = useState(() => questionnaireStoreCreator(props));
 
   return (
-    <QuestionnaireStoreContext.Provider value={questionnaireStoreRef.current}>
+    <QuestionnaireStoreContext.Provider value={store}>
       {children}
     </QuestionnaireStoreContext.Provider>
   );

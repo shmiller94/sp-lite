@@ -1,7 +1,15 @@
-import { useChat } from '@ai-sdk/react';
+import { useChat, type UseChatHelpers } from '@ai-sdk/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { DefaultChatTransport, FileUIPart, type UIMessage } from 'ai';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -109,48 +117,77 @@ export function Chat({
   id: string;
   initialMessages: Array<UIMessage>;
 }) {
+  const controller = useConciergeChatController({ id, initialMessages });
+
+  return (
+    <ChatView
+      chatId={id}
+      messages={controller.messages}
+      setMessages={controller.setMessages}
+      effectiveStatus={controller.effectiveStatus}
+      showLoadErrorBanner={controller.showLoadErrorBanner}
+      input={controller.input}
+      setInput={controller.setInput}
+      attachments={controller.attachments}
+      setAttachments={controller.setAttachments}
+      sendMessage={controller.sendMessage}
+    />
+  );
+}
+
+function useConciergeChatController({
+  id,
+  initialMessages,
+}: {
+  id: string;
+  initialMessages: Array<UIMessage>;
+}) {
   const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
   const { refetch } = useHistory();
   const { track } = useAnalytics();
   const navigate = useNavigate();
+
   const lastReportedErrorRef = useRef<string | null>(null);
+  const recoveryInProgressRef = useRef(false);
+  const resumeAttemptedRef = useRef(false);
+  const recoveryAttemptedRef = useRef(false);
+  const lastSyncedCountRef = useRef(0);
 
   const initialMessage = searchParams.get('defaultMessage');
   const [input, setInput] = useState(initialMessage ?? '');
+  const [attachments, setAttachments] = useState<Array<FileUIPart>>([]);
+  const [recoveryFailed, setRecoveryFailed] = useState(false);
+  const [showLoadErrorBanner, setShowLoadErrorBanner] = useState(false);
 
-  // Helper to get fresh access token and user ID for each request
-  const getActiveLoginData = () => {
-    const activeLogin = getActiveLogin();
-    return {
-      accessToken: activeLogin?.accessToken,
-      userId: activeLogin?.profile?.userId,
-    };
-  };
+  const sessionStartTime = useChatStore((s) => s.sessionStartTime);
+  const setSessionStartTime = useChatStore((s) => s.setSessionStartTime);
+  const incrementMessageCount = useChatStore((s) => s.incrementMessageCount);
+  const addResponseTime = useChatStore((s) => s.addResponseTime);
 
-  // Memoize transport to prevent unnecessary re-creation
   const transport = useMemo(
     () =>
       new DefaultChatTransport<UIMessage>({
         api: `${env.API_URL}/chat/chatv2`,
         credentials: 'include',
         headers: () => {
-          // Get fresh token and user ID on each request
-          const { accessToken } = getActiveLoginData();
+          const accessToken = getActiveLogin()?.accessToken;
           return {
             Accept: 'application/json',
             ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
           };
         },
         prepareSendMessagesRequest: ({ id, messages }) => {
-          // Find the last user message
-          const lastUser = [...messages]
-            .reverse()
-            .find((m) => m.role === 'user');
-
-          if (!lastUser) {
-            throw new Error('No user message to send.');
+          let lastUser: UIMessage | undefined;
+          for (let i = messages.length - 1; i >= 0; i = i - 1) {
+            const m = messages[i];
+            if (m.role === 'user') {
+              lastUser = m;
+              break;
+            }
           }
+
+          if (!lastUser) throw new Error('No user message to send.');
 
           return {
             api: `${env.API_URL}/chat/chatv2`,
@@ -161,10 +198,8 @@ export function Chat({
           api: `${env.API_URL}/chat/chatv2/${id}/stream`,
         }),
       }),
-    [], // Intentionally empty - uses fresh data via getActiveLoginData()
+    [], // Intentionally empty - reads fresh token inside headers()
   );
-
-  const recoveryInProgressRef = useRef(false);
 
   const reportChatError = useCallback(
     (errorBody: string) => {
@@ -193,28 +228,45 @@ export function Chat({
 
       try {
         const serverMessages = await getMessages({ chatId: id });
-        if (serverMessages && serverMessages.length > 0) {
-          const lastMessage = serverMessages[serverMessages.length - 1];
-          if (hasAssistantContent(lastMessage)) {
-            setMessages(serverMessages);
-            queryClient.setQueryData(
-              getMessagesQueryOptions(id).queryKey,
-              serverMessages,
-            );
-            recoveryInProgressRef.current = false;
-            return { success: true as const, errorBody: null };
+        if (!serverMessages) {
+          recoveryInProgressRef.current = false;
+          return {
+            success: false as const,
+            errorBody: 'Recovery failed: assistant response was empty.',
+          };
+        }
+
+        if (serverMessages.length === 0) {
+          recoveryInProgressRef.current = false;
+          return {
+            success: false as const,
+            errorBody: 'Recovery failed: assistant response was empty.',
+          };
+        }
+
+        const lastMessage = serverMessages[serverMessages.length - 1];
+        if (!hasAssistantContent(lastMessage)) {
+          recoveryInProgressRef.current = false;
+          return {
+            success: false as const,
+            errorBody: 'Recovery failed: assistant response was empty.',
+          };
+        }
+
+        setMessages(serverMessages);
+        queryClient.setQueryData(
+          getMessagesQueryOptions(id).queryKey,
+          serverMessages,
+        );
+        recoveryInProgressRef.current = false;
+        return { success: true as const, errorBody: null };
+      } catch (err) {
+        let recoveryErrorMessage = 'Recovery failed: unable to fetch messages.';
+        if (err instanceof Error) {
+          if (err.message) {
+            recoveryErrorMessage = err.message;
           }
         }
-        recoveryInProgressRef.current = false;
-        return {
-          success: false as const,
-          errorBody: 'Recovery failed: assistant response was empty.',
-        };
-      } catch (err) {
-        const recoveryErrorMessage =
-          err instanceof Error && err.message
-            ? err.message
-            : 'Recovery failed: unable to fetch messages.';
 
         recoveryInProgressRef.current = false;
         return {
@@ -224,6 +276,19 @@ export function Chat({
       }
     },
     [id, queryClient],
+  );
+
+  const clearRecoveryFailed = useCallback(() => {
+    setRecoveryFailed(false);
+  }, []);
+
+  const markRecoveryFailed = useCallback(
+    (errorBody: string | null | undefined) => {
+      setRecoveryFailed(true);
+      setShowLoadErrorBanner(true);
+      reportChatError(errorBody ?? 'Recovery failed: unknown chat error.');
+    },
+    [reportChatError],
   );
 
   const { messages, setMessages, sendMessage, resumeStream, status } = useChat({
@@ -239,26 +304,26 @@ export function Chat({
       queryClient.invalidateQueries({ queryKey: ['chat', id] });
 
       if (message.role === 'user') {
-        const messageLength = message.parts?.reduce((acc, part) => {
+        let messageLength = 0;
+        for (const part of message.parts ?? []) {
           if (part.type === 'text') {
-            acc += part.text.length;
+            messageLength += part.text.length;
           }
-          return acc;
-        }, 0);
-
-        track('sent_message_ai', {
-          message_length: messageLength ?? 0,
-        });
-      } else if (message.role === 'assistant') {
-        const timing = extractTiming(message, false);
-
-        track('received_message_ai', {
-          response_time: timing.totalMs,
-        });
-
-        if (timing.totalMs) {
-          addResponseTime(timing.totalMs);
         }
+
+        track('sent_message_ai', { message_length: messageLength });
+        return;
+      }
+
+      if (message.role !== 'assistant') return;
+      const timing = extractTiming(message, false);
+
+      track('received_message_ai', {
+        response_time: timing.totalMs,
+      });
+
+      if (timing.totalMs) {
+        addResponseTime(timing.totalMs);
       }
     },
     onError: (err) => {
@@ -300,10 +365,6 @@ export function Chat({
     },
   });
 
-  // Resume stream on page load for existing chats.
-  // Always attempt for non-new chats with messages — if no stream is active,
-  // the SDK gracefully handles it as a no-op.
-  const resumeAttemptedRef = useRef(false);
   useEffect(() => {
     if (resumeAttemptedRef.current) return;
     if (initialMessages.length === 0) return;
@@ -313,17 +374,16 @@ export function Chat({
     resumeStream().catch(() => {});
   }, [initialMessages.length, resumeStream, status]);
 
-  // Safety net: detect "ready but empty assistant" state and attempt recovery.
-  // Catches edge cases where onFinish might not fire or status transitions unexpectedly.
-  const recoveryAttemptedRef = useRef(false);
-  const [recoveryFailed, setRecoveryFailed] = useState(false);
-  const [showLoadErrorBanner, setShowLoadErrorBanner] = useState(false);
-
   useEffect(() => {
     if (status !== 'ready') {
       recoveryAttemptedRef.current = false;
-      setRecoveryFailed(false);
-      return;
+      const timeoutId = setTimeout(() => {
+        clearRecoveryFailed();
+      }, 0);
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
     }
 
     const lastMessage = messages[messages.length - 1];
@@ -338,27 +398,21 @@ export function Chat({
 
       recoverFromServer(setMessages).then((result) => {
         if (!result.success) {
-          setRecoveryFailed(true);
-          setShowLoadErrorBanner(true);
-          reportChatError(
-            result.errorBody ?? 'Recovery failed: unknown chat error.',
-          );
+          markRecoveryFailed(result.errorBody);
         }
       });
     }
-  }, [status, messages, recoverFromServer, setMessages, reportChatError]);
+  }, [
+    status,
+    messages,
+    recoverFromServer,
+    setMessages,
+    clearRecoveryFailed,
+    markRecoveryFailed,
+  ]);
 
-  // Treat recovery failure as error so UI shows retry option
   const effectiveStatus =
     recoveryFailed && status === 'ready' ? 'error' : status;
-
-  // Sync messages to React Query cache when message count changes.
-  // This ensures navigating away mid-stream and returning gets the latest
-  // messages (including the user's sent message), so resumeStream() works correctly.
-  // IMPORTANT: Exclude the partial streaming assistant message from cache.
-  // The server's reconnect endpoint replays the full stream, so caching
-  // partial content would cause duplicates when resumeStream() runs.
-  const lastSyncedCountRef = useRef(0);
 
   useEffect(() => {
     if (messages.length === 0 || messages.length === lastSyncedCountRef.current)
@@ -380,101 +434,137 @@ export function Chat({
     );
   }, [messages.length, messages, id, queryClient, status]);
 
-  const sessionStartTime = useChatStore((s) => s.sessionStartTime);
-  const setSessionStartTime = useChatStore((s) => s.setSessionStartTime);
-  const incrementMessageCount = useChatStore((s) => s.incrementMessageCount);
-  const addResponseTime = useChatStore((s) => s.addResponseTime);
+  const handleSendMessage: typeof sendMessage = useCallback(
+    (message, options) => {
+      if (searchParams.get('defaultMessage') != null) {
+        setSearchParams(
+          (params) => {
+            params.delete('defaultMessage');
+            return params;
+          },
+          { replace: true },
+        );
+      }
 
-  const [attachments, setAttachments] = useState<Array<FileUIPart>>([]);
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleSendMessage = (message: any, options: any) => {
-    if (searchParams.get('defaultMessage') != null) {
-      setSearchParams(
-        (params) => {
-          params.delete('defaultMessage');
-          return params;
-        },
-        { replace: true },
-      );
-    }
-    lastReportedErrorRef.current = null;
-    setRecoveryFailed(false);
-    setShowLoadErrorBanner(false);
-    incrementMessageCount();
-    setInput('');
-    return sendMessage(message, options);
-  };
+      lastReportedErrorRef.current = null;
+      setRecoveryFailed(false);
+      setShowLoadErrorBanner(false);
+      incrementMessageCount();
+      setInput('');
+      return sendMessage(message, options);
+    },
+    [incrementMessageCount, searchParams, sendMessage, setSearchParams],
+  );
 
   useEffect(() => {
-    if (!sessionStartTime) {
+    if (sessionStartTime != null) return;
+
+    const timeoutId = setTimeout(() => {
       setSessionStartTime(Date.now());
-    }
+    }, 0);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [sessionStartTime, setSessionStartTime]);
 
+  return {
+    messages,
+    setMessages,
+    effectiveStatus,
+    showLoadErrorBanner,
+    input,
+    setInput,
+    attachments,
+    setAttachments,
+    sendMessage: handleSendMessage,
+  };
+}
+
+interface ChatViewProps {
+  chatId: string;
+  messages: UseChatHelpers<UIMessage>['messages'];
+  setMessages: UseChatHelpers<UIMessage>['setMessages'];
+  effectiveStatus: UseChatHelpers<UIMessage>['status'];
+  showLoadErrorBanner: boolean;
+  input: string;
+  setInput: Dispatch<SetStateAction<string>>;
+  attachments: Array<FileUIPart>;
+  setAttachments: Dispatch<SetStateAction<Array<FileUIPart>>>;
+  sendMessage: UseChatHelpers<UIMessage>['sendMessage'];
+}
+
+function ChatView({
+  chatId,
+  messages,
+  setMessages,
+  effectiveStatus,
+  showLoadErrorBanner,
+  input,
+  setInput,
+  attachments,
+  setAttachments,
+  sendMessage,
+}: ChatViewProps) {
   return (
-    <>
-      <div className="mx-auto flex size-full min-w-0 max-w-3xl flex-1 flex-col">
-        {/* Scrollable content area */}
-        <div
-          className={cn(
-            'flex flex-1 flex-col overflow-y-auto',
-            messages.length > 0 ? 'justify-start' : 'justify-center',
-          )}
-        >
-          <Messages
-            chatId={id}
-            messages={messages}
-            setMessages={setMessages}
-            status={effectiveStatus}
-          />
+    <div className="mx-auto flex size-full min-w-0 max-w-3xl flex-1 flex-col">
+      <div
+        className={cn(
+          'flex flex-1 flex-col overflow-y-auto',
+          messages.length > 0 ? 'justify-start' : 'justify-center',
+        )}
+      >
+        <Messages
+          chatId={chatId}
+          messages={messages}
+          setMessages={setMessages}
+          status={effectiveStatus}
+        />
 
-          {messages.length === 0 && (
-            <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
-              <Greeting />
-              <div className="flex w-full">
-                <SuggestedActions
-                  onSendSuggestion={(text) =>
-                    handleSendMessage({ text, files: [] }, undefined)
-                  }
-                />
-              </div>
+        {messages.length === 0 && (
+          <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
+            <Greeting />
+            <div className="flex w-full">
+              <SuggestedActions
+                onSendSuggestion={(text) =>
+                  sendMessage({ text, files: [] }, undefined)
+                }
+              />
             </div>
-          )}
-        </div>
-
-        {/* Sticky bottom area */}
-        <div className="sticky bottom-0 shrink-0">
-          {effectiveStatus === 'error' && showLoadErrorBanner && (
-            <div className="mx-auto mb-3 w-full max-w-3xl px-1">
-              <Alert variant="destructive">
-                <AlertTitle>Concierge is experiencing high demand</AlertTitle>
-                <AlertDescription>{conciergeLoadErrorMessage}</AlertDescription>
-              </Alert>
-            </div>
-          )}
-
-          <form className="mx-auto w-full pb-2">
-            <MultimodalInput
-              input={input}
-              setInput={setInput}
-              sendMessage={handleSendMessage}
-              status={effectiveStatus}
-              attachments={attachments}
-              setAttachments={setAttachments}
-              disableFileUpload
-            />
-          </form>
-
-          <p className="mx-auto max-w-xl pb-2 text-center text-[10px] text-zinc-400">
-            Your Superpower AI is not intended to replace medical advice, and
-            solely provided solely to offer suggestions and education. Always
-            seek the advice of a licensed human healthcare provider for any
-            medical questions and call 911 or go to the emergency room if you
-            are experiencing an emergent medical issue.
-          </p>
-        </div>
+          </div>
+        )}
       </div>
-    </>
+
+      <div className="sticky bottom-0 shrink-0">
+        {effectiveStatus === 'error' && showLoadErrorBanner && (
+          <div className="mx-auto mb-3 w-full max-w-3xl px-1">
+            <Alert variant="destructive">
+              <AlertTitle>Concierge is experiencing high demand</AlertTitle>
+              <AlertDescription>{conciergeLoadErrorMessage}</AlertDescription>
+            </Alert>
+          </div>
+        )}
+
+        <form className="mx-auto w-full pb-2">
+          <MultimodalInput
+            input={input}
+            setInput={setInput}
+            sendMessage={sendMessage}
+            status={effectiveStatus}
+            attachments={attachments}
+            setAttachments={setAttachments}
+            disableFileUpload
+          />
+        </form>
+
+        <p className="mx-auto max-w-xl pb-2 text-center text-[10px] text-zinc-400">
+          Your Superpower AI is not intended to replace medical advice, and
+          solely provided solely to offer suggestions and education. Always seek
+          the advice of a licensed human healthcare provider for any medical
+          questions and call 911 or go to the emergency room if you are
+          experiencing an emergent medical issue.
+        </p>
+      </div>
+    </div>
   );
 }

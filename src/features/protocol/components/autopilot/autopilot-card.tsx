@@ -31,8 +31,8 @@ export const AutopilotCard = () => {
             <Body2>Prefer we run your entire protocol for you?</Body2>
           </div>
           <ul className="space-y-2">
-            {HIGHLIGHTS.map((highlight, index) => (
-              <li key={index} className="flex items-start gap-2">
+            {HIGHLIGHTS.map((highlight) => (
+              <li key={highlight.text} className="flex items-start gap-2">
                 <highlight.icon className="size-4 shrink-0 text-vermillion-900" />
                 <Body2>{highlight.text}</Body2>
               </li>

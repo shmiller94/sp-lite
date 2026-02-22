@@ -114,12 +114,13 @@ const AssistantMessageContent = memo(function AssistantMessageContent({
   );
 
   // Build user's full name for FHIR Patient citation tooltips
+  const firstName = user?.firstName;
+  const lastName = user?.lastName;
   const userName = useMemo(() => {
-    if (!user?.firstName) return undefined;
-    return user.lastName
-      ? `${user.firstName} ${user.lastName}`
-      : user.firstName;
-  }, [user?.firstName, user?.lastName]);
+    if (firstName == null || firstName.length === 0) return undefined;
+    if (lastName == null || lastName.length === 0) return firstName;
+    return `${firstName} ${lastName}`;
+  }, [firstName, lastName]);
 
   // Show loading message when streaming but no content yet
   const showLoadingMessage = isStreaming && blocks.length === 0;

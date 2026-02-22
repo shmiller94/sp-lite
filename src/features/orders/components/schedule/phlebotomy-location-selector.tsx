@@ -1,5 +1,6 @@
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Body1, Body2 } from '@/components/ui/typography';
 import { CurrentAddressEditSuggestion } from '@/features/users/components/current-address-card';
 import { cn } from '@/lib/utils';
@@ -28,14 +29,31 @@ export const PhlebotomyLocationSelector = () => {
     updateTz(null);
   };
 
-  const options = useCollectionMethods({ creditIds: [...selectedCreditIds] });
+  const creditIds: string[] = [];
+  for (const creditId of selectedCreditIds) {
+    creditIds.push(creditId);
+  }
+
+  const { options, isLoading, showMissingPrimaryAddress } =
+    useCollectionMethods({
+      creditIds,
+    });
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-4">
+        <Skeleton className="h-[92px] w-full rounded-2xl" variant="shimmer" />
+        <Skeleton className="h-[92px] w-full rounded-2xl" variant="shimmer" />
+      </div>
+    );
+  }
 
   return (
     <RadioGroup
       defaultValue={collectionMethod ?? 'AT_HOME'}
       className="flex flex-col"
     >
-      {options.length === 0 ? (
+      {showMissingPrimaryAddress ? (
         <div className="flex flex-col items-center gap-4 rounded-xl border border-zinc-200 bg-white p-6">
           <p className="text-zinc-500">No primary address found.</p>
           <CurrentAddressEditSuggestion />

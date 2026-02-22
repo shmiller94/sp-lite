@@ -101,96 +101,100 @@ const ProtocolRevealContent = ({
   previous,
   currentStepId,
 }: ProtocolRevealContentProps) => {
-  const renderGoalStep = () => {
-    const goalId = currentStepId.replace('goal-', '');
-    const goal = protocol.goals.find((g) => g.id === goalId);
+  let stepElement: JSX.Element | null = null;
+  switch (currentStepId) {
+    case REVEAL_STEPS.GET_STARTED:
+      stepElement = <GetStartedStep next={next} />;
+      break;
+    case REVEAL_STEPS.BIOLOGICAL_AGE:
+      stepElement = <BiologicalAgeStep next={next} previous={previous} />;
+      break;
+    case REVEAL_STEPS.SCORE:
+      stepElement = <HealthScoreStep next={next} previous={previous} />;
+      break;
+    case REVEAL_STEPS.BIOMARKERS:
+      stepElement = (
+        <BiomarkersStep
+          carePlanId={carePlanId}
+          next={next}
+          previous={previous}
+        />
+      );
+      break;
+    case REVEAL_STEPS.ORDER_SUMMARY:
+      stepElement = (
+        <OrderSummaryStep
+          goals={protocol.goals}
+          activities={protocol.activities}
+          next={next}
+          previous={previous}
+        />
+      );
+      break;
+    case REVEAL_STEPS.PRODUCT_CHECKOUT:
+      stepElement = (
+        <ProductCheckoutStep
+          carePlanId={carePlanId}
+          next={next}
+          previous={previous}
+        />
+      );
+      break;
+    case REVEAL_STEPS.SERVICE_CHECKOUT:
+      stepElement = (
+        <ServiceCheckoutStep
+          carePlanId={carePlanId}
+          next={next}
+          previous={previous}
+        />
+      );
+      break;
+    case REVEAL_STEPS.RX_QUESTIONNAIRE:
+      stepElement = (
+        <RxQuestionnaireStep
+          carePlanId={carePlanId}
+          activities={protocol.activities}
+          next={next}
+        />
+      );
+      break;
+    default:
+      if (currentStepId.startsWith('goal-')) {
+        const goalId = currentStepId.replace('goal-', '');
+        const goal = protocol.goals.find((g) => g.id === goalId);
 
-    if (!goal) {
-      console.error('Unknown goal step', { currentStepId });
-      return null;
-    }
-
-    const goalActivities =
-      protocol.activities.filter(
-        (activity) =>
-          ['product', 'service', 'prescription'].includes(activity.type) &&
-          activity.goalIds.includes(goal.id),
-      ) || [];
-
-    return (
-      <GoalStep
-        goal={goal}
-        activities={goalActivities}
-        allGoals={protocol.goals}
-        next={next}
-        previous={previous}
-      />
-    );
-  };
-
-  const renderCurrentStep = () => {
-    switch (currentStepId) {
-      case REVEAL_STEPS.GET_STARTED:
-        return <GetStartedStep next={next} />;
-      case REVEAL_STEPS.BIOLOGICAL_AGE:
-        return <BiologicalAgeStep next={next} previous={previous} />;
-      case REVEAL_STEPS.SCORE:
-        return <HealthScoreStep next={next} previous={previous} />;
-      case REVEAL_STEPS.BIOMARKERS:
-        return (
-          <BiomarkersStep
-            carePlanId={carePlanId}
-            next={next}
-            previous={previous}
-          />
-        );
-      case REVEAL_STEPS.ORDER_SUMMARY:
-        return (
-          <OrderSummaryStep
-            goals={protocol?.goals}
-            activities={protocol?.activities}
-            next={next}
-            previous={previous}
-          />
-        );
-      case REVEAL_STEPS.PRODUCT_CHECKOUT:
-        return (
-          <ProductCheckoutStep
-            carePlanId={carePlanId}
-            next={next}
-            previous={previous}
-          />
-        );
-      case REVEAL_STEPS.SERVICE_CHECKOUT:
-        return (
-          <ServiceCheckoutStep
-            carePlanId={carePlanId}
-            next={next}
-            previous={previous}
-          />
-        );
-      case REVEAL_STEPS.RX_QUESTIONNAIRE:
-        return (
-          <RxQuestionnaireStep
-            carePlanId={carePlanId}
-            activities={protocol?.activities}
-            next={next}
-          />
-        );
-      default:
-        if (currentStepId.startsWith('goal-')) {
-          return renderGoalStep();
+        if (!goal) {
+          console.error('Unknown goal step', { currentStepId });
+          break;
         }
 
-        console.error('Unknown reveal step', { currentStepId });
-        return null;
-    }
-  };
+        const goalActivities =
+          protocol.activities.filter(
+            (activity) =>
+              ['product', 'service', 'prescription'].includes(activity.type) &&
+              activity.goalIds.includes(goal.id),
+          ) || [];
+
+        stepElement = (
+          <GoalStep
+            goal={goal}
+            activities={goalActivities}
+            allGoals={protocol.goals}
+            next={next}
+            previous={previous}
+          />
+        );
+        break;
+      }
+
+      console.error('Unknown reveal step', { currentStepId });
+      stepElement = null;
+  }
 
   return (
     <>
       <Head title="Your Health Protocol" />
-      <div className={cn('')}>{renderCurrentStep()}</div>
+      <div className={cn('')}>{stepElement}</div>
     </>
   );
 };

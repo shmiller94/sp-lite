@@ -1,7 +1,13 @@
 import { EllipsisVertical } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -98,6 +104,10 @@ const SeeDetailsMenuItem = ({
         </DropdownMenuItem>
       </DialogTrigger>
       <DialogContent>
+        <DialogTitle className="sr-only">Invoice details</DialogTitle>
+        <DialogDescription className="sr-only">
+          View invoice details for this order.
+        </DialogDescription>
         <OrderInvoiceContent multiPlatformOrder={multiPlatformOrder} />
       </DialogContent>
     </Dialog>

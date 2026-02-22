@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 import { Spinner } from '../ui/spinner';
 
@@ -61,18 +66,24 @@ export const FlexHSAFSAModal = ({
 
   // Defer iframe rendering to improve perceived performance on Safari - wait one frame to allow modal animation to start before loading iframe
   useEffect(() => {
-    if (isOpen && checkoutUrl && !loading) {
-      requestAnimationFrame(() => {
-        setShouldRenderIframe(true);
-      });
-    } else {
-      setShouldRenderIframe(false);
-    }
+    const nextShouldRender = isOpen && checkoutUrl != null && !loading;
+
+    const rafId = requestAnimationFrame(() => {
+      setShouldRenderIframe(nextShouldRender);
+    });
+
+    return () => {
+      cancelAnimationFrame(rafId);
+    };
   }, [isOpen, checkoutUrl, loading]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="size-full max-h-[80vh] max-w-[80vw] p-0 md:max-h-[90vh] md:max-w-[70vw]">
+        <DialogTitle className="sr-only">Flex HSA/FSA Checkout</DialogTitle>
+        <DialogDescription className="sr-only">
+          Complete your Flex HSA/FSA checkout in the embedded secure window.
+        </DialogDescription>
         {loading || !checkoutUrl || !shouldRenderIframe ? (
           <div className="flex h-full flex-col items-center justify-center space-y-4">
             <Spinner size="lg" variant="primary" />

@@ -37,18 +37,16 @@ const DesktopCard = ({
 }) => {
   const navigate = useNavigate();
 
-  const renderButton = () => {
-    if (draftOrder) {
-      return (
-        <Button className="absolute inset-x-4 bottom-4" size="medium">
-          Schedule
-        </Button>
-      );
-    }
-
+  let actionButton: JSX.Element;
+  if (draftOrder) {
+    actionButton = (
+      <Button className="absolute inset-x-4 bottom-4" size="medium">
+        Schedule
+      </Button>
+    );
+  } else {
     const buttonText = service.group === 'test-kit' ? 'Order now' : 'Book now';
-
-    return (
+    actionButton = (
       <Button
         className="transition-timing-function-[cubic-bezier(0.22,_0.61,_0.35,_1)] pointer-events-none absolute inset-x-4 bottom-4 translate-y-2 opacity-0 blur-sm transition-all duration-200 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 group-hover:blur-0"
         size="medium"
@@ -56,7 +54,7 @@ const DesktopCard = ({
         {buttonText}
       </Button>
     );
-  };
+  }
 
   return (
     <div
@@ -85,7 +83,7 @@ const DesktopCard = ({
           alt={service.name}
           className="h-[300px] w-full rounded-[20px] bg-zinc-50 object-contain"
         />
-        {renderButton()}
+        {actionButton}
       </div>
 
       <div className="flex flex-col gap-1">

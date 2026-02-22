@@ -1,13 +1,8 @@
-/* eslint-disable @typescript-eslint/no-namespace */
-import type { Object3DNode, ThreeElements } from '@react-three/fiber';
-import type { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
+import type { ThreeElement } from '@react-three/fiber';
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 
-declare global {
-  namespace JSX {
-    interface IntrinsicElements extends ThreeElements {
-      textGeometry: Object3DNode<TextGeometry, typeof TextGeometry>;
-    }
+declare module '@react-three/fiber' {
+  interface ThreeElements {
+    textGeometry: ThreeElement<typeof TextGeometry>;
   }
 }
-
-export {};

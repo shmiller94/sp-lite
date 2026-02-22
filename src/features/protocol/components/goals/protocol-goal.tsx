@@ -34,6 +34,46 @@ export function ProtocolGoal({
   const { goalId } = useParams();
   const goalIndex = allGoals ? getGoalIndex(allGoals, goal.id) : -1;
 
+  const bodyNodes: JSX.Element[] = [];
+  if (goal.body.length > 0) {
+    const keyCounts = new Map<string, number>();
+    for (const paragraph of goal.body) {
+      const baseKey = `${goal.id}:body:${paragraph}`;
+      const prevCount = keyCounts.get(baseKey) ?? 0;
+      const nextCount = prevCount + 1;
+      keyCounts.set(baseKey, nextCount);
+
+      const key = nextCount === 1 ? baseKey : `${baseKey}:${nextCount}`;
+      bodyNodes.push(
+        <ProtocolMarkdown
+          key={key}
+          content={paragraph}
+          citations={goal.citations}
+        />,
+      );
+    }
+  }
+
+  const actionNodes: JSX.Element[] = [];
+  if (goal.actions.length > 0) {
+    const keyCounts = new Map<string, number>();
+    for (const action of goal.actions) {
+      const baseKey = `${goal.id}:action:${action}`;
+      const prevCount = keyCounts.get(baseKey) ?? 0;
+      const nextCount = prevCount + 1;
+      keyCounts.set(baseKey, nextCount);
+
+      const key = nextCount === 1 ? baseKey : `${baseKey}:${nextCount}`;
+      actionNodes.push(
+        <ProtocolMarkdown
+          key={key}
+          content={action}
+          citations={goal.citations}
+        />,
+      );
+    }
+  }
+
   return (
     <div className="space-y-8">
       <ProtocolHeader src={getGoalImage(goalIndex)}>
@@ -82,17 +122,9 @@ export function ProtocolGoal({
             )}
           </div>
         </div>
-        {goal.body.length > 0 && (
-          <div className="space-y-4">
-            {goal.body.map((paragraph, index) => (
-              <ProtocolMarkdown
-                key={index}
-                content={paragraph}
-                citations={goal.citations}
-              />
-            ))}
-          </div>
-        )}
+        {bodyNodes.length > 0 ? (
+          <div className="space-y-4">{bodyNodes}</div>
+        ) : null}
 
         {goal.targetBiomarkerIds.length > 0 && (
           <div className="space-y-2">
@@ -110,17 +142,9 @@ export function ProtocolGoal({
             </div>
           </div>
         )}
-        {goal.actions.length > 0 && (
-          <div className="space-y-4">
-            {goal.actions.map((action, index) => (
-              <ProtocolMarkdown
-                key={index}
-                content={action}
-                citations={goal.citations}
-              />
-            ))}
-          </div>
-        )}
+        {actionNodes.length > 0 ? (
+          <div className="space-y-4">{actionNodes}</div>
+        ) : null}
         {activities.length > 0 && (
           <div className="space-y-4">
             <H4>Select your protocol items:</H4>

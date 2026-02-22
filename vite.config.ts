@@ -6,10 +6,24 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
-const plugins = [react(), tsconfigPaths()];
+const enableReactCompiler = process.env.REACT_COMPILER !== 'false';
+
+const plugins = [
+  react(
+    enableReactCompiler
+      ? {
+          babel: {
+            plugins: ['babel-plugin-react-compiler'],
+          },
+        }
+      : undefined,
+  ),
+  tsconfigPaths(),
+];
 
 if (process.env.ANALYZE === 'true') {
   plugins.push(
+    // @ts-expect-error - rollup-plugin-visualizer is not typed
     visualizer({
       filename: 'dist/stats.html',
       template: 'treemap',
@@ -18,6 +32,7 @@ if (process.env.ANALYZE === 'true') {
     }),
   );
   plugins.push(
+    // @ts-expect-error - rollup-plugin-visualizer is not typed
     visualizer({
       filename: 'dist/stats.json',
       template: 'raw-data',

@@ -13,25 +13,32 @@ export const useShaderMaterial = ({
   area?: Area;
   level?: Level;
 }) => {
+  const baseTexture = textures?.base;
   const shaderMaterial = useMemo(() => {
-    if (!textures?.base) return null;
-    return createShaderMaterial(textures.base);
-  }, [textures]);
+    if (!baseTexture) return null;
+    return createShaderMaterial(baseTexture);
+  }, [baseTexture]);
 
-  const materialFader =
-    shaderMaterial &&
-    createShaderMaterialFader(shaderMaterial, {
+  const materialFader = useMemo(() => {
+    if (!shaderMaterial) return null;
+
+    return createShaderMaterialFader(shaderMaterial, {
       duration: 0.2,
     });
+  }, [shaderMaterial]);
 
   // responding to area and level prop changes (without reloading model or mixer)
   useEffect(() => {
-    if (materialFader && textures) {
-      if (!!level && !!area && textures?.[area]?.[level]) {
-        materialFader.setTexture(textures?.[area]?.[level]);
-      } else if (textures.base) {
-        materialFader.setTexture(textures.base);
-      }
+    if (!materialFader) return;
+    if (!textures) return;
+
+    if (level != null && area != null && textures?.[area]?.[level]) {
+      materialFader.setTexture(textures[area][level]);
+      return;
+    }
+
+    if (textures.base) {
+      materialFader.setTexture(textures.base);
     }
   }, [area, level, textures, materialFader]);
 

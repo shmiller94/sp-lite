@@ -75,7 +75,9 @@ export const CreatePaymentMethodForm = ({
       await mutateAsync({ data: { paymentMethodId: id } });
 
       setProcessing(false);
-      onSuccess?.();
+      if (onSuccess) {
+        onSuccess();
+      }
     } catch (e) {
       setProcessing(false);
       return;

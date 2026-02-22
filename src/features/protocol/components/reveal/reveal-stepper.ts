@@ -217,7 +217,10 @@ export const useRevealStepper = (
 
   // Navigate to next step with analytics tracking
   const next = useCallback(async () => {
-    const allStepIds = RevealStepper.utils.getAll().map((s) => s.id as string);
+    const allStepIds: string[] = [];
+    for (const step of RevealStepper.steps) {
+      allStepIds.push(step.id);
+    }
     if (allStepIds.length === 0) return;
 
     const activeStepId = resolveActiveStepId(allStepIds);
@@ -253,7 +256,10 @@ export const useRevealStepper = (
 
   // Navigate to previous step
   const previous = useCallback(() => {
-    const allStepIds = RevealStepper.utils.getAll().map((s) => s.id as string);
+    const allStepIds: string[] = [];
+    for (const step of RevealStepper.steps) {
+      allStepIds.push(step.id);
+    }
     if (allStepIds.length === 0) return;
 
     const activeStepId = resolveActiveStepId(allStepIds);

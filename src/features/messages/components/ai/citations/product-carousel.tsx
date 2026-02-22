@@ -207,10 +207,13 @@ const CarouselInner = memo(function CarouselInner({
 
   useEffect(() => {
     if (!emblaMainApi) return;
-    onSelect();
+    const timeoutId = setTimeout(() => {
+      onSelect();
+    }, 0);
     emblaMainApi.on('select', onSelect);
     emblaMainApi.on('reInit', onSelect);
     return () => {
+      clearTimeout(timeoutId);
       emblaMainApi.off('select', onSelect);
       emblaMainApi.off('reInit', onSelect);
     };

@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useSearchParams } from 'react-router';
 import { z } from 'zod';
@@ -12,7 +12,6 @@ import {
   FormItem,
   FormMessage,
 } from '@/components/ui/form';
-import { toast } from '@/components/ui/sonner';
 import { Spinner } from '@/components/ui/spinner';
 import { Body2, H1 } from '@/components/ui/typography';
 import { env } from '@/config/env';
@@ -20,14 +19,16 @@ import { useSendMagicLink } from '@/features/auth/api/send-magic-link';
 import { AuthInput } from '@/features/auth/components/auth-input';
 import { useLogin } from '@/lib/auth';
 import { loginInputSchema } from '@/lib/auth-schemas';
-import type { LoginInput } from '@/lib/auth-schemas';
 import { User } from '@/types/api';
 
-const magicLinkLoginSchema = z.object({
-  email: z.string().email('Please enter a valid email address'),
+const passwordLoginSchema = loginInputSchema;
+const magicLinkLoginSchema = loginInputSchema.extend({
+  // allow blank password in magic-link mode (we don’t render the field)
+  password: z.string(),
 });
 
-const passwordLoginSchema = loginInputSchema;
+type LoginFormInput = z.input<typeof passwordLoginSchema>;
+type LoginFormData = z.output<typeof passwordLoginSchema>;
 
 type LoginFormProps = {
   redirectTo?: string;
@@ -53,7 +54,7 @@ export const LoginForm = ({
 
   // Switch the resolver based on the active mode so validation matches the
   // fields we render (email-only for magic link, email+password otherwise).
-  const form = useForm<LoginInput>({
+  const form = useForm<LoginFormInput, unknown, LoginFormData>({
     resolver: zodResolver(
       loginMode === 'magic-link' ? magicLinkLoginSchema : passwordLoginSchema,
     ),
@@ -83,15 +84,7 @@ export const LoginForm = ({
     },
   });
 
-  useEffect(() => {
-    if (defaultEmail) {
-      toast.info(
-        `An account with the email ${defaultEmail} already exists. Please login.`,
-      );
-    }
-  }, [defaultEmail]);
-
-  const handleSubmit = (values: LoginInput) => {
+  const handleSubmit = (values: LoginFormData) => {
     if (loginMode === 'magic-link') {
       sendMagicLinkMutation.mutate({
         data: {
@@ -124,6 +117,16 @@ export const LoginForm = ({
           </a>
         </div>
       </div>
+
+      {defaultEmail ? (
+        <div className="rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3">
+          <Body2 className="text-secondary">
+            An account with the email{' '}
+            <span className="font-medium">{defaultEmail}</span> already exists.
+            Please login.
+          </Body2>
+        </div>
+      ) : null}
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">

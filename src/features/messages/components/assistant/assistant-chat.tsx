@@ -30,7 +30,7 @@ export function AssistantChat({
   const { pathname } = useLocation();
   const queryClient = useQueryClient();
 
-  const [id] = useState<string>(chatId);
+  const id = chatId;
 
   const [lastSentMessageTime, setLastSentMessageTime] = useState<number | null>(
     null,

@@ -26,52 +26,49 @@ import { AVAILABLE_BIOMARKERS } from './biomarkers-content';
 interface AvailableBiomarkersDialogProps {
   children: React.ReactNode;
 }
+
+const AvailableBiomarkersDialogContent = () => (
+  <div className="space-y-14">
+    {AVAILABLE_BIOMARKERS.map((category) => (
+      <div key={category.title} className="space-y-6">
+        <div className="flex items-center space-x-4">
+          <img
+            src={category.image}
+            alt={category.title}
+            className="pointer-events-none size-12 rounded-xl object-cover"
+          />
+
+          <H4 className="font-semibold text-foreground">{category.title}</H4>
+        </div>
+
+        {category.biomarkers.length > 0 && (
+          <ul className="columns-1 gap-x-6 space-y-4 sm:columns-2">
+            {category.biomarkers.map((biomarker) => (
+              <li
+                key={biomarker.title}
+                className="flex break-inside-avoid items-center space-x-3"
+              >
+                <Body1 className="font-medium text-zinc-500">
+                  {biomarker.title}
+                </Body1>
+                {biomarker.advanced && (
+                  <Badge variant="vermillion" className="whitespace-nowrap">
+                    Advanced Panel
+                  </Badge>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    ))}
+  </div>
+);
+
 const AvailableBiomarkersDialog = ({
   children,
 }: AvailableBiomarkersDialogProps) => {
   const { width } = useWindowDimensions();
-
-  const renderContent = () => (
-    <>
-      <div className="space-y-14">
-        {AVAILABLE_BIOMARKERS.map((category, categoryIndex) => (
-          <div key={categoryIndex} className="space-y-6">
-            <div className="flex items-center space-x-4">
-              <img
-                src={category.image}
-                alt={category.title}
-                className="pointer-events-none size-12 rounded-xl object-cover"
-              />
-
-              <H4 className="font-semibold text-foreground">
-                {category.title}
-              </H4>
-            </div>
-
-            {category.biomarkers.length > 0 && (
-              <ul className="columns-1 gap-x-6 space-y-4 sm:columns-2">
-                {category.biomarkers.map((biomarker, biomarkerIndex) => (
-                  <li
-                    key={biomarkerIndex}
-                    className="flex break-inside-avoid items-center space-x-3"
-                  >
-                    <Body1 className="font-medium text-zinc-500">
-                      {biomarker.title}
-                    </Body1>
-                    {biomarker.advanced && (
-                      <Badge variant="vermillion" className="whitespace-nowrap">
-                        Advanced Panel
-                      </Badge>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        ))}
-      </div>
-    </>
-  );
 
   if (width <= 768) {
     return (
@@ -89,7 +86,7 @@ const AvailableBiomarkersDialog = ({
             </SheetClose>
           </SheetHeader>
           <div className="flex-1 overflow-y-auto px-8 pb-12">
-            {renderContent()}
+            <AvailableBiomarkersDialogContent />
           </div>
         </SheetContent>
       </Sheet>
@@ -110,7 +107,9 @@ const AvailableBiomarkersDialog = ({
             </div>
           </DialogClose>
         </DialogHeader>
-        <div className="px-14 pb-12">{renderContent()}</div>
+        <div className="px-14 pb-12">
+          <AvailableBiomarkersDialogContent />
+        </div>
       </DialogContent>
     </Dialog>
   );

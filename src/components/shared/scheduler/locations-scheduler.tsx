@@ -135,7 +135,6 @@ function LocationsSchedulerConsumer({
     updateSelectedDay,
     startRange,
     updateStartRange,
-    getAllSlots,
     onSelectionChange,
   } = useLocationsScheduler((s) => s);
 
@@ -144,7 +143,12 @@ function LocationsSchedulerConsumer({
     fetchLocations(postalCode);
   }, [postalCode, fetchLocations]);
 
-  const allSlots = getAllSlots();
+  const allSlots: Slot[] = [];
+  for (const location of locations) {
+    for (const slot of location.slots) {
+      allSlots.push(slot);
+    }
+  }
 
   // locations to only show those with slots on the selected day
   const filteredLocations = useMemo(() => {

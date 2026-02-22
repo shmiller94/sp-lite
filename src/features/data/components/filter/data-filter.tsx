@@ -19,7 +19,15 @@ export const DataFilter = ({ isLoading }: { isLoading: boolean }) => {
   const updateSearchQuery = useDataFilterStore((s) => s.updateSearchQuery);
 
   const [localQuery, setLocalQuery] = useState(searchQuery);
-  useEffect(() => setLocalQuery(searchQuery), [searchQuery]);
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setLocalQuery(searchQuery);
+    }, 0);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [searchQuery]);
   const [_, startTransition] = useTransition();
   const debouncedUpdate = useDebouncedCallback((q: string) => {
     startTransition(() => updateSearchQuery(q));

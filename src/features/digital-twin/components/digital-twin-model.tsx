@@ -1,7 +1,7 @@
 import { Canvas } from '@react-three/fiber';
 import { useMemo } from 'react';
 
-import type { Model, Area, Level } from '../types';
+import type { Area, Level, Model } from '../types';
 
 import { Avatar } from './avatar/avatar';
 import { GroundShadow } from './ground-shadow';
@@ -47,7 +47,7 @@ export default function DigitalTwinModel({
       camera={cameraProps}
       // Lower max DPR to reduce initial shader/RT cost on first paint
       dpr={[1, 1.25]}
-      gl={{ powerPreference: 'high-performance' }}
+      gl={{ powerPreference: 'high-performance', antialias: false }}
     >
       {/* <Stats showPanel={0} className="stats" /> */}
 

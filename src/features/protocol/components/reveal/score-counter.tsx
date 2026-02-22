@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 
 import NumberFlow from '@/components/shared/number-flow';
@@ -88,23 +88,40 @@ export const ScoreCounter = ({
     animate ? (isStepMode ? targetProgress : 0) : targetProgress,
   );
   const rafRef = useRef<number | null>(null);
+
+  const applyTargetProgress = useCallback(() => {
+    setProgress(targetProgress);
+  }, [targetProgress]);
+
   useEffect(() => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
+
     if (!animate) {
-      setProgress(targetProgress);
-      return;
+      const timeoutId = setTimeout(() => {
+        applyTargetProgress();
+      }, 0);
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
     }
     // In step mode, jump directly to target; transitions will animate between steps.
     if (isStepMode) {
-      setProgress(targetProgress);
-      return;
+      const timeoutId = setTimeout(() => {
+        applyTargetProgress();
+      }, 0);
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
     }
     // In value mode, animate from 0 to target on mount/update.
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    rafRef.current = requestAnimationFrame(() => setProgress(targetProgress));
+    rafRef.current = requestAnimationFrame(applyTargetProgress);
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [targetProgress, animate, isStepMode]);
+  }, [applyTargetProgress, animate, isStepMode]);
 
   const dashOffset = circle.c * (1 - progress);
   const transition = animate
@@ -171,7 +188,6 @@ export const ScoreCounter = ({
           strokeLinecap="round"
           style={{
             transition,
-            willChange: 'stroke-dashoffset',
             transform: 'rotate(-90deg)',
             transformOrigin: '50% 50%',
           }}

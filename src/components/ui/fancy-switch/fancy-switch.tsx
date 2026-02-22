@@ -60,6 +60,184 @@ export function FancySwitch<T extends OptionType>({
   renderOption,
   ...props
 }: FancySwitchProps<T>) {
+  const {
+    containerRef,
+    radioRefs,
+    memoizedOptions,
+    activeIndex,
+    highlighterStyle,
+    handleChange,
+  } = useFancySwitchLogic<T>({
+    options,
+    valueKey,
+    labelKey,
+    disabledKey,
+    value,
+    onChange,
+    disabledOptions,
+    highlighterIncludeMargin,
+  });
+
+  return (
+    <div
+      role="radiogroup"
+      aria-label="Fancy switch options"
+      ref={containerRef}
+      className={cn('flex rounded-full bg-transparent p-2', className)}
+      onKeyDown={(e) => {
+        props.onKeyDown?.(e);
+
+        if (!e.defaultPrevented) {
+          switch (e.key) {
+            case 'ArrowDown':
+            case 'ArrowRight': {
+              e.preventDefault();
+              const nextIndex = (activeIndex + 1) % options.length;
+              handleChange(nextIndex);
+              break;
+            }
+            case 'ArrowUp':
+            case 'ArrowLeft': {
+              e.preventDefault();
+              const prevIndex =
+                (activeIndex - 1 + options.length) % options.length;
+              handleChange(prevIndex);
+              break;
+            }
+            default:
+              break;
+          }
+        }
+      }}
+      {...props}
+    >
+      <div
+        className={cn('rounded-full bg-primary', highlighterClassName)}
+        style={{
+          position: 'absolute',
+          transitionProperty: 'all',
+          transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+          transitionDuration: '300ms',
+          ...highlighterStyle,
+          ...customHighlighterStyle,
+        }}
+        aria-hidden="true"
+        data-highlighter
+      />
+
+      {memoizedOptions.map((option, index) => {
+        const isSelected = index === activeIndex;
+
+        if (renderOption) {
+          return (
+            <React.Fragment key={option.value.toString()}>
+              {React.createElement(renderOption, {
+                option,
+                isSelected,
+                getOptionProps: () => ({
+                  ref: (el: HTMLDivElement | null) => {
+                    radioRefs.current[index] = el;
+                  },
+                  role: 'radio',
+                  'aria-checked': isSelected,
+                  tabIndex: isSelected && !option.disabled ? 0 : -1,
+                  onClick: () => handleChange(index),
+                  className: cn(
+                    'relative mx-2 flex h-9 cursor-pointer items-center justify-center capitalize',
+                    'rounded-full px-3.5 text-sm font-medium transition-colors data-[checked]:text-primary-foreground focus:outline-none',
+                    'data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50',
+                    radioClassName,
+                  ),
+                  ...(isSelected ? { 'data-checked': true } : {}),
+                  ...(option.disabled
+                    ? { 'aria-disabled': true, 'data-disabled': true }
+                    : {}),
+                  'aria-label': `${option.label} option`,
+                }),
+              })}
+            </React.Fragment>
+          );
+        }
+
+        return (
+          <div
+            key={option.value.toString()}
+            ref={(el) => {
+              radioRefs.current[index] = el;
+            }}
+            role="radio"
+            aria-checked={isSelected}
+            tabIndex={isSelected && !option.disabled ? 0 : -1}
+            onClick={() => handleChange(index)}
+            onKeyDown={(e) => {
+              if (option.disabled) return;
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleChange(index);
+              }
+            }}
+            className={cn(
+              'relative mx-2 flex h-9 cursor-pointer items-center justify-center capitalize',
+              'rounded-full px-3.5 text-sm font-medium transition-colors data-[checked]:text-primary-foreground focus:outline-none',
+              'data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50',
+              radioClassName,
+            )}
+            {...(isSelected ? { 'data-checked': true } : {})}
+            {...(option.disabled
+              ? { 'aria-disabled': true, 'data-disabled': true }
+              : {})}
+            aria-label={`${option.label} option`}
+          >
+            {option.label}
+          </div>
+        );
+      })}
+
+      <div
+        aria-live="polite"
+        style={{
+          position: 'absolute',
+          width: '1px',
+          height: '1px',
+          padding: 0,
+          margin: '-1px',
+          overflow: 'hidden',
+          clip: 'rect(0, 0, 0, 0)',
+          whiteSpace: 'nowrap',
+          borderWidth: 0,
+        }}
+      >
+        {memoizedOptions[activeIndex]?.label} selected
+      </div>
+    </div>
+  );
+}
+
+FancySwitch.displayName = 'FancySwitch';
+
+export default FancySwitch;
+
+interface FancySwitchLogicInput<T extends OptionType> {
+  options: T[];
+  valueKey: keyof T & string;
+  labelKey: keyof T & string;
+  disabledKey: keyof T & string;
+  value: FancySwitchProps<T>['value'];
+  onChange: FancySwitchProps<T>['onChange'];
+  disabledOptions: Array<T extends OptionObject ? T[keyof T] : T>;
+  highlighterIncludeMargin: boolean;
+}
+
+function useFancySwitchLogic<T extends OptionType>({
+  options,
+  valueKey,
+  labelKey,
+  disabledKey,
+  value,
+  onChange,
+  disabledOptions,
+  highlighterIncludeMargin,
+}: FancySwitchLogicInput<T>) {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const radioRefs = React.useRef<(HTMLDivElement | null)[]>([]);
 
@@ -223,138 +401,12 @@ export function FancySwitch<T extends OptionType>({
     }
   }, [value, memoizedOptions, activeIndex]);
 
-  return (
-    <div
-      role="radiogroup"
-      aria-label="Fancy switch options"
-      ref={containerRef}
-      className={cn('flex rounded-full bg-transparent p-2', className)}
-      onKeyDown={(e) => {
-        props.onKeyDown?.(e);
-
-        if (!e.defaultPrevented) {
-          switch (e.key) {
-            case 'ArrowDown':
-            case 'ArrowRight': {
-              e.preventDefault();
-              const nextIndex = (activeIndex + 1) % options.length;
-              handleChange(nextIndex);
-              break;
-            }
-            case 'ArrowUp':
-            case 'ArrowLeft': {
-              e.preventDefault();
-              const prevIndex =
-                (activeIndex - 1 + options.length) % options.length;
-              handleChange(prevIndex);
-              break;
-            }
-            default:
-              break;
-          }
-        }
-      }}
-      {...props}
-    >
-      <div
-        className={cn('rounded-full bg-primary', highlighterClassName)}
-        style={{
-          position: 'absolute',
-          transitionProperty: 'all',
-          transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
-          transitionDuration: '300ms',
-          ...highlighterStyle,
-          ...customHighlighterStyle,
-        }}
-        aria-hidden="true"
-        data-highlighter
-      />
-
-      {memoizedOptions.map((option, index) => {
-        const isSelected = index === activeIndex;
-
-        if (renderOption) {
-          return (
-            <React.Fragment key={option.value.toString()}>
-              {React.createElement(renderOption, {
-                option,
-                isSelected,
-                getOptionProps: () => ({
-                  ref: (el: HTMLDivElement | null) =>
-                    (radioRefs.current[index] = el),
-                  role: 'radio',
-                  'aria-checked': isSelected,
-                  tabIndex: isSelected && !option.disabled ? 0 : -1,
-                  onClick: () => handleChange(index),
-                  className: cn(
-                    'relative mx-2 flex h-9 cursor-pointer items-center justify-center capitalize',
-                    'rounded-full px-3.5 text-sm font-medium transition-colors data-[checked]:text-primary-foreground focus:outline-none',
-                    'data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50',
-                    radioClassName,
-                  ),
-                  ...(isSelected ? { 'data-checked': true } : {}),
-                  ...(option.disabled
-                    ? { 'aria-disabled': true, 'data-disabled': true }
-                    : {}),
-                  'aria-label': `${option.label} option`,
-                }),
-              })}
-            </React.Fragment>
-          );
-        }
-
-        return (
-          <div
-            key={option.value.toString()}
-            ref={(el) => (radioRefs.current[index] = el)}
-            role="radio"
-            aria-checked={isSelected}
-            tabIndex={isSelected && !option.disabled ? 0 : -1}
-            onClick={() => handleChange(index)}
-            onKeyDown={(e) => {
-              if (option.disabled) return;
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                handleChange(index);
-              }
-            }}
-            className={cn(
-              'relative mx-2 flex h-9 cursor-pointer items-center justify-center capitalize',
-              'rounded-full px-3.5 text-sm font-medium transition-colors data-[checked]:text-primary-foreground focus:outline-none',
-              'data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50',
-              radioClassName,
-            )}
-            {...(isSelected ? { 'data-checked': true } : {})}
-            {...(option.disabled
-              ? { 'aria-disabled': true, 'data-disabled': true }
-              : {})}
-            aria-label={`${option.label} option`}
-          >
-            {option.label}
-          </div>
-        );
-      })}
-
-      <div
-        aria-live="polite"
-        style={{
-          position: 'absolute',
-          width: '1px',
-          height: '1px',
-          padding: 0,
-          margin: '-1px',
-          overflow: 'hidden',
-          clip: 'rect(0, 0, 0, 0)',
-          whiteSpace: 'nowrap',
-          borderWidth: 0,
-        }}
-      >
-        {memoizedOptions[activeIndex]?.label} selected
-      </div>
-    </div>
-  );
+  return {
+    containerRef,
+    radioRefs,
+    memoizedOptions,
+    activeIndex,
+    highlighterStyle,
+    handleChange,
+  };
 }
-
-FancySwitch.displayName = 'FancySwitch';
-
-export default FancySwitch;

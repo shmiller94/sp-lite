@@ -72,15 +72,14 @@ const QuestionnaireFormConsumer = ({
   initialProgressPercent?: number;
 }) => {
   const response = useQuestionnaireStore((s) => s.response);
-  const { activeStep } = useQuestionnaireStore((s) => s);
+  const activeStep = useQuestionnaireStore((s) => s.activeStep);
   const checkForQuestionEnabled = useQuestionnaireStore(
     (s) => s.checkForQuestionEnabled,
   );
-  const getNumberOfPages = useQuestionnaireStore((s) => s.getNumberOfPages);
-  const getLastQuestion = useQuestionnaireStore((s) => s.getLastQuestion);
+  const numberOfPages = useQuestionnaireStore((s) => s.getNumberOfPages());
+  const lastQuestion = useQuestionnaireStore((s) => s.getLastQuestion());
 
-  const isLastStep = activeStep === getNumberOfPages() - 1;
-  const lastQuestion = getLastQuestion();
+  const isLastStep = activeStep === numberOfPages - 1;
 
   const handleSubmit = () => {
     if (!isLastStep || !lastQuestion) {
@@ -121,17 +120,12 @@ const QuestionnaireFormConsumer = ({
   };
 
   return (
-    <form
-      className={className}
-      onSubmit={(e) => {
-        e.preventDefault();
-        handleSubmit();
-      }}
-    >
+    <div className={className}>
       <QuestionnaireFormPageSequence
         onSave={onSave}
+        onFinalSubmit={handleSubmit}
         initialProgressPercent={initialProgressPercent}
       />
-    </form>
+    </div>
   );
 };

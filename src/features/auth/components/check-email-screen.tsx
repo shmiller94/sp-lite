@@ -72,12 +72,13 @@ export const CheckEmailScreen = ({
   // This prevents users from spamming the resend email button by enforcing
   // a 60-second wait period between requests
   useEffect(() => {
-    if (cooldownSeconds > 0) {
-      const timer = setTimeout(() => {
-        setCooldownSeconds(cooldownSeconds - 1);
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
+    if (cooldownSeconds <= 0) return;
+
+    const timer = setTimeout(() => {
+      setCooldownSeconds((seconds) => seconds - 1);
+    }, 1000);
+
+    return () => clearTimeout(timer);
   }, [cooldownSeconds]);
 
   const handleResend = useCallback(() => {

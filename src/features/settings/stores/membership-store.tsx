@@ -1,4 +1,4 @@
-import { createContext, useContext, useRef, PropsWithChildren } from 'react';
+import { createContext, useContext, useState, PropsWithChildren } from 'react';
 import { shallow } from 'zustand/shallow';
 import { useStoreWithEqualityFn } from 'zustand/traditional';
 
@@ -19,13 +19,10 @@ export const MembershipStoreProvider = ({
   children,
   ...props
 }: MembershipStoreProviderProps) => {
-  const membershipStoreRef = useRef<MembershipStoreApi>();
-  if (!membershipStoreRef.current) {
-    membershipStoreRef.current = membershipStoreCreator(props);
-  }
+  const [store] = useState(() => membershipStoreCreator(props));
 
   return (
-    <MembershipStoreContext.Provider value={membershipStoreRef.current}>
+    <MembershipStoreContext.Provider value={store}>
       {children}
     </MembershipStoreContext.Provider>
   );

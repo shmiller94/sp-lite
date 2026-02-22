@@ -263,6 +263,12 @@ const BundledDiscountContent = () => {
       return;
     }
 
+    const paymentProvider = firstPaymentMethod.paymentProvider ?? 'unknown';
+    let plural = '';
+    if (selectedFrequency.quantity > 1) {
+      plural = 's';
+    }
+
     try {
       await upgradeOrderMutation.mutateAsync({
         data: {
@@ -281,11 +287,11 @@ const BundledDiscountContent = () => {
           },
         ],
         totalValue: pricing.price,
-        paymentProvider: firstPaymentMethod?.paymentProvider ?? 'unknown',
+        paymentProvider,
       });
 
       toast.success(
-        `Purchase of ${selectedFrequency.quantity} additional test${selectedFrequency.quantity > 1 ? 's' : ''} successful!`,
+        `Purchase of ${selectedFrequency.quantity} additional test${plural} successful!`,
       );
       next();
     } catch {
@@ -347,9 +353,9 @@ const BundledDiscountContent = () => {
               Why re-test?
             </h3>
             <div className="space-y-4">
-              {WHY_RETEST_ITEMS.map((item, index) => (
+              {WHY_RETEST_ITEMS.map((item) => (
                 <WhyRetestItem
-                  key={index}
+                  key={item.title}
                   title={item.title}
                   description={item.description}
                 />

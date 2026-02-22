@@ -267,6 +267,9 @@ export const AddOnPanelsStep = () => {
       return;
     }
 
+    const paymentProvider =
+      paymentMethodsData?.paymentMethods?.[0]?.paymentProvider ?? 'unknown';
+
     try {
       await createCreditMutation.mutateAsync({
         data: {
@@ -286,8 +289,7 @@ export const AddOnPanelsStep = () => {
       trackOnboardingCreditPurchase({
         credits: purchasedCredits,
         totalValue: totalPrice,
-        paymentProvider:
-          paymentMethodsData?.paymentMethods?.[0]?.paymentProvider ?? 'unknown',
+        paymentProvider,
       });
 
       clear();

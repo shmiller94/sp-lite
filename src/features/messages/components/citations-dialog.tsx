@@ -68,7 +68,8 @@ export function CitationsDialog({ citations, trigger }: CitationsDialogProps) {
   const content = (
     <div className="space-y-4 p-6 pt-0">
       <div className="space-y-3">
-        {items.map(({ citation, label, href, biomarker }, index) => {
+        {items.map(({ citation, label, href, biomarker }) => {
+          const key = citation.number;
           const inner = (
             <div className="min-w-0 flex-1">
               <Body1>{citation.title}</Body1>
@@ -77,7 +78,7 @@ export function CitationsDialog({ citations, trigger }: CitationsDialogProps) {
           );
           if (biomarker) {
             return (
-              <BiomarkerDialog key={index} biomarker={biomarker}>
+              <BiomarkerDialog key={key} biomarker={biomarker}>
                 <div className="group flex cursor-pointer items-center gap-3 rounded-xl border border-zinc-200 bg-white p-3 shadow-sm hover:bg-zinc-50">
                   {inner}
                   <ChevronRight className="mr-1 size-4 text-secondary transition-all duration-200 ease-out group-hover:mr-0" />
@@ -88,7 +89,7 @@ export function CitationsDialog({ citations, trigger }: CitationsDialogProps) {
           if (href) {
             return (
               <a
-                key={index}
+                key={key}
                 href={href}
                 target="_blank"
                 rel="noreferrer"
@@ -101,7 +102,7 @@ export function CitationsDialog({ citations, trigger }: CitationsDialogProps) {
           }
           return (
             <div
-              key={index}
+              key={key}
               className="flex items-start gap-3 rounded-xl border border-zinc-200 bg-white p-3 shadow-sm"
             >
               {inner}

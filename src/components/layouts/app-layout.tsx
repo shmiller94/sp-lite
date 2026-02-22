@@ -1,6 +1,7 @@
-import * as React from 'react';
+import type React from 'react';
 import { useLocation } from 'react-router';
 
+import { DevHelper } from '@/components/shared/dev-helper';
 import { FloatingWrapper } from '@/components/shared/floating-wrapper';
 import { NavigationProgress } from '@/components/ui/navigation-progress';
 import { WHITE_BACKGROUND_PATHS } from '@/const/white-background-paths';
@@ -15,30 +16,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const { data } = useUser();
   const { pathname } = useLocation();
   const isDev = import.meta.env.DEV;
-
-  const [DevHelperComponent, setDevHelperComponent] =
-    React.useState<React.ComponentType | null>(null);
-
-  React.useEffect(() => {
-    if (!isDev) {
-      return;
-    }
-
-    let active = true;
-
-    import('@/components/shared/dev-helper')
-      .then((mod) => {
-        if (!active) return;
-        setDevHelperComponent(() => mod.DevHelper);
-      })
-      .catch(() => {
-        // ignore – dev helper is non-critical
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [isDev]);
 
   // matches theme colors
   useThemeColor();
@@ -61,7 +38,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <main className={isWhiteBg ? 'bg-white' : 'bg-zinc-50'}>
-      {isDev && DevHelperComponent ? <DevHelperComponent /> : null}
+      {isDev ? <DevHelper /> : null}
       {!hideNavBar && <Navbar />}
       <NavigationProgress />
       <div

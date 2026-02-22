@@ -1,4 +1,4 @@
-import { createContext, useContext, useRef, PropsWithChildren } from 'react';
+import { createContext, useContext, useState, PropsWithChildren } from 'react';
 import { shallow } from 'zustand/shallow';
 import { useStoreWithEqualityFn } from 'zustand/traditional';
 
@@ -19,13 +19,10 @@ export const PurchaseStoreProvider = ({
   children,
   ...props
 }: PurchaseStoreProviderProps) => {
-  const orderStoreRef = useRef<PurchaseStoreApi>();
-  if (!orderStoreRef.current) {
-    orderStoreRef.current = purchaseStoreCreator(props);
-  }
+  const [store] = useState(() => purchaseStoreCreator(props));
 
   return (
-    <PurchaseStoreContext.Provider value={orderStoreRef.current}>
+    <PurchaseStoreContext.Provider value={store}>
       {children}
     </PurchaseStoreContext.Provider>
   );

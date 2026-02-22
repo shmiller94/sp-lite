@@ -63,28 +63,13 @@ export const ScoreChart = ({
   };
 
   useEffect(() => {
-    if (hoveredIndex !== null) {
-      if (cooldownTimeoutRef.current) {
-        clearTimeout(cooldownTimeoutRef.current);
-        cooldownTimeoutRef.current = null;
-      }
-      setDisplayedIndex(hoveredIndex);
-    } else {
-      if (displayedIndex !== null) {
-        cooldownTimeoutRef.current = setTimeout(() => {
-          setDisplayedIndex(null);
-          cooldownTimeoutRef.current = null;
-        }, config.COOLDOWN_TIMEOUT);
-      }
-    }
-
     return () => {
       if (cooldownTimeoutRef.current) {
         clearTimeout(cooldownTimeoutRef.current);
         cooldownTimeoutRef.current = null;
       }
     };
-  }, [hoveredIndex, displayedIndex, config.COOLDOWN_TIMEOUT]);
+  }, []);
 
   const mergedSegmentPaths = data.segmentPaths.map((segmentPath) => (
     <path
@@ -104,7 +89,14 @@ export const ScoreChart = ({
 
     const handleMouseEnter = () => {
       if (!hasInteraction) return;
+
+      if (cooldownTimeoutRef.current) {
+        clearTimeout(cooldownTimeoutRef.current);
+        cooldownTimeoutRef.current = null;
+      }
+
       setHoveredIndex(segment.index);
+      setDisplayedIndex(segment.index);
       const position = calculateTooltipPosition(segment.index);
       setTooltipPosition(position);
     };
@@ -112,6 +104,16 @@ export const ScoreChart = ({
     const handleMouseLeave = () => {
       if (!hasInteraction) return;
       setHoveredIndex(null);
+
+      if (cooldownTimeoutRef.current) {
+        clearTimeout(cooldownTimeoutRef.current);
+        cooldownTimeoutRef.current = null;
+      }
+
+      cooldownTimeoutRef.current = setTimeout(() => {
+        setDisplayedIndex(null);
+        cooldownTimeoutRef.current = null;
+      }, config.COOLDOWN_TIMEOUT);
     };
 
     return (

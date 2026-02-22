@@ -8,10 +8,10 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
+  AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/dialog/alert-dialog';
 import { DropdownMenuItem } from '@/components/ui/dropdown';
-import { H2 } from '@/components/ui/typography';
 import { useDeleteAddress } from '@/features/users/api/delete-address';
 import { Address } from '@/types/api';
 
@@ -43,7 +43,9 @@ export function DeleteAddressDialog({ address }: DeleteAddressDialogProps) {
       </AlertDialogTrigger>
       <AlertDialogContent className="max-w-[95vw] p-8 sm:max-w-[525px]">
         <AlertDialogHeader className="mb-4">
-          <H2>Delete address</H2>
+          <AlertDialogTitle className="text-2xl font-normal tracking-[-0.64px] text-zinc-900 md:text-3xl">
+            Delete address
+          </AlertDialogTitle>
           <AlertDialogDescription className="text-base text-zinc-600">
             Are you sure you want to delete this address? This action cannot be
             undone.

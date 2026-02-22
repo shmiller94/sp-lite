@@ -67,13 +67,14 @@ export const ServiceCheckoutStep = ({
   );
 
   // Filter protocol activities to get service activities
+  const protocolActivities = protocolQuery.data?.activities;
   const serviceActivities = useMemo(() => {
-    if (!protocolQuery.data?.activities) return [];
-    return protocolQuery.data.activities.filter(
+    if (protocolActivities == null) return [];
+    return protocolActivities.filter(
       (activity): activity is Extract<typeof activity, { type: 'service' }> =>
         activity.type === 'service' && activity.service !== undefined,
     );
-  }, [protocolQuery.data?.activities]);
+  }, [protocolActivities]);
 
   // Create a map of service activities by service ID and name for quick lookup
   const serviceActivitiesById = useMemo(
@@ -160,28 +161,13 @@ export const ServiceCheckoutStep = ({
   ]);
 
   if (revealStatusQuery.isError || protocolQuery.isError) {
+    const handleRetry = () => {
+      revealStatusQuery.refetch();
+      protocolQuery.refetch();
+    };
+
     return (
-      <CheckoutLayout step={REVEAL_STEPS.SERVICE_CHECKOUT}>
-        <div className="col-span-2 mx-auto w-full max-w-md space-y-6 px-6 text-center">
-          <H3>We couldn&apos;t load your order</H3>
-          <Body1 className="text-secondary">
-            Please refresh the page or try again later.
-          </Body1>
-          <div className="flex flex-col gap-3">
-            <Button
-              onClick={() => {
-                revealStatusQuery.refetch();
-                protocolQuery.refetch();
-              }}
-            >
-              Try again
-            </Button>
-            <Button variant="outline" onClick={previous}>
-              Back
-            </Button>
-          </div>
-        </div>
-      </CheckoutLayout>
+      <ServiceCheckoutErrorState onRetry={handleRetry} onBack={previous} />
     );
   }
 
@@ -211,17 +197,110 @@ export const ServiceCheckoutStep = ({
   const hasPaymentMethod = Boolean(defaultPaymentMethod);
 
   if (isLoadingData) {
-    return (
-      <CheckoutLayout step={REVEAL_STEPS.SERVICE_CHECKOUT}>
-        <div className="col-span-2 mx-auto w-full px-6 text-center lg:max-w-md">
-          <div className="flex min-h-[180px] items-center justify-center">
-            <Spinner variant="primary" />
-          </div>
-        </div>
-      </CheckoutLayout>
-    );
+    return <ServiceCheckoutLoadingState />;
   }
 
+  const isConfirmDisabled =
+    !activePaymentMethod?.externalPaymentMethodId ||
+    createServiceOrdersMutation.isPending ||
+    completeRevealMutation.isPending;
+  const hideConfirmButton = checkoutItems.length === 0 || !hasPaymentMethod;
+  const isCompleteWithoutActionDisabled =
+    completeRevealMutation.isPending || createServiceOrdersMutation.isPending;
+
+  return (
+    <ServiceCheckoutContent
+      checkoutItems={checkoutItems}
+      total={total}
+      showPaymentForm={showPaymentForm}
+      hasPaymentMethod={hasPaymentMethod}
+      hasFlexPaymentMethod={hasFlexPaymentMethod}
+      activePaymentMethodId={activePaymentMethodId}
+      onSelectFlexPaymentMethod={startSelectingPaymentMethod}
+      hasPaymentError={createServiceOrdersMutation.isError}
+      onConfirm={handleConfirm}
+      hideConfirmButton={hideConfirmButton}
+      isConfirmDisabled={isConfirmDisabled}
+      isConfirmPending={createServiceOrdersMutation.isPending}
+      isFlexSelected={isFlexSelected}
+      onCompleteWithoutAction={handleCompleteWithoutAction}
+      isCompleteWithoutActionDisabled={isCompleteWithoutActionDisabled}
+    />
+  );
+};
+
+function ServiceCheckoutErrorState({
+  onRetry,
+  onBack,
+}: {
+  onRetry: () => void;
+  onBack: () => void;
+}) {
+  return (
+    <CheckoutLayout step={REVEAL_STEPS.SERVICE_CHECKOUT}>
+      <div className="col-span-2 mx-auto w-full max-w-md space-y-6 px-6 text-center">
+        <H3>We couldn&apos;t load your order</H3>
+        <Body1 className="text-secondary">
+          Please refresh the page or try again later.
+        </Body1>
+        <div className="flex flex-col gap-3">
+          <Button onClick={onRetry}>Try again</Button>
+          <Button variant="outline" onClick={onBack}>
+            Back
+          </Button>
+        </div>
+      </div>
+    </CheckoutLayout>
+  );
+}
+
+function ServiceCheckoutLoadingState() {
+  return (
+    <CheckoutLayout step={REVEAL_STEPS.SERVICE_CHECKOUT}>
+      <div className="col-span-2 mx-auto w-full px-6 text-center lg:max-w-md">
+        <div className="flex min-h-[180px] items-center justify-center">
+          <Spinner variant="primary" />
+        </div>
+      </div>
+    </CheckoutLayout>
+  );
+}
+
+interface ServiceCheckoutContentProps {
+  checkoutItems: ServiceCheckoutItem[];
+  total: number;
+  showPaymentForm: boolean;
+  hasPaymentMethod: boolean;
+  hasFlexPaymentMethod: boolean;
+  activePaymentMethodId: string | null | undefined;
+  onSelectFlexPaymentMethod: () => void;
+  hasPaymentError: boolean;
+  onConfirm: () => void;
+  hideConfirmButton: boolean;
+  isConfirmDisabled: boolean;
+  isConfirmPending: boolean;
+  isFlexSelected: boolean;
+  onCompleteWithoutAction: () => void;
+  isCompleteWithoutActionDisabled: boolean;
+}
+
+function ServiceCheckoutContent({
+  checkoutItems,
+  total,
+  showPaymentForm,
+  hasPaymentMethod,
+  hasFlexPaymentMethod,
+  activePaymentMethodId,
+  onSelectFlexPaymentMethod,
+  hasPaymentError,
+  onConfirm,
+  hideConfirmButton,
+  isConfirmDisabled,
+  isConfirmPending,
+  isFlexSelected,
+  onCompleteWithoutAction,
+  isCompleteWithoutActionDisabled,
+}: ServiceCheckoutContentProps) {
   return (
     <CheckoutLayout step={REVEAL_STEPS.SERVICE_CHECKOUT}>
       <div className="mb-8 flex-1 space-y-4 rounded-3xl border-zinc-100 lg:mb-0 lg:border lg:bg-white lg:p-8">
@@ -232,9 +311,9 @@ export const ServiceCheckoutStep = ({
               <Body2 className="text-secondary">No items selected.</Body2>
             </div>
           )}
-          {checkoutItems.map((item, index) => (
+          {checkoutItems.map((item) => (
             <div
-              key={index}
+              key={item.id}
               className="flex items-center gap-4 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm"
             >
               <img
@@ -280,7 +359,7 @@ export const ServiceCheckoutStep = ({
               <CurrentPaymentMethodCard
                 className="bg-white"
                 error={
-                  createServiceOrdersMutation.isError
+                  hasPaymentError
                     ? 'There was an issue with your payment method. Please try another card.'
                     : undefined
                 }
@@ -294,7 +373,7 @@ export const ServiceCheckoutStep = ({
                 <Button
                   variant="outline"
                   className="w-full bg-white"
-                  onClick={startSelectingPaymentMethod}
+                  onClick={onSelectFlexPaymentMethod}
                 >
                   <CircleCheckBig className="mr-2 size-[20px] text-zinc-700" />
                   Select HSA/FSA card
@@ -305,18 +384,11 @@ export const ServiceCheckoutStep = ({
 
         <div className="flex flex-col gap-3">
           <Button
-            className={cn(
-              'w-full sm:flex-1',
-              (checkoutItems.length === 0 || !hasPaymentMethod) && 'hidden',
-            )}
-            onClick={handleConfirm}
-            disabled={
-              !activePaymentMethod?.externalPaymentMethodId ||
-              createServiceOrdersMutation.isPending ||
-              completeRevealMutation.isPending
-            }
+            className={cn('w-full sm:flex-1', hideConfirmButton && 'hidden')}
+            onClick={onConfirm}
+            disabled={isConfirmDisabled}
           >
-            {createServiceOrdersMutation.isPending ? (
+            {isConfirmPending ? (
               <TransactionSpinner className="flex justify-center" />
             ) : (
               <>
@@ -330,11 +402,8 @@ export const ServiceCheckoutStep = ({
           <Button
             variant="outline"
             className="bg-white"
-            onClick={handleCompleteWithoutAction}
-            disabled={
-              completeRevealMutation.isPending ||
-              createServiceOrdersMutation.isPending
-            }
+            onClick={onCompleteWithoutAction}
+            disabled={isCompleteWithoutActionDisabled}
           >
             I don’t want to act on my results yet
           </Button>
@@ -342,4 +411,4 @@ export const ServiceCheckoutStep = ({
       </div>
     </CheckoutLayout>
   );
-};
+}

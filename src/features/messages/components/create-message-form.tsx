@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowUpIcon, Clock, Loader, XIcon } from 'lucide-react';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { useNavigate } from 'react-router';
 
 import { Button } from '@/components/ui/button';
@@ -39,6 +39,12 @@ export const CreateMessageForm = (): JSX.Element => {
       type: 'concierge',
     },
   });
+
+  const watchedText = useWatch({
+    control: form.control,
+    name: 'text',
+  });
+  const watchedTextValue = watchedText ?? '';
 
   const createMessageMutation = useCreateMessage({
     mutationConfig: {
@@ -83,7 +89,7 @@ export const CreateMessageForm = (): JSX.Element => {
                           className="h-fit rounded-full p-1.5"
                           type="submit"
                           disabled={
-                            form.watch('text').length === 0 ||
+                            watchedTextValue.length === 0 ||
                             createMessageMutation.isPending
                           }
                           aria-busy={createMessageMutation.isPending}

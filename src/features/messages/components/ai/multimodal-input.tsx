@@ -210,9 +210,9 @@ function PureMultimodalInput({
         ]);
       } catch (error) {
         console.error('Error uploading files!', error);
-      } finally {
-        setUploadQueue([]);
       }
+
+      setUploadQueue([]);
     },
     [setAttachments, uploadFiles],
   );
@@ -222,15 +222,9 @@ function PureMultimodalInput({
     accept: acceptedFileContentTypes,
     onDrop: (acceptedFiles) => {
       const fileList = {
-        item: (index: number) => acceptedFiles[index],
+        item: (index: number) => acceptedFiles[index] ?? null,
         length: acceptedFiles.length,
-        [Symbol.iterator]: function* () {
-          let i = 0;
-          while (i < acceptedFiles.length) {
-            yield acceptedFiles[i];
-            i++;
-          }
-        },
+        [Symbol.iterator]: () => acceptedFiles.values(),
       } as FileList;
 
       handleFileChange({
@@ -244,11 +238,108 @@ function PureMultimodalInput({
     disabled: disableFileUpload,
   });
 
-  const handleRemoveAttachment = (url: string) => {
-    setAttachments((currentAttachments) =>
-      currentAttachments.filter((a) => a.url !== url),
+  const handleRemoveAttachment = useCallback(
+    (url: string) => {
+      setAttachments((currentAttachments) => {
+        const nextAttachments: FileUIPart[] = [];
+        for (const attachment of currentAttachments) {
+          if (attachment.url === url) continue;
+          nextAttachments.push(attachment);
+        }
+        return nextAttachments;
+      });
+    },
+    [setAttachments],
+  );
+
+  return (
+    <MultimodalInputView
+      getRootProps={getRootProps}
+      isDragActive={isDragActive}
+      fileInputRef={fileInputRef}
+      handleFileChange={handleFileChange}
+      inputWrapperRef={inputWrapperRef}
+      isAttachmentPresent={isAttachmentPresent}
+      attachments={attachments}
+      uploadQueue={uploadQueue}
+      handleRemoveAttachment={handleRemoveAttachment}
+      textareaRef={textareaRef}
+      input={input}
+      handleInput={handleInput}
+      status={status}
+      className={className}
+      disableFileUpload={disableFileUpload}
+      submitForm={submitForm}
+    />
+  );
+}
+
+interface MultimodalInputViewProps {
+  getRootProps: ReturnType<typeof useDropzone>['getRootProps'];
+  isDragActive: boolean;
+  fileInputRef: React.RefObject<HTMLInputElement | null>;
+  handleFileChange: (
+    event: ChangeEvent<HTMLInputElement>,
+  ) => void | Promise<void>;
+  inputWrapperRef: React.RefObject<HTMLDivElement | null>;
+  isAttachmentPresent: boolean;
+  attachments: Array<FileUIPart>;
+  uploadQueue: Array<string>;
+  handleRemoveAttachment: (url: string) => void;
+  textareaRef: React.RefObject<HTMLTextAreaElement | null>;
+  input: string;
+  handleInput: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  status: UseChatHelpers<UIMessage>['status'];
+  className: string | undefined;
+  disableFileUpload: boolean;
+  submitForm: () => void;
+}
+
+function MultimodalInputView({
+  getRootProps,
+  isDragActive,
+  fileInputRef,
+  handleFileChange,
+  inputWrapperRef,
+  isAttachmentPresent,
+  attachments,
+  uploadQueue,
+  handleRemoveAttachment,
+  textareaRef,
+  input,
+  handleInput,
+  status,
+  className,
+  disableFileUpload,
+  submitForm,
+}: MultimodalInputViewProps) {
+  const previews: JSX.Element[] = [];
+  for (const attachment of attachments) {
+    previews.push(
+      <PreviewAttachment
+        key={attachment.url}
+        attachment={attachment}
+        onRemove={() => handleRemoveAttachment(attachment.url)}
+      />,
     );
-  };
+  }
+
+  const uploading: JSX.Element[] = [];
+  for (const filename of uploadQueue) {
+    uploading.push(
+      <PreviewAttachment
+        key={filename}
+        attachment={{
+          url: '',
+          filename,
+          mediaType: '',
+          type: 'file',
+        }}
+        isUploading={true}
+        onRemove={() => handleRemoveAttachment(filename)}
+      />,
+    );
+  }
 
   return (
     <div
@@ -306,27 +397,8 @@ function PureMultimodalInput({
           )}
           {isAttachmentPresent && (
             <div className="flex shrink-0 flex-row items-center justify-start gap-2 overflow-x-scroll px-4 pt-2 duration-500 animate-in fade-in scrollbar scrollbar-track-transparent scrollbar-thumb-zinc-300 [mask-image:linear-gradient(to_right,transparent,black_2%,black_98%,transparent)] hover:scrollbar-thumb-zinc-400 [&>div]:!ml-0">
-              {attachments.map((attachment) => (
-                <PreviewAttachment
-                  key={attachment.url}
-                  attachment={attachment}
-                  onRemove={() => handleRemoveAttachment(attachment.url)}
-                />
-              ))}
-
-              {uploadQueue.map((filename) => (
-                <PreviewAttachment
-                  key={filename}
-                  attachment={{
-                    url: '',
-                    filename: filename,
-                    mediaType: '',
-                    type: 'file',
-                  }}
-                  isUploading={true}
-                  onRemove={() => handleRemoveAttachment(filename)}
-                />
-              ))}
+              {previews}
+              {uploading}
             </div>
           )}
           <div

@@ -35,42 +35,40 @@ export const ServiceFaqs = ({
       defaultValue={defaultValue ? [defaultValue] : undefined}
     >
       {serviceDetails?.faqs
-        ? serviceDetails.faqs
-            .filter(filter ?? (() => true))
-            .map((faq, index) => {
-              return (
-                <AccordionItem
-                  value={faq.question}
-                  key={index}
-                  className="border-b-0"
+        ? serviceDetails.faqs.filter(filter ?? (() => true)).map((faq) => {
+            return (
+              <AccordionItem
+                value={faq.question}
+                key={faq.question}
+                className="border-b-0"
+              >
+                <AccordionTrigger
+                  className={cn(
+                    'group text-zinc-900 transition-colors hover:text-zinc-500',
+                    isCompact ? 'py-1' : 'py-2',
+                  )}
                 >
-                  <AccordionTrigger
-                    className={cn(
-                      'group text-zinc-900 transition-colors hover:text-zinc-500',
-                      isCompact ? 'py-1' : 'py-2',
-                    )}
+                  {isCompact ? (
+                    <Body2 className="m-0 transition-colors group-hover:text-zinc-500">
+                      {faq.question}
+                    </Body2>
+                  ) : (
+                    <H4 className="m-0 transition-colors group-hover:text-zinc-500">
+                      {faq.question}
+                    </H4>
+                  )}
+                </AccordionTrigger>
+                <AccordionContent>
+                  <StyledMarkdown
+                    variant={isCompact ? 'small' : 'default'}
+                    className="space-y-4 text-zinc-500"
                   >
-                    {isCompact ? (
-                      <Body2 className="m-0 transition-colors group-hover:text-zinc-500">
-                        {faq.question}
-                      </Body2>
-                    ) : (
-                      <H4 className="m-0 transition-colors group-hover:text-zinc-500">
-                        {faq.question}
-                      </H4>
-                    )}
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <StyledMarkdown
-                      variant={isCompact ? 'small' : 'default'}
-                      className="space-y-4 text-zinc-500"
-                    >
-                      {faq.answer}
-                    </StyledMarkdown>
-                  </AccordionContent>
-                </AccordionItem>
-              );
-            })
+                    {faq.answer}
+                  </StyledMarkdown>
+                </AccordionContent>
+              </AccordionItem>
+            );
+          })
         : null}
     </Accordion>
   );

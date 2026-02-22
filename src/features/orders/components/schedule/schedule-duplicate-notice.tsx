@@ -2,8 +2,13 @@ import { XIcon } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogClose } from '@/components/ui/dialog';
-import { Body1, H3 } from '@/components/ui/typography';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 import { useScheduleDuplicate } from '../../hooks/use-schedule-duplicate';
 import { useScheduleStore } from '../../stores/schedule-store';
@@ -24,7 +29,15 @@ export const ScheduleDuplicateNotice = () => {
   );
 
   useEffect(() => {
-    if (slotKey && nearestMatchingDupe) setOpen(true);
+    if (!slotKey || !nearestMatchingDupe) return;
+
+    const timeoutId = setTimeout(() => {
+      setOpen(true);
+    }, 0);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [slotKey, nearestMatchingDupe]);
 
   if (!nearestMatchingDupe) return null;
@@ -40,6 +53,7 @@ export const ScheduleDuplicateNotice = () => {
             className="rounded-full"
           >
             <XIcon className="size-4 text-zinc-500 transition-colors duration-200 hover:text-zinc-600" />
+            <span className="sr-only">Close</span>
           </Button>
         </DialogClose>
         <div>
@@ -52,14 +66,16 @@ export const ScheduleDuplicateNotice = () => {
             <div className="absolute bottom-0 h-20 w-full bg-gradient-to-b from-transparent via-white/75 to-white" />
           </div>
           <div className="mb-8 flex flex-col gap-1.5">
-            <H3 className="text-center">Similar test already scheduled</H3>
-            <Body1 className="text-center text-secondary">
+            <DialogTitle className="text-center text-xl font-normal tracking-[-0.48px] text-zinc-900 md:text-2xl">
+              Similar test already scheduled
+            </DialogTitle>
+            <DialogDescription className="text-center text-base text-secondary">
               This panel measures biomarkers that are similar to a test you have
               already scheduled{' '}
               {nearestMatchingDupe?.startTimestamp ? ` on ${dupeDate}` : ''}. We
               recommend scheduling these blood draws at least 1 month apart so
               you have time in between tests to see trends.
-            </Body1>
+            </DialogDescription>
           </div>
           <div className="flex flex-col gap-2">
             <Button onClick={close}>Schedule Later</Button>

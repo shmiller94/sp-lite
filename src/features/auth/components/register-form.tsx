@@ -1,7 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Check } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useForm, useFormContext } from 'react-hook-form';
+import {
+  useForm,
+  useFormContext,
+  useWatch,
+  type Resolver,
+} from 'react-hook-form';
 
 import { AuthLayout, SplitScreenLayout } from '@/components/layouts';
 import { Button } from '@/components/ui/button';
@@ -45,14 +50,18 @@ export const RegisterForm = () => {
             email: true,
           })
         : registerInputSchema,
-    ),
+    ) as unknown as Resolver<RegisterInput, unknown, RegisterInput>,
     mode: 'onChange',
     defaultValues: {
       postalCode: '',
     },
   });
 
-  const postalCode = form.watch('postalCode');
+  const postalCode = useWatch({
+    control: form.control,
+    name: 'postalCode',
+  });
+  const postalCodeValue = postalCode ?? '';
 
   const handleNext = () => setStep(2);
   const handlePrev = () => setStep(1);
@@ -60,16 +69,7 @@ export const RegisterForm = () => {
   return (
     <>
       <Form {...form}>
-        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
-        <form
-          className="space-y-1"
-          onSubmit={(e) => e.preventDefault()}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-            }
-          }}
-        >
+        <div className="space-y-1">
           {step === 1 ? (
             <AuthLayout title="Email" progress={{ current: step, total: 2 }}>
               <Step1 onNext={handleNext} />
@@ -78,11 +78,11 @@ export const RegisterForm = () => {
             <SplitScreenLayout title="Configurator" className="bg-zinc-50">
               <>
                 <Configurator onPrev={handlePrev} />
-                <BaselineSummary postalCode={postalCode} />
+                <BaselineSummary postalCode={postalCodeValue} />
               </>
             </SplitScreenLayout>
           )}
-        </form>
+        </div>
       </Form>
     </>
   );
@@ -180,11 +180,15 @@ export const Configurator = ({ onPrev }: { onPrev: () => void }) => {
   const coupon = useCheckoutContext((s) => s.coupon);
   const form = useFormContext<RegisterInput>();
 
-  const postalCode = form.watch('postalCode');
+  const postalCode = useWatch({
+    control: form.control,
+    name: 'postalCode',
+  });
+  const postalCodeValue = postalCode ?? '';
 
   const availableSubscriptionsQuery = useAvailableSubscriptions({
     coupon: coupon ?? undefined,
-    state: getState(postalCode)?.state,
+    state: getState(postalCodeValue)?.state,
   });
 
   useEffect(() => {

@@ -107,7 +107,7 @@ export function ChatShareDialog({
 }) {
   const [internalOpen, setInternalOpen] = useState(false);
   const isControlled = openProp !== undefined;
-  const open = isControlled ? (openProp as boolean) : internalOpen;
+  const open = openProp ?? internalOpen;
   const setOpen = (v: boolean) => {
     onOpenChange?.(v);
     if (!isControlled) setInternalOpen(v);
@@ -140,9 +140,15 @@ export function ChatShareDialog({
   // Sync local state only when the server value changes.
   useEffect(() => {
     const serverVisibility = selectedChat?.visibility;
-    if (serverVisibility) {
+    if (serverVisibility == null) return;
+
+    const timeoutId = setTimeout(() => {
       setVisibility(serverVisibility);
-    }
+    }, 0);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [selectedChat?.visibility]);
 
   const updateChatMutation = useUpdateChat({});
@@ -206,173 +212,20 @@ export function ChatShareDialog({
   const isShareActionDisabled = !chatId || isBusy;
 
   const URL = `${env.WEBSITE_URL}/share/chat/${chatId}`;
-
-  const consentContent = () => (
-    <>
-      <div className='w-full overflow-hidden bg-[url("/chat/share-chat.webp")] bg-cover px-8 pt-14'>
-        <m.div
-          className="pointer-events-none space-y-6"
-          initial="hidden"
-          animate="show"
-          variants={{
-            show: {
-              transition: { staggerChildren: 0.15, delayChildren: 0.05 },
-            },
-          }}
-        >
-          <m.div
-            variants={{
-              hidden: { opacity: 0, y: 24, filter: 'blur(6px)' },
-              show: {
-                opacity: 1,
-                y: 0,
-                filter: 'blur(0px)',
-                transition: { duration: 0.35, delay: 0.2, ease: 'easeOut' },
-              },
-            }}
-            className="ml-auto w-fit max-w-xs rounded-xl border border-white/10 bg-black/15 p-2 backdrop-blur"
-          >
-            <Body1 className="text-white">{lastUserMessage}</Body1>
-          </m.div>
-          <m.div
-            variants={{
-              hidden: { opacity: 0, y: 24, filter: 'blur(6px)' },
-              show: {
-                opacity: 1,
-                y: 0,
-                filter: 'blur(0px)',
-                transition: { duration: 0.35, delay: 0.5, ease: 'easeOut' },
-              },
-            }}
-            className="max-h-32 [-webkit-mask-image:linear-gradient(to_bottom,black_0%,black_50%,transparent_100%)] [mask-image:linear-gradient(to_bottom,black_0%,black_50%,transparent_100%)] [mask-repeat:no-repeat] [mask-size:100%_100%]"
-          >
-            <div className="mr-auto w-fit max-w-xs text-white/75">
-              <Streamdown
-                components={baseMarkdownComponents as any}
-                rehypePlugins={rehypePlugins}
-              >
-                {lastAiMessage ?? ''}
-              </Streamdown>
-            </div>
-          </m.div>
-        </m.div>
-      </div>
-      <div className="space-y-6 p-6 pt-10">
-        <div className="space-y-2">
-          <H2 className="text-center">Share this chat</H2>
-          <Body1 className="text-balance text-center text-secondary">
-            Share this chat with your doctor, family or friends.
-          </Body1>
-        </div>
-        <div className="space-y-2 rounded-xl bg-zinc-50 p-4">
-          <Body2 className="text-secondary">
-            By enabling public sharing, you consent to making all messages in
-            this chat thread accessible to anyone who has the URL. This includes
-            any personal health information that has been disclosed in messages
-            you&apos;ve sent or received
-          </Body2>
-        </div>
-        <div className="flex w-full flex-col space-y-1">
-          <Button
-            variant="default"
-            className="gap-2 rounded-full text-center"
-            onClick={handleEnableSharing}
-            disabled={isShareActionDisabled}
-          >
-            {isBusy ? 'Enabling sharing...' : 'Enable public sharing'}
-          </Button>
-        </div>
-      </div>
-    </>
+  const body = (
+    <ChatShareDialogBody
+      visibility={visibility}
+      lastUserMessage={lastUserMessage}
+      lastAiMessage={lastAiMessage}
+      url={URL}
+      isBusy={isBusy}
+      isShareActionDisabled={isShareActionDisabled}
+      chatId={chatId}
+      onEnableSharing={handleEnableSharing}
+      onCopyLink={handleCopy}
+      onRevokeSharing={handleRevokeSharing}
+    />
   );
-
-  const shareContent = () => (
-    <>
-      <div className='w-full overflow-hidden bg-[url("/chat/share-chat.webp")] bg-cover px-8 pt-14'>
-        <m.div
-          className="pointer-events-none space-y-6"
-          initial="hidden"
-          animate="show"
-          variants={{
-            show: {
-              transition: { staggerChildren: 0.15, delayChildren: 0.05 },
-            },
-          }}
-        >
-          <m.div
-            variants={{
-              hidden: { opacity: 0, y: 24, filter: 'blur(6px)' },
-              show: {
-                opacity: 1,
-                y: 0,
-                filter: 'blur(0px)',
-                transition: { duration: 0.35, delay: 0.2, ease: 'easeOut' },
-              },
-            }}
-            className="ml-auto w-fit max-w-xs rounded-xl border border-white/10 bg-black/15 p-2 backdrop-blur"
-          >
-            <Body1 className="text-white">{lastUserMessage}</Body1>
-          </m.div>
-          <m.div
-            variants={{
-              hidden: { opacity: 0, y: 24, filter: 'blur(6px)' },
-              show: {
-                opacity: 1,
-                y: 0,
-                filter: 'blur(0px)',
-                transition: { duration: 0.35, delay: 0.5, ease: 'easeOut' },
-              },
-            }}
-            className="max-h-32 [-webkit-mask-image:linear-gradient(to_bottom,black_0%,black_50%,transparent_100%)] [mask-image:linear-gradient(to_bottom,black_0%,black_50%,transparent_100%)] [mask-repeat:no-repeat] [mask-size:100%_100%]"
-          >
-            <div className="mr-auto w-fit max-w-xs text-white/75">
-              <Streamdown
-                components={baseMarkdownComponents as any}
-                rehypePlugins={rehypePlugins}
-              >
-                {lastAiMessage ?? ''}
-              </Streamdown>
-            </div>
-          </m.div>
-        </m.div>
-      </div>
-      <div className="space-y-6 p-6 pt-10">
-        <div className="space-y-2">
-          <H2 className="text-center">Share this chat</H2>
-          <Body1 className="text-balance text-center text-secondary">
-            Share this chat with your doctor, family or friends.
-          </Body1>
-        </div>
-        <div>
-          <Input value={URL} readOnly />
-          <div className="flex w-full flex-col space-y-1 pt-4">
-            <Button
-              variant="default"
-              className="gap-2 rounded-full text-center"
-              onClick={handleCopy}
-              disabled={!chatId}
-            >
-              <Copy className="size-4" />
-              Copy link
-            </Button>
-          </div>
-        </div>
-        <div className="flex justify-center">
-          <button
-            type="button"
-            onClick={handleRevokeSharing}
-            disabled={isShareActionDisabled}
-            className="text-sm text-secondary underline transition-colors hover:text-primary disabled:opacity-50"
-          >
-            {isBusy ? 'Revoking sharing...' : 'Revoke public sharing'}
-          </button>
-        </div>
-      </div>
-    </>
-  );
-
-  const content = () =>
-    visibility === 'public' ? shareContent() : consentContent();
 
   if (isMobile) {
     return (
@@ -390,7 +243,7 @@ export function ChatShareDialog({
               <X className="h-4 min-w-4 text-white" />
             </div>
           </SheetClose>
-          {content()}
+          {body}
         </SheetContent>
       </Sheet>
     );
@@ -414,9 +267,207 @@ export function ChatShareDialog({
             <X className="size-4" />
           </Button>
         </DialogClose>
-        {content()}
+        {body}
       </DialogContent>
     </Dialog>
+  );
+}
+
+function ChatShareDialogBody({
+  visibility,
+  lastUserMessage,
+  lastAiMessage,
+  url,
+  isBusy,
+  isShareActionDisabled,
+  chatId,
+  onEnableSharing,
+  onCopyLink,
+  onRevokeSharing,
+}: {
+  visibility: Visibility;
+  lastUserMessage: string | null;
+  lastAiMessage: string | null;
+  url: string;
+  isBusy: boolean;
+  isShareActionDisabled: boolean;
+  chatId: string;
+  onEnableSharing: () => void;
+  onCopyLink: () => Promise<void>;
+  onRevokeSharing: () => void;
+}) {
+  return (
+    <>
+      <ChatSharePreviewHero
+        lastUserMessage={lastUserMessage}
+        lastAiMessage={lastAiMessage}
+      />
+      {visibility === 'public' ? (
+        <ChatSharePublicControls
+          url={url}
+          chatId={chatId}
+          isBusy={isBusy}
+          isShareActionDisabled={isShareActionDisabled}
+          onCopyLink={onCopyLink}
+          onRevokeSharing={onRevokeSharing}
+        />
+      ) : (
+        <ChatShareConsentControls
+          isBusy={isBusy}
+          isShareActionDisabled={isShareActionDisabled}
+          onEnableSharing={onEnableSharing}
+        />
+      )}
+    </>
+  );
+}
+
+function ChatSharePreviewHero({
+  lastUserMessage,
+  lastAiMessage,
+}: {
+  lastUserMessage: string | null;
+  lastAiMessage: string | null;
+}) {
+  return (
+    <div className='w-full overflow-hidden bg-[url("/chat/share-chat.webp")] bg-cover px-8 pt-14'>
+      <m.div
+        className="pointer-events-none space-y-6"
+        initial="hidden"
+        animate="show"
+        variants={{
+          show: {
+            transition: { staggerChildren: 0.15, delayChildren: 0.05 },
+          },
+        }}
+      >
+        <m.div
+          variants={{
+            hidden: { opacity: 0, y: 24, filter: 'blur(6px)' },
+            show: {
+              opacity: 1,
+              y: 0,
+              filter: 'blur(0px)',
+              transition: { duration: 0.35, delay: 0.2, ease: 'easeOut' },
+            },
+          }}
+          className="ml-auto w-fit max-w-xs rounded-xl border border-white/10 bg-black/15 p-2 backdrop-blur"
+        >
+          <Body1 className="text-white">{lastUserMessage}</Body1>
+        </m.div>
+        <m.div
+          variants={{
+            hidden: { opacity: 0, y: 24, filter: 'blur(6px)' },
+            show: {
+              opacity: 1,
+              y: 0,
+              filter: 'blur(0px)',
+              transition: { duration: 0.35, delay: 0.5, ease: 'easeOut' },
+            },
+          }}
+          className="max-h-32 [-webkit-mask-image:linear-gradient(to_bottom,black_0%,black_50%,transparent_100%)] [mask-image:linear-gradient(to_bottom,black_0%,black_50%,transparent_100%)] [mask-repeat:no-repeat] [mask-size:100%_100%]"
+        >
+          <div className="mr-auto w-fit max-w-xs text-white/75">
+            <Streamdown
+              components={baseMarkdownComponents as any}
+              rehypePlugins={rehypePlugins}
+            >
+              {lastAiMessage ?? ''}
+            </Streamdown>
+          </div>
+        </m.div>
+      </m.div>
+    </div>
+  );
+}
+
+function ChatShareConsentControls({
+  isBusy,
+  isShareActionDisabled,
+  onEnableSharing,
+}: {
+  isBusy: boolean;
+  isShareActionDisabled: boolean;
+  onEnableSharing: () => void;
+}) {
+  return (
+    <div className="space-y-6 p-6 pt-10">
+      <div className="space-y-2">
+        <H2 className="text-center">Share this chat</H2>
+        <Body1 className="text-balance text-center text-secondary">
+          Share this chat with your doctor, family or friends.
+        </Body1>
+      </div>
+      <div className="space-y-2 rounded-xl bg-zinc-50 p-4">
+        <Body2 className="text-secondary">
+          By enabling public sharing, you consent to making all messages in this
+          chat thread accessible to anyone who has the URL. This includes any
+          personal health information that has been disclosed in messages
+          you&apos;ve sent or received
+        </Body2>
+      </div>
+      <div className="flex w-full flex-col space-y-1">
+        <Button
+          variant="default"
+          className="gap-2 rounded-full text-center"
+          onClick={onEnableSharing}
+          disabled={isShareActionDisabled}
+        >
+          {isBusy ? 'Enabling sharing...' : 'Enable public sharing'}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function ChatSharePublicControls({
+  url,
+  chatId,
+  isBusy,
+  isShareActionDisabled,
+  onCopyLink,
+  onRevokeSharing,
+}: {
+  url: string;
+  chatId: string;
+  isBusy: boolean;
+  isShareActionDisabled: boolean;
+  onCopyLink: () => Promise<void>;
+  onRevokeSharing: () => void;
+}) {
+  return (
+    <div className="space-y-6 p-6 pt-10">
+      <div className="space-y-2">
+        <H2 className="text-center">Share this chat</H2>
+        <Body1 className="text-balance text-center text-secondary">
+          Share this chat with your doctor, family or friends.
+        </Body1>
+      </div>
+      <div>
+        <Input value={url} readOnly />
+        <div className="flex w-full flex-col space-y-1 pt-4">
+          <Button
+            variant="default"
+            className="gap-2 rounded-full text-center"
+            onClick={() => void onCopyLink()}
+            disabled={!chatId}
+          >
+            <Copy className="size-4" />
+            Copy link
+          </Button>
+        </div>
+      </div>
+      <div className="flex justify-center">
+        <button
+          type="button"
+          onClick={onRevokeSharing}
+          disabled={isShareActionDisabled}
+          className="text-sm text-secondary underline transition-colors hover:text-primary disabled:opacity-50"
+        >
+          {isBusy ? 'Revoking sharing...' : 'Revoke public sharing'}
+        </button>
+      </div>
+    </div>
   );
 }
 

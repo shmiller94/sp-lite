@@ -23,29 +23,34 @@ export function CancelMembership({
 }
 
 function CancelMembershipCard(): JSX.Element {
-  const methods = CancelMembershipStepper.useStepper();
-  const utils = CancelMembershipStepper.utils;
+  return (
+    <CancelMembershipStepper.Scoped>
+      <CancelMembershipCardContent />
+    </CancelMembershipStepper.Scoped>
+  );
+}
 
-  const activeStep = utils.getIndex(methods.current.id);
+function CancelMembershipCardContent(): JSX.Element {
+  const methods = CancelMembershipStepper.useStepper();
+  const activeStep = methods.state.current.index;
+  const totalSteps = methods.state.all.length;
 
   return (
     <div
       className={cn(
         `z-[110] flex flex-col justify-between gap-12 overflow-y-scroll px-6 py-12 md:px-14`,
-        activeStep === methods.all.length - 1
-          ? 'max-w-[432px]'
-          : 'rounded-[24px]',
+        activeStep === totalSteps - 1 ? 'max-w-[432px]' : 'rounded-[24px]',
       )}
     >
       <div
         className={cn(
           `flex items-center justify-between pb-6`,
-          activeStep === methods.all.length - 1 && 'hidden',
+          activeStep === totalSteps - 1 && 'hidden',
         )}
       >
         <DialogClose>
           <div
-            onClick={methods.reset}
+            onClick={methods.navigation.reset}
             role="presentation"
             className="block cursor-pointer rounded-full bg-zinc-100 p-3 md:hidden"
           >
@@ -56,7 +61,7 @@ function CancelMembershipCard(): JSX.Element {
         <DialogClose>
           <X
             className="hidden size-4 cursor-pointer md:block"
-            onClick={methods.reset}
+            onClick={methods.navigation.reset}
           />
         </DialogClose>
         <div className="block size-6 p-3 md:hidden" />

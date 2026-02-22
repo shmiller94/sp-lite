@@ -17,20 +17,10 @@ export const ScheduleFlowFooter = ({
 }) => {
   const { isLast, next, prev, isFirst } = useScheduleFlowStepper();
 
-  const renderButton = (
-    btn: ReactNode | null | undefined,
-    defaultButton: ReactNode,
-  ) => {
-    if (btn === undefined) {
-      return defaultButton;
-    }
-    return btn; // This includes the case when btn is null (renders nothing) or a ReactNode
-  };
-
-  const renderPrevButton = () => {
-    if (!isFirst)
-      return renderButton(
-        prevBtn,
+  let prevButton: ReactNode | null = null;
+  if (!isFirst) {
+    if (prevBtn === undefined) {
+      prevButton = (
         <Button
           variant="outline"
           className="w-full bg-white"
@@ -38,30 +28,29 @@ export const ScheduleFlowFooter = ({
           disabled={prevBtnDisabled}
         >
           Back
-        </Button>,
-      );
-
-    return null;
-  };
-
-  const renderNextButton = () => {
-    if (nextBtn) return nextBtn;
-
-    if (!isLast)
-      return (
-        <Button onClick={next} className="w-full" disabled={nextBtnDisabled}>
-          Next
         </Button>
       );
+    } else {
+      prevButton = prevBtn;
+    }
+  }
 
-    return null;
-  };
+  let nextButton: ReactNode | null = null;
+  if (nextBtn) {
+    nextButton = nextBtn;
+  } else if (!isLast) {
+    nextButton = (
+      <Button onClick={next} className="w-full" disabled={nextBtnDisabled}>
+        Next
+      </Button>
+    );
+  }
 
   return (
     <div className="flex items-center py-4 backdrop-blur-sm md:py-8">
       <div className="flex w-full flex-col-reverse justify-end gap-4 md:flex-row md:gap-2">
-        {renderPrevButton()}
-        {renderNextButton()}
+        {prevButton}
+        {nextButton}
       </div>
     </div>
   );

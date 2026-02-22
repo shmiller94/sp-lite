@@ -22,6 +22,7 @@ import {
 import { Spinner } from '@/components/ui/spinner';
 import { TextShimmer } from '@/components/ui/text-shimmer';
 import { Body1, H4 } from '@/components/ui/typography';
+import { useNowMs } from '@/hooks/use-now-ms';
 
 import { DEFAULT_DAYS_RANGE } from '../const';
 
@@ -51,7 +52,8 @@ export const SchedulerHeading = ({
         ? new TZDateMini(startRange.getTime(), tz)
         : undefined;
 
-  const currentWeekStart = startOfISOWeek(new TZDateMini(Date.now(), tz));
+  const nowMs = useNowMs();
+  const currentWeekStart = startOfISOWeek(new TZDateMini(nowMs, tz));
   const isAtInitialWeek =
     startRangeInTz == null
       ? true
@@ -60,7 +62,7 @@ export const SchedulerHeading = ({
   const handlePrev = () => {
     if (startRangeInTz == null || isAtInitialWeek) return;
 
-    const today = startOfDay(new TZDateMini(Date.now(), tz));
+    const today = startOfDay(new TZDateMini(nowMs, tz));
     const target = subDays(startOfISOWeek(startRangeInTz), DEFAULT_DAYS_RANGE);
 
     // don't go before today
@@ -82,7 +84,7 @@ export const SchedulerHeading = ({
   const [open, setOpen] = useState(false);
 
   // tomorrow is the earliest selectable date
-  const tomorrow = startOfDay(addDays(new TZDateMini(Date.now(), tz), 1));
+  const tomorrow = startOfDay(addDays(new TZDateMini(nowMs, tz), 1));
 
   const handleCalendarSelect = (date: Date | undefined) => {
     if (date == null) return;

@@ -36,6 +36,68 @@ export const OrderInvoiceContent = ({
 
   const invoice = invoiceQuery.data.invoice;
 
+  const invoiceLineRows: JSX.Element[] = [];
+  const invoiceLineKeyCounts = new Map<string, number>();
+
+  for (const line of invoice.lines) {
+    const baseKey = `${line.description ?? ''}:${line.amount}:${
+      line.price ?? 'null'
+    }:${line.quantity ?? 'null'}`;
+    const prevCount = invoiceLineKeyCounts.get(baseKey) ?? 0;
+    const nextCount = prevCount + 1;
+    invoiceLineKeyCounts.set(baseKey, nextCount);
+
+    const rowKey = nextCount === 1 ? baseKey : `${baseKey}:${nextCount}`;
+
+    invoiceLineRows.push(
+      <TableRow className="border-b hover:bg-transparent" key={rowKey}>
+        <TableCell className="pl-0">
+          <div>
+            {invoiceQuery.isPending ? (
+              <Skeleton className="h-6 w-full" />
+            ) : (
+              <Body1 className="text-zinc-700">{line.description}</Body1>
+            )}
+          </div>
+        </TableCell>
+        <TableCell className="hidden sm:table-cell">
+          {invoiceQuery.isPending ? (
+            <Skeleton className="h-6 w-full" />
+          ) : (
+            <Body1 className="text-zinc-700">
+              {format(invoice.created * 1000, 'PP')}
+            </Body1>
+          )}
+        </TableCell>
+        <TableCell className="hidden sm:table-cell">
+          {invoiceQuery.isPending ? (
+            <Skeleton className="h-6 w-full" />
+          ) : (
+            <Body1 className="text-zinc-700">
+              {line.price ? formatMoney(line.price) : 0}
+            </Body1>
+          )}
+        </TableCell>
+        <TableCell className="hidden sm:table-cell">
+          {invoiceQuery.isPending ? (
+            <Skeleton className="h-6 w-full" />
+          ) : (
+            <Body1 className="text-zinc-700">1</Body1>
+          )}
+        </TableCell>
+        <TableCell className="pr-0">
+          {invoiceQuery.isPending ? (
+            <Skeleton className="h-6 w-full" />
+          ) : (
+            <Body1 className="text-zinc-700">
+              {line.price ? formatMoney(line.price) : 0}
+            </Body1>
+          )}
+        </TableCell>
+      </TableRow>,
+    );
+  }
+
   const finalInfo = [
     {
       title: 'Total',
@@ -53,7 +115,7 @@ export const OrderInvoiceContent = ({
     <div className="overflow-y-auto px-6 py-12 md:px-14">
       <div className="flex justify-between pb-6">
         <h3 className="text-base text-[#71717A]">Order history</h3>
-        <DialogClose className="outline-none">
+        <DialogClose className="outline-none" aria-label="Close">
           <X className="size-6 cursor-pointer p-1" />
         </DialogClose>
       </div>
@@ -85,55 +147,12 @@ export const OrderInvoiceContent = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {invoice.lines.map((line, index) => (
-            <TableRow className="border-b hover:bg-transparent" key={index}>
-              <TableCell className="pl-0">
-                <div>
-                  {invoiceQuery.isPending ? (
-                    <Skeleton className="h-6 w-full" />
-                  ) : (
-                    <Body1 className="text-zinc-700">{line.description}</Body1>
-                  )}
-                </div>
-              </TableCell>
-              <TableCell className="hidden sm:table-cell">
-                {invoiceQuery.isPending ? (
-                  <Skeleton className="h-6 w-full" />
-                ) : (
-                  <Body1 className="text-zinc-700">
-                    {format(invoice.created * 1000, 'PP')}
-                  </Body1>
-                )}
-              </TableCell>
-              <TableCell className="hidden sm:table-cell">
-                {invoiceQuery.isPending ? (
-                  <Skeleton className="h-6 w-full" />
-                ) : (
-                  <Body1 className="text-zinc-700">
-                    {line.price ? formatMoney(line.price) : 0}
-                  </Body1>
-                )}
-              </TableCell>
-              <TableCell className="hidden sm:table-cell">
-                {invoiceQuery.isPending ? (
-                  <Skeleton className="h-6 w-full" />
-                ) : (
-                  <Body1 className="text-zinc-700">1</Body1>
-                )}
-              </TableCell>
-              <TableCell className="pr-0">
-                {invoiceQuery.isPending ? (
-                  <Skeleton className="h-6 w-full" />
-                ) : (
-                  <Body1 className="text-zinc-700">
-                    {line.price ? formatMoney(line.price) : 0}
-                  </Body1>
-                )}
-              </TableCell>
-            </TableRow>
-          ))}
-          {finalInfo.map((item, index) => (
-            <TableRow className="border-b hover:bg-transparent" key={index}>
+          {invoiceLineRows}
+          {finalInfo.map((item) => (
+            <TableRow
+              className="border-b hover:bg-transparent"
+              key={item.title}
+            >
               <TableCell className="hidden py-3 pl-0 sm:table-cell" />
               <TableCell className="hidden py-3 sm:table-cell" />
               <TableCell className="px-0 py-3 md:px-4">

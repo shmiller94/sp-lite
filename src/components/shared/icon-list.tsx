@@ -27,7 +27,7 @@ export const IconList = ({
         const isLastItem = index === items.length - 1;
 
         return (
-          <div key={index} className="relative">
+          <div key={item.title} className="relative">
             <div className="flex items-start">
               <IconHighlight
                 icon={item.icon}

@@ -19,6 +19,26 @@ type PanelItem = {
   quantity: number;
 };
 
+interface PanelContentProps {
+  panel: PanelItem;
+}
+
+const PanelContent = ({ panel }: PanelContentProps) => (
+  <>
+    <img
+      src={panel.image}
+      alt={panel.title}
+      className="pointer-events-none mx-auto h-[140px] w-full select-none object-contain pt-4 lg:h-[180px]"
+    />
+    <div className="text-center lg:text-left">
+      <H4 className="text-base lg:text-lg">
+        {panel.title} ({panel.quantity}x)
+      </H4>
+      <Body2 className="text-zinc-500">{panel.description}</Body2>
+    </div>
+  </>
+);
+
 const ADVANCED_PANEL: Omit<PanelItem, 'quantity'> = {
   id: 'advanced',
   image: '/services/upgrade/advanced-panel.png',
@@ -103,22 +123,6 @@ export const BenefitSummary = () => {
 
   const showCarousel = panelItems.length > 1;
 
-  const renderPanelContent = (panel: PanelItem) => (
-    <>
-      <img
-        src={panel.image}
-        alt={panel.title}
-        className="pointer-events-none mx-auto h-[140px] w-full select-none object-contain pt-4 lg:h-[180px]"
-      />
-      <div className="text-center lg:text-left">
-        <H4 className="text-base lg:text-lg">
-          {panel.title} ({panel.quantity}x)
-        </H4>
-        <Body2 className="text-zinc-500">{panel.description}</Body2>
-      </div>
-    </>
-  );
-
   return (
     <div className="flex w-full flex-col gap-4 rounded-3xl border border-zinc-200 bg-white p-6 lg:sticky lg:top-8 lg:h-[calc(100svh-4rem)] lg:max-h-[calc(100svh-4rem)] lg:overflow-auto lg:p-10">
       <Body1 className="text-zinc-500">Benefit summary</Body1>
@@ -131,7 +135,7 @@ export const BenefitSummary = () => {
             {panelItems.map((panel) => (
               <SliderMainItem key={panel.id}>
                 <div className="w-full space-y-2 rounded-[20px] border bg-white p-4 shadow-sm lg:space-y-4">
-                  {renderPanelContent(panel)}
+                  <PanelContent panel={panel} />
                 </div>
               </SliderMainItem>
             ))}
@@ -140,7 +144,7 @@ export const BenefitSummary = () => {
         </Carousel>
       ) : (
         <div className="w-full space-y-2 rounded-[20px] border bg-white p-4 shadow-sm lg:space-y-4">
-          {renderPanelContent(panelItems[0])}
+          <PanelContent panel={panelItems[0]} />
         </div>
       )}
     </div>

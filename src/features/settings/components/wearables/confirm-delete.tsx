@@ -1,7 +1,12 @@
 import React from 'react';
 
 import { Button } from '@/components/ui/button';
-import { DialogClose, DialogContent } from '@/components/ui/dialog';
+import {
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Spinner } from '@/components/ui/spinner';
 import { useDeleteWearable } from '@/features/settings/api';
 
@@ -14,6 +19,10 @@ export function ConfirmDelete({ provider }: { provider: string }) {
 
   return (
     <DialogContent className="w-full max-w-[432px] space-y-8 p-9 md:p-12">
+      <DialogTitle className="sr-only">Disconnect integration</DialogTitle>
+      <DialogDescription className="sr-only">
+        Confirm disconnecting the {provider} integration.
+      </DialogDescription>
       <h1 className="text-center text-2xl text-[#18181B]">
         Are you sure you want to disconnect this integration?
       </h1>

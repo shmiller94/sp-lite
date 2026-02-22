@@ -1,8 +1,8 @@
 import {
   createContext,
   useContext,
-  useRef,
   useEffect,
+  useState,
   PropsWithChildren,
 } from 'react';
 import { shallow } from 'zustand/shallow';
@@ -25,20 +25,15 @@ export const SchedulerStoreProvider = ({
   children,
   ...props
 }: SchedulerStoreProviderProps) => {
-  const schedulerStoreRef = useRef<SchedulerStoreApi>();
-  if (!schedulerStoreRef.current) {
-    schedulerStoreRef.current = schedulerStoreCreator(props);
-  }
+  const [store] = useState(() => schedulerStoreCreator(props));
 
   // keeps onSlotUpdate callback in sync, captures parent state in closure
   useEffect(() => {
-    if (schedulerStoreRef.current) {
-      schedulerStoreRef.current.setState({ onSlotUpdate: props.onSlotUpdate });
-    }
-  }, [props.onSlotUpdate]);
+    store.setState({ onSlotUpdate: props.onSlotUpdate });
+  }, [props.onSlotUpdate, store]);
 
   return (
-    <SchedulerStoreContext.Provider value={schedulerStoreRef.current}>
+    <SchedulerStoreContext.Provider value={store}>
       {children}
     </SchedulerStoreContext.Provider>
   );

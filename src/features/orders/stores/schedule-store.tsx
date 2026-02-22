@@ -1,4 +1,4 @@
-import { createContext, useContext, useRef, PropsWithChildren } from 'react';
+import { createContext, useContext, useState, PropsWithChildren } from 'react';
 import { shallow } from 'zustand/shallow';
 import { useStoreWithEqualityFn } from 'zustand/traditional';
 
@@ -19,13 +19,10 @@ export const ScheduleStoreProvider = ({
   children,
   ...props
 }: ScheduleStoreProviderProps) => {
-  const orderStoreRef = useRef<ScheduleStoreApi>();
-  if (!orderStoreRef.current) {
-    orderStoreRef.current = scheduleStoreCreator(props);
-  }
+  const [store] = useState(() => scheduleStoreCreator(props));
 
   return (
-    <ScheduleStoreContext.Provider value={orderStoreRef.current}>
+    <ScheduleStoreContext.Provider value={store}>
       {children}
     </ScheduleStoreContext.Provider>
   );

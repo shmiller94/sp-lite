@@ -56,7 +56,8 @@ export const ShareableCardsModal = ({
   // State needed for showing appropriate share card
   const [showAge, setShowAge] = useState(true);
 
-  const [selectedTab, setSelectedTab] = useState(preselectedTab);
+  const [selectedTab, setSelectedTab] =
+    useState<(typeof tabs)[number]['value']>('score');
   const navigate = useNavigate();
 
   // const shareCard =
@@ -98,6 +99,7 @@ export const ShareableCardsModal = ({
           className="absolute right-5 top-5 text-zinc-400"
         >
           <X strokeWidth={2.5} className="size-4" />
+          <span className="sr-only">Close</span>
         </Button>
       </DialogClose>
       <SimpleTabs

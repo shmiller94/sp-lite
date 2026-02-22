@@ -2,7 +2,12 @@ import React from 'react';
 import { useNavigate } from 'react-router';
 
 import { Button } from '@/components/ui/button';
-import { AlertDialogContent, AlertDialogCancel } from '@/components/ui/dialog';
+import {
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogTitle,
+} from '@/components/ui/dialog';
 import { Spinner } from '@/components/ui/spinner';
 import { useDeleteFile } from '@/features/files/api/delete-file';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
@@ -41,9 +46,10 @@ export function ConfirmDelete({ fileId }: { fileId: string }) {
 
   return (
     <AlertDialogContent className="w-full max-w-[432px] space-y-8 p-8">
-      <h1 className="text-center text-2xl text-[#18181B]">
+      <AlertDialogTitle className="sr-only">Delete file</AlertDialogTitle>
+      <AlertDialogDescription className="text-center text-2xl text-[#18181B]">
         Are you sure you want to delete this file? This action cannot be undone.
-      </h1>
+      </AlertDialogDescription>
       <div className="mx-auto flex w-full items-center justify-center gap-4">
         <AlertDialogCancel asChild>
           <Button variant="outline" className="px-8 py-4">

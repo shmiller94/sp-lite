@@ -1,7 +1,8 @@
 import { useGLTF } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Mesh, AnimationMixer } from 'three';
+import { clone as cloneSkeleton } from 'three/examples/jsm/utils/SkeletonUtils.js';
 
 import { useRenderSetup } from '../../hooks/use-render-setup';
 import { useShaderMaterial } from '../../hooks/use-shader-material';
@@ -94,31 +95,40 @@ export const Avatar = ({
   const shaderMaterial = useShaderMaterial({ textures, area, level });
 
   // main model
-  const avatar = useMemo(() => {
-    const cloned = modelScene.clone(true);
-    shaderMaterial &&
-      cloned.traverse((child) => {
-        if ((child as Mesh).isMesh) {
-          const mesh = child as Mesh;
-          mesh.layers.set(2);
-          mesh.material = shaderMaterial;
-        }
-      });
+  const avatar = useMemo(() => cloneSkeleton(modelScene), [modelScene]);
 
-    return cloned;
-  }, [modelScene, shaderMaterial]);
+  useLayoutEffect(() => {
+    if (!shaderMaterial) return;
+
+    avatar.traverse((child) => {
+      if (!(child instanceof Mesh)) return;
+      child.layers.set(2);
+      child.material = shaderMaterial;
+    });
+  }, [avatar, shaderMaterial]);
 
   // clone to generate the glow
-  const avatarClone = useMemo(() => modelScene.clone(), [modelScene]);
+  const avatarClone = useMemo(() => cloneSkeleton(modelScene), [modelScene]);
 
   // setting up idle animation mixer for the model and the glow clone
-  const mixer = useMemo(() => new AnimationMixer(modelScene), [modelScene]);
+  const mixer = useMemo(() => new AnimationMixer(avatar), [avatar]);
   useEffect(() => {
-    if (avatar && avatarClone && animations.length) {
-      mixer.clipAction(animations[0], avatar).play();
-      mixer.clipAction(animations[0], avatarClone).play();
-    }
-  }, [avatar, avatarClone, animations, mixer]);
+    if (!animations.length) return;
+
+    const clip = animations[0];
+    const avatarAction = mixer.clipAction(clip, avatar);
+    const cloneAction = mixer.clipAction(clip, avatarClone);
+
+    avatarAction.play();
+    cloneAction.play();
+
+    return () => {
+      avatarAction.stop();
+      cloneAction.stop();
+      mixer.uncacheAction(clip, avatar);
+      mixer.uncacheAction(clip, avatarClone);
+    };
+  }, [animations, avatar, avatarClone, mixer]);
 
   // setting up and starting the renderer
   useRenderSetup({ area, mixer });

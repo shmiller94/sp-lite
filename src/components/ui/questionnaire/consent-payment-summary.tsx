@@ -115,17 +115,28 @@ const useConsentPaymentPrescription = (
   isLoading: boolean;
 } => {
   const marketplaceQuery = useMarketplace();
+  const prescriptions = marketplaceQuery.data?.prescriptions;
 
   const prescription = useMemo(() => {
-    if (!questionnaireName || !marketplaceQuery.data?.prescriptions?.length) {
+    if (questionnaireName == null || questionnaireName.length === 0) {
       return undefined;
     }
 
-    return marketplaceQuery.data.prescriptions.find((rx) => {
+    if (prescriptions == null || prescriptions.length === 0) {
+      return undefined;
+    }
+
+    for (const rx of prescriptions) {
       // '/questionnaire/{name}'
-      return rx.url?.includes(questionnaireName) ?? false;
-    });
-  }, [marketplaceQuery.data?.prescriptions, questionnaireName]);
+      const url = rx.url;
+      if (url == null) continue;
+      if (url.includes(questionnaireName)) {
+        return rx;
+      }
+    }
+
+    return undefined;
+  }, [prescriptions, questionnaireName]);
 
   return {
     prescription,

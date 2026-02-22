@@ -54,10 +54,14 @@ export const AssistantModal = () => {
   const boxWidth = isExpanded ? width : undefined;
 
   const handleCopyLinkClick = useCallback(async () => {
+    const trimmedMessage = input == null ? '' : input.trim();
+    let q = '';
+    if (trimmedMessage.length > 0) {
+      q = `?defaultMessage=${encodeURIComponent(trimmedMessage)}`;
+    }
+    const url = `${window.location.origin}/concierge/${chatId}${q}`;
+
     try {
-      const message = input?.trim();
-      const q = message ? `?defaultMessage=${encodeURIComponent(message)}` : '';
-      const url = `${window.location.origin}/concierge/${chatId}${q}`;
       await navigator.clipboard.writeText(url);
       toast.success('Link copied to clipboard');
     } catch (err) {

@@ -146,9 +146,9 @@ export const DesktopNavbar = () => {
         </div>
         <div className="relative flex flex-1 items-center justify-center">
           <div className="relative flex items-center justify-center rounded-full bg-black p-1 shadow-xl shadow-black/5 transition-all duration-200 lg:gap-2">
-            {allLinks.map((link, idx) => (
+            {allLinks.map((link) => (
               <NavLink
-                key={idx}
+                key={link.to}
                 to={link.to}
                 onClick={() => {
                   if (link.name === 'Marketplace') {
@@ -214,9 +214,9 @@ export const DesktopNavbar = () => {
                 align="end"
                 sideOffset={5}
               >
-                {profileDropdownItems.map((link, i) => (
+                {profileDropdownItems.map((link) => (
                   <NavLink
-                    key={i}
+                    key={link.to}
                     to={link.to}
                     data-testid={link.testid}
                     className={({ isActive }) =>
@@ -288,9 +288,9 @@ export const MobileNavbar = () => {
       >
         {baseLinks
           .filter((link) => link.name !== 'Concierge')
-          .map((link, idx) => (
+          .map((link) => (
             <NavLink
-              key={idx}
+              key={link.to}
               to={link.to}
               onClick={() => {
                 if (link.name === 'Marketplace') {

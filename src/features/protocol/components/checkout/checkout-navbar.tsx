@@ -65,7 +65,7 @@ export const CheckoutNavbar = ({
             const isCurrent = i === currentIndex;
 
             return (
-              <div key={i} className="flex items-center gap-2">
+              <div key={seg.key} className="flex items-center gap-2">
                 <Body2
                   className={cn(
                     'flex aspect-square size-6 shrink-0 items-center justify-center rounded-full bg-zinc-400 text-white',

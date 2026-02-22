@@ -57,10 +57,10 @@ export const BiomarkersList = () => {
 
   return (
     <div className="flex flex-col">
-      {statuses.map((status, index) => (
+      {statuses.map((status) => (
         <div
           className="grid grid-cols-[1.2rem,1fr] items-baseline gap-2"
-          key={index}
+          key={status.label}
         >
           <H4 className={cn(status.text)}>{status.num}</H4>
           <Body2 className="line-clamp-1 text-zinc-400">{status.label}</Body2>

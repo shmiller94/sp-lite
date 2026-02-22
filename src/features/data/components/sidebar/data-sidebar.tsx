@@ -109,16 +109,22 @@ const PureDataSidebar = () => {
 
   const categoriesContent = useMemo(() => {
     if (isLoading) {
-      return Array.from({ length: 17 }).map((_, index) => (
-        <Skeleton
-          key={index}
-          className="h-6 shrink-0 rounded-full"
-          style={{
-            width: `${Math.max(96, Math.random() * 128)}px`,
-          }}
-          variant="shimmer"
-        />
-      ));
+      const nodes: JSX.Element[] = [];
+
+      for (let i = 0; i < 17; i++) {
+        const width = 96 + ((i * 10) % 33);
+
+        nodes.push(
+          <Skeleton
+            key={width}
+            className="h-6 shrink-0 rounded-full"
+            style={{ width: `${width}px` }}
+            variant="shimmer"
+          />,
+        );
+      }
+
+      return nodes;
     }
 
     const items = [] as JSX.Element[];

@@ -61,14 +61,14 @@ export function ProfileDropdown({
         align={align}
       >
         <ul className="flex flex-col gap-1.5">
-          {links.map((link, i) => {
+          {links.map((link) => {
             const isLogout =
               link.to === '/logout' || /log\s*out/i.test(link.name);
             const Icon = link.icon as any;
 
             return (
               <NavLink
-                key={i}
+                key={link.to}
                 to={link.to}
                 data-testid={link.testid}
                 state={linkState}

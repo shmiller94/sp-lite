@@ -24,18 +24,18 @@ export const SettingsListDesktop = () => {
     <>
       <URLTabs paramName="tab" defaultTab="profile" className="hidden md:block">
         <TabsList className="flex h-auto flex-wrap items-center justify-start">
-          {settings.map((s, idx) => (
+          {settings.map((s) => (
             <TabsTrigger
               value={s.value}
               className="text-base lg:text-xl"
-              key={idx}
+              key={s.value}
             >
               {capitalize(s.value)}
             </TabsTrigger>
           ))}
         </TabsList>
-        {settings.map((s, idx) => (
-          <TabsContent value={s.value} className="mt-10" key={idx}>
+        {settings.map((s) => (
+          <TabsContent value={s.value} className="mt-10" key={s.value}>
             {s.component}
           </TabsContent>
         ))}

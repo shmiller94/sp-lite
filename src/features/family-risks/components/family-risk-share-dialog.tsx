@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Copy, X } from 'lucide-react';
 import type React from 'react';
-import { useState } from 'react';
 
 import { AIIcon } from '@/components/icons/ai-icon';
 import { Button } from '@/components/ui/button';
@@ -42,9 +41,6 @@ export function FamilyRiskShareDialog({
   const queryClient = useQueryClient();
   const URL = `${env.WEBSITE_URL}/share/family-risk/plan/${planId}`;
 
-  // Local state to track sharing status (optimistic updates)
-  const [localIsShared, setLocalIsShared] = useState(isPubliclyShared);
-
   // Mutation to enable/disable sharing
   const setPublicSharingMutation = useMutation({
     mutationFn: async (enabled: boolean) => {
@@ -58,10 +54,6 @@ export function FamilyRiskShareDialog({
       }
 
       return data;
-    },
-    onMutate: async (enabled) => {
-      // Optimistic update
-      setLocalIsShared(enabled);
     },
     onSuccess: (_, enabled) => {
       // Invalidate the family risk plan query to refresh data
@@ -77,12 +69,19 @@ export function FamilyRiskShareDialog({
         toast.success('Sharing revoked');
       }
     },
-    onError: (_, enabled) => {
-      // Revert optimistic update
-      setLocalIsShared(!enabled);
+    onError: (_, _enabled) => {
       toast.error('Failed to update sharing status');
     },
   });
+
+  let effectiveIsShared = isPubliclyShared;
+  if (
+    (setPublicSharingMutation.isPending ||
+      setPublicSharingMutation.isSuccess) &&
+    setPublicSharingMutation.variables !== undefined
+  ) {
+    effectiveIsShared = setPublicSharingMutation.variables;
+  }
 
   const handleEnableSharing = () => {
     setPublicSharingMutation.mutate(true);
@@ -105,8 +104,6 @@ export function FamilyRiskShareDialog({
   const handleOpenDialog = (open: boolean) => {
     if (open) {
       track('family_ap_share_dialog_opened');
-      // Sync local state with prop when dialog opens
-      setLocalIsShared(isPubliclyShared);
     }
   };
 
@@ -202,7 +199,7 @@ export function FamilyRiskShareDialog({
     </>
   );
 
-  const content = () => (localIsShared ? shareContent() : consentContent());
+  const content = () => (effectiveIsShared ? shareContent() : consentContent());
 
   if (isMobile) {
     return (

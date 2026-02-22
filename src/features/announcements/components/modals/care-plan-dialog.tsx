@@ -3,8 +3,12 @@ import { format } from 'date-fns';
 import { useNavigate } from 'react-router';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { Body1, H3 } from '@/components/ui/typography';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { ProtocolBook } from '@/features/protocol/components/protocol-book';
 import { useLatestCompletedPlan } from '@/features/protocol/hooks/use-latest-completed-plan';
 import { useAnalytics } from '@/hooks/use-analytics';
@@ -52,11 +56,13 @@ export const CarePlanDialog = ({ open, onOpenChange }: CarePlanDialogProps) => {
         </div>
         <div className="space-y-6">
           <div className="mx-auto max-w-sm space-y-2">
-            <H3 className="text-center">Your action plan is ready</H3>
-            <Body1 className="text-center text-secondary">
+            <DialogTitle className="text-center text-xl font-normal tracking-[-0.48px] text-zinc-900 md:text-2xl">
+              Your action plan is ready
+            </DialogTitle>
+            <DialogDescription className="text-center text-base text-secondary">
               Superpower has analyzed your lab results and built a precise
               action plan, tailored to you.
-            </Body1>
+            </DialogDescription>
           </div>
           <div className="flex flex-col justify-center">
             <Button

@@ -47,14 +47,14 @@ export const SettingsListMobile = () => {
         {!current && (
           <>
             <div className="mb-2 flex h-[160px] gap-2">
-              {SETTINGS_MOBILE.slice(0, 2).map((item, index) => {
+              {SETTINGS_MOBILE.slice(0, 2).map((item) => {
                 const IconComponent = item.icon;
                 return (
                   <div
                     className="flex w-full cursor-pointer flex-col justify-between rounded-[20px] bg-white p-5"
                     role="presentation"
                     onClick={() => setCurrent(item.value as MobileMenu)}
-                    key={index}
+                    key={item.value}
                   >
                     <IconComponent width={20} height={20} color="#71717A" />
                     <div className="flex flex-col">
@@ -73,7 +73,7 @@ export const SettingsListMobile = () => {
               {SETTINGS_MOBILE.slice(2).map((item, index) => {
                 const IconComponent = item.icon;
                 return (
-                  <Fragment key={index}>
+                  <Fragment key={item.value}>
                     <div
                       className={cn(
                         'flex cursor-pointer gap-4 p-5',

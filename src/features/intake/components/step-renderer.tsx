@@ -10,37 +10,42 @@ import { SplashStep } from './splash-step';
 export const IntakeStepRenderer = () => {
   const step = useOnboardingFlowStore((s) => s.currentStep);
 
-  const renderStep = () => {
-    switch (step) {
-      case STEP_IDS.INTAKE_SPLASH:
-        return <SplashStep />;
-      case STEP_IDS.INTAKE_COMPLETION:
-        return <CompletionStep />;
-      case STEP_IDS.PRIMER:
-        return (
-          <QuestionnaireSequence.OnboardingQuestionnaireStep questionnaireName="onboarding-primer" />
-        );
-      case STEP_IDS.MEDICAL_HISTORY:
-        return (
-          <QuestionnaireSequence.OnboardingQuestionnaireStep questionnaireName="onboarding-medical-history" />
-        );
-      case STEP_IDS.FEMALE_HEALTH:
-        return (
-          <QuestionnaireSequence.OnboardingQuestionnaireStep questionnaireName="onboarding-female-health" />
-        );
-      case STEP_IDS.LIFESTYLE:
-        return (
-          <QuestionnaireSequence.OnboardingQuestionnaireStep questionnaireName="onboarding-lifestyle" />
-        );
-      default:
-        throw new Error(`Unknown intake step: ${step}`);
-    }
-  };
+  let content: JSX.Element;
+  switch (step) {
+    case STEP_IDS.INTAKE_SPLASH:
+      content = <SplashStep />;
+      break;
+    case STEP_IDS.INTAKE_COMPLETION:
+      content = <CompletionStep />;
+      break;
+    case STEP_IDS.PRIMER:
+      content = (
+        <QuestionnaireSequence.OnboardingQuestionnaireStep questionnaireName="onboarding-primer" />
+      );
+      break;
+    case STEP_IDS.MEDICAL_HISTORY:
+      content = (
+        <QuestionnaireSequence.OnboardingQuestionnaireStep questionnaireName="onboarding-medical-history" />
+      );
+      break;
+    case STEP_IDS.FEMALE_HEALTH:
+      content = (
+        <QuestionnaireSequence.OnboardingQuestionnaireStep questionnaireName="onboarding-female-health" />
+      );
+      break;
+    case STEP_IDS.LIFESTYLE:
+      content = (
+        <QuestionnaireSequence.OnboardingQuestionnaireStep questionnaireName="onboarding-lifestyle" />
+      );
+      break;
+    default:
+      throw new Error(`Unknown intake step: ${step}`);
+  }
 
   return (
     <AnimatePresence mode="wait">
       <div key={step} className="flex min-h-dvh flex-col">
-        {renderStep()}
+        {content}
       </div>
     </AnimatePresence>
   );

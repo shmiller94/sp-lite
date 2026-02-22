@@ -19,8 +19,6 @@ export const RevealProgressBar = ({ className }: { className?: string }) => {
   const { data: protocol } = useLatestProtocol();
   const progressBarsRef = useRef<(HTMLDivElement | null)[]>([]);
   const lastCurrentIndexRef = useRef<number>(-1);
-  const isVisibleActiveRef = useRef<boolean>(false);
-  const currentIndexRef = useRef<number>(0);
 
   const currentStep =
     (step && baseSteps.includes(step) ? step : initialStep) ??
@@ -61,16 +59,11 @@ export const RevealProgressBar = ({ className }: { className?: string }) => {
   currentIndex = Math.max(0, currentIndex);
   const isVisibleActive = visibleIndex !== -1;
 
-  currentIndexRef.current = currentIndex;
-  isVisibleActiveRef.current = isVisibleActive;
-
   useEffect(() => {
-    const currentIdx = currentIndexRef.current;
-    const isVisible = isVisibleActiveRef.current;
-
-    if (!isVisible) return;
+    if (!isVisibleActive) return;
 
     const lastIndex = lastCurrentIndexRef.current;
+    const currentIdx = currentIndex;
 
     if (lastIndex !== currentIdx) {
       progressBarsRef.current.forEach((bar, index) => {
@@ -99,7 +92,7 @@ export const RevealProgressBar = ({ className }: { className?: string }) => {
 
       lastCurrentIndexRef.current = currentIdx;
     }
-  }, [currentStep]);
+  }, [currentIndex, isVisibleActive]);
 
   return (
     <div
@@ -110,7 +103,7 @@ export const RevealProgressBar = ({ className }: { className?: string }) => {
     >
       {items.map((item, index) => (
         <div
-          key={`${item.id}-${index}`}
+          key={item.id}
           className={cn(
             'relative h-1 flex-1 overflow-hidden rounded-full bg-white/50',
           )}

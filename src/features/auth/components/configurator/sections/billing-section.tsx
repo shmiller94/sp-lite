@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 
 import { HSAFSACheckoutButton } from '@/components/shared/hsa-fsa-checkout-button';
 import { StripeCardElement } from '@/components/shared/stripe-card-element';
@@ -21,7 +21,22 @@ export const BillingSection = () => {
   const form = useFormContext<RegisterInput>();
   const { membership, processing } = useCheckoutContext();
   const [expressAvailable, setExpressAvailable] = useState(false);
-  const formValues = form.watch();
+  const postalCode = useWatch({
+    control: form.control,
+    name: 'postalCode',
+  });
+  const email = useWatch({
+    control: form.control,
+    name: 'email',
+  });
+  const phone = useWatch({
+    control: form.control,
+    name: 'phone',
+  });
+
+  const postalCodeValue = postalCode ?? '';
+  const emailValue = email ?? '';
+  const phoneValue = phone ?? '';
 
   const {
     handleCardNumberPayment,
@@ -30,7 +45,7 @@ export const BillingSection = () => {
     stripeError,
     setStripeError,
     isMutationPending,
-  } = useCheckout({ postalCode: formValues.postalCode });
+  } = useCheckout({ postalCode: postalCodeValue });
 
   return (
     <div className="space-y-8">
@@ -75,10 +90,10 @@ export const BillingSection = () => {
             )()
           }
           disabled={processing || isMutationPending}
-          state={getState(formValues.postalCode)?.state ?? 'CA'}
+          state={getState(postalCodeValue)?.state ?? 'CA'}
           coupon={getAccessCode() || undefined}
-          email={formValues.email}
-          phone={formValues.phone}
+          email={emailValue}
+          phone={phoneValue}
         />
         <div className="flex items-center">
           <div className="h-px flex-1 bg-zinc-200" />

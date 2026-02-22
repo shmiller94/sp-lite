@@ -22,14 +22,14 @@ const ScheduleFlowStepsContent = (): React.ReactElement => {
 
   useEffect(() => {
     const isCurrentStepValid = methods.validSteps.some(
-      (step) => step.id === methods.current.id,
+      (step) => step.id === methods.state.current.data.id,
     );
     if (!isCurrentStepValid && methods.validSteps.length > 0) {
-      methods.goTo(methods.validSteps[0].id);
+      void methods.navigation.goTo(methods.validSteps[0].id);
     }
   }, [methods]);
 
-  return methods.switch({
+  return methods.flow.switch({
     [SCHEDULE_STEPS.INTRO]: () => <Steps.IntroStep />,
     [SCHEDULE_STEPS.CREDITS_SELECT]: () => <Steps.CreditsSelectStep />,
     [SCHEDULE_STEPS.CONFIRM_ADDRESS]: () => <Steps.ConfirmAddressStep />,

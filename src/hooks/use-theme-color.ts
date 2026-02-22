@@ -5,7 +5,7 @@ import { WHITE_BACKGROUND_PATHS } from '@/const/white-background-paths';
 
 export function useThemeColor() {
   const { pathname } = useLocation();
-  const lastColorRef = useRef<string>();
+  const lastColorRef = useRef<string | null>(null);
 
   const themeColor = useMemo(() => {
     const isWhiteBg = WHITE_BACKGROUND_PATHS.some((path) =>

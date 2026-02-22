@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 
 import { usePaymentMethods } from '@/features/settings/api';
 import { usePaymentMethodStore } from '@/features/settings/stores/payment-method-store';
@@ -20,17 +21,19 @@ export function usePaymentMethodSelection() {
     getActivePaymentMethod,
     getIsFlexSelected,
     getHasFlexPaymentMethod,
-  } = usePaymentMethodStore((s) => ({
-    selectedPaymentMethodId: s.selectedPaymentMethodId,
-    isSelectingPaymentMethod: s.isSelectingPaymentMethod,
-    setActivePaymentMethod: s.setActivePaymentMethod,
-    startSelectingPaymentMethod: s.startSelectingPaymentMethod,
-    getDefaultPaymentMethod: s.getDefaultPaymentMethod,
-    getFlexPaymentMethod: s.getFlexPaymentMethod,
-    getActivePaymentMethod: s.getActivePaymentMethod,
-    getIsFlexSelected: s.getIsFlexSelected,
-    getHasFlexPaymentMethod: s.getHasFlexPaymentMethod,
-  }));
+  } = usePaymentMethodStore(
+    useShallow((s) => ({
+      selectedPaymentMethodId: s.selectedPaymentMethodId,
+      isSelectingPaymentMethod: s.isSelectingPaymentMethod,
+      setActivePaymentMethod: s.setActivePaymentMethod,
+      startSelectingPaymentMethod: s.startSelectingPaymentMethod,
+      getDefaultPaymentMethod: s.getDefaultPaymentMethod,
+      getFlexPaymentMethod: s.getFlexPaymentMethod,
+      getActivePaymentMethod: s.getActivePaymentMethod,
+      getIsFlexSelected: s.getIsFlexSelected,
+      getHasFlexPaymentMethod: s.getHasFlexPaymentMethod,
+    })),
+  );
 
   const paymentMethodsQuery = usePaymentMethods();
   // Filter out Klarna payment methods

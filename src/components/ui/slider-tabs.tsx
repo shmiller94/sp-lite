@@ -127,7 +127,20 @@ const TabsList = forwardRef<
 
     const tabsElement = tabsRef.current;
 
-    updateIndicatorPosition();
+    let didCancel = false;
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+    if (typeof queueMicrotask === 'function') {
+      queueMicrotask(() => {
+        if (didCancel) return;
+        updateIndicatorPosition();
+      });
+    } else {
+      timeoutId = setTimeout(() => {
+        if (didCancel) return;
+        updateIndicatorPosition();
+      }, 0);
+    }
 
     const mutationObserver = new MutationObserver(() => {
       updateIndicatorPosition();
@@ -158,6 +171,11 @@ const TabsList = forwardRef<
     }
 
     return () => {
+      didCancel = true;
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId);
+      }
+
       mutationObserver.disconnect();
       if (resizeObserver) {
         resizeObserver.disconnect();
@@ -196,7 +214,6 @@ const TabsList = forwardRef<
             transition: shouldAnimate
               ? 'transform 250ms cubic-bezier(0.22, 1, 0.36, 1), width 250ms cubic-bezier(0.22, 1, 0.36, 1), height 250ms cubic-bezier(0.22, 1, 0.36, 1)'
               : 'none',
-            willChange: 'transform, width, height',
           }}
         />
       )}

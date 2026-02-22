@@ -106,7 +106,6 @@ function PureMessages({
         id="ai-chat-scroll-container"
         className="relative flex max-h-[calc(100vh-20.5rem)] min-h-32 min-w-0 flex-col gap-6 overflow-y-scroll py-4 md:max-h-full lg:pb-0"
         style={{
-          willChange: 'scroll-position',
           maskImage:
             'linear-gradient(to bottom, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 32px, rgba(0,0,0,1) calc(100% - 32px), rgba(0,0,0,0) 100%)',
           WebkitMaskImage:

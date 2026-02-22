@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -19,9 +19,19 @@ export const ChartTooltip = ({
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
 }) => {
-  const [displayedContent, setDisplayedContent] =
-    useState<React.ReactNode>(null);
-  const contentTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [lastOpenContent, setLastOpenContent] = useState<React.ReactNode>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const timeoutId = setTimeout(() => {
+      setLastOpenContent(children);
+    }, 0);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [children, isOpen]);
 
   // this function prevents the tooltip from going out of bound and adding horizontal scroll or something weird
   const getAdjustedPositionAndTransform = () => {
@@ -49,30 +59,6 @@ export const ChartTooltip = ({
 
   const adjustedStyle = getAdjustedPositionAndTransform();
 
-  useEffect(() => {
-    if (isOpen) {
-      if (contentTimeoutRef.current) {
-        clearTimeout(contentTimeoutRef.current);
-        contentTimeoutRef.current = null;
-      }
-      setDisplayedContent(children);
-    } else {
-      if (displayedContent !== null) {
-        contentTimeoutRef.current = setTimeout(() => {
-          setDisplayedContent(null);
-          contentTimeoutRef.current = null;
-        }, 500);
-      }
-    }
-
-    return () => {
-      if (contentTimeoutRef.current) {
-        clearTimeout(contentTimeoutRef.current);
-        contentTimeoutRef.current = null;
-      }
-    };
-  }, [isOpen, children, displayedContent]);
-
   // dismiss the tooltip on any scroll/wheel/touch while open to avoid sticky tooltips
   useEffect(() => {
     if (!isOpen) return;
@@ -94,6 +80,8 @@ export const ChartTooltip = ({
       window.removeEventListener('touchstart', hide, { capture: true });
     };
   }, [isOpen, onMouseLeave]);
+
+  const displayedContent = isOpen ? children : lastOpenContent;
 
   return (
     <div

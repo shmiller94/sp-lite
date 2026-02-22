@@ -18,6 +18,8 @@ export const AnimatedIcon = ({
   size?: number;
   className?: string;
 }) => {
+  'use no memo';
+
   const { RiveComponent, rive } = useRive({
     src: '/animations/superpower_ai.riv',
     autoplay: true,
@@ -26,28 +28,27 @@ export const AnimatedIcon = ({
   });
 
   useEffect(() => {
-    if (rive) {
-      // Get inputs for the state machine
-      const inputs = rive.stateMachineInputs('states');
+    if (rive == null) return;
 
-      // Find boolean inputs for each state
-      const thinkingInput = inputs.find((i) => i.name === 'thinking');
-      const analyzingInput = inputs.find((i) => i.name === 'analyzing');
-
-      if (thinkingInput && analyzingInput) {
-        // Reset all states first
-        thinkingInput.value = false;
-        analyzingInput.value = false;
-
-        // Set the active state based on the current state
-        if (state === 'thinking') {
-          thinkingInput.value = true;
-        } else if (state === 'analyzing') {
-          analyzingInput.value = true;
+    const inputs = rive.stateMachineInputs('states');
+    for (const input of inputs) {
+      if (input.name === 'thinking') {
+        const nextThinking = state === 'thinking';
+        if (typeof input.value === 'boolean') {
+          if (input.value !== nextThinking) {
+            input.value = nextThinking;
+          }
+        }
+      } else if (input.name === 'analyzing') {
+        const nextAnalyzing = state === 'analyzing';
+        if (typeof input.value === 'boolean') {
+          if (input.value !== nextAnalyzing) {
+            input.value = nextAnalyzing;
+          }
         }
       }
     }
-  }, [state, rive]);
+  }, [rive, state]);
 
   return (
     <div

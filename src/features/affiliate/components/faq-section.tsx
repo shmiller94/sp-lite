@@ -32,11 +32,11 @@ export const FAQSection = () => {
       <H3>FAQ&apos;s</H3>
       <div className="mt-4">
         <Accordion type="multiple">
-          {faqs.map((faq, index) => {
+          {faqs.map((faq) => {
             return (
               <AccordionItem
                 value={faq.question}
-                key={index}
+                key={faq.question}
                 className="last:border-b-0"
               >
                 <AccordionTrigger className="group text-zinc-900 transition-colors hover:text-zinc-500">

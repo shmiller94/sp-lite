@@ -51,9 +51,8 @@ export function OrderSummaryStep({
   const createOrderMutation = useCreateProtocolOrder();
   const completeRevealMutation = useCompleteReveal();
   const { track } = useAnalytics();
-  const showAutopilotCard = useFeatureFlagEnabled(
-    FeatureFlags.ProtocolAutopilot,
-  );
+  const showAutopilotCard =
+    useFeatureFlagEnabled(FeatureFlags.ProtocolAutopilot) === true;
 
   const navigate = useNavigate();
 
@@ -130,15 +129,163 @@ export function OrderSummaryStep({
     }
   };
 
+  const handleContinue = async () => {
+    const carePlanId = revealData?.carePlanId;
+
+    if (!carePlanId) {
+      console.error('No protocol ID available');
+      return;
+    }
+
+    try {
+      await createOrderMutation.mutateAsync({
+        carePlanId,
+        items,
+      });
+      next();
+    } catch (error) {
+      console.error('Failed to create protocol order', error);
+
+      let errorMessage = '';
+      if (
+        error &&
+        typeof error === 'object' &&
+        'message' in error &&
+        typeof (error as { message?: unknown }).message === 'string'
+      ) {
+        errorMessage = (error as { message: string }).message;
+      }
+
+      if (errorMessage.includes('already exists')) {
+        try {
+          await completeRevealMutation.mutateAsync(carePlanId);
+          track('protocol_reveal_quit', {
+            reason: 'order_already_exists',
+            careplanId: carePlanId,
+          });
+          navigate('/protocol');
+          return;
+        } catch (completeError) {
+          console.error('Failed to complete reveal', completeError);
+          navigate('/protocol');
+          return;
+        }
+      }
+
+      toast.error(
+        'Unable to create your protocol order. Please try again or contact support if this issue persists.',
+      );
+    }
+  };
+
+  const handleCompleteWithoutAction = async () => {
+    const carePlanId = revealData?.carePlanId;
+
+    if (!carePlanId) {
+      console.error('No protocol ID available');
+      navigate('/protocol');
+      return;
+    }
+
+    try {
+      if (import.meta.env.DEV) {
+        console.debug(
+          '[CheckoutStep] Completing reveal without placing an order',
+          { carePlanId },
+        );
+      }
+      track('protocol_reveal_quit', {
+        reason: 'order_summary_step_quit',
+        careplanId: carePlanId,
+      });
+      await completeRevealMutation.mutateAsync(carePlanId);
+      navigate('/protocol');
+    } catch (error) {
+      console.error('Failed to complete reveal', error);
+      toast.error(
+        'Unable to complete your protocol. Please try again or contact support if this issue persists.',
+      );
+    }
+  };
+
+  return (
+    <OrderSummaryContent
+      previous={previous}
+      userGender={data?.gender}
+      userFirstName={data?.firstName}
+      userLastName={data?.lastName}
+      isLoadingUser={isLoading}
+      showAutopilotCard={showAutopilotCard}
+      goals={goals}
+      itemsByGoal={itemsByGoal}
+      getActivityId={getActivityId}
+      hasItem={hasItem}
+      onToggleItem={handleToggleItem}
+      subtotalDiscounted={subtotalDiscounted}
+      subtotalOriginal={subtotalOriginal}
+      memberDiscount={memberDiscount}
+      shippingCents={shippingCents}
+      totalWithShipping={totalWithShipping}
+      isCreatingOrder={createOrderMutation.isPending}
+      isCompletingReveal={completeRevealMutation.isPending}
+      onContinue={handleContinue}
+      onCompleteWithoutAction={handleCompleteWithoutAction}
+    />
+  );
+}
+
+interface OrderSummaryContentProps {
+  previous: () => void;
+  userGender: string | undefined;
+  userFirstName: string | undefined;
+  userLastName: string | undefined;
+  isLoadingUser: boolean;
+  showAutopilotCard: boolean;
+  goals: Goal[] | undefined;
+  itemsByGoal: Map<string, Activity[]>;
+  getActivityId: (activity: Activity, goalId: string, index: number) => string;
+  hasItem: (id: string) => boolean;
+  onToggleItem: (activity: Activity, goalId: string, index: number) => void;
+  subtotalDiscounted: number;
+  subtotalOriginal: number;
+  memberDiscount: number;
+  shippingCents: number;
+  totalWithShipping: number;
+  isCreatingOrder: boolean;
+  isCompletingReveal: boolean;
+  onContinue: () => void;
+  onCompleteWithoutAction: () => void;
+}
+
+function OrderSummaryContent({
+  previous,
+  userGender,
+  userFirstName,
+  userLastName,
+  isLoadingUser,
+  showAutopilotCard,
+  goals,
+  itemsByGoal,
+  getActivityId,
+  hasItem,
+  onToggleItem,
+  subtotalDiscounted,
+  subtotalOriginal,
+  memberDiscount,
+  shippingCents,
+  totalWithShipping,
+  isCreatingOrder,
+  isCompletingReveal,
+  onContinue,
+  onCompleteWithoutAction,
+}: OrderSummaryContentProps) {
   return (
     <ProtocolLayout className="pt-8 lg:pt-24">
       <div className="sticky top-20 hidden w-40 shrink-0 lg:block">
         <Button
           variant="ghost"
           className="group -ml-1.5 flex items-center gap-0.5 p-0"
-          onClick={() => {
-            previous();
-          }}
+          onClick={previous}
         >
           <ChevronLeft className="-mt-px w-[15px] text-zinc-400 transition-all duration-150 group-hover:-translate-x-0.5 group-hover:text-zinc-600" />
           <Body2 className="text-zinc-500 transition-all duration-150 group-hover:text-zinc-700">
@@ -153,17 +300,17 @@ export function OrderSummaryStep({
               className="mx-auto size-24 cursor-default bg-vermillion-700"
               size="large"
               src={
-                data?.gender === 'female'
+                userGender === 'female'
                   ? '/user/fallback-avatar-female.webp'
                   : '/user/fallback-avatar-male.webp'
               }
             />
             <div>
-              {isLoading ? (
+              {isLoadingUser ? (
                 <Skeleton className="mx-auto h-10 w-40" />
               ) : (
                 <H4 className="text-center">
-                  {data?.firstName} {data?.lastName}
+                  {userFirstName} {userLastName}
                 </H4>
               )}
               <H4 className="text-center text-secondary">Personal Protocol</H4>
@@ -178,7 +325,7 @@ export function OrderSummaryStep({
         {showAutopilotCard && <AutopilotCard />}
         <div className="space-y-8">
           {goals?.map((goal, goalIndex) => {
-            const activities = itemsByGoal.get(goal.id) || [];
+            const goalActivities = itemsByGoal.get(goal.id) || [];
 
             return (
               <div key={goal.id} className="flex flex-col items-start gap-2">
@@ -187,14 +334,14 @@ export function OrderSummaryStep({
                   {goalIndex + 1}. {goal.title}
                 </H4>
                 <div className="w-full space-y-3">
-                  {activities.length === 0 && (
+                  {goalActivities.length === 0 && (
                     <div className="flex w-full items-center justify-center rounded-xl bg-zinc-100 py-4">
                       <Body2 className="py-12 text-center text-secondary">
                         No activites found.
                       </Body2>
                     </div>
                   )}
-                  {activities.map((activity, activityIndex) => {
+                  {goalActivities.map((activity, activityIndex) => {
                     const activityId = getActivityId(
                       activity,
                       goal.id,
@@ -204,11 +351,11 @@ export function OrderSummaryStep({
 
                     return (
                       <CheckoutItemCard
-                        key={`${goal.id}-${activityIndex}`}
+                        key={activityId}
                         activity={activity}
                         selected={isSelected}
                         onToggle={() =>
-                          handleToggleItem(activity, goal.id, activityIndex)
+                          onToggleItem(activity, goal.id, activityIndex)
                         }
                       />
                     );
@@ -269,85 +416,15 @@ export function OrderSummaryStep({
         </div>
         <div className="flex w-full flex-col justify-between gap-4 pt-6">
           <Button
-            disabled={!subtotalDiscounted || createOrderMutation.isPending}
-            onClick={async () => {
-              const carePlanId = revealData?.carePlanId;
-
-              if (!carePlanId) {
-                console.error('No protocol ID available');
-                return;
-              }
-
-              try {
-                await createOrderMutation.mutateAsync({
-                  carePlanId,
-                  items,
-                });
-
-                next();
-              } catch (error: any) {
-                console.error('Failed to create protocol order', error);
-
-                // Handle edge case: if order already exists with completed checkouts,
-                // mark reveal as completed and redirect to protocol
-                // The backend should return an error indicating this state
-                const errorMessage = error?.message || '';
-                if (errorMessage.includes('already exists')) {
-                  try {
-                    await completeRevealMutation.mutateAsync(carePlanId);
-                    track('protocol_reveal_quit', {
-                      reason: 'order_already_exists',
-                      careplanId: carePlanId,
-                    });
-                    navigate('/protocol');
-                    return;
-                  } catch (completeError) {
-                    console.error('Failed to complete reveal', completeError);
-                    navigate('/protocol');
-                    return;
-                  }
-                }
-
-                toast.error(
-                  'Unable to create your protocol order. Please try again or contact support if this issue persists.',
-                );
-              }
-            }}
+            disabled={!subtotalDiscounted || isCreatingOrder}
+            onClick={onContinue}
           >
-            {createOrderMutation.isPending ? 'Loading...' : 'Continue'}
+            {isCreatingOrder ? 'Loading...' : 'Continue'}
           </Button>
           <Button
             variant="outline"
-            disabled={completeRevealMutation.isPending}
-            onClick={async () => {
-              const carePlanId = revealData?.carePlanId;
-
-              if (!carePlanId) {
-                console.error('No protocol ID available');
-                navigate('/protocol');
-                return;
-              }
-
-              try {
-                if (import.meta.env.DEV) {
-                  console.debug(
-                    '[CheckoutStep] Completing reveal without placing an order',
-                    { carePlanId },
-                  );
-                }
-                track('protocol_reveal_quit', {
-                  reason: 'order_summary_step_quit',
-                  careplanId: carePlanId,
-                });
-                await completeRevealMutation.mutateAsync(carePlanId);
-                navigate('/protocol');
-              } catch (error) {
-                console.error('Failed to complete reveal', error);
-                toast.error(
-                  'Unable to complete your protocol. Please try again or contact support if this issue persists.',
-                );
-              }
-            }}
+            disabled={isCompletingReveal}
+            onClick={onCompleteWithoutAction}
           >
             I don&apos;t want to act on my results yet
           </Button>

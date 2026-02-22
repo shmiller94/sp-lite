@@ -1,7 +1,11 @@
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { toast } from '@/components/ui/sonner';
-import { Body1, H3 } from '@/components/ui/typography';
 import { useUser } from '@/lib/auth';
 import { ConsentType } from '@/types/api';
 
@@ -92,7 +96,7 @@ export const PhiConsentDialog = ({
 
                   return (
                     <div
-                      key={i}
+                      key={angle}
                       className="absolute"
                       style={{
                         transform: `translate(-50%, -50%) rotateY(${angle}deg) translateZ(${radius}px)`,
@@ -127,12 +131,14 @@ export const PhiConsentDialog = ({
         </div>
         <div className="space-y-6">
           <div className="mx-auto max-w-sm space-y-2">
-            <H3 className="text-center">Get personalized guidance</H3>
-            <Body1 className="text-center text-secondary">
+            <DialogTitle className="text-center text-xl font-normal tracking-[-0.48px] text-zinc-900 md:text-2xl">
+              Get personalized guidance
+            </DialogTitle>
+            <DialogDescription className="text-center text-base text-secondary">
               Receive personalized offers & reminders based on your Action Plan
               & Lab results. Superpower will use your health data for this. Opt
               out anytime.
-            </Body1>
+            </DialogDescription>
           </div>
           <div className="flex flex-col justify-center">
             <Button

@@ -22,8 +22,8 @@ export const ProtocolWaitingScreen = () => (
         <H3 className="text-black">Protocol</H3>
         <div className="space-y-4">
           <H4>Your protocol items</H4>
-          {PLACEHOLDER_ITEMS.map((item, index) => (
-            <div key={index} className="flex items-center gap-4">
+          {PLACEHOLDER_ITEMS.map((item) => (
+            <div key={item.title} className="flex items-center gap-4">
               <div className="flex aspect-square w-16 shrink-0 items-center justify-center rounded-xl bg-zinc-200/50 p-2">
                 <Lock className="size-4 text-secondary" />
               </div>

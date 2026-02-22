@@ -1,5 +1,5 @@
 import { Search, X } from 'lucide-react';
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,32 @@ export const DataSearch = ({
   ...rest
 }: React.InputHTMLAttributes<HTMLInputElement>) => {
   const inputRef = useRef<HTMLInputElement>(null);
+  const isControlled = rest.value !== undefined;
+  const [uncontrolledValueLength, setUncontrolledValueLength] = useState(() => {
+    const defaultValue = rest.defaultValue;
+
+    if (defaultValue === undefined) return 0;
+    if (typeof defaultValue === 'string') return defaultValue.length;
+    if (typeof defaultValue === 'number') return String(defaultValue).length;
+    if (Array.isArray(defaultValue)) return defaultValue.join('').length;
+
+    return 0;
+  });
+
+  let controlledValueLength = 0;
+  if (isControlled) {
+    const value = rest.value;
+
+    if (typeof value === 'string') controlledValueLength = value.length;
+    else if (typeof value === 'number')
+      controlledValueLength = String(value).length;
+    else if (Array.isArray(value))
+      controlledValueLength = value.join('').length;
+  }
+
+  const isEmpty = isControlled
+    ? controlledValueLength === 0
+    : uncontrolledValueLength === 0;
 
   const focusInput = useCallback(() => {
     inputRef.current?.focus();
@@ -26,9 +52,12 @@ export const DataSearch = ({
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (!isControlled) {
+        setUncontrolledValueLength(e.currentTarget.value.length);
+      }
       onChange?.(e);
     },
-    [onChange],
+    [isControlled, onChange],
   );
 
   const handleClear = useCallback(() => {
@@ -36,17 +65,11 @@ export const DataSearch = ({
     if (!input) return;
 
     input.value = '';
-
-    // update parent via event
-    const event = {
-      target: input,
-      currentTarget: input,
-    } as unknown as React.ChangeEvent<HTMLInputElement>;
-    handleChange(event);
+    input.dispatchEvent(new Event('input', { bubbles: true }));
 
     // keep focus state
     input.focus();
-  }, [handleChange]);
+  }, []);
 
   return (
     <div
@@ -72,8 +95,7 @@ export const DataSearch = ({
         variant="ghost"
         className={cn(
           'absolute right-0 top-1/2 aspect-square size-5 -translate-y-1/2 transition-all duration-200',
-          inputRef.current?.value.length === 0 &&
-            'pointer-events-none opacity-0',
+          isEmpty && 'pointer-events-none opacity-0',
         )}
       >
         <X size={16} />

@@ -28,10 +28,7 @@ export function useProtocolCheckout(): UseProtocolCheckout {
     items: itemsMap,
     addItem: addItemToStore,
     removeItem,
-    hasItem,
-    getItemsForGoal,
     clearItems,
-    getItemCount,
   } = useCheckoutStore();
 
   const getActivityId = useCallback(
@@ -39,6 +36,30 @@ export function useProtocolCheckout(): UseProtocolCheckout {
       return generateActivityId(activity, goalId, index);
     },
     [],
+  );
+
+  const hasItem = useCallback(
+    (itemId: string) => {
+      return itemId in itemsMap;
+    },
+    [itemsMap],
+  );
+
+  const getItemsForGoal = useCallback(
+    (goalId: string) => {
+      const items: CheckoutItem[] = [];
+
+      for (const itemId in itemsMap) {
+        const item = itemsMap[itemId];
+        if (item.goalId !== goalId) {
+          continue;
+        }
+        items.push(item);
+      }
+
+      return items;
+    },
+    [itemsMap],
   );
 
   const addItem = useCallback(
@@ -56,7 +77,7 @@ export function useProtocolCheckout(): UseProtocolCheckout {
   );
 
   const items = Object.values(itemsMap);
-  const itemCount = getItemCount();
+  const itemCount = items.length;
 
   return {
     items,

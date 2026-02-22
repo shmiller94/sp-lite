@@ -33,6 +33,14 @@ import type {
   SetPasswordInput,
 } from './auth-schemas';
 
+function ExternalRedirect({ href }: { href: string }) {
+  React.useEffect(() => {
+    window.location.href = href;
+  }, [href]);
+
+  return null;
+}
+
 export type {
   BaseLoginInput,
   LoginInput,
@@ -283,8 +291,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     if (isTaskIncomplete) {
       // If a user isn't subscribed, send them to checkout
       if (!isSubscribed) {
-        window.location.href = `${env.MARKETING_SITE_URL}/checkout`;
-        return null;
+        return <ExternalRedirect href={`${env.MARKETING_SITE_URL}/checkout`} />;
       }
       // otherwise, send to onboarding (but not if already there)
       else if (!onOnboarding) {

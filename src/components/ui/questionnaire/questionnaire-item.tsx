@@ -1,6 +1,7 @@
 import { getTypedPropertyValue } from '@medplum/core';
 import {
   QuestionnaireItem,
+  QuestionnaireItemInitial,
   QuestionnaireResponseItem,
   QuestionnaireResponseItemAnswer,
 } from '@medplum/fhirtypes';
@@ -199,7 +200,7 @@ export const QuestionnaireFormItem = ({
     );
   }
 
-  const hasAnswerOptions = item.answerOption && item.answerOption.length > 0;
+  const hasAnswerOptions = (item.answerOption?.length ?? 0) > 0;
   const firstValueInteger = hasAnswerOptions
     ? item.answerOption![0].valueInteger
     : undefined;
@@ -207,13 +208,14 @@ export const QuestionnaireFormItem = ({
     ? item.answerOption![item.answerOption!.length - 1].valueInteger
     : undefined;
 
-  const hasRangeLabels = item.extension?.some(
-    (e) =>
-      e.url ===
-        'https://superpower.com/fhir/StructureDefinition/questionnaire-rangeStartLabel' ||
-      e.url ===
-        'https://superpower.com/fhir/StructureDefinition/questionnaire-rangeEndLabel',
-  );
+  const hasRangeLabels =
+    item.extension?.some(
+      (e) =>
+        e.url ===
+          'https://superpower.com/fhir/StructureDefinition/questionnaire-rangeStartLabel' ||
+        e.url ===
+          'https://superpower.com/fhir/StructureDefinition/questionnaire-rangeEndLabel',
+    ) ?? false;
 
   const isScaleZeroToFive = firstValueInteger === 0 && lastValueInteger === 5;
   const isScaleOneToFive = firstValueInteger === 1 && lastValueInteger === 5;
@@ -229,10 +231,67 @@ export const QuestionnaireFormItem = ({
       isScaleOneToTen) &&
     hasRangeLabels;
 
-  /**
-   * This switch statement is used to render the correct component for the item type.
-   * It takes the item type and returns the correct component (some components are shared between item types).
-   */
+  return renderQuestionnaireFormItemByType({
+    type,
+    item,
+    response,
+    onChange,
+    isErrored,
+    name,
+    defaultValue,
+    rangeError,
+    setRangeError,
+    setLocalError,
+    onValidationChange,
+    onChangeAnswer,
+    onKeyDown,
+    entryFormatPlaceholder,
+    isRatingScale,
+    initial,
+  });
+};
+
+interface RenderQuestionnaireFormItemByTypeArgs {
+  type: NonNullable<QuestionnaireItem['type']>;
+  item: QuestionnaireItem;
+  response: QuestionnaireResponseItem;
+  onChange: (newResponseItem: QuestionnaireResponseItem) => void;
+  isErrored: boolean;
+  name: string;
+  defaultValue: ReturnType<typeof getCurrentAnswer> | undefined;
+  rangeError: string | null;
+  setRangeError: (next: string | null) => void;
+  setLocalError: (next: boolean) => void;
+  onValidationChange: ((linkId: string, hasError: boolean) => void) | undefined;
+  onChangeAnswer: (
+    newResponseAnswer:
+      | QuestionnaireResponseItemAnswer
+      | QuestionnaireResponseItemAnswer[],
+  ) => void;
+  onKeyDown: ((e: React.KeyboardEvent<HTMLInputElement>) => void) | undefined;
+  entryFormatPlaceholder: string | undefined;
+  isRatingScale: boolean;
+  initial: QuestionnaireItemInitial | undefined;
+}
+
+function renderQuestionnaireFormItemByType({
+  type,
+  item,
+  response,
+  onChange,
+  isErrored,
+  name,
+  defaultValue,
+  rangeError,
+  setRangeError,
+  setLocalError,
+  onValidationChange,
+  onChangeAnswer,
+  onKeyDown,
+  entryFormatPlaceholder,
+  isRatingScale,
+  initial,
+}: RenderQuestionnaireFormItemByTypeArgs) {
   switch (type) {
     // Display, mainly used for covers in each group (beginning)
     case QuestionnaireItemType.display:
@@ -647,4 +706,4 @@ export const QuestionnaireFormItem = ({
     default:
       return null;
   }
-};
+}

@@ -9,19 +9,11 @@ import { ConfirmationStep } from './steps/confirmation';
 import { GotItStep } from './steps/got-it';
 
 export const CancelMembershipSteps = () => {
-  return (
-    <CancelMembershipStepper.Scoped>
-      <CancelMembershipStepsContent />
-    </CancelMembershipStepper.Scoped>
-  );
-};
-
-const CancelMembershipStepsContent = (): React.ReactElement => {
   const methods = CancelMembershipStepper.useStepper();
 
   return (
     <React.Fragment>
-      {methods.switch({
+      {methods.flow.switch({
         [CANCEL_STEPS.BENEFITS]: () => <BenefitsStep />,
         [CANCEL_STEPS.CONFIRMATION]: () => <ConfirmationStep />,
         [CANCEL_STEPS.GOT_IT]: () => <GotItStep />,

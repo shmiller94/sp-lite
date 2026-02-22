@@ -55,7 +55,9 @@ export const BenefitsStep = (): JSX.Element => {
         </section>
       </div>
       <div className="flex w-full justify-end pt-12">
-        <Button onClick={methods.next}>Cancel membership</Button>
+        <Button onClick={() => void methods.navigation.next()}>
+          Cancel membership
+        </Button>
       </div>
     </div>
   );

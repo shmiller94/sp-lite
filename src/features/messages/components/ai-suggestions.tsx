@@ -40,15 +40,34 @@ export const AiSuggestions = ({
   const suggestions = items.slice(0, limit);
   const isLoading = isFetching;
 
-  const skeletons = Array.from({ length: limit }).map((_, index) => (
-    <Skeleton
-      key={index}
-      variant="shimmer"
-      className="h-14 w-full shrink-0 rounded-2xl"
-    />
-  ));
+  const skeletonKeys = [
+    's1',
+    's2',
+    's3',
+    's4',
+    's5',
+    's6',
+    's7',
+    's8',
+    's9',
+    's10',
+    's11',
+    's12',
+  ];
 
-  const suggestionButtons = suggestions.map((suggestion, index) => {
+  const skeletons: JSX.Element[] = [];
+  for (const key of skeletonKeys) {
+    if (skeletons.length >= limit) break;
+    skeletons.push(
+      <Skeleton
+        key={key}
+        variant="shimmer"
+        className="h-14 w-full shrink-0 rounded-2xl"
+      />,
+    );
+  }
+
+  const suggestionButtons = suggestions.map((suggestion) => {
     const suggestionText = prefix ? `${prefix} ${suggestion}` : suggestion;
 
     const handleClick = () => {
@@ -71,7 +90,7 @@ export const AiSuggestions = ({
     return (
       <Button
         variant="outline"
-        key={index}
+        key={suggestionText}
         className="group w-full justify-start gap-5 rounded-2xl pl-3.5 text-left transition-all duration-200 animate-in fade-in slide-in-from-bottom-2"
         onClick={handleClick}
       >

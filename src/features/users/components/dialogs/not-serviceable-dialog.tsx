@@ -3,8 +3,12 @@ import { RiveFile, useRive, useRiveFile } from '@rive-app/react-canvas-lite';
 import { XIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { Body1, H3 } from '@/components/ui/typography';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { NotServiceableReason } from '@/types/api';
 
@@ -30,17 +34,17 @@ export const NotServiceableDialog = ({
         <div className="absolute bottom-0 h-20 w-full bg-gradient-to-b from-transparent via-white/75 to-white" />
       </div>
       <div className="mb-8 flex flex-col gap-1.5">
-        <H3 className="text-center">
+        <DialogTitle className="text-center text-xl font-normal tracking-[-0.48px] text-zinc-900 md:text-2xl">
           {reason === 'state-not-serviceable'
             ? 'More locations coming soon'
             : 'No nearby providers at your address'}
-        </H3>
-        <Body1 className="text-center text-secondary">
+        </DialogTitle>
+        <DialogDescription className="text-center text-base text-secondary">
           We&apos;re not live in your area just yet — but we&apos;ll let you
           know the moment we launch near you.
           <br />
           We&apos;re expanding rapidly, so it won&apos;t be long.
-        </Body1>
+        </DialogDescription>
       </div>
       <Button
         onClick={onClick}
@@ -67,6 +71,7 @@ export const NotServiceableDialog = ({
             className="rounded-full"
           >
             <XIcon className="size-4 text-zinc-500 transition-colors duration-200 hover:text-zinc-600" />
+            <span className="sr-only">Close</span>
           </Button>
         </DialogClose>
         {content}

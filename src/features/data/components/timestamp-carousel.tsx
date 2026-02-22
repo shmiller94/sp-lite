@@ -39,13 +39,16 @@ const CarouselContent = ({
   useEffect(() => {
     if (!emblaMainApi) return;
 
-    onSelect();
+    const timeoutId = setTimeout(() => {
+      onSelect();
+    }, 0);
     emblaMainApi.on('select', onSelect);
     emblaMainApi.on('reInit', onSelect);
 
     emblaMainApi.scrollTo(timestamps.length - 1);
 
     return () => {
+      clearTimeout(timeoutId);
       emblaMainApi.off('select', onSelect);
       emblaMainApi.off('reInit', onSelect);
     };

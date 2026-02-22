@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { m } from 'framer-motion';
 import { AlertCircle, ArrowRight, Check } from 'lucide-react';
 import { useState } from 'react';
-import { useForm, useFormContext } from 'react-hook-form';
+import { useForm, useFormContext, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 
 import { SuperpowerLogo } from '@/components/icons/superpower-logo';
@@ -81,16 +81,16 @@ const NAME_REGEX =
   /^([a-zA-Z0-9]{1})([a-zA-Z0-9-.,']*(\s[a-zA-Z0-9-.,']+)*[a-zA-Z0-9-.,']?)$/;
 export const updateUserInputSchema = z.object({
   firstName: z
-    .string({ required_error: REQUIRED_MSG })
+    .string({ error: REQUIRED_MSG })
     .min(1, REQUIRED_MSG)
     .min(2, 'Please enter your full first name.')
     .regex(NAME_REGEX, 'Must contain only English letters.'),
   lastName: z
-    .string({ required_error: REQUIRED_MSG })
+    .string({ error: REQUIRED_MSG })
     .min(1, REQUIRED_MSG)
     .min(2, 'Please enter your full last name.')
     .regex(NAME_REGEX, 'Must contain only English letters.'),
-  gender: z.enum(['MALE', 'FEMALE'], { required_error: REQUIRED_MSG }),
+  gender: z.enum(['MALE', 'FEMALE'], { error: REQUIRED_MSG }),
   address: formAddressInputSchema,
 });
 
@@ -356,7 +356,10 @@ const PrimaryAddressForm = () => {
 
   const [input, setInput] = useState('');
   const [manualEntry, setManualEntry] = useState(false);
-  const address = form.watch('address');
+  const address = useWatch({
+    control: form.control,
+    name: 'address',
+  });
 
   if (address || manualEntry) {
     return <FullPrimaryAddressForm />;

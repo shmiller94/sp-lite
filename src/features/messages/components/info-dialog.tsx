@@ -2,8 +2,13 @@ import { XIcon } from 'lucide-react';
 import { useCallback, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogClose, DialogContent } from '@/components/ui/dialog';
-import { Body1, H3 } from '@/components/ui/typography';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { AnimatedIcon } from '@/features/messages/components/ai/animated-icon';
 
 const INFO_DIALOG_COOKIE = 'ai_chat:dialog_dismissed';
@@ -42,16 +47,19 @@ export const InfoDialog = () => {
             className="absolute right-3 top-3 text-zinc-500"
           >
             <XIcon size={16} />
+            <span className="sr-only">Close</span>
           </Button>
         </DialogClose>
         <div className="flex flex-col gap-2 p-8">
           <AnimatedIcon state="idle" size={64} className="mx-auto mb-4" />
-          <H3 className="text-balance text-center">Welcome to Superpower AI</H3>
-          <Body1 className="mb-11 text-center text-secondary">
+          <DialogTitle className="text-balance text-center text-xl font-normal tracking-[-0.48px] text-zinc-900 md:text-2xl">
+            Welcome to Superpower AI
+          </DialogTitle>
+          <DialogDescription className="mb-11 text-center text-base text-secondary">
             This AI health advisor is newly experimental and you have early
             access, please give us feedback on any responses so that we can
             refine the product to be the best for you!
-          </Body1>
+          </DialogDescription>
           <Button
             variant="default"
             className="w-full rounded-full"

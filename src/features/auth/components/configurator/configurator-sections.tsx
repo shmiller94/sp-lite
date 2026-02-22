@@ -1,5 +1,5 @@
 import { ChevronLeft } from 'lucide-react';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 
 import { SuperpowerLogo } from '@/components/icons/superpower-logo';
 import { AtHomeNoticeSection } from '@/components/shared/at-home-notice-section';
@@ -20,24 +20,36 @@ import {
 const ConfiguratorSections = ({ onPrev }: { onPrev: () => void }) => {
   const processing = useCheckoutContext((s) => s.processing);
   const form = useFormContext<RegisterInput>();
-  const postalCode = form.watch('postalCode');
+  const postalCode = useWatch({
+    control: form.control,
+    name: 'postalCode',
+  });
+  const postalCodeValue = postalCode ?? '';
 
   const CONFIGURATOR_ITEMS = [
     {
+      key: 'at-home-notice',
       component: (
-        <AtHomeNoticeSection postalCode={postalCode} className="lg:hidden" />
+        <AtHomeNoticeSection
+          postalCode={postalCodeValue}
+          className="lg:hidden"
+        />
       ),
     },
     {
+      key: 'purchase-membership-info',
       component: <PurchaseMembershipInfoSection />,
     },
     {
+      key: 'at-home-draw-credit',
       component: <AtHomeDrawCreditSection className="lg:hidden" />,
     },
     {
+      key: 'your-details',
       component: <YourDetailsSection />,
     },
     {
+      key: 'billing',
       component: <BillingSection />,
     },
   ];
@@ -68,10 +80,10 @@ const ConfiguratorSections = ({ onPrev }: { onPrev: () => void }) => {
         </Button>
       </div>
       <div className="flex flex-1 flex-col justify-center space-y-6">
-        {visibleItems.map((item, index) => {
+        {visibleItems.map((item) => {
           return (
             <div
-              key={index}
+              key={item.key}
               // idea here with [&:empty]:hidden is some components return null and we want to hide them
               className="flex flex-col justify-center [&:empty]:hidden"
             >
