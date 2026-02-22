@@ -50,10 +50,15 @@ export const AuthLayout = ({ children, title, progress }: LayoutProps) => {
       >
         <div className="relative z-0 order-1 max-h-[180px] w-full md:absolute md:inset-0 md:max-h-none">
           <img
-            src="/onboarding/shared/backgrounds/register-bg-alt.webp"
+            src="/onboarding/shared/backgrounds/register-bg-alt-1200.webp"
+            srcSet="/onboarding/shared/backgrounds/register-bg-alt-1200.webp 1200w, /onboarding/shared/backgrounds/register-bg-alt-2300.webp 2300w, /onboarding/shared/backgrounds/register-bg-alt.webp 3840w"
+            sizes="100vw"
             alt="auth-background"
             className="pointer-events-none size-full select-none object-cover"
             style={{ minHeight: '100%', minWidth: '100%' }}
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
           />
 
           <div className="absolute inset-x-4 top-5 z-20 flex items-center justify-between text-white md:hidden">

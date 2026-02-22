@@ -9,7 +9,7 @@ const shouldEnablePosthog =
   typeof env.POSTHOG_KEY === 'string' && env.POSTHOG_KEY.length > 0;
 
 function startPosthogInit(
-  initPromiseRef: React.MutableRefObject<Promise<PostHog | null> | null>,
+  initPromiseRef: React.RefObject<Promise<PostHog | null> | null>,
 ) {
   if (!shouldEnablePosthog) {
     return null;
@@ -61,8 +61,10 @@ export function PHProvider({
   children: React.ReactNode;
 }): JSX.Element {
   const user = useUser();
+  const userId = user.data?.id;
   const identified = React.useRef(null as string | null);
   const initPromiseRef = React.useRef<Promise<PostHog | null> | null>(null);
+  const didScheduleInit = React.useRef(false);
 
   React.useEffect(() => {
     if (!shouldEnablePosthog) {
@@ -72,6 +74,15 @@ export function PHProvider({
     if (typeof window === 'undefined') {
       return;
     }
+
+    if (userId == null) {
+      return;
+    }
+
+    if (didScheduleInit.current) {
+      return;
+    }
+    didScheduleInit.current = true;
 
     if (typeof window.requestIdleCallback === 'function') {
       const idleId = window.requestIdleCallback(
@@ -86,7 +97,7 @@ export function PHProvider({
       1000,
     );
     return () => window.clearTimeout(timeoutId);
-  }, []);
+  }, [userId]);
 
   React.useEffect(() => {
     if (!shouldEnablePosthog) {

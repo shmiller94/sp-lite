@@ -220,6 +220,15 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
       { enabled: userQuery.isSuccess && onboardingDone },
     );
 
+  if (!userQuery.isFetched) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center">
+        <SuperpowerLoadingLogo />
+        <span className="sr-only">Loading</span>
+      </div>
+    );
+  }
+
   if (taskQuery.isLoading) {
     return (
       <div className="flex h-screen w-screen items-center justify-center">

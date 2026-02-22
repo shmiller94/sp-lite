@@ -1,7 +1,11 @@
-import { useEffect } from 'react';
+import { Suspense, lazy, useEffect } from 'react';
 
+import { SuperpowerLoadingLogo } from '@/components/icons/superpower-logo';
 import { RegisterForm } from '@/features/auth/components/register-form';
-import { StripeProvider } from '@/lib/stripe';
+
+const LazyStripeProvider = lazy(() =>
+  import('@/lib/stripe').then((mod) => ({ default: mod.StripeProvider })),
+);
 
 export const RegisterRoute = () => {
   // this is basic hook to prevent refreshses during checkout operation
@@ -18,8 +22,17 @@ export const RegisterRoute = () => {
   }, []);
 
   return (
-    <StripeProvider>
-      <RegisterForm />
-    </StripeProvider>
+    <Suspense
+      fallback={
+        <div className="flex h-screen w-screen items-center justify-center">
+          <SuperpowerLoadingLogo />
+          <span className="sr-only">Loading</span>
+        </div>
+      }
+    >
+      <LazyStripeProvider>
+        <RegisterForm />
+      </LazyStripeProvider>
+    </Suspense>
   );
 };

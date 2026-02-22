@@ -1,8 +1,6 @@
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useSearchParams } from 'react-router';
-import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -18,17 +16,14 @@ import { env } from '@/config/env';
 import { useSendMagicLink } from '@/features/auth/api/send-magic-link';
 import { AuthInput } from '@/features/auth/components/auth-input';
 import { useLogin } from '@/lib/auth';
-import { loginInputSchema } from '@/lib/auth-schemas';
 import { User } from '@/types/api';
 
-const passwordLoginSchema = loginInputSchema;
-const magicLinkLoginSchema = loginInputSchema.extend({
-  // allow blank password in magic-link mode (we don’t render the field)
-  password: z.string(),
-});
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-type LoginFormInput = z.input<typeof passwordLoginSchema>;
-type LoginFormData = z.output<typeof passwordLoginSchema>;
+interface LoginFormData {
+  email: string;
+  password: string;
+}
 
 type LoginFormProps = {
   redirectTo?: string;
@@ -52,14 +47,9 @@ export const LoginForm = ({
     onSuccess: onSuccessWithPassword,
   });
 
-  // Switch the resolver based on the active mode so validation matches the
-  // fields we render (email-only for magic link, email+password otherwise).
-  const form = useForm<LoginFormInput, unknown, LoginFormData>({
-    resolver: zodResolver(
-      loginMode === 'magic-link' ? magicLinkLoginSchema : passwordLoginSchema,
-    ),
+  const form = useForm<LoginFormData>({
     defaultValues: {
-      email: defaultEmail || '',
+      email: defaultEmail ?? '',
       password: '',
     },
   });
@@ -134,6 +124,13 @@ export const LoginForm = ({
             <FormField
               control={form.control}
               name="email"
+              rules={{
+                required: 'Please enter your email address.',
+                pattern: {
+                  value: EMAIL_REGEX,
+                  message: 'Please enter a valid email address.',
+                },
+              }}
               render={({ field, fieldState }) => (
                 <FormItem>
                   <Body2 className="mb-2 text-secondary">Email</Body2>
@@ -155,6 +152,13 @@ export const LoginForm = ({
               <FormField
                 control={form.control}
                 name="password"
+                rules={{
+                  required: 'Please enter your password.',
+                  minLength: {
+                    value: 5,
+                    message: 'Please enter your password.',
+                  },
+                }}
                 render={({ field, fieldState }) => (
                   <FormItem>
                     <Body2 className="mb-2 text-secondary">Password</Body2>

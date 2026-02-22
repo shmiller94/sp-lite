@@ -125,6 +125,7 @@
       local('nbinternationalproreg-webfont'),
       url('./assets/fonts/NBInternationalPro/nbinternationalproreg-webfont.woff2')
         format('woff2');
+    font-display: swap;
   }
 
   @font-face {
@@ -133,6 +134,7 @@
       local('nbinternationalpromono-webfont'),
       url('./assets/fonts/NBInternationalPro/nbinternationalpromono-webfont.woff2')
         format('woff2');
+    font-display: swap;
   }
 
   @font-face {
@@ -141,6 +143,7 @@
       local('nbinternationalproboo-webfont'),
       url('./assets/fonts/NBInternationalPro/nbinternationalproboo-webfont.woff2')
         format('woff2');
+    font-display: swap;
   }
 
   * {
