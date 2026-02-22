@@ -28,53 +28,91 @@ export const filterBiomarkers = ({
   selectedRange,
   searchQuery,
 }: FilterBiomarkersParams): Biomarker[] => {
-  if (!biomarkers) return [];
-
   let filtered = biomarkers;
 
   if (selectedCategories.length > 0) {
-    filtered = filtered.filter((b) => selectedCategories.includes(b.category));
+    const selectedCategorySet = new Set(selectedCategories);
+    const next: Biomarker[] = [];
+
+    for (const biomarker of filtered) {
+      if (!selectedCategorySet.has(biomarker.category)) continue;
+      next.push(biomarker);
+    }
+
+    filtered = next;
   }
 
-  if (searchQuery && searchQuery.trim() !== '') {
-    const searchTerm = searchQuery.toLowerCase().trim();
-    filtered = filtered.filter((biomarker) => {
+  const trimmedQuery = searchQuery.trim();
+  if (trimmedQuery !== '') {
+    const searchTerm = trimmedQuery.toLowerCase();
+    const next: Biomarker[] = [];
+
+    for (const biomarker of filtered) {
       const name = biomarker.name.toLowerCase();
       const category = biomarker.category.toLowerCase();
-      return name.includes(searchTerm) || category.includes(searchTerm);
-    });
+      if (name.includes(searchTerm) || category.includes(searchTerm)) {
+        next.push(biomarker);
+      }
+    }
+
+    filtered = next;
   }
 
-  if (selectedRange && selectedRange !== 'all') {
-    filtered = filtered.filter((biomarker) => {
-      const mostRecentResult = mostRecent(biomarker.value);
-      if (!mostRecentResult) return false;
+  if (selectedRange != null && selectedRange !== 'all') {
+    const next: Biomarker[] = [];
 
-      const status = mostRecentResult.status || biomarker.status;
+    for (const biomarker of filtered) {
+      const mostRecentResult = mostRecent(biomarker.value);
+      if (mostRecentResult == null) continue;
+
+      const status = mostRecentResult.status ?? biomarker.status;
 
       switch (selectedRange) {
         case 'optimal':
-          return status === 'OPTIMAL';
+          if (status === 'OPTIMAL') next.push(biomarker);
+          break;
         case 'normal':
-          return status === 'NORMAL';
+          if (status === 'NORMAL') next.push(biomarker);
+          break;
         case 'out of range':
-          return status === 'HIGH' || status === 'LOW';
+          if (status === 'HIGH' || status === 'LOW') next.push(biomarker);
+          break;
         default:
-          return true;
+          next.push(biomarker);
       }
-    });
+    }
+
+    filtered = next;
   }
 
-  if (selectedOrder) {
-    const selectedOrderIds = selectedOrder.orders.map((o) => o.id);
+  if (selectedOrder != null) {
+    const selectedOrderIdSet = new Set<string>();
+    for (const order of selectedOrder.orders) {
+      selectedOrderIdSet.add(order.id);
+    }
 
     // only filter which biomarkers are shown (those that have a value for this order/date),
     // but keep each biomarker's full value history intact for charts and dialogs.
-    filtered = filtered.filter((biomarker) =>
-      biomarker.value.some((result) =>
-        result.orderIds.some((orderId) => selectedOrderIds.includes(orderId)),
-      ),
-    );
+    const next: Biomarker[] = [];
+
+    for (const biomarker of filtered) {
+      let hasSelectedOrder = false;
+
+      for (const result of biomarker.value) {
+        for (const orderId of result.orderIds) {
+          if (!selectedOrderIdSet.has(orderId)) continue;
+          hasSelectedOrder = true;
+          break;
+        }
+
+        if (hasSelectedOrder) break;
+      }
+
+      if (!hasSelectedOrder) continue;
+      next.push(biomarker);
+    }
+
+    filtered = next;
   }
 
   return filtered;
@@ -87,21 +125,26 @@ interface UseFilteredBiomarkersParams {
 
 export const useFilteredBiomarkers = ({
   biomarkers,
-  enabledFilters = { categories: true, date: true, range: true, search: true },
+  enabledFilters,
 }: UseFilteredBiomarkersParams): Biomarker[] => {
   const { selectedCategories, selectedOrder, selectedRange, searchQuery } =
     useDataFilterStore();
   const deferredQuery = useDeferredValue(searchQuery);
 
+  const categoriesEnabled = enabledFilters?.categories ?? true;
+  const dateEnabled = enabledFilters?.date ?? true;
+  const rangeEnabled = enabledFilters?.range ?? true;
+  const searchEnabled = enabledFilters?.search ?? true;
+
   return useMemo(() => {
-    if (!biomarkers) return [];
+    if (biomarkers == null) return [];
 
     return filterBiomarkers({
       biomarkers,
-      selectedCategories: enabledFilters.categories ? selectedCategories : [],
-      selectedOrder: enabledFilters.date ? selectedOrder : undefined,
-      selectedRange: enabledFilters.range ? selectedRange : undefined,
-      searchQuery: enabledFilters.search ? deferredQuery : '',
+      selectedCategories: categoriesEnabled ? selectedCategories : [],
+      selectedOrder: dateEnabled ? selectedOrder : undefined,
+      selectedRange: rangeEnabled ? selectedRange : undefined,
+      searchQuery: searchEnabled ? deferredQuery : '',
     });
   }, [
     biomarkers,
@@ -109,9 +152,9 @@ export const useFilteredBiomarkers = ({
     selectedOrder,
     selectedRange,
     deferredQuery,
-    enabledFilters.categories,
-    enabledFilters.date,
-    enabledFilters.range,
-    enabledFilters.search,
+    categoriesEnabled,
+    dateEnabled,
+    rangeEnabled,
+    searchEnabled,
   ]);
 };
