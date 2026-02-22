@@ -1,13 +1,10 @@
-import { Suspense, lazy, type ReactNode } from 'react';
+import { Suspense, type ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Outlet, useLocation } from 'react-router';
 
 import { AppLayout } from '@/components/layouts/app-layout';
 import { Spinner } from '@/components/ui/spinner';
-
-const LazyStripeProvider = lazy(() =>
-  import('@/lib/stripe').then((mod) => ({ default: mod.StripeProvider })),
-);
+import { LazyStripeProvider } from '@/lib/lazy-stripe-provider';
 
 export const AppRoot = () => {
   const location = useLocation();
