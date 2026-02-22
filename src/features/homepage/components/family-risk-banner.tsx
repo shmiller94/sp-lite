@@ -22,7 +22,8 @@ export const FamilyRiskBanner = () => {
         to="/family-risk/plan"
         className="group flex cursor-pointer items-center gap-4 overflow-hidden rounded-[20px] bg-no-repeat px-6 py-2 shadow-[0_0_4px_rgba(24,24,27,0.1)]"
         style={{
-          backgroundImage: `url('/home/family-risk-banner.png')`,
+          backgroundImage:
+            "image-set(url('/home/family-risk-banner.webp') type('image/webp'), url('/home/family-risk-banner.png') type('image/png'))",
           backgroundSize: 'auto 100%',
           backgroundPosition: 'left center',
           backgroundColor: '#979485',

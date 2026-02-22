@@ -16,9 +16,11 @@ export const ReferralCard: React.FC = () => {
         >
           <div className="absolute -left-12 top-0 h-full overflow-hidden md:inset-0">
             <m.img
-              src="/home/refer-a-friend.png"
+              src="/home/refer-a-friend.webp"
               alt="Refer a friend illustration"
               className="pointer-events-none h-full w-auto select-none object-contain object-left md:size-full md:object-left-top"
+              loading="lazy"
+              decoding="async"
               initial={{ y: 12 }}
               animate={{ y: 0 }}
               transition={{

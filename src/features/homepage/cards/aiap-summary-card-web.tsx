@@ -47,9 +47,11 @@ export const AiapSummaryCardWeb = () => {
           </Body2>
           <div className="pointer-events-none absolute -right-1 bottom-0 w-36 shrink-0 duration-500 ease-out animate-in fade-in-20">
             <img
-              src="/home/action-plan.png"
+              src="/home/action-plan.webp"
               alt="Action plan illustration"
               className="size-full object-contain object-right"
+              loading="lazy"
+              decoding="async"
             />
           </div>
         </Link>

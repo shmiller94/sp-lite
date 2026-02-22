@@ -190,11 +190,22 @@ export const LabOrderCard = () => {
       {/* Image */}
       <div className="relative mb-6 flex justify-center">
         <div className="relative h-56 overflow-hidden">
-          <img
-            src={'/services/custom_blood_panel.png'}
-            alt={'Superpower service'}
-            className="h-72 w-auto object-contain object-top"
-          />
+          <picture>
+            <source
+              type="image/webp"
+              srcSet="/services/custom_blood_panel-404.webp 1x, /services/custom_blood_panel-808.webp 2x"
+            />
+            <img
+              src="/services/custom_blood_panel.png"
+              alt="Superpower service"
+              className="h-72 w-auto object-contain object-top"
+              width={404}
+              height={288}
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
+            />
+          </picture>
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-b from-transparent via-transparent to-zinc-50 md:to-white" />
         </div>
       </div>
