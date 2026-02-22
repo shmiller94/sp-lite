@@ -77,20 +77,27 @@ BiomarkerFilterButton.displayName = 'BiomarkerFilterButton';
 
 export const BiomarkersDistributionBar = ({
   enableToggle,
+  applyDataFilters,
 }: {
   enableToggle?: boolean;
+  applyDataFilters?: boolean;
 }) => {
-  const { selectedRange, updateRange } = useDataFilterStore();
+  const { selectedRange: storeSelectedRange, updateRange } =
+    useDataFilterStore();
   const biomarkersQuery = useBiomarkers();
 
   const biomarkers = biomarkersQuery.data?.biomarkers ?? [];
+
+  const shouldApplyDataFilters = applyDataFilters ?? enableToggle === true;
+  const selectedRangeForUi = enableToggle === true ? storeSelectedRange : 'all';
 
   const filteredBiomarkers = useFilteredBiomarkers({
     biomarkers: biomarkers,
     enabledFilters: {
       range: false,
-      categories: true,
-      date: true,
+      categories: shouldApplyDataFilters,
+      date: shouldApplyDataFilters,
+      search: shouldApplyDataFilters,
     },
   });
 
@@ -111,9 +118,9 @@ export const BiomarkersDistributionBar = ({
     Math.round((numOutOfRange / numTotalBiomarkers) * 100) || 0;
 
   const handleToggle = (target: FilterTarget) => {
-    if (!enableToggle) return;
+    if (enableToggle !== true) return;
 
-    updateRange(selectedRange === target ? 'all' : target);
+    updateRange(storeSelectedRange === target ? 'all' : target);
   };
 
   const valueMap: Record<ValueKey, number> = {
@@ -137,7 +144,7 @@ export const BiomarkersDistributionBar = ({
             target={target}
             label={label}
             value={valueMap[valueKey]}
-            selected={selectedRange === target}
+            selected={selectedRangeForUi === target}
             onToggle={handleToggle}
             disabled={!enableToggle}
           />
@@ -150,7 +157,7 @@ export const BiomarkersDistributionBar = ({
             style={{
               backgroundColor: STATUS_TO_COLOR.optimal,
               opacity:
-                selectedRange === 'optimal' || selectedRange === 'all'
+                selectedRangeForUi === 'optimal' || selectedRangeForUi === 'all'
                   ? 1
                   : 0.5,
             }}
@@ -165,7 +172,9 @@ export const BiomarkersDistributionBar = ({
             style={{
               backgroundColor: STATUS_TO_COLOR.normal,
               opacity:
-                selectedRange === 'normal' || selectedRange === 'all' ? 1 : 0.5,
+                selectedRangeForUi === 'normal' || selectedRangeForUi === 'all'
+                  ? 1
+                  : 0.5,
             }}
             initial={{ width: 0 }}
             animate={{ width: `${normalPercent}%` }}
@@ -178,7 +187,8 @@ export const BiomarkersDistributionBar = ({
             style={{
               backgroundColor: STATUS_TO_COLOR['out of range'],
               opacity:
-                selectedRange === 'out of range' || selectedRange === 'all'
+                selectedRangeForUi === 'out of range' ||
+                selectedRangeForUi === 'all'
                   ? 1
                   : 0.5,
             }}

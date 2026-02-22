@@ -39,25 +39,34 @@ const PureDataSidebar = () => {
   const { width } = useWindowDimensions();
   const isMobile = width < 767;
 
-  const updateCategoryFilter = useCallback(
-    (category: string | null) => {
-      if (category) {
-        updateCategories([category]);
-      } else {
-        clearCategories();
+  const resolvedActiveCategory = useMemo(() => {
+    if (activeCategory == null) return null;
+
+    for (const category of categories) {
+      if (
+        encodeCategory(category.category) ===
+        encodeCategory(activeCategory ?? '')
+      ) {
+        return category.category;
       }
-    },
-    [updateCategories, clearCategories],
-  );
+    }
+
+    return null;
+  }, [activeCategory, categories]);
 
   useEffect(() => {
     if (isLoading) return;
 
-    if (previousActiveCategoryRef.current !== activeCategory) {
-      updateCategoryFilter(activeCategory);
-      previousActiveCategoryRef.current = activeCategory;
+    if (previousActiveCategoryRef.current !== resolvedActiveCategory) {
+      if (resolvedActiveCategory == null) {
+        clearCategories();
+      } else {
+        updateCategories([resolvedActiveCategory]);
+      }
+
+      previousActiveCategoryRef.current = resolvedActiveCategory;
     }
-  }, [activeCategory, isLoading, updateCategoryFilter]);
+  }, [isLoading, resolvedActiveCategory, updateCategories, clearCategories]);
 
   const repositionSelector = useCallback(() => {
     if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);

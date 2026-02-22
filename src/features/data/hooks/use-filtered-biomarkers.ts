@@ -18,6 +18,7 @@ interface FilterConfig {
   categories?: boolean;
   date?: boolean;
   range?: boolean;
+  search?: boolean;
 }
 
 export const filterBiomarkers = ({
@@ -86,7 +87,7 @@ interface UseFilteredBiomarkersParams {
 
 export const useFilteredBiomarkers = ({
   biomarkers,
-  enabledFilters = { categories: true, date: true, range: true },
+  enabledFilters = { categories: true, date: true, range: true, search: true },
 }: UseFilteredBiomarkersParams): Biomarker[] => {
   const { selectedCategories, selectedOrder, selectedRange, searchQuery } =
     useDataFilterStore();
@@ -100,7 +101,7 @@ export const useFilteredBiomarkers = ({
       selectedCategories: enabledFilters.categories ? selectedCategories : [],
       selectedOrder: enabledFilters.date ? selectedOrder : undefined,
       selectedRange: enabledFilters.range ? selectedRange : undefined,
-      searchQuery: deferredQuery,
+      searchQuery: enabledFilters.search === false ? '' : deferredQuery,
     });
   }, [
     biomarkers,
@@ -111,5 +112,6 @@ export const useFilteredBiomarkers = ({
     enabledFilters.categories,
     enabledFilters.date,
     enabledFilters.range,
+    enabledFilters.search,
   ]);
 };
