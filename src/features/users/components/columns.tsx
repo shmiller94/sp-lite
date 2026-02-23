@@ -1,4 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import { ColumnDef } from '@tanstack/react-table';
 import { useState } from 'react';
 
@@ -145,6 +146,7 @@ export const columns: ColumnDef<AdminUser>[] = [
     cell: function CellComponent({ row }) {
       const loginMutation = useLogin({});
       const queryClient = useQueryClient();
+      const router = useRouter();
 
       const userEmail = row.original.email;
       return (
@@ -159,6 +161,8 @@ export const columns: ColumnDef<AdminUser>[] = [
 
             // needed to remove all previous user queries and refetch for the new one
             queryClient.removeQueries();
+
+            void router.invalidate();
           }}
         >
           Sign in as User
