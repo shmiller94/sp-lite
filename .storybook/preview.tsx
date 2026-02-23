@@ -1,3 +1,4 @@
+import type { Decorator } from '@storybook/react';
 import {
   Outlet,
   RouterProvider,
@@ -6,7 +7,6 @@ import {
   createRoute,
   createRouter,
 } from '@tanstack/react-router';
-import type { Decorator } from '@storybook/react';
 
 import '../src/index.css';
 

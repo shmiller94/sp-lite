@@ -118,13 +118,8 @@ export const RecommendationCard: React.FC<{
     );
   }
 
-  const link = '/marketplace?tab=prescriptions';
   return (
-    <Link
-      to="/marketplace"
-      search={{ tab: 'prescriptions' }}
-      onClick={() => handleClick(link)}
-    >
+    <Link to="/marketplace" search={{ tab: 'prescriptions' }}>
       {content}
     </Link>
   );
