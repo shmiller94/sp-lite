@@ -1,5 +1,5 @@
+import { useSearch } from '@tanstack/react-router';
 import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
-import { useSearchParams } from 'react-router';
 
 import { Link } from '@/components/ui/link';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -30,9 +30,10 @@ const PureDataSidebar = () => {
   const categories = categoriesQuery.data?.categories ?? EMPTY_CATEGORIES;
   const gating = summaryQuery.data;
 
-  const [searchParams] = useSearchParams();
-
-  const activeCategory = searchParams.get('category');
+  const activeCategory = useSearch({
+    from: '/_app/data',
+    select: (s) => s.category,
+  });
 
   const { updateCategories, clearCategories } = useDataFilterStore();
 
@@ -72,9 +73,10 @@ const PureDataSidebar = () => {
     rafIdRef.current = requestAnimationFrame(() => {
       const selector = selectorRef.current;
 
-      const activeKey = activeCategory
-        ? decodeURIComponent(activeCategory).toLowerCase()
-        : 'summary';
+      const activeKey =
+        activeCategory != null && activeCategory.length > 0
+          ? decodeURIComponent(activeCategory).toLowerCase()
+          : 'summary';
       const activeCategoryElement = document.getElementById(
         `selector-${activeKey}`,
       );
@@ -144,7 +146,7 @@ const PureDataSidebar = () => {
           category: 'Summary',
           value: '-',
         }}
-        isActive={activeCategory === null}
+        isActive={activeCategory == null || activeCategory.length === 0}
       />,
     );
 

@@ -1,19 +1,13 @@
 import React, { useEffect } from 'react';
 
-import {
-  SCHEDULE_STEPS,
-  ScheduleFlowStepper,
-  useScheduleFlowStepper,
-} from './schedule-stepper';
+import { SCHEDULE_STEPS, useScheduleFlowStepper } from './schedule-stepper';
 import * as Steps from './steps';
 
 export const ScheduleFlowSteps = () => {
   return (
-    <ScheduleFlowStepper.Scoped>
-      <div className="flex flex-1 flex-col">
-        <ScheduleFlowStepsContent />
-      </div>
-    </ScheduleFlowStepper.Scoped>
+    <div className="flex flex-1 flex-col">
+      <ScheduleFlowStepsContent />
+    </div>
   );
 };
 

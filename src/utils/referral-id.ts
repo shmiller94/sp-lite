@@ -1,24 +1,35 @@
-export const getReferralId = (): string | null => {
-  try {
-    const params = new URLSearchParams(window.location.search);
+import { useSearch } from '@tanstack/react-router';
+import { useEffect, useState } from 'react';
 
-    const ref = params.get('invite')?.trim();
+const STORAGE_KEY = 'referral-id';
 
-    if (ref) {
-      localStorage.setItem('referral-id', ref);
+export const useReferralId = () => {
+  const invite = useSearch({ strict: false, select: (s) => s.invite });
 
-      return ref;
+  const [storedReferralId, setStoredReferralId] = useState<string | null>(
+    () => {
+      try {
+        return localStorage.getItem(STORAGE_KEY);
+      } catch (e) {
+        console.warn('Failed to read referral id from localStorage', e);
+        return null;
+      }
+    },
+  );
+
+  const inviteValue = invite?.trim();
+  const inviteIsValid = inviteValue != null && inviteValue.length > 0;
+
+  useEffect(() => {
+    if (!inviteIsValid || inviteValue == null) return;
+
+    try {
+      localStorage.setItem(STORAGE_KEY, inviteValue);
+      setStoredReferralId(inviteValue);
+    } catch (e) {
+      console.warn('Failed to persist referral id to localStorage', e);
     }
+  }, [inviteIsValid, inviteValue]);
 
-    const storedRef = localStorage.getItem('referral-id');
-
-    if (storedRef) {
-      return storedRef;
-    }
-
-    return null;
-  } catch (e) {
-    console.warn('Failed to get referral id', e);
-    return null;
-  }
+  return inviteIsValid ? inviteValue : storedReferralId;
 };

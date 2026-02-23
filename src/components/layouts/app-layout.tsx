@@ -1,5 +1,5 @@
+import { useRouterState } from '@tanstack/react-router';
 import type React from 'react';
-import { useLocation } from 'react-router';
 
 import { DevHelper } from '@/components/shared/dev-helper';
 import { FloatingWrapper } from '@/components/shared/floating-wrapper';
@@ -14,7 +14,7 @@ import { Navbar } from '../shared/navbar';
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const { data } = useUser();
-  const { pathname } = useLocation();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
   const isDev = import.meta.env.DEV;
 
   // matches theme colors
@@ -32,9 +32,13 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     pathname.includes('schedule') ||
     pathname.includes('intake');
 
-  const isWhiteBg = WHITE_BACKGROUND_PATHS.some((path) =>
-    pathname.includes(path),
-  );
+  let isWhiteBg = false;
+  for (const path of WHITE_BACKGROUND_PATHS) {
+    if (pathname.includes(path)) {
+      isWhiteBg = true;
+      break;
+    }
+  }
 
   return (
     <main className={isWhiteBg ? 'bg-white' : 'bg-zinc-50'}>

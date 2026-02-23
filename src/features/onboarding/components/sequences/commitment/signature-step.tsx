@@ -1,6 +1,6 @@
+import { useNavigate } from '@tanstack/react-router';
 import { X } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
-import { useNavigate } from 'react-router';
 import SignatureCanvas from 'react-signature-canvas';
 
 import { Button } from '@/components/ui/button';
@@ -29,7 +29,7 @@ export const SignatureStep = () => {
       setIsProcessing(true);
       toast.success('Success!');
       await new Promise((resolve) => setTimeout(resolve, 1200));
-      navigate('/');
+      void navigate({ to: '/' });
       return;
     }
 

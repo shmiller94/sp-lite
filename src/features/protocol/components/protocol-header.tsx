@@ -1,4 +1,4 @@
-import { useParams } from 'react-router';
+import { useParams } from '@tanstack/react-router';
 
 import { ChevronLeft } from '@/components/icons/chevron-left-icon';
 import { Button } from '@/components/ui/button';
@@ -15,7 +15,8 @@ export const ProtocolHeader = ({
   src?: string;
   className?: string;
 }) => {
-  const { goalId } = useParams();
+  const params = useParams({ strict: false });
+  const goalId = params.goalId;
 
   return (
     <div
@@ -37,7 +38,7 @@ export const ProtocolHeader = ({
         >
           <ChevronLeft className="size-5 text-white" />
         </Button>
-        {!goalId && (
+        {goalId == null && (
           <>
             <RevealProgressBar />
           </>

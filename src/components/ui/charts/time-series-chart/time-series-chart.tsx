@@ -1,8 +1,8 @@
 import NumberFlow from '@number-flow/react';
+import { useNavigate } from '@tanstack/react-router';
 import { format } from 'date-fns';
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useNavigate } from 'react-router';
 
 import { Button } from '@/components/ui/button';
 import { STATUS_TO_COLOR } from '@/const/status-to-color';
@@ -158,7 +158,9 @@ export const TimeSeriesChart = ({
         displayedPoint={displayedPoint}
         dataPoints={data.dataPoints}
         biomarkerUnit={biomarker.unit}
-        onBookNow={() => navigate('/marketplace')}
+        onBookNow={() => {
+          void navigate({ to: '/marketplace' });
+        }}
         onMouseEnter={handleTooltipMouseEnter}
         onMouseLeave={handleTooltipMouseLeave}
       />

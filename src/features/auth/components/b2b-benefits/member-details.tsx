@@ -1,6 +1,6 @@
+import { useSearch } from '@tanstack/react-router';
 import { ChevronLeft } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
-import { useSearchParams } from 'react-router';
 
 import { SuperpowerLogo } from '@/components/icons/superpower-logo';
 import { SplitScreenLayout } from '@/components/layouts';
@@ -23,8 +23,8 @@ type MemberDetailsProps = {
 };
 
 const MemberDetails = ({ onPrev, onSubmit }: MemberDetailsProps) => {
-  const [searchParams] = useSearchParams();
-  const organizationId = searchParams.get('id') ?? '';
+  const organizationId =
+    useSearch({ from: '/claim-benefit', select: (s) => s.id }) ?? '';
   const { data: benefits } = useBenefits(organizationId);
 
   const processing = useCheckoutContext((s) => s.processing);

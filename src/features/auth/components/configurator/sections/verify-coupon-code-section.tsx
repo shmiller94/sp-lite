@@ -8,10 +8,15 @@ import { useValidateCode } from '@/features/auth/api';
 import { useCheckoutContext } from '@/features/auth/stores';
 import { useIsFirstRender } from '@/hooks/use-first-render';
 import { cn } from '@/lib/utils';
-import { clearManualCouponOverride, getAccessCode } from '@/utils/access-code';
+import {
+  clearManualCouponOverride,
+  getAccessCode,
+  useUrlAccessCode,
+} from '@/utils/access-code';
 
 const AccessCodeInputSection = () => {
   const { isFirstRender } = useIsFirstRender();
+  const urlAccessCode = useUrlAccessCode();
   const {
     processing,
     setCoupon,
@@ -99,7 +104,7 @@ const AccessCodeInputSection = () => {
 
               if (!nextCode.trim() && !isFirstRender) {
                 clearManualCouponOverride();
-                setCoupon(getAccessCode());
+                setCoupon(urlAccessCode ?? getAccessCode());
                 validateCodeMutation.reset();
                 setCouponMetadata(null);
               }

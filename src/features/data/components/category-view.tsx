@@ -1,6 +1,6 @@
+import { useSearch } from '@tanstack/react-router';
 import { ArrowUpRight } from 'lucide-react';
 import { useRef } from 'react';
-import { useSearchParams } from 'react-router';
 
 import { Button } from '@/components/ui/button';
 import { ScoreChart } from '@/components/ui/charts/score-chart/score-chart';
@@ -21,14 +21,16 @@ import { BiomarkerSkeletonRow } from './table/biomarker-skeleton-row';
 import { CategoryDataTable } from './table/category-data-table';
 
 export const CategoryView = () => {
-  const [searchParams] = useSearchParams();
-  const activeCategory = searchParams.get('category');
+  const activeCategory = useSearch({
+    from: '/_app/data',
+    select: (s) => s.category,
+  });
   const contentRef = useRef<HTMLDivElement>(null);
   const { data: user } = useUser();
   const { openWithMessages } = useAssistantStore();
 
   const summaryQuery = useBiomarkerSummary({
-    category: activeCategory || '',
+    category: activeCategory ?? '',
   });
 
   const { data: categoriesData, isLoading: isCategoriesLoading } =

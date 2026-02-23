@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 
 import { SelectableCard } from '@/components/shared/selectable-card';
 import { buttonVariants } from '@/components/ui/button';
@@ -41,10 +41,6 @@ const SuggestedServices = ({ serviceIds }: { serviceIds: Set<string> }) => {
 
   if (filteredServices.length === 0) return null;
 
-  const handleServiceClick = (serviceId: string) => {
-    navigate(`/services/${serviceId}`);
-  };
-
   return filteredServices.map((s) => (
     <SelectableCard
       key={s.id}
@@ -52,11 +48,12 @@ const SuggestedServices = ({ serviceIds }: { serviceIds: Set<string> }) => {
       imageSrc={getServiceImage(s.name)}
       description={s.description}
       onToggle={() => {
-        handleServiceClick(s.id);
+        void navigate({ to: '/services/$id', params: { id: s.id } });
       }}
       trigger={
         <Link
-          to={`/services/${s.id}`}
+          to="/services/$id"
+          params={{ id: s.id }}
           className={buttonVariants({ size: 'small' })}
         >
           Test now

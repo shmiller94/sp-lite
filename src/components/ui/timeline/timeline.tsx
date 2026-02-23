@@ -1,8 +1,8 @@
+import { useNavigate } from '@tanstack/react-router';
 import { cva, VariantProps } from 'class-variance-authority';
 import { CircleAlert, CircleCheck, PlusIcon } from 'lucide-react';
 import * as React from 'react';
 import { ReactNode } from 'react';
-import { useNavigate } from 'react-router';
 
 import { LockIcon } from '@/components/icons';
 import { Body1, Body2 } from '@/components/ui/typography';
@@ -234,7 +234,9 @@ const TimelineEmptyCard = React.forwardRef<
         {...props}
         className={cn(timelineCardVariants({ variant: 'empty' }), className)}
         role="presentation"
-        onClick={() => navigate('/services')}
+        onClick={() => {
+          void navigate({ to: '/services' });
+        }}
       >
         <>
           <div className="flex items-center gap-4">

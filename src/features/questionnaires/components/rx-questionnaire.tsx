@@ -3,10 +3,10 @@ import {
   QuestionnaireResponse,
   QuestionnaireResponseItem,
 } from '@medplum/fhirtypes';
+import { notFound } from '@tanstack/react-router';
 import { useState } from 'react';
 
 // TODO: move data fetching upstream, or make this a global component
-import { NotFoundRoute } from '@/app/routes/not-found';
 import { QuestionnaireForm } from '@/components/ui/questionnaire';
 import { RxScreenOut } from '@/components/ui/questionnaire/rx-screen-out';
 import { Spinner } from '@/components/ui/spinner';
@@ -45,14 +45,14 @@ export const RxQuestionnaire = ({
   }
 
   //TODO: move this upstream
-  if (!questionnaire) {
+  if (questionnaire == null) {
     console.error('Questionnaire not found');
-    return <NotFoundRoute />;
+    throw notFound();
   }
 
-  if (!userQuery.data) {
+  if (userQuery.data == null) {
     console.error('User not found');
-    return <NotFoundRoute />;
+    throw notFound();
   }
 
   if (showIneligibleScreen && questionnaireResponse != null) {
@@ -68,7 +68,7 @@ export const RxQuestionnaire = ({
   };
 
   const handleSubmit = (item: QuestionnaireResponseItem[]) => {
-    if (!questionnaire) return;
+    if (questionnaire == null) return;
     const isIneligible = isMemberIneligible(
       item,
       (questionnaire as Questionnaire).item ?? [],
@@ -82,7 +82,9 @@ export const RxQuestionnaire = ({
         } else {
           // NOTE(audric): includes case for inEligible === undefined;
           // on failure default to NP approval downstream flow
-          onSubmit && onSubmit();
+          if (onSubmit != null) {
+            onSubmit();
+          }
         }
       },
     });

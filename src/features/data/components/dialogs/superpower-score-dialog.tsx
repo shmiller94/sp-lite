@@ -1,7 +1,7 @@
 import { Description } from '@radix-ui/react-dialog';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import { X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router';
 
 import { Button } from '@/components/ui/button';
 import { TimeSeriesChart } from '@/components/ui/charts/time-series-chart/time-series-chart';
@@ -45,7 +45,11 @@ export const SuperpowerScoreDialog = ({
   disabled?: boolean;
 }) => {
   const [open, setOpen] = useState(false);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate({ from: '/data' });
+  const modal = useSearch({
+    from: '/_app/data',
+    select: (s) => s.modal,
+  });
   const [sharingOptionsOpen, setSharingOptionsOpen] = useState(false);
   const { width } = useWindowDimensions();
   const { data: biomarkersData } = useBiomarkers();
@@ -72,7 +76,6 @@ export const SuperpowerScoreDialog = ({
     ) ?? [];
 
   useEffect(() => {
-    const modal = (searchParams.get('modal') || '').toLowerCase();
     const shouldBeOpen = modal === 'superpower-score' && !disabled;
     const timeoutId = setTimeout(() => {
       setOpen(shouldBeOpen);
@@ -81,17 +84,18 @@ export const SuperpowerScoreDialog = ({
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [searchParams, disabled]);
+  }, [modal, disabled]);
 
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
-    const params = new URLSearchParams(searchParams);
-    if (nextOpen) {
-      params.set('modal', 'superpower-score');
-    } else if (params.get('modal') === 'superpower-score') {
-      params.delete('modal');
-    }
-    setSearchParams(params);
+    void navigate({
+      search: (prev) => {
+        return {
+          ...prev,
+          modal: nextOpen ? 'superpower-score' : undefined,
+        };
+      },
+    });
   };
 
   const content = (

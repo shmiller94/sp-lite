@@ -1,16 +1,20 @@
+import { useRouterState } from '@tanstack/react-router';
 import { useEffect, useMemo, useRef } from 'react';
-import { useLocation } from 'react-router';
 
 import { WHITE_BACKGROUND_PATHS } from '@/const/white-background-paths';
 
 export function useThemeColor() {
-  const { pathname } = useLocation();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
   const lastColorRef = useRef<string | null>(null);
 
   const themeColor = useMemo(() => {
-    const isWhiteBg = WHITE_BACKGROUND_PATHS.some((path) =>
-      pathname.includes(path),
-    );
+    let isWhiteBg = false;
+    for (const path of WHITE_BACKGROUND_PATHS) {
+      if (pathname.includes(path)) {
+        isWhiteBg = true;
+        break;
+      }
+    }
     return isWhiteBg ? '#ffffff' : '#fafafa';
   }, [pathname]);
 

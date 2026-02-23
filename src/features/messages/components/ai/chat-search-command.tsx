@@ -1,3 +1,4 @@
+import { useNavigate } from '@tanstack/react-router';
 import {
   formatDistanceToNow,
   isToday,
@@ -6,7 +7,6 @@ import {
   subWeeks,
 } from 'date-fns';
 import { useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router';
 
 import {
   Command,
@@ -101,7 +101,7 @@ export function ChatSearchCommand({
 
   const handleSelect = (chatId: string) => {
     onOpenChange(false);
-    navigate(`/concierge/${chatId}`);
+    void navigate({ to: '/concierge/$id', params: { id: chatId } });
   };
 
   const groupedChats = groupChatsByDate(history ?? []);
@@ -116,10 +116,10 @@ export function ChatSearchCommand({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogOverlay className="z-[60]" />
+      <DialogOverlay className="z-[50]" />
       <DialogContent
         isStacked
-        className="z-[60] max-w-[calc(100%-1rem)] overflow-hidden rounded-[14px] p-0 shadow-lg md:max-w-3xl"
+        className="z-[50] max-w-[calc(100%-1rem)] overflow-hidden rounded-[14px] p-0 shadow-lg md:max-w-3xl"
       >
         <Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:size-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:size-5">
           <DialogTitle className="sr-only">Search conversations</DialogTitle>

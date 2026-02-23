@@ -1,5 +1,5 @@
+import { Link } from '@tanstack/react-router';
 import { Check } from 'lucide-react';
-import { NavLink } from 'react-router';
 
 import { HomeTreatment } from '@/components/icons/marketplace/prescriptions/home-treatment';
 import { Lab } from '@/components/icons/marketplace/prescriptions/lab-tested';
@@ -171,9 +171,9 @@ export const Header = ({ className, prescription }: HeaderProps) => {
             </div>
 
             {prescription.url ? (
-              <NavLink to={prescription.url} className="block w-full">
-                <Button className="w-full">Get started</Button>
-              </NavLink>
+              <Button asChild className="w-full">
+                <Link to={prescription.url}>Get started</Link>
+              </Button>
             ) : (
               <Button className="w-full" disabled>
                 Get started
@@ -237,7 +237,7 @@ const PrescriptionBreadcrumb = ({
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
-            <NavLink to="/marketplace">Marketplace</NavLink>
+            <Link to="/marketplace">Marketplace</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
 
@@ -245,7 +245,9 @@ const PrescriptionBreadcrumb = ({
 
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
-            <NavLink to="/marketplace?tab=prescriptions">Prescriptions</NavLink>
+            <Link to="/marketplace" search={{ tab: 'prescriptions' }}>
+              Prescriptions
+            </Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
 

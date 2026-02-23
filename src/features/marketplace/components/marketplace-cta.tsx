@@ -1,4 +1,4 @@
-import { NavLink, useSearchParams } from 'react-router';
+import { Link, useSearch } from '@tanstack/react-router';
 
 import { Orders } from '@/components/icons/marketplace/orders';
 import { Subscriptions } from '@/components/icons/marketplace/subscriptions';
@@ -12,8 +12,11 @@ import { useAnalytics } from '@/hooks/use-analytics';
 import { cn } from '@/lib/utils';
 
 export const MarketplaceCta = () => {
-  const [searchParams] = useSearchParams();
-  const isOrdersTab = searchParams.get('tab') === 'orders';
+  const tab = useSearch({
+    from: '/_app/marketplace',
+    select: (s) => s.tab,
+  });
+  const isOrdersTab = tab === 'orders';
 
   const creditsQuery = useCredits();
 
@@ -58,7 +61,7 @@ export const MarketplaceCta = () => {
         <Body1 as="span">Manage Subscriptions</Body1>
       </Button>
       <Button asChild variant="ghost" className="p-0">
-        <NavLink
+        <Link
           to="/orders"
           className="group relative inline-flex items-center gap-2 text-primary"
         >
@@ -83,7 +86,7 @@ export const MarketplaceCta = () => {
               isOrdersTab ? 'opacity-100' : 'opacity-0',
             )}
           />
-        </NavLink>
+        </Link>
       </Button>
     </div>
   );

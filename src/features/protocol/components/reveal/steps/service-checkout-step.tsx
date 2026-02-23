@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import { CircleCheckBig } from 'lucide-react';
 import { useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router';
 
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/sonner';
@@ -132,11 +132,11 @@ export const ServiceCheckoutStep = ({
     });
     try {
       await completeRevealMutation.mutateAsync(carePlanId);
-      navigate('/protocol');
+      void navigate({ to: '/protocol' });
     } catch (error) {
       // fall back to navigate
       console.error('Failed to complete reveal', error);
-      navigate('/protocol');
+      void navigate({ to: '/protocol' });
     }
   };
 

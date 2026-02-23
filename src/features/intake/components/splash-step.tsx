@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router';
+import { useNavigate } from '@tanstack/react-router';
 
 import { Head } from '@/components/seo';
 import { Button } from '@/components/ui/button';
@@ -20,7 +20,7 @@ export const SplashStep = () => {
 
   const skip = () => {
     dismissIntake();
-    navigate('/', { replace: true });
+    void navigate({ to: '/', replace: true });
   };
 
   return (

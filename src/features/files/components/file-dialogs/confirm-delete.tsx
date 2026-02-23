@@ -1,5 +1,5 @@
+import { useNavigate } from '@tanstack/react-router';
 import React from 'react';
-import { useNavigate } from 'react-router';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -19,7 +19,9 @@ export function ConfirmDelete({ fileId }: { fileId: string }) {
     mutationConfig: {
       onSuccess: () => {
         // redirect if called on mobile page
-        width <= 768 && navigate('/vault');
+        if (width <= 768) {
+          void navigate({ to: '/vault' });
+        }
 
         /**
          * @description

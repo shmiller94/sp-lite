@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router';
+import { useMatchRoute, useNavigate } from '@tanstack/react-router';
 
 import {
   AppleCalendarButton,
@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button';
 import { Body1, Body3, H2 } from '@/components/ui/typography';
 import { useCredits } from '@/features/orders/api/credits';
 import { useServices } from '@/features/services/api';
-import { useCheckLocation } from '@/hooks/use-check-location';
 import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 
@@ -31,7 +30,8 @@ export const ScheduleSuccessStep = () => {
   const creditsQuery = useCredits();
   const servicesQuery = useServices({ includeUnorderable: true });
   const navigate = useNavigate();
-  const isOnOnboarding = useCheckLocation('/onboarding');
+  const matchRoute = useMatchRoute();
+  const isOnOnboarding = matchRoute({ to: '/onboarding' });
 
   const resetEverything = () => {
     resetStore();
@@ -77,7 +77,13 @@ export const ScheduleSuccessStep = () => {
       <Button
         className="w-full"
         variant={'default'}
-        onClick={() => (onDone ? onDone() : navigate('/'))}
+        onClick={() => {
+          if (onDone != null) {
+            onDone();
+            return;
+          }
+          void navigate({ to: '/' });
+        }}
       >
         Done
       </Button>
@@ -93,7 +99,13 @@ export const ScheduleSuccessStep = () => {
       <Button
         className="w-full"
         variant={creditedServices.length > 0 ? 'ghost' : 'default'}
-        onClick={() => (onDone ? onDone() : navigate('/'))}
+        onClick={() => {
+          if (onDone != null) {
+            onDone();
+            return;
+          }
+          void navigate({ to: '/' });
+        }}
       >
         Done
       </Button>

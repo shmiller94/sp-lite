@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router';
+import { Link } from '@tanstack/react-router';
 
 import {
   Accordion,
@@ -83,11 +83,9 @@ export const Science = ({
         </Accordion>
 
         {prescription.url ? (
-          <NavLink to={prescription.url} className="inline-block w-fit">
-            <Button type="button" size="medium" className="w-fit">
-              Get started
-            </Button>
-          </NavLink>
+          <Button asChild size="medium" className="w-fit">
+            <Link to={prescription.url}>Get started</Link>
+          </Button>
         ) : (
           <Button type="button" size="medium" className="w-fit" disabled>
             Get started

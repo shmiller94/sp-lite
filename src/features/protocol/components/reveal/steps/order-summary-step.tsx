@@ -1,6 +1,6 @@
 import NumberFlow from '@number-flow/react';
+import { useNavigate } from '@tanstack/react-router';
 import React from 'react';
-import { useNavigate } from 'react-router';
 
 import { ChevronLeft } from '@/components/icons/chevron-left-icon';
 import { SuperpowerUserSignature } from '@/components/shared/superpower-user-signature';
@@ -163,11 +163,11 @@ export function OrderSummaryStep({
             reason: 'order_already_exists',
             careplanId: carePlanId,
           });
-          navigate('/protocol');
+          void navigate({ to: '/protocol' });
           return;
         } catch (completeError) {
           console.error('Failed to complete reveal', completeError);
-          navigate('/protocol');
+          void navigate({ to: '/protocol' });
           return;
         }
       }
@@ -183,7 +183,7 @@ export function OrderSummaryStep({
 
     if (!carePlanId) {
       console.error('No protocol ID available');
-      navigate('/protocol');
+      void navigate({ to: '/protocol' });
       return;
     }
 
@@ -199,7 +199,7 @@ export function OrderSummaryStep({
         careplanId: carePlanId,
       });
       await completeRevealMutation.mutateAsync(carePlanId);
-      navigate('/protocol');
+      void navigate({ to: '/protocol' });
     } catch (error) {
       console.error('Failed to complete reveal', error);
       toast.error(

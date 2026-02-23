@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router';
+import { useNavigate } from '@tanstack/react-router';
 
 import { SelectableCard } from '@/components/shared/selectable-card';
 import { Button } from '@/components/ui/button';
@@ -48,7 +48,10 @@ export const BiomarkerRxSuggestion = ({
             description={existingRx.description}
             imageSrc={getPrescriptionImage(existingRx.name)}
             onToggle={() => {
-              navigate(`/prescriptions/${existingRx.id}`);
+              void navigate({
+                to: '/prescriptions/$id',
+                params: { id: existingRx.id },
+              });
             }}
             trigger={<Button size="small">Learn more</Button>}
           />

@@ -8,51 +8,10 @@ import {
   useRef,
   useState,
 } from 'react';
-import { useSearchParams } from 'react-router';
 
 import { cn } from '@/lib/utils';
 
 const Tabs = TabsPrimitive.Root;
-
-const URLTabs = forwardRef<
-  ElementRef<typeof TabsPrimitive.Root>,
-  ComponentPropsWithoutRef<typeof TabsPrimitive.Root> & {
-    paramName?: string;
-    defaultTab?: string;
-  }
->(
-  (
-    { paramName = 'tab', defaultTab = 'all', className, children, ...props },
-    ref,
-  ) => {
-    const [searchParams, setSearchParams] = useSearchParams();
-    const currentTab = searchParams.get(paramName) || defaultTab;
-
-    const handleTabChange = (value: string) => {
-      setSearchParams((params) => {
-        if (value === defaultTab) {
-          params.delete(paramName);
-        } else {
-          params.set(paramName, value);
-        }
-        return params;
-      });
-    };
-
-    return (
-      <TabsPrimitive.Root
-        ref={ref}
-        value={currentTab}
-        onValueChange={handleTabChange}
-        className={className}
-        {...props}
-      >
-        {children}
-      </TabsPrimitive.Root>
-    );
-  },
-);
-URLTabs.displayName = 'URLTabs';
 
 const TabsList = forwardRef<
   ElementRef<typeof TabsPrimitive.List>,
@@ -259,4 +218,4 @@ const TabsContent = forwardRef<
 ));
 TabsContent.displayName = TabsPrimitive.Content.displayName;
 
-export { Tabs, TabsContent, TabsList, TabsTrigger, URLTabs };
+export { Tabs, TabsContent, TabsList, TabsTrigger };

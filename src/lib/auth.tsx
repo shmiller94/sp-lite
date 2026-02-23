@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { Navigate, useRouterState } from '@tanstack/react-router';
 import * as React from 'react';
 import { configureAuth } from 'react-query-auth';
-import { Navigate, useLocation } from 'react-router';
 
 import { SuperpowerLoadingLogo } from '@/components/icons/superpower-logo';
 import { env } from '@/config/env';
@@ -189,7 +189,7 @@ type RevealLatestResponse = {
 };
 
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const location = useLocation();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
   const userQuery = useUser();
   const taskQuery = useTask({
     taskName: 'onboarding',
@@ -241,7 +241,10 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   if (!userQuery.data) {
     return (
       <Navigate
-        to={`/signin?redirectTo=${encodeURIComponent(location.pathname)}`}
+        to="/signin"
+        search={{
+          redirectTo: pathname,
+        }}
         replace
       />
     );
@@ -257,7 +260,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  const onOnboarding = location.pathname.includes('/onboarding');
+  const onOnboarding = pathname.includes('/onboarding');
 
   const revealPermissiblePaths = [
     '/protocol/reveal',
@@ -266,9 +269,13 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     '/intake', // Medical intake for legacy members
     '/action-plan/intro', // Videos
   ];
-  const onPermissiblePath = revealPermissiblePaths.some((path) =>
-    location.pathname.startsWith(path),
-  );
+  let onPermissiblePath = false;
+  for (const path of revealPermissiblePaths) {
+    if (pathname.startsWith(path)) {
+      onPermissiblePath = true;
+      break;
+    }
+  }
 
   // Check if user should be redirected to protocol reveal flow
   const shouldRedirectToReveal =
@@ -284,7 +291,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   ) {
     const target = '/protocol/reveal';
     console.warn(
-      `Redirecting to protocol reveal: ${target}, current location: ${location.pathname}`,
+      `Redirecting to protocol reveal: ${target}, current location: ${pathname}`,
     );
     return <Navigate to={target} replace />;
   }
@@ -308,10 +315,8 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
       }
     }
 
-    if (target && target !== location.pathname) {
-      console.warn(
-        `Redirecting to ${target}, current location: ${location.pathname}`,
-      );
+    if (target && target !== pathname) {
+      console.warn(`Redirecting to ${target}, current location: ${pathname}`);
       return <Navigate to={target} replace />;
     }
 

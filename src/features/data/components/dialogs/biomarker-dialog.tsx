@@ -1,7 +1,7 @@
 import { Description } from '@radix-ui/react-dialog';
+import { useNavigate } from '@tanstack/react-router';
 import { Lock, X } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router';
 
 import NumberFlow from '@/components/shared/number-flow';
 import { Button } from '@/components/ui/button';
@@ -84,8 +84,11 @@ export const BiomarkerDialog = ({
                 const firstServiceId =
                   biomarker.recommendedTests.services[0]?.id;
 
-                if (firstServiceId) {
-                  navigate(`/services/${firstServiceId}`);
+                if (firstServiceId != null) {
+                  void navigate({
+                    to: '/services/$id',
+                    params: { id: firstServiceId },
+                  });
                 }
               }}
             >

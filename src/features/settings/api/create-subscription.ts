@@ -6,8 +6,8 @@ import { useAnalytics } from '@/hooks/use-analytics';
 import { api } from '@/lib/api-client';
 import { MutationConfig } from '@/lib/react-query';
 import { Subscription } from '@/types/api';
-import { getAccessCode } from '@/utils/access-code';
-import { getReferralId } from '@/utils/referral-id';
+import { useAccessCode } from '@/utils/access-code';
+import { useReferralId } from '@/utils/referral-id';
 
 export const createSubscriptionInputSchema = z.object({
   code: z.string().optional(),
@@ -39,6 +39,8 @@ export const useCreateSubscription = ({
 }: UseCreateSubscriptionOptions = {}) => {
   const queryClient = useQueryClient();
   const { track } = useAnalytics();
+  const accessCode = useAccessCode();
+  const referralId = useReferralId();
   const { onSuccess, ...restConfig } = mutationConfig || {};
 
   return useMutation({
@@ -49,8 +51,8 @@ export const useCreateSubscription = ({
 
       try {
         track('subscription_created', {
-          access_code: getAccessCode(),
-          referral_id: getReferralId(),
+          access_code: accessCode,
+          referral_id: referralId,
           currency: 'USD',
           value: args[0].subscription.total,
           payment_method: args[1].data.paymentMethod,

@@ -1,6 +1,6 @@
 import { QuestionnaireResponse } from '@medplum/fhirtypes';
+import { useNavigate } from '@tanstack/react-router';
 import { m } from 'framer-motion';
-import { useNavigate } from 'react-router';
 
 import { SuperpowerLogo } from '@/components/icons/superpower-logo';
 import { Button } from '@/components/ui/button';
@@ -81,7 +81,12 @@ export const RxScreenOut = ({
         {/* NOTE: We don't render this button if it's a front door experiment since
           their Superpower membership is cancelled; we don't want them going anywhere unintended! */}
         {!isFrontDoorExperiment && (
-          <Button className="mt-10 w-full" onClick={() => navigate('/')}>
+          <Button
+            className="mt-10 w-full"
+            onClick={() => {
+              void navigate({ to: '/' });
+            }}
+          >
             I Understand
           </Button>
         )}

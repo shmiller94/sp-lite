@@ -1,6 +1,6 @@
+import { Link } from '@tanstack/react-router';
 import { Info } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { NavLink } from 'react-router';
 
 import { SelectableCard } from '@/components/shared/selectable-card';
 import { Badge } from '@/components/ui/badge';
@@ -187,12 +187,9 @@ const CreditsSelectContent = ({
           <div className="flex items-center justify-center rounded-xl border border-dashed px-3 py-10">
             <Body1 className="text-secondary">
               No credits available, get some{' '}
-              <NavLink
-                className="text-vermillion-900 underline"
-                to="/marketplace"
-              >
+              <Link className="text-vermillion-900 underline" to="/marketplace">
                 here
-              </NavLink>
+              </Link>
             </Body1>
           </div>
         ) : null}

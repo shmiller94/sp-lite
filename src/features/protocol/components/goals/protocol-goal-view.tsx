@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router';
+import { useNavigate } from '@tanstack/react-router';
 
 import { ChevronLeft } from '@/components/icons/chevron-left-icon';
 import { Button } from '@/components/ui/button';
@@ -30,10 +30,7 @@ export function ProtocolGoalView({
   const { data: protocol, isLoading, error } = useProtocol(protocolId);
   const navigate = useNavigate();
 
-  const protocolLink =
-    lastProtocol?.id === protocolId
-      ? '/protocol'
-      : `/protocol/plans/${protocolId}`;
+  const isLatestProtocol = lastProtocol?.id === protocolId;
 
   if (isLoading || isLatestProtocolLoading) {
     return (
@@ -80,25 +77,46 @@ export function ProtocolGoalView({
   );
 
   const handleNextGoal = () => {
-    if (hasNextGoal) {
-      navigate(`/protocol/plans/${protocolId}/goals/${nextGoalId}`);
-    } else {
-      navigate(protocolLink);
+    if (hasNextGoal && nextGoalId != null) {
+      void navigate({
+        to: '/protocol/plans/$planId/goals/$goalId',
+        params: { planId: protocolId, goalId: nextGoalId },
+      });
+      return;
     }
+
+    if (isLatestProtocol) {
+      void navigate({ to: '/protocol' });
+      return;
+    }
+
+    void navigate({ to: '/protocol/plans/$id', params: { id: protocolId } });
   };
 
   return (
     <ProtocolLayout className="lg:pt-7">
       <div className="sticky top-20 hidden w-40 shrink-0 lg:block">
-        <Link
-          to={protocolLink}
-          className="group -ml-1.5 flex items-center gap-0.5 p-0"
-        >
-          <ChevronLeft className="-mt-px w-[15px] text-zinc-400 transition-all duration-150 group-hover:-translate-x-0.5 group-hover:text-zinc-600" />
-          <Body2 className="text-zinc-500 transition-all duration-150 group-hover:text-zinc-700">
-            Back
-          </Body2>
-        </Link>
+        {isLatestProtocol ? (
+          <Link
+            to="/protocol"
+            className="group -ml-1.5 flex items-center gap-0.5 p-0"
+          >
+            <ChevronLeft className="-mt-px w-[15px] text-zinc-400 transition-all duration-150 group-hover:-translate-x-0.5 group-hover:text-zinc-600" />
+            <Body2 className="text-zinc-500 transition-all duration-150 group-hover:text-zinc-700">
+              Back
+            </Body2>
+          </Link>
+        ) : (
+          <Link
+            to={`/protocol/plans/${protocolId}`}
+            className="group -ml-1.5 flex items-center gap-0.5 p-0"
+          >
+            <ChevronLeft className="-mt-px w-[15px] text-zinc-400 transition-all duration-150 group-hover:-translate-x-0.5 group-hover:text-zinc-600" />
+            <Body2 className="text-zinc-500 transition-all duration-150 group-hover:text-zinc-700">
+              Back
+            </Body2>
+          </Link>
+        )}
       </div>
       <div className="mx-auto flex w-full max-w-[680px] flex-col items-center space-y-12 pb-24">
         <ProtocolGoal

@@ -1,5 +1,5 @@
+import { useNavigate } from '@tanstack/react-router';
 import { useState, useTransition } from 'react';
-import { useNavigate } from 'react-router';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { SelectableCard } from '@/components/shared/selectable-card';
@@ -129,7 +129,9 @@ const GutInsights = () => {
       title={service.name}
       imageSrc={getServiceImage(service.name)}
       description={service.description}
-      onToggle={() => navigate(`/services/${service.id}`)}
+      onToggle={() => {
+        void navigate({ to: '/services/$id', params: { id: service.id } });
+      }}
       trigger={
         <Button size="small" variant="outline">
           Unlock
@@ -172,7 +174,9 @@ const ToxinsInsights = () => {
           title={env.name}
           imageSrc={getServiceImage(env.name)}
           description={env.description}
-          onToggle={() => navigate(`/services/${env.id}`)}
+          onToggle={() => {
+            void navigate({ to: '/services/$id', params: { id: env.id } });
+          }}
           trigger={
             <Button size="small" variant="outline">
               Unlock
@@ -185,7 +189,12 @@ const ToxinsInsights = () => {
           title={mycotoxins.name}
           imageSrc={getServiceImage(mycotoxins.name)}
           description={mycotoxins.description}
-          onToggle={() => navigate(`/services/${mycotoxins.id}`)}
+          onToggle={() => {
+            void navigate({
+              to: '/services/$id',
+              params: { id: mycotoxins.id },
+            });
+          }}
           trigger={
             <Button size="small" variant="outline">
               Unlock
@@ -198,7 +207,12 @@ const ToxinsInsights = () => {
           title={heavymetals.name}
           imageSrc={getServiceImage(heavymetals.name)}
           description={heavymetals.description}
-          onToggle={() => navigate(`/services/${heavymetals.id}`)}
+          onToggle={() => {
+            void navigate({
+              to: '/services/$id',
+              params: { id: heavymetals.id },
+            });
+          }}
           trigger={
             <Button size="small" variant="outline">
               Unlock

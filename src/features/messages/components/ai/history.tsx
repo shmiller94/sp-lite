@@ -1,11 +1,11 @@
 import { IconEditSmall1 } from '@central-icons-react/round-outlined-radius-3-stroke-1.5/IconEditSmall1';
 import { IconMagnifyingGlass } from '@central-icons-react/round-outlined-radius-3-stroke-1.5/IconMagnifyingGlass';
 import { IconSidebarSimpleLeftSquare } from '@central-icons-react/round-outlined-radius-3-stroke-1.5/IconSidebarSimpleLeftSquare';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import { isToday, isYesterday, subMonths, subWeeks } from 'date-fns';
 import { AnimatePresence, m } from 'framer-motion';
 import { MoreHorizontalIcon } from 'lucide-react';
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -54,14 +54,15 @@ const sidebarItemVariants = {
 };
 
 const ChatItem = ({ chat, isActive }: { chat: Chat; isActive: boolean }) => {
-  const { id } = useParams();
+  const params = useParams({ strict: false });
+  const id = params.id;
   const navigate = useNavigate();
 
   const deleteChatMutation = useDeleteChat({
     mutationConfig: {
       onSuccess: () => {
         if (chat.id === id) {
-          navigate('/concierge');
+          void navigate({ to: '/concierge' });
         }
       },
     },
@@ -70,7 +71,7 @@ const ChatItem = ({ chat, isActive }: { chat: Chat; isActive: boolean }) => {
   return (
     <Link
       to={`/concierge/${chat.id}`}
-      preventScrollReset
+      resetScroll={false}
       className={cn(
         'group flex w-full justify-between gap-2 rounded-xl px-4 py-2.5 transition-all duration-200 ease-out',
         isActive ? 'bg-zinc-200/60' : 'hover:bg-zinc-100',
@@ -100,7 +101,7 @@ const ChatItem = ({ chat, isActive }: { chat: Chat; isActive: boolean }) => {
           <span className="sr-only">More</span>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent side="bottom" align="end" className="z-[60]">
+        <DropdownMenuContent side="bottom" align="end" className="z-[50]">
           <DropdownMenuItem
             className="cursor-pointer text-pink-700 focus:bg-pink-50 focus:text-pink-700"
             onSelect={() => {
@@ -116,7 +117,8 @@ const ChatItem = ({ chat, isActive }: { chat: Chat; isActive: boolean }) => {
 };
 
 export function ChatHistoryContainer({ className }: { className?: string }) {
-  const { id } = useParams();
+  const params = useParams({ strict: false });
+  const id = params.id;
   const navigate = useNavigate();
   const { data: history, isLoading } = useHistory();
 
@@ -145,7 +147,9 @@ export function ChatHistoryContainer({ className }: { className?: string }) {
         activeChatId={id}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
-        onNewChat={() => navigate('/concierge')}
+        onNewChat={() => {
+          void navigate({ to: '/concierge' });
+        }}
         onOpenSearch={() => setSearchOpen(true)}
       />
       <ChatSearchCommand open={searchOpen} onOpenChange={setSearchOpen} />

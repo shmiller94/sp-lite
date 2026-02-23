@@ -1,6 +1,6 @@
+import { Link, useMatchRoute } from '@tanstack/react-router';
 import { LucideIcon } from 'lucide-react';
 import { FC, ReactNode, SVGProps } from 'react';
-import { NavLink } from 'react-router';
 
 import {
   DropdownMenu,
@@ -16,6 +16,10 @@ export type ProfileDropdownLink = {
   testid?: string;
 };
 
+interface ProfileDropdownLinkState {
+  from?: string;
+}
+
 type ProfileDropdownProps = {
   trigger: ReactNode;
   links: ProfileDropdownLink[];
@@ -25,7 +29,7 @@ type ProfileDropdownProps = {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   contentClassName?: string;
-  linkState?: any;
+  linkState?: ProfileDropdownLinkState;
   getIsActive?: (
     link: ProfileDropdownLink,
     isActiveByRouter: boolean,
@@ -46,6 +50,8 @@ export function ProfileDropdown({
   getIsActive,
   onItemClick,
 }: ProfileDropdownProps) {
+  const matchRoute = useMatchRoute();
+
   return (
     <DropdownMenu open={open} onOpenChange={onOpenChange}>
       <DropdownMenuTrigger asChild className={cn('group rounded-[20px]')}>
@@ -64,37 +70,50 @@ export function ProfileDropdown({
           {links.map((link) => {
             const isLogout =
               link.to === '/logout' || /log\s*out/i.test(link.name);
-            const Icon = link.icon as any;
+            const isExternal =
+              link.to.startsWith('https://') || link.to.startsWith('http://');
+            const isActiveByRouter = isExternal
+              ? false
+              : matchRoute({ to: link.to, fuzzy: true }) !== false;
+            const shouldBeActive = getIsActive
+              ? getIsActive(link, isActiveByRouter)
+              : isActiveByRouter;
+            const className = cn(
+              isLogout
+                ? 'flex cursor-pointer items-center gap-3 rounded-[18px] p-4 text-secondary transition duration-200 ease-in-out hover:text-zinc-600'
+                : 'flex cursor-pointer items-center gap-3 rounded-[18px] border border-transparent p-4 text-secondary transition duration-200 ease-in-out hover:text-zinc-600',
+              shouldBeActive &&
+                !isLogout &&
+                'border-zinc-200 bg-white text-zinc-900 shadow-sm',
+            );
 
-            return (
-              <NavLink
+            const Icon = link.icon;
+
+            return isExternal ? (
+              <a
+                key={link.to}
+                href={link.to}
+                data-testid={link.testid}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={onItemClick}
+                className={className}
+              >
+                <Icon width={12} height={12} color="currentColor" />
+                <p className="text-sm">{link.name}</p>
+              </a>
+            ) : (
+              <Link
                 key={link.to}
                 to={link.to}
                 data-testid={link.testid}
                 state={linkState}
-                target={link.to.includes('https') ? '_blank' : undefined}
-                rel={
-                  link.to.includes('https') ? 'noopener noreferrer' : undefined
-                }
                 onClick={onItemClick}
-                className={({ isActive }) => {
-                  const shouldBeActive = getIsActive
-                    ? getIsActive(link, isActive)
-                    : isActive;
-
-                  return cn(
-                    isLogout
-                      ? 'flex cursor-pointer items-center gap-3 rounded-[18px] p-4 text-secondary transition duration-200 ease-in-out hover:text-zinc-600'
-                      : 'flex cursor-pointer items-center gap-3 rounded-[18px] border border-transparent p-4 text-secondary transition duration-200 ease-in-out hover:text-zinc-600',
-                    shouldBeActive &&
-                      !isLogout &&
-                      'border-zinc-200 bg-white text-zinc-900 shadow-sm',
-                  );
-                }}
+                className={className}
               >
                 <Icon width={12} height={12} color="currentColor" />
                 <p className="text-sm">{link.name}</p>
-              </NavLink>
+              </Link>
             );
           })}
         </ul>

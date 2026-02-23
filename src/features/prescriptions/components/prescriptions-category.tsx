@@ -1,5 +1,5 @@
+import { Link } from '@tanstack/react-router';
 import { ChevronRight } from 'lucide-react';
-import { NavLink } from 'react-router';
 
 import { Body3, H2 } from '@/components/ui/typography';
 import { Rx } from '@/types/api';
@@ -40,14 +40,14 @@ export const PrescriptionsCategory = ({
           )}
         </div>
         {path && (
-          <NavLink
+          <Link
             to={path}
             className="inline-flex items-center gap-1 font-medium text-secondary hover:text-primary"
             onClick={handleViewAllClick}
           >
             View all
             <ChevronRight className="size-4" />
-          </NavLink>
+          </Link>
         )}
       </div>
 

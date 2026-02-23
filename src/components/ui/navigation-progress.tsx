@@ -1,8 +1,9 @@
+import { useRouterState } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
-import { useNavigation } from 'react-router';
 
 export const NavigationProgress = () => {
-  const { state, location } = useNavigation();
+  const status = useRouterState({ select: (s) => s.status });
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   const [progress, setProgress] = useState(0);
 
@@ -14,10 +15,10 @@ export const NavigationProgress = () => {
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [location?.pathname]);
+  }, [pathname]);
 
   useEffect(() => {
-    if (state === 'loading') {
+    if (status === 'pending') {
       const timer = setInterval(() => {
         setProgress((oldProgress) => {
           if (oldProgress === 100) {
@@ -33,9 +34,9 @@ export const NavigationProgress = () => {
         clearInterval(timer);
       };
     }
-  }, [state]);
+  }, [status]);
 
-  if (state !== 'loading') {
+  if (status !== 'pending') {
     return null;
   }
 

@@ -1,5 +1,5 @@
+import { useNavigate } from '@tanstack/react-router';
 import { ReactNode } from 'react';
-import { useNavigate } from 'react-router';
 
 import { AnimatedCheckbox } from '@/components/ui/checkbox';
 import { ProgressiveImage } from '@/components/ui/progressive-image';
@@ -65,7 +65,7 @@ export function ProtocolItemCard({
       if (itemDetails.linkType === 'external') {
         window.open(itemDetails.url, '_blank', 'noopener,noreferrer');
       } else if (itemDetails.linkType === 'internal') {
-        navigate(itemDetails.url);
+        void navigate({ href: itemDetails.url });
       }
     }
   };
@@ -79,7 +79,7 @@ export function ProtocolItemCard({
         if (itemDetails.linkType === 'external') {
           window.open(itemDetails.url, '_blank', 'noopener,noreferrer');
         } else if (itemDetails.linkType === 'internal') {
-          navigate(itemDetails.url);
+          void navigate({ href: itemDetails.url });
         }
       }
     }

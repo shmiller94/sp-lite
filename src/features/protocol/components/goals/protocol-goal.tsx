@@ -1,5 +1,5 @@
+import { useParams } from '@tanstack/react-router';
 import React, { Fragment } from 'react';
-import { useParams } from 'react-router';
 
 import { Body2, Body3, H2, H4, Mono } from '@/components/ui/typography';
 import { AiSuggestions } from '@/features/messages/components/ai-suggestions';
@@ -31,7 +31,8 @@ export function ProtocolGoal({
   onSelectionChange,
   getActivityKey,
 }: ProtocolGoalProps) {
-  const { goalId } = useParams();
+  const params = useParams({ strict: false });
+  const goalId = params.goalId;
   const goalIndex = allGoals ? getGoalIndex(allGoals, goal.id) : -1;
 
   const bodyNodes: JSX.Element[] = [];
@@ -156,7 +157,7 @@ export function ProtocolGoal({
             />
           </div>
         )}
-        {goalId && (
+        {goalId != null && (
           <div className="space-y-4">
             <H4>Ask Superpower AI</H4>
             <AiSuggestions

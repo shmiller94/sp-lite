@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router';
 import { m } from 'framer-motion';
 import {
   ActivityIcon,
@@ -6,7 +7,6 @@ import {
   DollarSignIcon,
 } from 'lucide-react';
 import { useMemo } from 'react';
-import { NavLink } from 'react-router';
 
 import { Body1, Body2 } from '@/components/ui/typography';
 import {
@@ -62,7 +62,7 @@ export const RecommendationCard: React.FC<{
   };
 
   return (
-    <NavLink to={link} onClick={handleClick}>
+    <Link to={link} onClick={handleClick}>
       <div className="group relative flex cursor-pointer justify-between gap-4 rounded-3xl bg-white px-5 py-4 shadow-sm shadow-black/[.04]">
         <div className="relative my-auto size-24 shrink-0">
           <m.img
@@ -107,6 +107,6 @@ export const RecommendationCard: React.FC<{
           <ChevronRightIcon className="size-5 text-zinc-500 transition-all group-hover:-mr-1" />
         </div>
       </div>
-    </NavLink>
+    </Link>
   );
 };

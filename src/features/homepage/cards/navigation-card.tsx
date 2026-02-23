@@ -1,5 +1,5 @@
+import { Link } from '@tanstack/react-router';
 import { Syringe, Pill, FileText, Package, ChevronRight } from 'lucide-react';
-import { Link } from 'react-router';
 
 import { HomepageCard } from '../components/homepage-card';
 

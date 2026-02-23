@@ -1,5 +1,6 @@
 import { useChat, type UseChatHelpers } from '@ai-sdk/react';
 import { useQueryClient } from '@tanstack/react-query';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import { DefaultChatTransport, FileUIPart, type UIMessage } from 'ai';
 import {
   useCallback,
@@ -10,7 +11,6 @@ import {
   type Dispatch,
   type SetStateAction,
 } from 'react';
-import { useNavigate, useSearchParams } from 'react-router';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { toast } from '@/components/ui/sonner';
@@ -142,11 +142,14 @@ function useConciergeChatController({
   id: string;
   initialMessages: Array<UIMessage>;
 }) {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const defaultMessage = useSearch({
+    from: '/_app/concierge',
+    select: (s) => s.defaultMessage,
+  });
   const queryClient = useQueryClient();
   const { refetch } = useHistory();
   const { track } = useAnalytics();
-  const navigate = useNavigate();
+  const navigate = useNavigate({ from: '/concierge' });
 
   const lastReportedErrorRef = useRef<string | null>(null);
   const recoveryInProgressRef = useRef(false);
@@ -154,8 +157,7 @@ function useConciergeChatController({
   const recoveryAttemptedRef = useRef(false);
   const lastSyncedCountRef = useRef(0);
 
-  const initialMessage = searchParams.get('defaultMessage');
-  const [input, setInput] = useState(initialMessage ?? '');
+  const [input, setInput] = useState(defaultMessage ?? '');
   const [attachments, setAttachments] = useState<Array<FileUIPart>>([]);
   const [recoveryFailed, setRecoveryFailed] = useState(false);
   const [showLoadErrorBanner, setShowLoadErrorBanner] = useState(false);
@@ -346,7 +348,7 @@ function useConciergeChatController({
 
         // Don't show these validation errors to the user as they're internal SDK issues
         refetch();
-        navigate(`/concierge/${id}`);
+        void navigate({ to: '/concierge/$id', params: { id } });
 
         return;
       }
@@ -436,14 +438,16 @@ function useConciergeChatController({
 
   const handleSendMessage: typeof sendMessage = useCallback(
     (message, options) => {
-      if (searchParams.get('defaultMessage') != null) {
-        setSearchParams(
-          (params) => {
-            params.delete('defaultMessage');
-            return params;
+      if (defaultMessage != null && defaultMessage.length > 0) {
+        void navigate({
+          search: (prev) => {
+            return {
+              ...prev,
+              defaultMessage: undefined,
+            };
           },
-          { replace: true },
-        );
+          replace: true,
+        });
       }
 
       lastReportedErrorRef.current = null;
@@ -453,7 +457,7 @@ function useConciergeChatController({
       setInput('');
       return sendMessage(message, options);
     },
-    [incrementMessageCount, searchParams, sendMessage, setSearchParams],
+    [defaultMessage, incrementMessageCount, navigate, sendMessage],
   );
 
   useEffect(() => {

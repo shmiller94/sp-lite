@@ -1,5 +1,5 @@
+import { useNavigate } from '@tanstack/react-router';
 import { Check } from 'lucide-react';
-import { useNavigate } from 'react-router';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -61,11 +61,13 @@ const DesktopCard = ({
       role="button"
       tabIndex={0}
       className="group relative hidden cursor-pointer flex-col gap-4 overflow-hidden sm:flex"
-      onClick={() => navigate(`/services/${service.id}`)}
+      onClick={() => {
+        void navigate({ to: '/services/$id', params: { id: service.id } });
+      }}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          navigate(`/services/${service.id}`);
+          void navigate({ to: '/services/$id', params: { id: service.id } });
         }
       }}
     >
@@ -115,11 +117,13 @@ const MobileCard = ({
       role="button"
       tabIndex={0}
       className="flex flex-col gap-2 sm:hidden"
-      onClick={() => navigate(`/services/${service.id}`)}
+      onClick={() => {
+        void navigate({ to: '/services/$id', params: { id: service.id } });
+      }}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          navigate(`/services/${service.id}`);
+          void navigate({ to: '/services/$id', params: { id: service.id } });
         }
       }}
     >

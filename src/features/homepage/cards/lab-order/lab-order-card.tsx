@@ -1,6 +1,6 @@
+import { Link } from '@tanstack/react-router';
 import { ArrowUpRightIcon, Calendar, MapPin } from 'lucide-react';
 import { useCallback } from 'react';
-import { Link } from 'react-router';
 
 import { AddToCalendar } from '@/components/shared/add-to-calendar-button';
 import { Button } from '@/components/ui/button';
@@ -215,7 +215,8 @@ export const LabOrderCard = () => {
         <div className="mb-4 flex items-center justify-between">
           <Body1 className="font-medium text-zinc-900">{primaryMessage}</Body1>
           <Link
-            to={`/orders/${activeLabOrder.id}`}
+            to="/orders/$id"
+            params={{ id: activeLabOrder.id }}
             className="group text-sm text-zinc-500 hover:text-zinc-700"
           >
             <span className="hidden md:inline-block">More details </span>

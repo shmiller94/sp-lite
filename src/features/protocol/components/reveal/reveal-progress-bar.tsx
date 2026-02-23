@@ -1,5 +1,5 @@
+import { useParams } from '@tanstack/react-router';
 import { useEffect, useMemo, useRef } from 'react';
-import { useParams } from 'react-router';
 
 import { cn } from '@/lib/utils';
 
@@ -14,7 +14,8 @@ const HIDDEN = new Set<string>([
 ]);
 
 export const RevealProgressBar = ({ className }: { className?: string }) => {
-  const { step } = useParams<{ step?: string }>();
+  const params = useParams({ strict: false });
+  const step = params.step;
   const { baseSteps, initialStep } = useRevealStepper(undefined, step);
   const { data: protocol } = useLatestProtocol();
   const progressBarsRef = useRef<(HTMLDivElement | null)[]>([]);

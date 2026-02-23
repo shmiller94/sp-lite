@@ -10,8 +10,8 @@ import {
   StripeExpressCheckoutElementConfirmEvent,
 } from '@stripe/stripe-js';
 import { useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
 
 import { toast } from '@/components/ui/sonner';
 import { useCreateConsent } from '@/features/announcements/api/create-consent';
@@ -25,8 +25,8 @@ import {
 import { RegisterInput, useRegister, useUser } from '@/lib/auth';
 import { getActiveLogin } from '@/lib/utils';
 import { ConsentType, User } from '@/types/api';
-import { getAccessCode } from '@/utils/access-code';
-import { getReferralId } from '@/utils/referral-id';
+import { getAccessCode, useAccessCode } from '@/utils/access-code';
+import { useReferralId } from '@/utils/referral-id';
 import { getState } from '@/utils/verify-state-from-postal';
 
 export const useCheckout = ({
@@ -48,6 +48,8 @@ export const useCheckout = ({
   );
   const queryClient = useQueryClient();
   const { data: user } = useUser();
+  const accessCodeFromSearch = useAccessCode();
+  const referralId = useReferralId();
 
   // queries / mutations
   const addPaymentMethodMutation = useAddPaymentMethod();
@@ -87,14 +89,15 @@ export const useCheckout = ({
           });
 
           // Navigate to check email screen with email in React Router state
-          navigate('/check-email', {
+          void navigate({
+            to: '/check-email',
             state: {
               email: user.email,
               origin: 'registration',
             },
           });
         } else {
-          navigate('/onboarding');
+          void navigate({ to: '/onboarding' });
         }
 
         // Reset processing state after navigation to prevent UI flash
@@ -122,10 +125,9 @@ export const useCheckout = ({
       stateValue = stateLookup.state;
     }
 
-    const accessCode = getAccessCode();
+    const accessCode = getAccessCode() ?? accessCodeFromSearch;
     const accessCodeValue = accessCode == null ? undefined : accessCode;
 
-    const referralId = getReferralId();
     const referralIdValue = referralId == null ? undefined : referralId;
 
     try {

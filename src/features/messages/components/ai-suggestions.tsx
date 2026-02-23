@@ -1,6 +1,6 @@
+import { useNavigate } from '@tanstack/react-router';
 import { useWindowWidth } from '@wojtekmaj/react-hooks';
 import { ArrowRight } from 'lucide-react';
-import { useNavigate } from 'react-router';
 
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -72,9 +72,10 @@ export const AiSuggestions = ({
 
     const handleClick = () => {
       if (isMobile) {
-        navigate(
-          `/concierge?defaultMessage=${encodeURIComponent(suggestionText)}`,
-        );
+        const href = `/concierge?defaultMessage=${encodeURIComponent(
+          suggestionText,
+        )}`;
+        void navigate({ href });
       } else {
         open(suggestionText);
       }

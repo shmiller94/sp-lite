@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router';
+import { useNavigate } from '@tanstack/react-router';
 
 import { AnimatedTimeline } from '@/components/ui/animated-timeline';
 import { Button } from '@/components/ui/button';
@@ -45,19 +45,21 @@ export const PurchaseSuccessStep = () => {
           <div className="w-full space-y-2">
             <Button
               className="w-full"
-              onClick={() =>
-                navigate(
-                  service.group
+              onClick={() => {
+                const href =
+                  service?.group != null
                     ? `/schedule?mode=${service.group}`
-                    : '/schedule',
-                )
-              }
+                    : '/schedule';
+                void navigate({ href });
+              }}
             >
               {isTestKit ? 'Ship now' : 'Schedule now'}
             </Button>
             <DialogClose asChild>
               <Button
-                onClick={() => navigate('/orders')}
+                onClick={() => {
+                  void navigate({ to: '/orders' });
+                }}
                 className="w-full"
                 variant="white"
               >

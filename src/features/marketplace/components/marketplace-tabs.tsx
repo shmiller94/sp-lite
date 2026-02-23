@@ -1,6 +1,6 @@
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import type { ComponentType, ReactNode, SVGProps } from 'react';
 import { useCallback, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router';
 
 import {
   AllProducts,
@@ -9,10 +9,10 @@ import {
 } from '@/components/icons/marketplace';
 import { Prescriptions } from '@/components/icons/marketplace/prescriptions';
 import {
+  Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-  URLTabs,
 } from '@/components/ui/slider-tabs';
 import { useMarketplace } from '@/features/marketplace/api/get-marketplace';
 import { MarketplaceFilters } from '@/features/marketplace/components/marketplace-filters';
@@ -38,16 +38,13 @@ type MarketplaceTab = {
 
 export const MarketplaceTabs = () => {
   const { data, isLoading } = useMarketplace();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate({ from: '/marketplace' });
   const { track } = useAnalytics();
-  const rawTab = searchParams.get('tab');
-  const activeTab: MarketplaceTabValue =
-    rawTab === 'tests' ||
-    rawTab === 'supplements' ||
-    rawTab === 'prescriptions' ||
-    rawTab === 'orders'
-      ? rawTab
-      : 'all';
+  const tab = useSearch({
+    from: '/_app/marketplace',
+    select: (s) => s.tab,
+  });
+  const activeTab: MarketplaceTabValue = tab ?? 'all';
   const [filter, setFilter] = useState<MarketplaceFilter>('all');
   const {
     query,
@@ -57,15 +54,56 @@ export const MarketplaceTabs = () => {
   } = useMarketplaceSearch();
 
   const ensureAllTabActive = useCallback(() => {
-    setSearchParams((params) => {
-      if (!params.has('tab')) {
-        return params;
+    if (tab == null) {
+      return;
+    }
+    void navigate({
+      search: (prev) => {
+        return {
+          ...prev,
+          tab: undefined,
+        };
+      },
+    });
+  }, [navigate, tab]);
+
+  const handleTabChange = useCallback(
+    (value: string) => {
+      if (value === activeTab) {
+        return;
+      }
+      if (value === 'all') {
+        void navigate({
+          search: (prev) => {
+            return {
+              ...prev,
+              tab: undefined,
+            };
+          },
+        });
+        return;
       }
 
-      params.delete('tab');
-      return params;
-    });
-  }, [setSearchParams]);
+      if (
+        value !== 'tests' &&
+        value !== 'supplements' &&
+        value !== 'prescriptions' &&
+        value !== 'orders'
+      ) {
+        return;
+      }
+
+      void navigate({
+        search: (prev) => {
+          return {
+            ...prev,
+            tab: value,
+          };
+        },
+      });
+    },
+    [activeTab, navigate],
+  );
 
   const handleClearSearch = useCallback(() => {
     setSearchQuery('');
@@ -157,7 +195,7 @@ export const MarketplaceTabs = () => {
   };
 
   return (
-    <URLTabs>
+    <Tabs value={activeTab} onValueChange={handleTabChange}>
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between md:gap-6">
           <TabsList
@@ -221,6 +259,6 @@ export const MarketplaceTabs = () => {
           {tab.render()}
         </TabsContent>
       ))}
-    </URLTabs>
+    </Tabs>
   );
 };

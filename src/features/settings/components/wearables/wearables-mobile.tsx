@@ -1,7 +1,7 @@
+import { useNavigate } from '@tanstack/react-router';
 import { Reorder } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
 
 import { WearablesSearch } from '@/features/settings/components/wearables/wearables-search';
 import { Wearable } from '@/types/api';
@@ -63,9 +63,10 @@ export function WearablesMobile({
         value={provider}
         className="flex cursor-pointer items-center rounded-2xl bg-white px-5 py-6"
         key={provider}
-        onClick={() =>
-          navigate(`/settings/integrations/${wearable.provider.toLowerCase()}`)
-        }
+        onClick={() => {
+          const href = `/settings/integrations/${wearable.provider.toLowerCase()}`;
+          void navigate({ href });
+        }}
       >
         <div className="flex flex-row items-center gap-x-2">
           <img src={wearable.logo} alt={wearable.provider} className="size-5" />

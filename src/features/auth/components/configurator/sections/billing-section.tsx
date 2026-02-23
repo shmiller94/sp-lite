@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
 import { HSAFSACheckoutButton } from '@/components/shared/hsa-fsa-checkout-button';
@@ -12,15 +12,16 @@ import { useCheckout } from '@/features/auth/hooks/use-checkout';
 import { useCheckoutContext } from '@/features/auth/stores';
 import { PaymentDetails } from '@/features/users/components/payment/payment-details';
 import { RegisterInput } from '@/lib/auth';
-import { getAccessCode } from '@/utils/access-code';
+import { useAccessCode } from '@/utils/access-code';
 import { getState } from '@/utils/verify-state-from-postal';
 
 import { VerifyCouponCodeSection } from './verify-coupon-code-section';
 
 export const BillingSection = () => {
   const form = useFormContext<RegisterInput>();
-  const { membership, processing } = useCheckoutContext();
+  const { membership, processing, coupon, setCoupon } = useCheckoutContext();
   const [expressAvailable, setExpressAvailable] = useState(false);
+  const accessCode = useAccessCode();
   const postalCode = useWatch({
     control: form.control,
     name: 'postalCode',
@@ -37,6 +38,12 @@ export const BillingSection = () => {
   const postalCodeValue = postalCode ?? '';
   const emailValue = email ?? '';
   const phoneValue = phone ?? '';
+
+  useEffect(() => {
+    if (coupon != null) return;
+    if (accessCode == null) return;
+    setCoupon(accessCode);
+  }, [coupon, accessCode, setCoupon]);
 
   const {
     handleCardNumberPayment,
@@ -91,7 +98,7 @@ export const BillingSection = () => {
           }
           disabled={processing || isMutationPending}
           state={getState(postalCodeValue)?.state ?? 'CA'}
-          coupon={getAccessCode() || undefined}
+          coupon={coupon ?? accessCode ?? undefined}
           email={emailValue}
           phone={phoneValue}
         />

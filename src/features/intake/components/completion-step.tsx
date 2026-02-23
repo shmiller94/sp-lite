@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router';
+import { useNavigate } from '@tanstack/react-router';
 
 import { Head } from '@/components/seo';
 import { Button } from '@/components/ui/button';
@@ -9,7 +9,7 @@ export const CompletionStep = () => {
   const navigate = useNavigate();
 
   const handleContinue = () => {
-    navigate('/', { replace: true });
+    void navigate({ to: '/', replace: true });
   };
 
   return (

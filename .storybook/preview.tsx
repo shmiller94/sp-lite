@@ -1,5 +1,5 @@
+import { BrowserRouter as Router } from '@tanstack/react-router';
 import React from 'react';
-import { BrowserRouter as Router } from 'react-router';
 
 import '../src/index.css';
 

@@ -1,6 +1,6 @@
 import { defineStepper } from '@stepperize/react';
+import { useNavigate } from '@tanstack/react-router';
 import { useCallback, useMemo, useRef } from 'react';
-import { useNavigate } from 'react-router';
 
 import { useAnalytics } from '@/hooks/use-analytics';
 
@@ -233,7 +233,7 @@ export const useRevealStepper = (
       if (carePlanId) {
         await completeRevealMutation.mutateAsync(carePlanId);
       }
-      navigate('/protocol', { replace: true });
+      void navigate({ to: '/protocol', replace: true });
       return;
     }
 
@@ -244,7 +244,10 @@ export const useRevealStepper = (
       next_step: nextStepId,
     });
 
-    navigate(`/protocol/reveal/${nextStepId}`);
+    void navigate({
+      to: '/protocol/reveal/$step',
+      params: { step: nextStepId },
+    });
   }, [
     RevealStepper,
     carePlanId,
@@ -278,7 +281,10 @@ export const useRevealStepper = (
       previous_step: prevStepId,
     });
 
-    navigate(`/protocol/reveal/${prevStepId}`);
+    void navigate({
+      to: '/protocol/reveal/$step',
+      params: { step: prevStepId },
+    });
   }, [RevealStepper, navigate, resolveActiveStepId, track]);
 
   return {

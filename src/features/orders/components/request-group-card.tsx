@@ -1,7 +1,7 @@
 import { TZDateMini } from '@date-fns/tz';
+import { useNavigate } from '@tanstack/react-router';
 import { format } from 'date-fns';
 import React from 'react';
-import { useNavigate } from 'react-router';
 
 import { ChevronRightIcon } from '@/components/icons/chevron-right-icon';
 import { Badge } from '@/components/ui/badge';
@@ -39,7 +39,9 @@ export const RequestGroupCard: React.FC<RequestGroupCardProps> = ({
           <RequestGroupItems
             group={group}
             services={services}
-            onManage={() => navigate(`/orders/${group.id}`)}
+            onManage={() => {
+              void navigate({ to: '/orders/$id', params: { id: group.id } });
+            }}
           />
           {requestGroups.length - 1 !== index && (
             <div className="my-2 h-px w-full bg-zinc-200" />

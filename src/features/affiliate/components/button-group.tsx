@@ -1,5 +1,5 @@
+import { useNavigate } from '@tanstack/react-router';
 import React from 'react';
-import { useNavigate } from 'react-router';
 
 import { Button } from '@/components/ui/button';
 
@@ -21,7 +21,7 @@ export const ButtonGroup: React.FC<ButtonGroupProps> = ({
       event_category: 'engagement',
       event_label: sourceParam,
     });
-    navigate(`/invite?source=${sourceParam}`);
+    void navigate({ href: `/invite?source=${sourceParam}` });
   };
 
   return (

@@ -1,11 +1,18 @@
 import {
+  Outlet,
+  RouterProvider,
+  createMemoryHistory,
+  createRootRoute,
+  createRoute,
+  createRouter,
+} from '@tanstack/react-router';
+import {
   render as rtlRender,
   screen,
   waitForElementToBeRemoved,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
-import { RouterProvider, createMemoryRouter } from 'react-router';
 
 import { AppProvider } from '@/app/provider';
 import { useUser } from '@/lib/auth';
@@ -86,30 +93,40 @@ export const renderApp = async (
   // if you want to render the app unauthenticated then pass "null" as the user
   const initializedUser = await initializeUser(user);
 
-  const router = createMemoryRouter(
-    [
-      {
-        path: path,
-        element: ui,
-      },
-    ],
-    {
-      initialEntries: url ? ['/', url] : ['/'],
-      initialIndex: url ? 1 : 0,
+  const rootRoute = createRootRoute({
+    component: () => <Outlet />,
+  });
+
+  const normalizedPath = path.replace(
+    /:([A-Za-z0-9_]+)/g,
+    (_m: string, p1: string) => {
+      return `$${p1}`;
     },
   );
 
+  const testRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: normalizedPath,
+    component: () => ui,
+  });
+
+  const router = createRouter({
+    routeTree: rootRoute.addChildren([testRoute]),
+    history: createMemoryHistory({
+      initialEntries: url ? ['/', url] : ['/'],
+      initialIndex: url ? 1 : 0,
+    }),
+  });
+
+  await router.load({ sync: true });
+
   const returnValue = {
-    ...rtlRender(ui, {
-      wrapper: () => {
-        return (
-          <AppProvider>
-            <TestAuthGate>
-              <RouterProvider router={router} />
-            </TestAuthGate>
-          </AppProvider>
-        );
-      },
+    ...rtlRender(<RouterProvider router={router} />, {
+      wrapper: ({ children }) => (
+        <AppProvider>
+          <TestAuthGate>{children}</TestAuthGate>
+        </AppProvider>
+      ),
       ...renderOptions,
     }),
     user: initializedUser,

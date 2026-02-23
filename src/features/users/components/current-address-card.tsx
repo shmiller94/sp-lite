@@ -1,6 +1,6 @@
+import { useRouterState } from '@tanstack/react-router';
 import { Pencil } from 'lucide-react';
 import { useState } from 'react';
-import { useLocation } from 'react-router';
 
 import { Button } from '@/components/ui/button';
 import { Body1, Body2, Body3 } from '@/components/ui/typography';
@@ -82,9 +82,9 @@ export const CurrentAddressCard = ({
 };
 
 export const CurrentAddressEditSuggestion = () => {
-  const location = useLocation();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
 
-  return location.pathname.includes('onboarding') ? (
+  return pathname.includes('onboarding') ? (
     <span>
       Contact concierge at{' '}
       <a

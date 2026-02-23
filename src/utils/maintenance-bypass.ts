@@ -1,33 +1,48 @@
+import { useNavigate, useSearch } from '@tanstack/react-router';
+import { useEffect } from 'react';
+
 const STORAGE_KEY = 'bypass';
 const BYPASS_CODE = 'superpower-emr';
 
-const setBypassInSession = (code: string) => {
-  sessionStorage.setItem(STORAGE_KEY, code);
-};
-
-const cleanUrlParams = () => {
-  const newUrl = new URL(window.location.href);
-  newUrl.searchParams.delete(STORAGE_KEY);
-  window.history.replaceState({}, document.title, newUrl.toString());
-};
-
-const checkUrlBypass = (bypassCode: string): boolean => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const urlBypass = urlParams.get(STORAGE_KEY);
-
-  if (urlBypass === bypassCode) {
-    setBypassInSession(bypassCode);
-    cleanUrlParams();
-    return true;
+const readBypassFromSession = () => {
+  try {
+    return sessionStorage.getItem(STORAGE_KEY);
+  } catch (e) {
+    console.warn('Failed to read maintenance bypass from sessionStorage', e);
+    return null;
   }
-
-  return false;
 };
 
-const checkSessionBypass = (bypassCode: string): boolean => {
-  return sessionStorage.getItem(STORAGE_KEY) === bypassCode;
-};
+export const useShouldBypassMaintenance = () => {
+  const navigate = useNavigate();
+  const bypass = useSearch({ strict: false, select: (s) => s.bypass });
 
-export const shouldBypassMaintenance = (): boolean => {
-  return checkSessionBypass(BYPASS_CODE) || checkUrlBypass(BYPASS_CODE);
+  const bypassValue = bypass?.trim();
+  const sessionBypass = readBypassFromSession();
+
+  const shouldBypass =
+    sessionBypass === BYPASS_CODE || bypassValue === BYPASS_CODE;
+
+  useEffect(() => {
+    if (bypassValue !== BYPASS_CODE) return;
+
+    try {
+      sessionStorage.setItem(STORAGE_KEY, BYPASS_CODE);
+    } catch (e) {
+      console.warn('Failed to persist maintenance bypass in sessionStorage', e);
+    }
+
+    void navigate({
+      to: '.',
+      replace: true,
+      search: (prev) => {
+        return {
+          ...prev,
+          bypass: undefined,
+        };
+      },
+    });
+  }, [bypassValue, navigate]);
+
+  return shouldBypass;
 };

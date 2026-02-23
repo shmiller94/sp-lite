@@ -1,6 +1,5 @@
 import { defineStepper } from '@stepperize/react';
-
-import { useCheckLocation } from '@/hooks/use-check-location';
+import { useMatchRoute } from '@tanstack/react-router';
 
 import { useScheduleStore } from '../../stores/schedule-store';
 
@@ -47,7 +46,8 @@ interface UseScheduleFlowStepperType extends ScheduleFlowStepperUseStepperType {
 
 export const useScheduleFlowStepper = (): UseScheduleFlowStepperType => {
   const mode = useScheduleStore((s) => s.mode);
-  const isOnOnboarding = useCheckLocation('/onboarding');
+  const matchRoute = useMatchRoute();
+  const isOnOnboarding = matchRoute({ to: '/onboarding' });
 
   const methods = ScheduleFlowStepper.useStepper();
 

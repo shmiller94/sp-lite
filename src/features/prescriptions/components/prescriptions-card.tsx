@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router';
+import { useNavigate } from '@tanstack/react-router';
 
 import { Button } from '@/components/ui/button';
 import { ProgressiveImage } from '@/components/ui/progressive-image';
@@ -29,7 +29,10 @@ const DesktopCard = ({ prescription }: { prescription: Rx }) => {
         track('prescription_card_clicked', {
           prescriptionId: prescription.id,
         });
-        navigate(`/prescriptions/${prescription.id}`);
+        void navigate({
+          to: '/prescriptions/$id',
+          params: { id: prescription.id },
+        });
       }}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -37,7 +40,10 @@ const DesktopCard = ({ prescription }: { prescription: Rx }) => {
           track('prescription_card_clicked', {
             prescriptionId: prescription.id,
           });
-          navigate(`/prescriptions/${prescription.id}`);
+          void navigate({
+            to: '/prescriptions/$id',
+            params: { id: prescription.id },
+          });
         }
       }}
     >
@@ -82,7 +88,10 @@ const MobileCard = ({ prescription }: { prescription: Rx }) => {
         track('prescription_card_clicked', {
           prescriptionId: prescription.id,
         });
-        navigate(`/prescriptions/${prescription.id}`);
+        void navigate({
+          to: '/prescriptions/$id',
+          params: { id: prescription.id },
+        });
       }}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -90,7 +99,10 @@ const MobileCard = ({ prescription }: { prescription: Rx }) => {
           track('prescription_card_clicked', {
             prescriptionId: prescription.id,
           });
-          navigate(`/prescriptions/${prescription.id}`);
+          void navigate({
+            to: '/prescriptions/$id',
+            params: { id: prescription.id },
+          });
         }
       }}
     >

@@ -1,7 +1,7 @@
+import { useNavigate } from '@tanstack/react-router';
 import { format } from 'date-fns';
 import { ChevronRight } from 'lucide-react';
 import { HTMLAttributes } from 'react';
-import { useNavigate } from 'react-router';
 
 import { Card } from '@/components/ui/card';
 import {
@@ -157,7 +157,7 @@ const OrderRowCard = ({
 
   const onClickHandler = () => {
     if (multiPlatformOrder.type === 'service') {
-      navigate('/services');
+      void navigate({ to: '/services' });
     }
 
     if (multiPlatformOrder.invoiceUrl) {

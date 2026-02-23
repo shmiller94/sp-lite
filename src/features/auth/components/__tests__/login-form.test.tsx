@@ -19,7 +19,7 @@ test('should login new user and call onSuccessWithPassword cb which should navig
       onSuccessWithPassword={onSuccessWithPassword}
       onSuccessWithMagicLink={onSuccessWithMagicLink}
     />,
-    { user: null },
+    { user: null, url: '/signin', path: '/signin' },
   );
 
   // Switch to password mode first since magic link is default

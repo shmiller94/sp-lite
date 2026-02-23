@@ -1,6 +1,6 @@
+import { useNavigate } from '@tanstack/react-router';
 import { ShoppingCart } from 'lucide-react';
 import { useEffect, useRef, useState, useMemo } from 'react';
-import { useNavigate } from 'react-router';
 
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
@@ -95,11 +95,11 @@ export const ProductCheckoutStep = ({
     });
     try {
       await completeRevealMutation.mutateAsync(carePlanId);
-      navigate('/protocol');
+      void navigate({ to: '/protocol' });
     } catch (e) {
       console.error('Error completing reveal', e);
       // fall back to navigate
-      navigate('/protocol');
+      void navigate({ to: '/protocol' });
     }
   };
 

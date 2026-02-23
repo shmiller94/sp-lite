@@ -1,8 +1,8 @@
 import { UseChatHelpers } from '@ai-sdk/react';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import { UIMessage } from 'ai';
 import { ArrowDown } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
 
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -28,7 +28,8 @@ function PureMessages({
 }: MessagesProps) {
   const { data: history } = useHistory();
   const navigate = useNavigate();
-  const { id } = useParams();
+  const params = useParams({ strict: false });
+  const id = params.id;
 
   // Smart scroll state
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
@@ -38,10 +39,14 @@ function PureMessages({
   // If the chat is ready and there are messages, navigate to the chat
   useEffect(() => {
     if (disableAutoNavigate) return;
-    if (status === 'ready' && messages.length > 0 && !id) {
+    if (status === 'ready' && messages.length > 0 && id == null) {
       const recentChat = history?.find((h) => h.id === chatId);
       if (recentChat) {
-        navigate(`/concierge/${recentChat.id}`, { replace: true });
+        void navigate({
+          to: '/concierge/$id',
+          params: { id: recentChat.id },
+          replace: true,
+        });
       }
     }
   }, [status, messages, history, chatId, navigate, id, disableAutoNavigate]);

@@ -1,8 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigate } from '@tanstack/react-router';
 import { ArrowUpIcon, Clock, Loader, XIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
-import { useNavigate } from 'react-router';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -189,7 +189,7 @@ const SuccessDialog = ({
             variant="default"
             className="w-full rounded-full"
             onClick={() => {
-              navigate('/concierge');
+              void navigate({ to: '/concierge' });
             }}
           >
             Message Superpower AI

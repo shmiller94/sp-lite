@@ -1,6 +1,6 @@
+import { Link } from '@tanstack/react-router';
 import { ChevronDown, CalendarPlus } from 'lucide-react';
 import React, { useState } from 'react';
-import { NavLink } from 'react-router';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -111,12 +111,12 @@ export const RequestGroupsListListEmpty = ({
           {/* Mobile-only CTA (< md) */}
           <div className="lg:hidden">
             <Button asChild size="medium">
-              <NavLink to="/services">Get Started</NavLink>
+              <Link to="/services">Get Started</Link>
             </Button>
           </div>
         </div>
 
-        <NavLink
+        <Link
           to="/services"
           className={cn(
             'absolute inset-0 flex items-center justify-center',
@@ -130,7 +130,7 @@ export const RequestGroupsListListEmpty = ({
             <CalendarPlus />
             <span className="text-base font-medium">Get Started</span>
           </div>
-        </NavLink>
+        </Link>
       </div>
     </div>
   );

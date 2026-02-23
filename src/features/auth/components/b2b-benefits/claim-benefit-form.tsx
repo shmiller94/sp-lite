@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { useForm, useFormContext } from 'react-hook-form';
-import { useNavigate, useSearchParams } from 'react-router';
 
 import { AuthLayout } from '@/components/layouts';
 import { Button } from '@/components/ui/button';
@@ -31,8 +31,8 @@ export const ClaimBenefitForm = () => {
   const [step, setStep] = useState<1 | 2>(1);
   const [benefitIds, setBenefitIds] = useState<string[]>([]);
 
-  const [searchParams] = useSearchParams();
-  const organizationId = searchParams.get('id') ?? '';
+  const organizationId =
+    useSearch({ from: '/claim-benefit', select: (s) => s.id }) ?? '';
   const {
     data: benefits,
     isLoading: isBenefitsLoading,
@@ -52,7 +52,8 @@ export const ClaimBenefitForm = () => {
     organizationId,
     benefitIds,
     onSuccess: async (email) => {
-      navigate('/check-email', {
+      void navigate({
+        to: '/check-email',
         state: {
           email,
           origin: 'registration',
@@ -75,13 +76,13 @@ export const ClaimBenefitForm = () => {
   useEffect(() => {
     if (!organizationId) {
       toast.error('Invalid benefit link. Please contact your organization.');
-      navigate('/register');
+      void navigate({ to: '/register' });
       return;
     }
 
     if (!isBenefitsLoading && (isBenefitsError || !benefits)) {
       toast.error('Unable to load benefits. Please contact your organization.');
-      navigate('/register');
+      void navigate({ to: '/register' });
     }
   }, [organizationId, navigate, isBenefitsLoading, isBenefitsError, benefits]);
 
@@ -114,8 +115,10 @@ const VerifyEligibilityStep = ({
 
   const userQuery = useUser();
 
-  const [searchParams] = useSearchParams();
-  const organizationId = searchParams.get('id');
+  const organizationId = useSearch({
+    from: '/claim-benefit',
+    select: (s) => s.id,
+  });
 
   const logout = useLogout();
   const getEligibleBenefits = useGetEligibleBenefits();
@@ -125,7 +128,8 @@ const VerifyEligibilityStep = ({
   const handleNext = async () => {
     const isStepValid = await form.trigger('email');
 
-    if (!isStepValid || !organizationId) return;
+    if (!isStepValid) return;
+    if (organizationId == null || organizationId.length === 0) return;
 
     const email = form.getValues('email');
 

@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigate } from '@tanstack/react-router';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -101,7 +101,9 @@ export function ResetPasswordForm(): JSX.Element {
                 type="button"
                 className="w-full"
                 variant="outline"
-                onClick={() => navigate('/signin')}
+                onClick={() => {
+                  void navigate({ to: '/signin' });
+                }}
               >
                 Back to sign in
               </Button>

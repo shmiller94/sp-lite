@@ -1,6 +1,6 @@
 import { TZDateMini } from '@date-fns/tz';
+import { useNavigate } from '@tanstack/react-router';
 import { format } from 'date-fns';
-import { useNavigate } from 'react-router';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -37,7 +37,7 @@ export const CarePlanDialog = ({ open, onOpenChange }: CarePlanDialogProps) => {
       action_plan_id: latestPlan.id,
     });
     onOpenChange(false);
-    navigate(`/plans/${latestPlan.id}`);
+    void navigate({ to: '/plans/$id', params: { id: latestPlan.id } });
   };
 
   const handleDismiss = () => {

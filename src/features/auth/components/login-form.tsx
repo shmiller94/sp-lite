@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Link, useSearch } from '@tanstack/react-router';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link, useSearchParams } from 'react-router';
 import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
@@ -45,8 +45,10 @@ export const LoginForm = ({
     'magic-link',
   );
 
-  const [searchParams] = useSearchParams();
-  const defaultEmail = searchParams.get('email');
+  const defaultEmail = useSearch({
+    from: '/signin',
+    select: (s) => s.email,
+  });
 
   const loginMutation = useLogin({
     onSuccess: onSuccessWithPassword,
@@ -116,7 +118,7 @@ export const LoginForm = ({
         </div>
       </div>
 
-      {defaultEmail ? (
+      {defaultEmail != null && defaultEmail.length > 0 ? (
         <div className="rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3">
           <Body2 className="text-secondary">
             An account with the email{' '}

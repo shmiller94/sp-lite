@@ -1,4 +1,5 @@
 import { TZDateMini, type TZDate } from '@date-fns/tz';
+import { useRouterState } from '@tanstack/react-router';
 import {
   addDays,
   format,
@@ -10,7 +11,6 @@ import {
 } from 'date-fns';
 import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
-import { useLocation } from 'react-router';
 
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -43,7 +43,7 @@ export const SchedulerHeading = ({
   onRangeChange,
   onSelectionClear,
 }: SchedulerHeadingProps) => {
-  const { pathname } = useLocation();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   const startRangeInTz =
     startRange?.timeZone === tz

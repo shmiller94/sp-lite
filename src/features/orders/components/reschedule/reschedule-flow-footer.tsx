@@ -1,6 +1,6 @@
 import { sleep } from '@medplum/core';
+import { useNavigate } from '@tanstack/react-router';
 import React, { Dispatch, SetStateAction, useState } from 'react';
-import { useNavigate } from 'react-router';
 
 import { Button } from '@/components/ui/button';
 import { TransactionSpinner } from '@/components/ui/spinner/transaction-spinner';
@@ -36,7 +36,7 @@ export const HealthcareServiceRescheduleFooter = ({
       // user but credit wouldnt be restored yet
       // I tried to approach this with waitUntil (draft order exists) but what if it was regular cancellation without credit?
       // if u find anything smarter - open PR
-      navigate('/marketplace');
+      void navigate({ to: '/marketplace' });
     }
 
     if (mode === 'reschedule') {
@@ -44,7 +44,7 @@ export const HealthcareServiceRescheduleFooter = ({
       setIsProcessing(true);
       await sleep(3000);
       setIsProcessing(false);
-      navigate('/schedule');
+      void navigate({ to: '/schedule' });
       return;
     }
   };

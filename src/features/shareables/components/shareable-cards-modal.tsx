@@ -1,7 +1,7 @@
 import { Description } from '@radix-ui/react-dialog';
+import { useNavigate } from '@tanstack/react-router';
 import { X } from 'lucide-react';
 import { useCallback, useState } from 'react';
-import { useNavigate } from 'react-router';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -83,7 +83,7 @@ export const ShareableCardsModal = ({
         ? '/data?modal=superpower-score'
         : '/data?modal=biological-age';
 
-    navigate(params);
+    void navigate({ href: params });
   };
 
   const content = (

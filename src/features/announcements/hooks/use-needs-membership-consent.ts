@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router';
+import { useRouterState } from '@tanstack/react-router';
 
 import { useUser } from '@/lib/auth';
 import { useAuthorization } from '@/lib/authorization';
@@ -6,7 +6,7 @@ import { useAuthorization } from '@/lib/authorization';
 import { useGetConsent } from '../api';
 
 export const useNeedsMembershipConsent = () => {
-  const { pathname } = useLocation();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { checkAdminActorAccess } = useAuthorization();
   const { data: user } = useUser();
 

@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router';
+import { Link } from '@tanstack/react-router';
 
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
@@ -32,15 +32,15 @@ export const ProductsSection = () => {
             <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-white to-transparent" />
             <div className="absolute bottom-0 left-1/2 -translate-x-1/2">
               {plan ? (
-                <NavLink to={'/plans/' + plan.id}>
-                  <Button className="rounded-full">
-                    View your action plan
-                  </Button>
-                </NavLink>
+                <Button asChild className="rounded-full">
+                  <Link to={'/plans/' + plan.id}>View your action plan</Link>
+                </Button>
               ) : (
-                <NavLink to="/marketplace" state={{ from: location.pathname }}>
-                  <Button className="rounded-full">Explore all products</Button>
-                </NavLink>
+                <Button asChild className="rounded-full">
+                  <Link to="/marketplace" state={{ from: location.pathname }}>
+                    Explore all products
+                  </Link>
+                </Button>
               )}
             </div>
           </div>

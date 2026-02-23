@@ -1,5 +1,5 @@
+import { useParams, useSearch } from '@tanstack/react-router';
 import { format } from 'date-fns';
-import { useParams, useSearchParams } from 'react-router';
 
 import { ChevronLeft } from '@/components/icons/chevron-left-icon';
 import { Link } from '@/components/ui/link';
@@ -19,7 +19,8 @@ export const ProtocolOverview = ({
 }: {
   protocolId?: Protocol['id'];
 }) => {
-  const { id } = useParams();
+  const params = useParams({ strict: false });
+  const id = params.id;
   const {
     data: lastProtocol,
     isLoading: isLatestProtocolLoading,
@@ -36,8 +37,11 @@ export const ProtocolOverview = ({
 
   const { width } = useWindowDimensions();
   const isMobile = width ? width < 1024 : false;
-  const [searchParams] = useSearchParams();
-  const currentTab = searchParams.get('tab') || 'protocol';
+  const tab = useSearch({
+    from: '/_app/protocol',
+    select: (s) => s.tab,
+  });
+  const currentTab = tab ?? 'protocol';
 
   const protocol = protocolId ? idProtocol : lastProtocol;
   const isLoading = protocolId ? isProtocolLoading : isLatestProtocolLoading;

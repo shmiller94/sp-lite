@@ -1,5 +1,5 @@
+import { useSearch } from '@tanstack/react-router';
 import { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router';
 
 import {
   Carousel,
@@ -95,8 +95,10 @@ const CarouselDots = ({ count }: { count: number }) => {
 };
 
 export const BenefitSummary = () => {
-  const [searchParams] = useSearchParams();
-  const organizationId = searchParams.get('id');
+  const organizationId = useSearch({
+    from: '/claim-benefit',
+    select: (s) => s.id,
+  });
   const benefits = useBenefits(organizationId ?? '');
 
   const panelItems = useMemo(() => {

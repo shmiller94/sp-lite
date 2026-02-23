@@ -2,6 +2,8 @@
 /// <reference types="vite/client" />
 
 import react from '@vitejs/plugin-react';
+import { devtools } from '@tanstack/devtools-vite';
+import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
@@ -9,6 +11,11 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 const enableReactCompiler = process.env.REACT_COMPILER !== 'false';
 
 const plugins = [
+  devtools(),
+  tanstackRouter({
+    target: 'react',
+    autoCodeSplitting: true,
+  }),
   react(
     enableReactCompiler
       ? {

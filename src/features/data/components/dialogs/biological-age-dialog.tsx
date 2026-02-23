@@ -1,7 +1,7 @@
 import { Description } from '@radix-ui/react-dialog';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import { X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router';
 
 import { Button } from '@/components/ui/button';
 import { TimeSeriesChart } from '@/components/ui/charts/time-series-chart/time-series-chart';
@@ -49,7 +49,11 @@ export const BiologicalAgeDialog = ({
   disabled?: boolean;
 }) => {
   const [open, setOpen] = useState(false);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate({ from: '/data' });
+  const modal = useSearch({
+    from: '/_app/data',
+    select: (s) => s.modal,
+  });
   const [sharingOptionsOpen, setSharingOptionsOpen] = useState(false);
   const [showAge, setShowAge] = useState(false);
   const { width } = useWindowDimensions();
@@ -64,7 +68,6 @@ export const BiologicalAgeDialog = ({
   const organAgeBiomarkers = getOrganAgeBiomarkers(biomarkersData?.biomarkers);
 
   useEffect(() => {
-    const modal = (searchParams.get('modal') || '').toLowerCase();
     const shouldBeOpen = modal === 'biological-age' && !disabled;
     const timeoutId = setTimeout(() => {
       setOpen(shouldBeOpen);
@@ -73,17 +76,18 @@ export const BiologicalAgeDialog = ({
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [searchParams, disabled]);
+  }, [modal, disabled]);
 
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
-    const params = new URLSearchParams(searchParams);
-    if (nextOpen) {
-      params.set('modal', 'biological-age');
-    } else if (params.get('modal') === 'biological-age') {
-      params.delete('modal');
-    }
-    setSearchParams(params);
+    void navigate({
+      search: (prev) => {
+        return {
+          ...prev,
+          modal: nextOpen ? 'biological-age' : undefined,
+        };
+      },
+    });
   };
 
   const content = (

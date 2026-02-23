@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router';
+import { useNavigate } from '@tanstack/react-router';
 
 import { Head } from '@/components/seo';
 import { ScheduleFlow } from '@/features/orders/components/schedule/schedule-flow';
@@ -20,7 +20,7 @@ const BookingContent = () => {
 
   const handleDone = () => {
     if (isLastStep) {
-      navigate('/');
+      void navigate({ to: '/' });
     } else {
       next();
     }

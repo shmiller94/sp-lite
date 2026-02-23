@@ -26,6 +26,7 @@ import { useAnalytics } from '@/hooks/use-analytics';
 import { useLogout, useUser } from '@/lib/auth';
 import { registerInputSchema } from '@/lib/auth-schemas';
 import type { RegisterInput } from '@/lib/auth-schemas';
+import { useAccessCode } from '@/utils/access-code';
 import { getState } from '@/utils/verify-state-from-postal';
 
 import { BaselineSummary } from './configurator/baseline-summary';
@@ -178,6 +179,8 @@ const Step1 = ({ onNext }: { onNext: () => void }) => {
 export const Configurator = ({ onPrev }: { onPrev: () => void }) => {
   const updateMembership = useCheckoutContext((s) => s.updateMembership);
   const coupon = useCheckoutContext((s) => s.coupon);
+  const setCoupon = useCheckoutContext((s) => s.setCoupon);
+  const accessCode = useAccessCode();
   const form = useFormContext<RegisterInput>();
 
   const postalCode = useWatch({
@@ -187,9 +190,15 @@ export const Configurator = ({ onPrev }: { onPrev: () => void }) => {
   const postalCodeValue = postalCode ?? '';
 
   const availableSubscriptionsQuery = useAvailableSubscriptions({
-    coupon: coupon ?? undefined,
+    coupon: coupon ?? accessCode ?? undefined,
     state: getState(postalCodeValue)?.state,
   });
+
+  useEffect(() => {
+    if (coupon != null) return;
+    if (accessCode == null) return;
+    setCoupon(accessCode);
+  }, [coupon, accessCode, setCoupon]);
 
   useEffect(() => {
     const subscriptions = availableSubscriptionsQuery.data;
