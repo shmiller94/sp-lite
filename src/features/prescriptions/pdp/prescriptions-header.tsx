@@ -94,7 +94,7 @@ export const Header = ({ className, prescription }: HeaderProps) => {
               />
             </div>
           </div>
-          {prescription.name !== HCG && (
+          {prescription.name !== HCG && prescription.name !== TRETINOIN && (
             <Body3 className="mt-4 text-tertiary">
               {COMPOUNDED_PRODUCTS_DISCLAIMER}
             </Body3>
@@ -142,7 +142,7 @@ export const Header = ({ className, prescription }: HeaderProps) => {
               ))}
             </ul>
 
-            {prescription.name !== HCG && (
+            {prescription.name !== HCG && prescription.name !== TRETINOIN && (
               <Body3 className="text-tertiary">
                 {COMPOUNDED_PRODUCTS_DISCLAIMER}
               </Body3>

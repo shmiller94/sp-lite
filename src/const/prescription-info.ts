@@ -669,73 +669,90 @@ Avoid Metformin in conditions that increase the risk of lactic acidosis, such as
 
 export const TRETINOIN = {
   benefits: [
-    'Improves skin texture',
-    'Reduces fine lines and wrinkles',
-    'Enhances overall skin tone',
-    'Promotes skin renewal',
-    'Reveals a rejuvenated complexion',
+    'Accelerates cellular turnover to clear damaged surface cells',
+    'Stimulates collagen synthesis for measurable reduction in fine lines',
+    'Normalizes melanin distribution to even skin tone',
+    'Reduces comedone formation and pore congestion',
+    'Delivers cumulative structural improvements that build over months of consistent use',
   ],
   includes: [
-    '30 day supply of medication',
-    'Overnight shipping',
+    '30-day supply, delivered monthly',
     'Medical evaluation',
-    'Unlimited messaging',
+    'Free shipping',
+    'Unlimited messaging with your care team',
   ],
   science: {
-    activeIngredients: `The primary active ingredient, Tretinoin, is a potent derivative of vitamin A. This promotes cellular renewal and collagen synthesis for visibly smoother, more refined skin. The formulation is balanced with Aloe Vera to calm and hydrate, helping reduce redness and irritation. A PracaSil-Plus base supports barrier repair and optimal absorption, while emollients and stabilizers ensure a silky, restorative finish.`,
-    mechanism: `Apply a pea-sized amount of Resurfacing Gel to clean, completely dry skin in the evening. Smooth evenly across the face, avoiding the eye area, corners of the nose, and mouth. Begin with every-third-night use, gradually increasing frequency as tolerated. Follow with a gentle moisturizer if needed. In the morning, use a broad-spectrum sunscreen (SPF 30 or higher) to protect against sun sensitivity and support results.`,
-    history: `Tretinoin, a derivative of vitamin A, has been widely used in dermatology for its ability to promote skin renewal. It is a topical retinoid known for its effectiveness in treating acne and improving skin texture. Over the years, Tretinoin has become a cornerstone in skincare routines, helping individuals achieve smoother, clearer skin through its targeted mechanism of action.`,
+    activeIngredients: `The active ingredient is Tretinoin (0.025%), a direct metabolite of vitamin A and the most clinically validated topical retinoid. The cream base includes emollients and stabilizers designed for even distribution and absorption across the skin surface.`,
+    mechanism: `Apply a pea-sized amount to clean, completely dry skin in the evening. Spread evenly across the face, avoiding the eye area, corners of the nose, and lips.
+
+Phase-in schedule:
+• Weeks 1–2: Every third night — establishes baseline tolerance and allows barrier recovery between applications
+• Weeks 3–4: Every other night — increases receptor activation as skin adapts
+• Week 5+: Nightly (as tolerated) — full therapeutic frequency for ongoing collagen remodeling and turnover
+
+Wait at least 20 minutes after cleansing before applying. Damp skin increases penetration and irritation risk. Follow with a gentle, fragrance-free moisturizer if needed. Every morning, apply broad-spectrum sunscreen (SPF 30+). Tretinoin thins the outer skin layer — UV protection during treatment is required, not optional.`,
+    history: `Tretinoin was first developed in the 1960s as a treatment for acne and has since become one of the most extensively studied topical compounds in dermatology. Decades of clinical research have established its efficacy for improving skin texture, reducing fine lines, and correcting hyperpigmentation. It remains the gold standard topical retinoid — the molecule against which all other retinoids are measured.`,
   },
   headerFaq: [
     {
-      question: 'What is Tretinoin / Aloe Vera?',
-      answer: `Tretinoin / Aloe Vera Gel is a treatment that refines texture, smooths fine lines, and evens skin tone. Medical-grade Tretinoin accelerates cellular renewal and boosts collagen, while Aloe Vera calms and hydrates to minimize irritation. The result is smoother, clearer, more luminous skin with continued use.`,
+      question: 'What is Tretinoin Cream?',
+      answer: `Tretinoin Cream is a prescription-strength retinoid that works at the cellular level to resurface skin. It accelerates the turnover of damaged cells, stimulates new collagen production, and normalizes pigmentation. The result is measurably smoother, clearer, and more even skin — improvements that build with consistent use over months.`,
     },
     {
       question: 'How does it work?',
-      answer: `Tretinoin, a derivative of vitamin A, works by modulating gene expression and protein synthesis via the activation of nuclear retinoic acid receptors. This process leads to increased epidermal turnover, comedolysis, modulation of keratinocyte differentiation, and stimulation of collagen production. As a result, tretinoin helps to clear pores, reduce inflammation, and improve the appearance of the skin.`,
+      answer: `Tretinoin is the active metabolite of vitamin A. It binds directly to nuclear retinoic acid receptors (RARs), which modulate gene expression controlling epidermal differentiation and proliferation. This produces several measurable effects: accelerated shedding of damaged surface cells, normalization of keratinocyte maturation, stimulation of procollagen synthesis in the dermis, and redistribution of melanin granules. The net effect is structural remodeling of both the epidermis and upper dermis over time.`,
     },
   ],
   faq: [
     {
       question: 'Am I a good candidate for Tretinoin?',
-      answer: `A good candidate for tretinoin face cream typically has concerns such as acne, sun damage, fine lines, or hyperpigmentation. They should be committed to following a skincare routine and have minimal skin sensitivity.`,
+      answer: `Tretinoin is well-suited for anyone looking to address fine lines, uneven texture, hyperpigmentation, or mild to moderate acne. It works best for individuals who can commit to a consistent evening routine and daily sunscreen use.
+
+If you have a history of severe eczema, rosacea, or significant skin sensitivity, your clinician will evaluate whether tretinoin is appropriate or whether an adjusted protocol makes more sense for your skin.`,
     },
     {
-      question: 'Can tretinoin be used for sensitive skin types?',
-      answer:
-        'Tretinoin can be challenging for individuals with sensitive skin, as it may cause irritation, redness, or peeling. However, starting with a lower concentration of tretinoin and gradually increasing frequency of use can help minimize these side effects.',
+      question: 'What is the "purging" phase and how long does it last?',
+      answer: `In the first 2–6 weeks, tretinoin accelerates the turnover of skin cells — including cells that were already forming microcomedones beneath the surface. This can temporarily increase breakouts as those pre-existing impactions are pushed out. This is not new acne. It is existing congestion reaching the surface faster.
+
+The purging phase typically resolves within 4–6 weeks as skin turnover normalizes at the new rate.`,
     },
     {
-      question: 'How long does it take to see results from tretinoin cream?',
-      answer: `Results from tretinoin cream can vary depending on individual skin conditions and concerns. While some people may notice improvements in acne and skin texture within a few weeks, it may take several months to see significant changes in fine lines, wrinkles, and hyperpigmentation. Consistency and patience are key, and it's crucial to continue using tretinoin as directed by your dermatologist for optimal results.`,
+      question: 'How long does it take to see results?',
+      answer: `Texture improvements often appear within 4–6 weeks. Fine line reduction and tone correction develop more gradually over 3–6 months as dermal collagen remodeling accumulates. Tretinoin's benefits are cumulative — the longer you use it consistently, the more structural improvement occurs beneath the surface.
+
+Most clinical studies measure outcomes at 6–12 months.`,
+    },
+    {
+      question: 'Can I use other skincare products with tretinoin?',
+      answer: `Keep your routine simple during the adjustment phase. Use a gentle, fragrance-free cleanser and a basic moisturizer. Avoid vitamin C serums, AHAs, BHAs, benzoyl peroxide, and alcohol-based products until your skin has fully adapted (typically 6–8 weeks).
+
+Once stable, actives can be reintroduced one at a time — preferably on alternating days or mornings only. Your clinician can help sequence this.`,
     },
     {
       question:
-        'Can tretinoin cream be used during pregnancy or while breastfeeding?',
-      answer: `Tretinoin / Aloe Vera Face Cream is contraindicated for use in pregnant women, and caution is advised to prevent potential harm to a developing fetus.
-
-Breastfeeding women should avoid Tretinoin / Aloe Vera Face Cream due to the risk of excretion in breast milk, posing potential risks to nursing infants.
-
-Pregnant women should not handle Tretinoin / Aloe Vera Face Cream to prevent potential systemic absorption and exposure to the developing fetus.
-
-Individuals should consult with healthcare professionals before using Tretinoin / Aloe Vera Face Cream, especially if pregnant, planning pregnancy, or breastfeeding.`,
+        'Can tretinoin be used during pregnancy or while breastfeeding?',
+      answer: `Tretinoin Cream is contraindicated during pregnancy due to established risk to a developing fetus. Avoid use while breastfeeding. Pregnant individuals should avoid direct skin contact with the product. Consult your clinician before use if you are pregnant, planning pregnancy, or nursing.`,
     },
     {
       question: 'What are the potential side effects?',
-      answer: `Common side effects of Tretinoin / Aloe Vera Face Cream may include temporary redness, dryness, peeling, or a mild burning sensation. These effects often subside as the skin becomes acclimated to the treatment. If persistent or severe reactions occur, consult a healthcare professional.`,
+      answer: `Weeks 1–4 (Adaptation Phase): Tretinoin accelerates epidermal turnover beyond your skin's current baseline. Common effects include dryness and peeling, redness, mild burning or stinging, and temporary breakouts (purging). These are signs the medication is working, not damage.
+
+After Week 6 (Stabilization): Your skin adapts to the increased turnover rate. Most initial side effects resolve. Continued mild dryness is common and manageable with moisturizer. If irritation persists beyond 8 weeks, contact your care team to evaluate concentration or frequency adjustments.`,
     },
     {
       question: 'What are potential contraindications?',
-      answer: `- Allergies or Hypersensitivity: Avoid Tretinoin / Aloe Vera Face Cream if you have known allergies or hypersensitivity to the drug or any of its components.
-- Pregnancy: Tretinoin / Aloe Vera Face Cream is contraindicated for use in pregnant women, and caution is advised to prevent potential harm to a developing fetus.
-- Breastfeeding: Breastfeeding women should avoid Tretinoin / Aloe Vera Face Cream due to the risk of excretion in breast milk, posing potential risks to nursing infants.
-- Handling Precautions: Pregnant women should not handle Tretinoin / Aloe Vera Face Cream to prevent potential systemic absorption and exposure to the developing fetus.
-- Consultation with Healthcare Professionals: Individuals should consult with healthcare professionals before using Tretinoin / Aloe Vera Face Cream, especially if pregnant, planning pregnancy, or breastfeeding. Regular medical supervision ensures safe use and adherence to specific precautions.`,
+      answer: `- Allergy or Hypersensitivity: Do not use if you have a known allergy to tretinoin or any component in the formulation.
+- Pregnancy: Contraindicated during pregnancy. Retinoids carry established risk to a developing fetus.
+- Breastfeeding: Avoid use while breastfeeding. Small amounts of tretinoin may transfer into breast milk.
+- Handling Precautions: Pregnant individuals should avoid direct skin contact with the product.
+- Sun Sensitivity: Tretinoin thins the outer layer of skin, increasing UV vulnerability. Daily broad-spectrum sunscreen (SPF 30+) is required during treatment.
+- Medical Consultation: Discuss use with your clinician if you are pregnant, planning pregnancy, nursing, or using other prescription topicals.`,
     },
     {
       question: 'Potential drug interactions?',
-      answer: `Tretinoin / Aloe Vera Face Cream may interact with certain topical medications or skincare products containing alcohol, astringents, or peeling agents, potentially increasing skin irritation. It is crucial to avoid concurrent use of such products to prevent adverse reactions and enhance the effectiveness of Tretinoin / Aloe Vera Face Cream.`,
+      answer: `Avoid layering with other active topicals — particularly benzoyl peroxide, alpha/beta hydroxy acids (glycolic, salicylic), alcohol-based toners, or astringents. These increase the likelihood of irritation, dryness, and barrier disruption when combined with tretinoin.
+
+Introduce new actives one at a time. Pair with a gentle, fragrance-free cleanser and moisturizer to maintain skin barrier integrity and support tretinoin's effects.`,
     },
   ],
 };
