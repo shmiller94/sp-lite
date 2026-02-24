@@ -60,10 +60,10 @@ const ProtocolTabContent = ({
       const additionalProductNodes: JSX.Element[] = [];
       const avoidProductNodes: JSX.Element[] = [];
 
-      for (const activity of protocol.activities) {
+      for (const [index, activity] of protocol.activities.entries()) {
         if (activity.type === 'avoid-product') {
           hasAvoidProducts = true;
-          const key = `avoid-product:${activity.title}`;
+          const key = `avoid-product:${index}`;
 
           avoidProductNodes.push(
             <ProtocolTextItemRow
@@ -158,10 +158,10 @@ const ProtocolTabContent = ({
     case 'nutrition': {
       const currentTabNodes: JSX.Element[] = [];
 
-      for (const activity of protocol.activities) {
+      for (const [index, activity] of protocol.activities.entries()) {
         if (activity.type !== tabValue) continue;
 
-        const key = `${activity.type}:${activity.title}`;
+        const key = `${activity.type}:${index}`;
         currentTabNodes.push(
           <ProtocolTextItemRow key={key} activity={activity} />,
         );
