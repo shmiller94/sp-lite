@@ -48,7 +48,7 @@ function CitationCard({
           alt="Research paper"
         />
       </div>
-      <div className="space-y-0.5">
+      <div className="flex-1 space-y-0.5">
         <Body2 className="line-clamp-2 font-medium">{citation.title}</Body2>
         {meta && <Body3 className="text-zinc-500">{meta}</Body3>}
       </div>

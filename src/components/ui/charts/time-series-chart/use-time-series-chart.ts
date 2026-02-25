@@ -166,6 +166,7 @@ export const useTimeSeriesChart = ({
   currentPage = 0,
   itemsPerPage = 6,
   hoveredSource,
+  showNextTest = true,
 }: {
   biomarker: Biomarker;
   svgWidth: number;
@@ -174,6 +175,7 @@ export const useTimeSeriesChart = ({
   currentPage?: number;
   itemsPerPage?: number;
   hoveredSource?: string;
+  showNextTest?: boolean;
 }) => {
   const newestValueInfo = useMemo(
     () => getNewestValue(biomarker.value),
@@ -223,7 +225,7 @@ export const useTimeSeriesChart = ({
   const totalValues = sortedValues.length;
   const totalPages = Math.ceil(totalValues / itemsPerPage);
   const showPagination = totalPages > 1;
-  const shouldShowNextTest = currentPage === 0;
+  const shouldShowNextTest = currentPage === 0 && showNextTest;
 
   const endIndex = totalValues - currentPage * itemsPerPage;
   const startIndex = Math.max(0, endIndex - itemsPerPage);

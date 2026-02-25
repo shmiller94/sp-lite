@@ -1,5 +1,5 @@
 import NumberFlow from '@number-flow/react';
-import { useNavigate } from '@tanstack/react-router';
+import { useLocation, useNavigate } from '@tanstack/react-router';
 import { format } from 'date-fns';
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -65,6 +65,10 @@ export const TimeSeriesChart = ({
     null,
   );
 
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const isRevealRoute = pathname.startsWith('/protocol/reveal');
+
   const { meta, data, axes, optimal, rangeStack, config } = useTimeSeriesChart({
     biomarker,
     svgWidth,
@@ -75,9 +79,8 @@ export const TimeSeriesChart = ({
       ? CHART_CONFIG.ITEMS_PER_PAGE_MOBILE
       : CHART_CONFIG.ITEMS_PER_PAGE_DESKTOP,
     hoveredSource: displayedPoint?.source,
+    showNextTest: !isRevealRoute,
   });
-
-  const navigate = useNavigate();
 
   const sortedValues = [...biomarker.value].sort(
     (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
@@ -158,6 +161,7 @@ export const TimeSeriesChart = ({
         displayedPoint={displayedPoint}
         dataPoints={data.dataPoints}
         biomarkerUnit={biomarker.unit}
+        hideBookNow={isRevealRoute}
         onBookNow={() => {
           void navigate({ to: '/marketplace' });
         }}
@@ -628,6 +632,7 @@ function TimeSeriesChartTooltipPortal({
   displayedPoint,
   dataPoints,
   biomarkerUnit,
+  hideBookNow,
   onBookNow,
   onMouseEnter,
   onMouseLeave,
@@ -635,6 +640,7 @@ function TimeSeriesChartTooltipPortal({
   displayedPoint: DisplayedPoint | null;
   dataPoints: Array<{ status: string }>;
   biomarkerUnit: string;
+  hideBookNow?: boolean;
   onBookNow: () => void;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
@@ -663,6 +669,7 @@ function TimeSeriesChartTooltipPortal({
               onClick={onBookNow}
               size="small"
               className="w-full rounded-md"
+              disabled={hideBookNow}
             >
               Book now
             </Button>
