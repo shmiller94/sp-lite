@@ -1,15 +1,37 @@
 import React from 'react';
 
 import { useMarketplace } from '@/features/marketplace/api/get-marketplace';
-import { usePlans } from '@/features/protocol/api';
-import { parseProductRequests } from '@/features/protocol/utils/parse-product-requests';
+import { useLatestProtocol, type Protocol } from '@/features/protocol/api';
 import { Product } from '@/types/api';
 
 /**
- * Decide on the products to recommend based on the products available and the care plan requests
- * @param products
- * @param carePlanRequests
- * @returns
+ * Extract product IDs from protocol actions (supplements)
+ */
+const extractProductIds = (protocol: Protocol): string[] => {
+  const productIds: string[] = [];
+
+  for (const goal of protocol.goals) {
+    // Check primary action
+    if (
+      goal.primaryAction.content.type === 'supplement' &&
+      goal.primaryAction.content.productId
+    ) {
+      productIds.push(goal.primaryAction.content.productId);
+    }
+
+    // Check additional actions
+    for (const action of goal.additionalActions ?? []) {
+      if (action.content.type === 'supplement' && action.content.productId) {
+        productIds.push(action.content.productId);
+      }
+    }
+  }
+
+  return productIds;
+};
+
+/**
+ * Decide on the products to recommend based on the products available and the protocol requests
  */
 const getProducts = (
   /**
@@ -17,9 +39,9 @@ const getProducts = (
    */
   availableProducts: Product[],
   /**
-   * Product ids requested by the care plan
+   * Product ids requested by the protocol
    */
-  carePlanRequests?: string[],
+  protocolProductIds?: string[],
   /**
    * Number of products to return (default: 4)
    */
@@ -49,8 +71,8 @@ const getProducts = (
 
   const products: Product[] = [];
 
-  // prioritize care plan requests
-  for (const productId of carePlanRequests ?? []) {
+  // prioritize protocol requests
+  for (const productId of protocolProductIds ?? []) {
     const product = productIdMap.get(productId);
     if (product) {
       products.push(product);
@@ -81,33 +103,28 @@ const getProducts = (
 };
 
 export const useProductRecommendations = () => {
-  const plans = usePlans();
+  const protocolQuery = useLatestProtocol();
+  const protocol = protocolQuery.data?.protocol;
 
-  const plan = React.useMemo(() => {
-    // get the most recent completed action plan with product requests
-    const actionPlans = (plans.data?.actionPlans ?? []).filter(
-      (p) =>
-        p.status === 'completed' &&
-        parseProductRequests(p.activity ?? []).length > 0,
-    );
-
-    return actionPlans[0];
-  }, [plans.data?.actionPlans]);
+  const productIds = React.useMemo(() => {
+    if (!protocol) return [];
+    return extractProductIds(protocol);
+  }, [protocol]);
 
   const { data: productsData, isLoading: isProductsLoading } = useMarketplace();
 
   const recommendedProducts = React.useMemo(() => {
     return getProducts(
       productsData?.supplements ?? [],
-      parseProductRequests(plan?.activity ?? []),
+      productIds.length > 0 ? productIds : undefined,
     );
-  }, [plan, productsData?.supplements]);
+  }, [productIds, productsData?.supplements]);
 
-  const isLoading = plans.isLoading || isProductsLoading;
+  const isLoading = protocolQuery.isLoading || isProductsLoading;
 
   return {
     recommendedProducts,
-    plan,
+    protocol,
     isLoading,
   };
 };

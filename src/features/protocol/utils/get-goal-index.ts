@@ -1,5 +1,8 @@
-import type { Goal } from '../api';
+import type { LegacyGoal, ProtocolGoal } from '../api';
 
-export function getGoalIndex(goals: Goal[], goalId: string): number {
+export function getGoalIndex(
+  goals: LegacyGoal[] | ProtocolGoal[],
+  goalId: string,
+): number {
   return goals.findIndex((goal) => goal.id === goalId);
 }

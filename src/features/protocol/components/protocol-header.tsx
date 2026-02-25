@@ -1,10 +1,6 @@
-import { useParams } from '@tanstack/react-router';
-
 import { ChevronLeft } from '@/components/icons/chevron-left-icon';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-
-import { RevealProgressBar } from './reveal/reveal-progress-bar';
 
 export const ProtocolHeader = ({
   children,
@@ -15,9 +11,6 @@ export const ProtocolHeader = ({
   src?: string;
   className?: string;
 }) => {
-  const params = useParams({ strict: false });
-  const goalId = params.goalId;
-
   return (
     <div
       style={{
@@ -38,11 +31,6 @@ export const ProtocolHeader = ({
         >
           <ChevronLeft className="size-5 text-white" />
         </Button>
-        {goalId == null && (
-          <>
-            <RevealProgressBar />
-          </>
-        )}
       </div>
       <div className="relative z-10 space-y-2 p-8 duration-500 ease-out animate-in fade-in slide-in-from-bottom-8">
         {children}

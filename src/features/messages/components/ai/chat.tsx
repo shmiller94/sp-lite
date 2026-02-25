@@ -458,6 +458,15 @@ function useConciergeChatController({
     [defaultMessage, incrementMessageCount, navigate, sendMessage],
   );
 
+  // Auto-send when navigated with a defaultMessage query param
+  const autoSentRef = useRef(false);
+  useEffect(() => {
+    if (defaultMessage && !autoSentRef.current && status === 'ready') {
+      autoSentRef.current = true;
+      handleSendMessage({ text: defaultMessage, files: [] });
+    }
+  }, [defaultMessage, status]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     if (sessionStartTime != null) return;
 

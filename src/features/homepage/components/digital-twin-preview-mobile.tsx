@@ -1,7 +1,7 @@
 import { LockKeyholeIcon } from 'lucide-react';
 import { Suspense, lazy } from 'react';
 
-import { useLatestCompletedPlan } from '@/features/protocol/hooks/use-latest-completed-plan';
+import { useLatestProtocol } from '@/features/protocol/api';
 
 const LazyDigitalTwin = lazy(() =>
   import('@/features/digital-twin/components/digital-twin').then((mod) => ({
@@ -10,12 +10,13 @@ const LazyDigitalTwin = lazy(() =>
 );
 
 export const DigitalTwinPreviewMobile = () => {
-  const { hasCompletedPlan, isLoading } = useLatestCompletedPlan();
+  const { data: protocolData, isLoading } = useLatestProtocol();
+  const hasProtocol = Boolean(protocolData?.protocol);
 
   return (
     <div className="relative h-56 w-full overflow-hidden lg:hidden">
       <div className="pointer-events-none">
-        {!isLoading && hasCompletedPlan ? (
+        {!isLoading && hasProtocol ? (
           <Suspense fallback={<div className="h-56 w-full" />}>
             <LazyDigitalTwin />
           </Suspense>
@@ -24,7 +25,7 @@ export const DigitalTwinPreviewMobile = () => {
         )}
       </div>
       <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-b from-transparent via-transparent to-zinc-50" />
-      {!isLoading && !hasCompletedPlan && (
+      {!isLoading && !hasProtocol && (
         <div className="pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center">
           <div
             className="pointer-events-auto flex flex-row items-center gap-3 rounded-[8px] bg-white/10 px-6 py-4"

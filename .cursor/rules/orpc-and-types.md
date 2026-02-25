@@ -1,16 +1,21 @@
-# oRPC API Client and Generated Types
+# API Clients and Generated Types
 
-This document describes how to use the OpenAPI-generated types and the `$api` client for making type-safe API calls to the ts-server backend.
+This document describes how to use the OpenAPI-generated types and API clients for making type-safe API calls to the backend services.
 
 ## Overview
 
-- **Types file**: `@/orpc/types.generated` - Auto-generated from backend oRPC routes
-- **API client**: `@/orpc/client` - Exports `api` (fetch client) and `$api` (React Query client)
-- **Pattern**: Use `$api.queryOptions()` for React Query integration
+We have **two API origins** with separate clients and generated types:
+
+| Service                        | Types File                       | Clients                                             | Base URL |
+| ------------------------------ | -------------------------------- | --------------------------------------------------- | -------- |
+| **ts-server** (Superpower API) | `@/orpc/types.generated`         | `api`, `$api` from `@/orpc/client`                  | `/rpc`   |
+| **ts-ai-chat** (AI Chat API)   | `@/orpc/ai-chat-types.generated` | `aiChatApi`, `$aiChatApi` from `@/orpc/ai-chat-api` | `/chat`  |
 
 ## Type Extraction
 
 Extract types from the generated `operations` interface:
+
+### ts-server Types
 
 ```typescript
 import type { operations } from '@/orpc/types.generated';
@@ -22,14 +27,23 @@ type GetAllProtocolsResponse =
 // Extract nested types from the response
 export type Protocol = GetAllProtocolsResponse['protocols'][number];
 export type Goal = Protocol['goals'][number];
-export type Activity = Protocol['activities'][number];
 ```
 
-**Pattern**: `operations['<namespace>.<method>']['responses'][<status>]['content']['application/json']`
+### ts-ai-chat Types
 
-## Using $api for Queries
+```typescript
+import type { operations } from '@/orpc/ai-chat-types.generated';
 
-### Basic Query
+// Extract response type from a specific operation
+type GetHistoryResponse =
+  operations['getHistory']['responses'][200]['content']['application/json'];
+```
+
+**Pattern**: `operations['<operationId>']['responses'][<status>]['content']['application/json']`
+
+## Using $api for ts-server
+
+Import from `@/orpc/client` for ts-server endpoints:
 
 ```typescript
 import { useQuery } from '@tanstack/react-query';
@@ -73,6 +87,36 @@ export function useAuthMethods(email: string) {
   });
 }
 ```
+
+## Using $aiChatApi for ts-ai-chat
+
+Import from `@/orpc/ai-chat-api` for AI chat endpoints:
+
+```typescript
+import { useQuery } from '@tanstack/react-query';
+import { $aiChatApi } from '@/orpc/ai-chat-api';
+
+export function useChatHistory() {
+  return $aiChatApi.useQuery('get', '/history');
+}
+
+export function useChat(chatId: string) {
+  return $aiChatApi.useQuery('get', '/{chatId}', {
+    params: { path: { chatId } },
+  });
+}
+```
+
+### AI Chat Path Mapping
+
+The ts-ai-chat API is proxied through ts-server's `/chat` endpoint. Paths are transformed:
+
+| Client Path      | ts-ai-chat Path        |
+| ---------------- | ---------------------- |
+| `/history`       | `/api/v1/history`      |
+| `/biomarkers/*`  | `/api/v1/biomarkers/*` |
+| `/*` (root)      | `/api/v1/chat/*`       |
+| `/protocol-v2/*` | `/api/v1/protocols/*`  |
 
 ## Key Benefits
 
@@ -120,7 +164,9 @@ return useQuery({
 
 ## Mutations
 
-For POST/PUT/DELETE operations, use `$api.useMutation()`:
+For POST/PUT/DELETE operations, use `mutationOptions()`:
+
+### ts-server Mutations
 
 ```typescript
 import { useMutation } from '@tanstack/react-query';
@@ -133,33 +179,54 @@ export function useCreateCheckout() {
 }
 ```
 
+### ts-ai-chat Mutations
+
+```typescript
+import { useMutation } from '@tanstack/react-query';
+import { $aiChatApi } from '@/orpc/ai-chat-api';
+
+export function useSendMessage() {
+  return useMutation({
+    ...$aiChatApi.mutationOptions('post', '/'),
+  });
+}
+```
+
 ## Regenerating Types
 
 When backend routes change, regenerate types:
 
 ```bash
 # In react-app workspace
-bun generate:orpc-types
+
+# Generate types for ts-server only
+bun generate:ts-server-types
+
+# Generate types for ts-ai-chat only
+bun generate:ts-ai-chat-types
+
+# Generate types for both (recommended)
+bun generate:types
 ```
 
 ## Troubleshooting Type Issues
 
 ### Step 1: Regenerate Types
 
-If you encounter type errors or mismatches, the first step is to regenerate the types:
+If you encounter type errors or mismatches, regenerate the types:
 
 ```bash
 # In react-app workspace
 bun generate:orpc-types
 ```
 
-This command fetches the latest OpenAPI schema from the running ts-server and regenerates the TypeScript types.
+### Step 2: Ensure Backend Services are Running
 
-### Step 2: Ensure ts-server is Running
+Type generation requires the backend services to be running:
 
 If `bun generate:orpc-types` fails with a connection error, tell the user to ensure that ts-server is running and accessible at the expected URL. Do not try and start ts-server for them.
 
-The type generation command needs ts-server to be running because it fetches the OpenAPI schema from the `/rpc/openapi.json` endpoint.
+If a command fails with a connection error, tell the user to ensure the relevant service is running. Do not try to start the services for them.
 
 ### Common Type Issues
 
@@ -191,13 +258,25 @@ const url = `${API_URL}/protocol/${id}`;
 type Protocol = { id: string; title: string }; // Will get out of sync
 ```
 
-✅ **Do use the generated client and types**
+❌ **Don't mix up the API clients**
 
 ```typescript
-// GOOD
+// BAD - using $api for chat endpoints
+const { data } = $api.useQuery('get', '/history'); // Wrong! This is a ts-ai-chat endpoint
+```
+
+✅ **Do use the correct client for each service**
+
+```typescript
+// GOOD - ts-server endpoints
+import { $api } from '@/orpc/client';
 const { data } = useQuery({
   ...$api.queryOptions('get', '/protocol/:id', {
     params: { path: { id } },
   }),
 });
+
+// GOOD - ts-ai-chat endpoints
+import { $aiChatApi } from '@/orpc/ai-chat-api';
+const { data } = $aiChatApi.useQuery('get', '/history');
 ```

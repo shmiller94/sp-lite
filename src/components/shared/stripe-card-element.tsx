@@ -64,7 +64,9 @@ export const StripeCardElement = ({
             ...STRIPE_INPUT_STYLE,
           }}
           onFocus={() => {
-            setError && setError(undefined);
+            if (setError) {
+              setError(undefined);
+            }
             setFocusedElement('cardNumber');
           }}
           onBlur={() => setFocusedElement(null)}
@@ -103,7 +105,9 @@ export const StripeCardElement = ({
               ...STRIPE_INPUT_STYLE,
             }}
             onFocus={() => {
-              setError && setError(undefined);
+              if (setError) {
+                setError(undefined);
+              }
               setFocusedElement('cardExpiration');
             }}
             onBlur={() => setFocusedElement(null)}
@@ -139,7 +143,9 @@ export const StripeCardElement = ({
               ...STRIPE_INPUT_STYLE,
             }}
             onFocus={() => {
-              setError && setError(undefined);
+              if (setError) {
+                setError(undefined);
+              }
               setFocusedElement('cardCvc');
             }}
             onBlur={() => setFocusedElement(null)}

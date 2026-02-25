@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 
 import { Head } from '@/components/seo/head';
-import { ProtocolOverview } from '@/features/protocol/components/protocol-overview';
+import { ProtocolDashboard } from '@/features/protocol/components/dashboard';
 
 export const Route = createFileRoute('/_app/protocol/plans/$id')({
   component: ProtocolByIdComponent,
@@ -13,7 +13,7 @@ function ProtocolByIdComponent() {
   return (
     <>
       <Head title="Protocol" />
-      <ProtocolOverview protocolId={id} />
+      <ProtocolDashboard protocolId={id} />
     </>
   );
 }

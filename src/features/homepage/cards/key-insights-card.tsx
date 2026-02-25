@@ -2,15 +2,17 @@ import { GoalIcon } from 'lucide-react';
 
 import { Body1, Body2 } from '@/components/ui/typography';
 import { BiomarkersDistributionBar } from '@/features/data/components/biomarkers-distribution-bar';
+import { useLatestProtocol } from '@/features/protocol/api';
 import { ProtocolGoalObservation } from '@/features/protocol/components/goals/protocol-goal-observation';
-import { useLatestCompletedPlan } from '@/features/protocol/hooks/use-latest-completed-plan';
 
 import { HomepageCard } from '../components/homepage-card';
 
 export const KeyInsightsCard = () => {
-  const { firstGoal, goalObservations } = useLatestCompletedPlan();
+  const { data: protocolData } = useLatestProtocol();
+  const firstGoal = protocolData?.protocol?.goals[0];
+  const goalObservations = firstGoal?.biomarkers ?? [];
 
-  const noteText = firstGoal?.description?.text || '';
+  const noteText = firstGoal?.title ?? '';
 
   return (
     <HomepageCard title="Key Insights">

@@ -177,12 +177,14 @@ const UpdateInfoContent = () => {
     });
 
     // first add or edit address if already exists:
-    user?.primaryAddress
-      ? await editAddressMutation.mutateAsync({
-          id: user.primaryAddress.id,
-          data: address,
-        })
-      : await addAddressMutation.mutateAsync({ data: address });
+    if (user?.primaryAddress) {
+      await editAddressMutation.mutateAsync({
+        id: user.primaryAddress.id,
+        data: address,
+      });
+    } else {
+      await addAddressMutation.mutateAsync({ data: address });
+    }
 
     next();
   };

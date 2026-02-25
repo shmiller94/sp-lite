@@ -88,7 +88,7 @@ export const useCheckPerformance = () => {
         }
 
         setIsPerformanceSufficient(true);
-      } catch (error) {
+      } catch (_error) {
         setIsPerformanceSufficient(false);
       } finally {
         setIsLoading(false);

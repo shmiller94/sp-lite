@@ -54,7 +54,7 @@ const getManualCouponOverride = () => {
       const override = JSON.parse(stored);
       return override.code;
     }
-  } catch (error) {
+  } catch (_error) {
     // Invalid JSON, clear it
     clearManualCouponOverride();
   }
@@ -123,7 +123,7 @@ export const getCouponMetadata = (): Record<string, string> | null => {
       const override = JSON.parse(stored);
       return override.metadata || null;
     }
-  } catch (error) {
+  } catch (_error) {
     clearManualCouponOverride();
   }
   return null;

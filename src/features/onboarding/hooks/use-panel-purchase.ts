@@ -98,7 +98,7 @@ export const usePanelPurchase = ({
           paymentMethodId,
         },
       });
-    } catch (error) {
+    } catch (_error) {
       toast.error('Purchase failed. Please try again later.');
       onError?.();
       return;

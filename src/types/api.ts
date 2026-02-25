@@ -556,6 +556,7 @@ export type FhirCarePlan = CarePlan & {
 
 export type Product = {
   id: string;
+  productId?: string;
   name: string;
   image?: string;
   price: number;
@@ -585,6 +586,7 @@ export type Rx = {
 
 export type Marketplace = {
   id: string;
+  productId?: string | null;
   name: string;
   image?: string | null;
   price?: number | null;
@@ -592,6 +594,7 @@ export type Marketplace = {
   discount?: number | null;
   type?: string | null;
   vendor?: string | null;
+  inventoryQuantity?: number | null;
   source?: string | null;
   active?: boolean | null;
   description?: string | null;

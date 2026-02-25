@@ -17,6 +17,7 @@ interface AppEnv {
   POSTHOG_KEY?: string;
   POSTHOG_DEBUG?: string;
   MARKETING_SITE_URL: string;
+  DEV_TOOLS_ENABLED?: boolean;
 }
 
 const raw = import.meta.env;
@@ -208,6 +209,19 @@ if (posthogDebugRaw === undefined) {
   POSTHOG_DEBUG = undefined;
 }
 
+let DEV_TOOLS_ENABLED: boolean | undefined;
+const devToolsEnabledRaw = raw.VITE_APP_DEV_TOOLS_ENABLED;
+if (devToolsEnabledRaw === undefined) {
+  DEV_TOOLS_ENABLED = import.meta.env.DEV;
+} else if (devToolsEnabledRaw === 'true') {
+  DEV_TOOLS_ENABLED = true;
+} else if (devToolsEnabledRaw === 'false') {
+  DEV_TOOLS_ENABLED = false;
+} else {
+  issues.push('DEV_TOOLS_ENABLED');
+  DEV_TOOLS_ENABLED = import.meta.env.DEV;
+}
+
 if (issues.length > 0) {
   let lines = '';
   for (const issue of issues) {
@@ -237,4 +251,5 @@ export const env: AppEnv = {
   POSTHOG_KEY,
   POSTHOG_DEBUG,
   MARKETING_SITE_URL,
+  DEV_TOOLS_ENABLED,
 };

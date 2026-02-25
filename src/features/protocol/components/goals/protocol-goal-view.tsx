@@ -1,15 +1,10 @@
-import { Link, useNavigate } from '@tanstack/react-router';
-
-import { ChevronLeft } from '@/components/icons/chevron-left-icon';
-import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Body1, Body2 } from '@/components/ui/typography';
+import { Body1 } from '@/components/ui/typography';
 
 import { useLatestProtocol, useProtocol } from '../../api';
 import { getGoalIndex } from '../../utils/get-goal-index';
-import { ProtocolLayout } from '../layouts/protocol-layout';
 
-import { ProtocolGoal } from './protocol-goal';
+import { GoalDetailPage } from './goal-detail-page';
 
 type ProtocolGoalViewProps = {
   protocolId: string;
@@ -17,35 +12,45 @@ type ProtocolGoalViewProps = {
 };
 
 /**
- * View for a specific goal and its activities
+ * View for a specific goal in a protocol
  * Path: /protocol/plans/:planId/goals/:goalId
  */
 export function ProtocolGoalView({
   protocolId,
   goalId,
 }: ProtocolGoalViewProps) {
-  const { data: lastProtocol, isLoading: isLatestProtocolLoading } =
+  const { data: latestData, isLoading: isLatestProtocolLoading } =
     useLatestProtocol();
-  const { data: protocol, isLoading, error } = useProtocol(protocolId);
-  const navigate = useNavigate();
+  const { data: protocolData, isLoading, error } = useProtocol(protocolId);
+
+  // Unwrap the protocol from the response
+  const lastProtocol = latestData?.protocol;
+  const protocol = protocolData?.protocol;
 
   const isLatestProtocol = lastProtocol?.id === protocolId;
 
   if (isLoading || isLatestProtocolLoading) {
     return (
       <div className="mx-auto w-full max-w-2xl space-y-6 p-6 lg:px-0">
-        <Skeleton className="h-56 w-full rounded-2xl" />
+        <Skeleton className="h-8 w-24 rounded-lg" />
+        <div className="flex items-start gap-4">
+          <Skeleton className="size-12 rounded-lg" />
+          <div className="flex-1 space-y-2">
+            <Skeleton className="h-8 w-3/4 rounded-lg" />
+            <Skeleton className="h-4 w-1/3 rounded-lg" />
+          </div>
+        </div>
+        <Skeleton className="h-10 w-48 rounded-lg" />
+        <Skeleton className="h-32 w-full rounded-2xl" />
         <Skeleton className="h-24 w-full rounded-2xl" />
-        <Skeleton className="h-16 w-full rounded-2xl" />
-        <Skeleton className="h-12 w-2/3 rounded-2xl" />
-        <Skeleton className="h-12 w-full rounded-2xl" />
+        <Skeleton className="h-24 w-full rounded-2xl" />
       </div>
     );
   }
 
   if (error || !protocol) {
     return (
-      <div className="mx-auto max-w-4xl p-6">
+      <div className="mx-auto max-w-2xl p-6">
         <Body1 className="text-red-600">
           Failed to load goal. Please try again later.
         </Body1>
@@ -54,84 +59,26 @@ export function ProtocolGoalView({
   }
 
   const goal = protocol.goals.find((g) => g.id === goalId);
-
-  const currentIndex = getGoalIndex(protocol.goals, goalId);
-  const hasNextGoal =
-    currentIndex >= 0 && currentIndex < protocol.goals.length - 1;
-  const nextGoalId = hasNextGoal ? protocol.goals[currentIndex + 1].id : null;
+  const goalIndex = getGoalIndex(protocol.goals, goalId);
 
   if (!goal) {
     return (
-      <div className="mx-auto max-w-4xl p-6">
+      <div className="mx-auto max-w-2xl p-6">
         <Body1 className="text-red-600">Goal not found.</Body1>
       </div>
     );
   }
 
-  // Filter activities that are linked to this goal
-  const goalActivities = protocol.activities.filter(
-    (activity) =>
-      ['product', 'service', 'prescription'].includes(activity.type) &&
-      activity.goalIds.includes(goalId),
-  );
-
-  const handleNextGoal = () => {
-    if (hasNextGoal && nextGoalId != null) {
-      void navigate({
-        to: '/protocol/plans/$planId/goals/$goalId',
-        params: { planId: protocolId, goalId: nextGoalId },
-      });
-      return;
-    }
-
-    if (isLatestProtocol) {
-      void navigate({ to: '/protocol' });
-      return;
-    }
-
-    void navigate({ to: '/protocol/plans/$id', params: { id: protocolId } });
-  };
+  const protocolLink = isLatestProtocol
+    ? '/protocol'
+    : `/protocol/plans/${protocolId}`;
 
   return (
-    <ProtocolLayout className="lg:pt-7">
-      <div className="sticky top-20 hidden w-40 shrink-0 lg:block">
-        {isLatestProtocol ? (
-          <Link
-            to="/protocol"
-            className="group -ml-1.5 flex items-center gap-0.5 p-0 text-slate-600 hover:text-slate-900"
-          >
-            <ChevronLeft className="-mt-px w-[15px] text-zinc-400 transition-all duration-150 group-hover:-translate-x-0.5 group-hover:text-zinc-600" />
-            <Body2 className="text-zinc-500 transition-all duration-150 group-hover:text-zinc-700">
-              Back
-            </Body2>
-          </Link>
-        ) : (
-          <Link
-            to="/protocol/plans/$id"
-            params={{ id: protocolId }}
-            className="group -ml-1.5 flex items-center gap-0.5 p-0 text-slate-600 hover:text-slate-900"
-          >
-            <ChevronLeft className="-mt-px w-[15px] text-zinc-400 transition-all duration-150 group-hover:-translate-x-0.5 group-hover:text-zinc-600" />
-            <Body2 className="text-zinc-500 transition-all duration-150 group-hover:text-zinc-700">
-              Back
-            </Body2>
-          </Link>
-        )}
-      </div>
-      <div className="mx-auto flex w-full max-w-[680px] flex-col items-center space-y-12 pb-24">
-        <ProtocolGoal
-          goal={goal}
-          activities={goalActivities}
-          allGoals={protocol.goals}
-        />
-        <Button
-          onClick={handleNextGoal}
-          className="w-full max-w-[calc(100%-3rem)] lg:max-w-none"
-        >
-          {hasNextGoal ? 'Next goal' : 'Go back'}
-        </Button>
-      </div>
-      <div className="hidden w-40 shrink-0 lg:block" />
-    </ProtocolLayout>
+    <GoalDetailPage
+      goal={goal}
+      goalIndex={goalIndex}
+      protocolId={protocolId}
+      backLink={protocolLink}
+    />
   );
 }

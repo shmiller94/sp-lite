@@ -1,5 +1,5 @@
 import { LucideArrowRight } from 'lucide-react';
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useEffect } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -29,6 +29,12 @@ export const SlideToUnlock = ({
   const animationRef = useRef<number | null>(null);
   const hasMovedRef = useRef(false);
   const hasCompletedRef = useRef(false);
+
+  useEffect(() => {
+    return () => {
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
+    };
+  }, []);
 
   const handleStart = useCallback(
     (clientX: number) => {

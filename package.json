@@ -1,5 +1,5 @@
 {
-  "name": "bulletproof-react",
+  "name": "react-app",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -13,9 +13,15 @@
     "fmt": "oxfmt src",
     "fmt:check": "oxfmt --check src",
     "check": "bun run fmt:check && bun run lint",
+    "generate:ts-server-types": "bun run scripts/generate-ts-server-types.ts",
+    "generate:ts-ai-chat-types": "bun run scripts/generate-ts-ai-chat-types.ts",
+    "generate:types": "bun run generate:ts-server-types && bun run generate:ts-ai-chat-types",
     "generate:orpc-types": "bun generate-orpc-types.ts",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "env": "doppler secrets download --project=superpower-app --config=dev --no-file --format env > .env",
+    "env:stg": "doppler secrets download --project=superpower-app --config=stg --no-file --format env > .env",
+    "env:prd": "doppler secrets download --project=superpower-app --config=prd --no-file --format env > .env"
   },
   "dependencies": {
     "@ai-sdk/react": "^3.0.99",

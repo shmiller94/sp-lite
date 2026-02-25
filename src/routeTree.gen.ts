@@ -39,7 +39,7 @@ import { Route as AppServicesIdRouteImport } from './routes/_app.services.$id'
 import { Route as AppQuestionnaireTypeRouteImport } from './routes/_app.questionnaire.$type'
 import { Route as AppProtocolRevealRouteImport } from './routes/_app.protocol.reveal'
 import { Route as AppProtocolPlansRouteImport } from './routes/_app.protocol.plans'
-import { Route as AppProtocolAutopilotRouteImport } from './routes/_app.protocol.autopilot'
+import { Route as AppProtocolLegacyRouteImport } from './routes/_app.protocol.legacy'
 import { Route as AppPrescriptionsIdRouteImport } from './routes/_app.prescriptions.$id'
 import { Route as AppPlansIdRouteImport } from './routes/_app.plans.$id'
 import { Route as AppOrdersIdRouteImport } from './routes/_app.orders.$id'
@@ -53,7 +53,9 @@ import { Route as AppMapsOnboardingRouteImport } from './routes/_app._maps.onboa
 import { Route as AppProtocolRevealIndexRouteImport } from './routes/_app.protocol.reveal.index'
 import { Route as AppProtocolRevealStepRouteImport } from './routes/_app.protocol.reveal.$step'
 import { Route as AppProtocolPlansIdRouteImport } from './routes/_app.protocol.plans.$id'
+import { Route as AppProtocolLegacyIdRouteImport } from './routes/_app.protocol.legacy.$id'
 import { Route as AppProtocolPlansPlanIdGoalsGoalIdRouteImport } from './routes/_app.protocol.plans.$planId.goals.$goalId'
+import { Route as AppProtocolLegacyPlanIdGoalsGoalIdRouteImport } from './routes/_app.protocol.legacy.$planId.goals.$goalId'
 
 const VerifyEmailRoute = VerifyEmailRouteImport.update({
   id: '/verify-email',
@@ -203,9 +205,9 @@ const AppProtocolPlansRoute = AppProtocolPlansRouteImport.update({
   path: '/plans',
   getParentRoute: () => AppProtocolRoute,
 } as any)
-const AppProtocolAutopilotRoute = AppProtocolAutopilotRouteImport.update({
-  id: '/autopilot',
-  path: '/autopilot',
+const AppProtocolLegacyRoute = AppProtocolLegacyRouteImport.update({
+  id: '/legacy',
+  path: '/legacy',
   getParentRoute: () => AppProtocolRoute,
 } as any)
 const AppPrescriptionsIdRoute = AppPrescriptionsIdRouteImport.update({
@@ -273,11 +275,22 @@ const AppProtocolPlansIdRoute = AppProtocolPlansIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => AppProtocolPlansRoute,
 } as any)
+const AppProtocolLegacyIdRoute = AppProtocolLegacyIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppProtocolLegacyRoute,
+} as any)
 const AppProtocolPlansPlanIdGoalsGoalIdRoute =
   AppProtocolPlansPlanIdGoalsGoalIdRouteImport.update({
     id: '/$planId/goals/$goalId',
     path: '/$planId/goals/$goalId',
     getParentRoute: () => AppProtocolPlansRoute,
+  } as any)
+const AppProtocolLegacyPlanIdGoalsGoalIdRoute =
+  AppProtocolLegacyPlanIdGoalsGoalIdRouteImport.update({
+    id: '/$planId/goals/$goalId',
+    path: '/$planId/goals/$goalId',
+    getParentRoute: () => AppProtocolLegacyRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -309,7 +322,7 @@ export interface FileRoutesByFullPath {
   '/orders/$id': typeof AppOrdersIdRoute
   '/plans/$id': typeof AppPlansIdRoute
   '/prescriptions/$id': typeof AppPrescriptionsIdRoute
-  '/protocol/autopilot': typeof AppProtocolAutopilotRoute
+  '/protocol/legacy': typeof AppProtocolLegacyRouteWithChildren
   '/protocol/plans': typeof AppProtocolPlansRouteWithChildren
   '/protocol/reveal': typeof AppProtocolRevealRouteWithChildren
   '/questionnaire/$type': typeof AppQuestionnaireTypeRoute
@@ -320,9 +333,11 @@ export interface FileRoutesByFullPath {
   '/orders/': typeof AppOrdersIndexRoute
   '/protocol/': typeof AppProtocolIndexRoute
   '/services/': typeof AppServicesIndexRoute
+  '/protocol/legacy/$id': typeof AppProtocolLegacyIdRoute
   '/protocol/plans/$id': typeof AppProtocolPlansIdRoute
   '/protocol/reveal/$step': typeof AppProtocolRevealStepRoute
   '/protocol/reveal/': typeof AppProtocolRevealIndexRoute
+  '/protocol/legacy/$planId/goals/$goalId': typeof AppProtocolLegacyPlanIdGoalsGoalIdRoute
   '/protocol/plans/$planId/goals/$goalId': typeof AppProtocolPlansPlanIdGoalsGoalIdRoute
 }
 export interface FileRoutesByTo {
@@ -349,7 +364,7 @@ export interface FileRoutesByTo {
   '/orders/$id': typeof AppOrdersIdRoute
   '/plans/$id': typeof AppPlansIdRoute
   '/prescriptions/$id': typeof AppPrescriptionsIdRoute
-  '/protocol/autopilot': typeof AppProtocolAutopilotRoute
+  '/protocol/legacy': typeof AppProtocolLegacyRouteWithChildren
   '/protocol/plans': typeof AppProtocolPlansRouteWithChildren
   '/questionnaire/$type': typeof AppQuestionnaireTypeRoute
   '/services/$id': typeof AppServicesIdRoute
@@ -359,9 +374,11 @@ export interface FileRoutesByTo {
   '/orders': typeof AppOrdersIndexRoute
   '/protocol': typeof AppProtocolIndexRoute
   '/services': typeof AppServicesIndexRoute
+  '/protocol/legacy/$id': typeof AppProtocolLegacyIdRoute
   '/protocol/plans/$id': typeof AppProtocolPlansIdRoute
   '/protocol/reveal/$step': typeof AppProtocolRevealStepRoute
   '/protocol/reveal': typeof AppProtocolRevealIndexRoute
+  '/protocol/legacy/$planId/goals/$goalId': typeof AppProtocolLegacyPlanIdGoalsGoalIdRoute
   '/protocol/plans/$planId/goals/$goalId': typeof AppProtocolPlansPlanIdGoalsGoalIdRoute
 }
 export interface FileRoutesById {
@@ -396,7 +413,7 @@ export interface FileRoutesById {
   '/_app/orders/$id': typeof AppOrdersIdRoute
   '/_app/plans/$id': typeof AppPlansIdRoute
   '/_app/prescriptions/$id': typeof AppPrescriptionsIdRoute
-  '/_app/protocol/autopilot': typeof AppProtocolAutopilotRoute
+  '/_app/protocol/legacy': typeof AppProtocolLegacyRouteWithChildren
   '/_app/protocol/plans': typeof AppProtocolPlansRouteWithChildren
   '/_app/protocol/reveal': typeof AppProtocolRevealRouteWithChildren
   '/_app/questionnaire/$type': typeof AppQuestionnaireTypeRoute
@@ -407,9 +424,11 @@ export interface FileRoutesById {
   '/_app/orders/': typeof AppOrdersIndexRoute
   '/_app/protocol/': typeof AppProtocolIndexRoute
   '/_app/services/': typeof AppServicesIndexRoute
+  '/_app/protocol/legacy/$id': typeof AppProtocolLegacyIdRoute
   '/_app/protocol/plans/$id': typeof AppProtocolPlansIdRoute
   '/_app/protocol/reveal/$step': typeof AppProtocolRevealStepRoute
   '/_app/protocol/reveal/': typeof AppProtocolRevealIndexRoute
+  '/_app/protocol/legacy/$planId/goals/$goalId': typeof AppProtocolLegacyPlanIdGoalsGoalIdRoute
   '/_app/protocol/plans/$planId/goals/$goalId': typeof AppProtocolPlansPlanIdGoalsGoalIdRoute
 }
 export interface FileRouteTypes {
@@ -443,7 +462,7 @@ export interface FileRouteTypes {
     | '/orders/$id'
     | '/plans/$id'
     | '/prescriptions/$id'
-    | '/protocol/autopilot'
+    | '/protocol/legacy'
     | '/protocol/plans'
     | '/protocol/reveal'
     | '/questionnaire/$type'
@@ -454,9 +473,11 @@ export interface FileRouteTypes {
     | '/orders/'
     | '/protocol/'
     | '/services/'
+    | '/protocol/legacy/$id'
     | '/protocol/plans/$id'
     | '/protocol/reveal/$step'
     | '/protocol/reveal/'
+    | '/protocol/legacy/$planId/goals/$goalId'
     | '/protocol/plans/$planId/goals/$goalId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -483,7 +504,7 @@ export interface FileRouteTypes {
     | '/orders/$id'
     | '/plans/$id'
     | '/prescriptions/$id'
-    | '/protocol/autopilot'
+    | '/protocol/legacy'
     | '/protocol/plans'
     | '/questionnaire/$type'
     | '/services/$id'
@@ -493,9 +514,11 @@ export interface FileRouteTypes {
     | '/orders'
     | '/protocol'
     | '/services'
+    | '/protocol/legacy/$id'
     | '/protocol/plans/$id'
     | '/protocol/reveal/$step'
     | '/protocol/reveal'
+    | '/protocol/legacy/$planId/goals/$goalId'
     | '/protocol/plans/$planId/goals/$goalId'
   id:
     | '__root__'
@@ -529,7 +552,7 @@ export interface FileRouteTypes {
     | '/_app/orders/$id'
     | '/_app/plans/$id'
     | '/_app/prescriptions/$id'
-    | '/_app/protocol/autopilot'
+    | '/_app/protocol/legacy'
     | '/_app/protocol/plans'
     | '/_app/protocol/reveal'
     | '/_app/questionnaire/$type'
@@ -540,9 +563,11 @@ export interface FileRouteTypes {
     | '/_app/orders/'
     | '/_app/protocol/'
     | '/_app/services/'
+    | '/_app/protocol/legacy/$id'
     | '/_app/protocol/plans/$id'
     | '/_app/protocol/reveal/$step'
     | '/_app/protocol/reveal/'
+    | '/_app/protocol/legacy/$planId/goals/$goalId'
     | '/_app/protocol/plans/$planId/goals/$goalId'
   fileRoutesById: FileRoutesById
 }
@@ -770,11 +795,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProtocolPlansRouteImport
       parentRoute: typeof AppProtocolRoute
     }
-    '/_app/protocol/autopilot': {
-      id: '/_app/protocol/autopilot'
-      path: '/autopilot'
-      fullPath: '/protocol/autopilot'
-      preLoaderRoute: typeof AppProtocolAutopilotRouteImport
+    '/_app/protocol/legacy': {
+      id: '/_app/protocol/legacy'
+      path: '/legacy'
+      fullPath: '/protocol/legacy'
+      preLoaderRoute: typeof AppProtocolLegacyRouteImport
       parentRoute: typeof AppProtocolRoute
     }
     '/_app/prescriptions/$id': {
@@ -868,12 +893,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProtocolPlansIdRouteImport
       parentRoute: typeof AppProtocolPlansRoute
     }
+    '/_app/protocol/legacy/$id': {
+      id: '/_app/protocol/legacy/$id'
+      path: '/$id'
+      fullPath: '/protocol/legacy/$id'
+      preLoaderRoute: typeof AppProtocolLegacyIdRouteImport
+      parentRoute: typeof AppProtocolLegacyRoute
+    }
     '/_app/protocol/plans/$planId/goals/$goalId': {
       id: '/_app/protocol/plans/$planId/goals/$goalId'
       path: '/$planId/goals/$goalId'
       fullPath: '/protocol/plans/$planId/goals/$goalId'
       preLoaderRoute: typeof AppProtocolPlansPlanIdGoalsGoalIdRouteImport
       parentRoute: typeof AppProtocolPlansRoute
+    }
+    '/_app/protocol/legacy/$planId/goals/$goalId': {
+      id: '/_app/protocol/legacy/$planId/goals/$goalId'
+      path: '/$planId/goals/$goalId'
+      fullPath: '/protocol/legacy/$planId/goals/$goalId'
+      preLoaderRoute: typeof AppProtocolLegacyPlanIdGoalsGoalIdRouteImport
+      parentRoute: typeof AppProtocolLegacyRoute
     }
   }
 }
@@ -948,6 +987,20 @@ const AppOrdersRouteWithChildren = AppOrdersRoute._addFileChildren(
   AppOrdersRouteChildren,
 )
 
+interface AppProtocolLegacyRouteChildren {
+  AppProtocolLegacyIdRoute: typeof AppProtocolLegacyIdRoute
+  AppProtocolLegacyPlanIdGoalsGoalIdRoute: typeof AppProtocolLegacyPlanIdGoalsGoalIdRoute
+}
+
+const AppProtocolLegacyRouteChildren: AppProtocolLegacyRouteChildren = {
+  AppProtocolLegacyIdRoute: AppProtocolLegacyIdRoute,
+  AppProtocolLegacyPlanIdGoalsGoalIdRoute:
+    AppProtocolLegacyPlanIdGoalsGoalIdRoute,
+}
+
+const AppProtocolLegacyRouteWithChildren =
+  AppProtocolLegacyRoute._addFileChildren(AppProtocolLegacyRouteChildren)
+
 interface AppProtocolPlansRouteChildren {
   AppProtocolPlansIdRoute: typeof AppProtocolPlansIdRoute
   AppProtocolPlansPlanIdGoalsGoalIdRoute: typeof AppProtocolPlansPlanIdGoalsGoalIdRoute
@@ -976,14 +1029,14 @@ const AppProtocolRevealRouteWithChildren =
   AppProtocolRevealRoute._addFileChildren(AppProtocolRevealRouteChildren)
 
 interface AppProtocolRouteChildren {
-  AppProtocolAutopilotRoute: typeof AppProtocolAutopilotRoute
+  AppProtocolLegacyRoute: typeof AppProtocolLegacyRouteWithChildren
   AppProtocolPlansRoute: typeof AppProtocolPlansRouteWithChildren
   AppProtocolRevealRoute: typeof AppProtocolRevealRouteWithChildren
   AppProtocolIndexRoute: typeof AppProtocolIndexRoute
 }
 
 const AppProtocolRouteChildren: AppProtocolRouteChildren = {
-  AppProtocolAutopilotRoute: AppProtocolAutopilotRoute,
+  AppProtocolLegacyRoute: AppProtocolLegacyRouteWithChildren,
   AppProtocolPlansRoute: AppProtocolPlansRouteWithChildren,
   AppProtocolRevealRoute: AppProtocolRevealRouteWithChildren,
   AppProtocolIndexRoute: AppProtocolIndexRoute,

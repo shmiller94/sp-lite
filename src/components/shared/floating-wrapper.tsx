@@ -11,9 +11,8 @@ const HIDE_WRAPPER_PATHNAMES = [
   '/concierge',
   '/onboarding',
   '/questionnaire',
-  '/protocol/reveal/get-started',
-  '/protocol/reveal/biological-age',
-  '/protocol/reveal/score',
+  '/protocol/reveal/welcome',
+  '/protocol/reveal/text-sequence',
 ];
 
 export const FloatingWrapper = () => {

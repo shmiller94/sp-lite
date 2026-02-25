@@ -21,7 +21,7 @@ import { CategoryDataTable } from './table/category-data-table';
 
 export const CategoryView = () => {
   const activeCategory = useSearch({
-    from: '/_app/data',
+    strict: false,
     select: (s) => s.category,
   });
   const contentRef = useRef<HTMLDivElement>(null);

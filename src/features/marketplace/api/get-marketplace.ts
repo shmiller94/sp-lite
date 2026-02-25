@@ -14,6 +14,7 @@ import {
 const toProduct = (product: Marketplace): Product => {
   return {
     id: product.id,
+    productId: product.productId ?? undefined,
     name: product.name,
     price: product.price ?? 0,
     url: product.url ?? '',
@@ -22,6 +23,7 @@ const toProduct = (product: Marketplace): Product => {
     image: product.image ?? undefined,
     additionalClassification: product.additionalClassification ?? [],
     vendor: product.vendor ?? undefined,
+    inventoryQuantity: product.inventoryQuantity ?? undefined,
   };
 };
 

@@ -13,9 +13,11 @@ export function getLocalStorageObject<T>(key: string): T | undefined {
 }
 
 export function setLocalStorageObject<T>(key: string, value: T): void {
-  value
-    ? localStorage.setItem(key, stringify(value))
-    : localStorage.removeItem(key);
+  if (value) {
+    localStorage.setItem(key, stringify(value));
+  } else {
+    localStorage.removeItem(key);
+  }
 }
 
 /**

@@ -1,12 +1,19 @@
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useRouterState } from '@tanstack/react-router';
 import { useWindowWidth } from '@wojtekmaj/react-hooks';
 import { ArrowRight } from 'lucide-react';
+import { Suspense, lazy, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useCreateFollowups } from '@/features/messages/api/create-followups';
 import { AnimatedIcon } from '@/features/messages/components/ai/animated-icon';
 import { useAssistantStore } from '@/features/messages/stores/assistant-store';
+
+const AssistantChatSheet = lazy(() =>
+  import('@/features/messages/components/assistant/assistant-chat-sheet').then(
+    (m) => ({ default: m.AssistantChatSheet }),
+  ),
+);
 import { useAnalytics } from '@/hooks/use-analytics';
 
 export const AiSuggestions = ({
@@ -34,6 +41,12 @@ export const AiSuggestions = ({
   });
 
   const open = useAssistantStore((s) => s.open);
+
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isRevealMode = pathname.startsWith('/protocol/reveal/');
+
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [sheetMessage, setSheetMessage] = useState('');
 
   const isMobile = width ? width < 1024 : false;
 
@@ -72,15 +85,22 @@ export const AiSuggestions = ({
 
     const handleClick = () => {
       if (isMobile) {
-        const href = `/concierge?defaultMessage=${encodeURIComponent(
-          suggestionText,
-        )}`;
-        void navigate({ href });
+        if (isRevealMode) {
+          setSheetMessage(suggestionText);
+          setSheetOpen(true);
+        } else {
+          const href = `/concierge?defaultMessage=${encodeURIComponent(
+            suggestionText,
+          )}`;
+          void navigate({ href });
+        }
       } else {
         open(suggestionText);
       }
 
-      onClick && onClick(suggestionText);
+      if (onClick) {
+        onClick(suggestionText);
+      }
 
       track(eventName ?? 'clicked_ai_suggestion', {
         context,
@@ -108,5 +128,16 @@ export const AiSuggestions = ({
 
   if (!content || (suggestions.length === 0 && !isLoading)) return null;
 
-  return <div className="space-y-2">{content}</div>;
+  return (
+    <>
+      <div className="space-y-2">{content}</div>
+      <Suspense fallback={null}>
+        <AssistantChatSheet
+          open={sheetOpen}
+          onOpenChange={setSheetOpen}
+          defaultMessage={sheetMessage}
+        />
+      </Suspense>
+    </>
+  );
 };

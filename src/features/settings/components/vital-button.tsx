@@ -1,5 +1,5 @@
 import { useVitalLink } from '@tryvital/vital-link';
-import React, { ReactNode, useCallback, useState } from 'react';
+import { ReactNode, useCallback, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { env } from '@/config/env';
@@ -31,7 +31,9 @@ export const VitalLinkButton = ({
       // Then, we need to use this as a temporary hack.
       console.log(_metadata);
 
-      callback && callback();
+      if (callback) {
+        callback();
+      }
     },
     [callback],
   );

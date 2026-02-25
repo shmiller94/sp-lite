@@ -1,79 +1,26 @@
 import { useParams } from '@tanstack/react-router';
-import React, { Fragment } from 'react';
 
 import { Body2, Body3, H2, H4, Mono } from '@/components/ui/typography';
 import { AiSuggestions } from '@/features/messages/components/ai-suggestions';
 
-import type { Activity, Goal } from '../../api';
-import { getGoalImage } from '../../utils/get-goal-image';
+import type {
+  ProtocolAction,
+  ProtocolGoal as ProtocolGoalType,
+} from '../../api';
 import { getGoalIndex } from '../../utils/get-goal-index';
-import { ProtocolActivitiesList } from '../protocol-activities-list';
+import { getGoalImage } from '../../utils/legacy/get-goal-image';
 import { ProtocolHeader } from '../protocol-header';
 import { ProtocolMarkdown } from '../protocol-markdown';
 
-import { ProtocolGoalObservation } from './protocol-goal-observation';
-import { ProtocolGoalPriority } from './protocol-goal-priority';
-
 type ProtocolGoalProps = {
-  goal: Goal;
-  activities: Activity[];
-  allGoals?: Goal[];
-  tempSelections?: Set<string>;
-  onSelectionChange?: (activityKey: string, selected: boolean) => void;
-  getActivityKey?: (activity: Activity, index: number) => string;
+  goal: ProtocolGoalType;
+  actions: ProtocolAction[];
+  allGoals?: ProtocolGoalType[];
 };
 
-export function ProtocolGoal({
-  goal,
-  activities,
-  allGoals,
-  tempSelections,
-  onSelectionChange,
-  getActivityKey,
-}: ProtocolGoalProps) {
-  const params = useParams({ strict: false });
-  const goalId = params.goalId;
+export function ProtocolGoal({ goal, actions, allGoals }: ProtocolGoalProps) {
+  const { goalId } = useParams({ strict: false });
   const goalIndex = allGoals ? getGoalIndex(allGoals, goal.id) : -1;
-
-  const bodyNodes: JSX.Element[] = [];
-  if (goal.body.length > 0) {
-    const keyCounts = new Map<string, number>();
-    for (const paragraph of goal.body) {
-      const baseKey = `${goal.id}:body:${paragraph}`;
-      const prevCount = keyCounts.get(baseKey) ?? 0;
-      const nextCount = prevCount + 1;
-      keyCounts.set(baseKey, nextCount);
-
-      const key = nextCount === 1 ? baseKey : `${baseKey}:${nextCount}`;
-      bodyNodes.push(
-        <ProtocolMarkdown
-          key={key}
-          content={paragraph}
-          citations={goal.citations}
-        />,
-      );
-    }
-  }
-
-  const actionNodes: JSX.Element[] = [];
-  if (goal.actions.length > 0) {
-    const keyCounts = new Map<string, number>();
-    for (const action of goal.actions) {
-      const baseKey = `${goal.id}:action:${action}`;
-      const prevCount = keyCounts.get(baseKey) ?? 0;
-      const nextCount = prevCount + 1;
-      keyCounts.set(baseKey, nextCount);
-
-      const key = nextCount === 1 ? baseKey : `${baseKey}:${nextCount}`;
-      actionNodes.push(
-        <ProtocolMarkdown
-          key={key}
-          content={action}
-          citations={goal.citations}
-        />,
-      );
-    }
-  }
 
   return (
     <div className="space-y-8">
@@ -83,81 +30,73 @@ export function ProtocolGoal({
           {allGoals && goalIndex >= 0 && ` ${goalIndex + 1}/${allGoals.length}`}
         </Mono>
         <H2 className="text-balance text-white">{goal.title}</H2>
-        <ProtocolMarkdown
-          className="text-white/80 [&>div]:text-sm"
-          content={goal.introduction}
-        />
+        {goal.description && (
+          <ProtocolMarkdown
+            className="text-white/80 [&>div]:text-sm"
+            content={goal.description}
+          />
+        )}
       </ProtocolHeader>
       <div className="space-y-8 px-6 lg:px-0">
         <div className="flex h-16 w-full items-center rounded-2xl border border-zinc-100 bg-white p-3 shadow-sm">
           <div className="flex-1 space-y-0.5">
-            <Body3 className="text-secondary">Priority</Body3>
-            {goal.priority && <ProtocolGoalPriority code={goal.priority} />}
+            <Body3 className="text-secondary">Goal</Body3>
+            <Body2>#{goal.number}</Body2>
           </div>
           <div className="mx-4 h-10 w-px bg-zinc-200" />
           <div className="flex-1 space-y-0.5">
-            {goal.metadata?.healthImpact ? (
-              <>
-                <Body3 className="text-secondary">Health Impact</Body3>
-                <Body2>{goal.metadata.healthImpact}</Body2>
-              </>
-            ) : (
-              <>
-                <Body3 className="text-secondary">Biomarkers</Body3>
-                <Body2>{goal.targetBiomarkerIds.length}</Body2>
-              </>
-            )}
+            <Body3 className="text-secondary">Biomarkers</Body3>
+            <Body2>{goal.biomarkers?.length || 0}</Body2>
           </div>
           <div className="mx-4 h-10 w-px bg-zinc-200" />
           <div className="flex-1 space-y-0.5">
-            {goal.metadata?.recoveryTime ? (
-              <>
-                <Body3 className="text-secondary">Recovery Time</Body3>
-                <Body2>{goal.metadata.recoveryTime}</Body2>
-              </>
-            ) : (
-              <>
-                <Body3 className="text-secondary">Products</Body3>
-                <Body2>{goal.activityIds.length}</Body2>
-              </>
-            )}
+            <Body3 className="text-secondary">Actions</Body3>
+            <Body2>{actions.length}</Body2>
           </div>
         </div>
-        {bodyNodes.length > 0 ? (
-          <div className="space-y-4">{bodyNodes}</div>
-        ) : null}
 
-        {goal.targetBiomarkerIds.length > 0 && (
+        {goal.impactContent && (
+          <div className="space-y-4">
+            <H4>Health Impact</H4>
+            <ProtocolMarkdown content={goal.impactContent} />
+          </div>
+        )}
+
+        {goal.biomarkers && goal.biomarkers.length > 0 && (
           <div className="space-y-2">
             <H4>Biomarkers to improve:</H4>
             <div className="divide-y divide-zinc-200 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
-              {goal.targetBiomarkerIds.map((id) => (
-                <Fragment key={id}>
-                  <div className="relative z-10 mx-auto -mt-px h-px w-[calc(100%-2rem)] bg-zinc-200" />
-                  <ProtocolGoalObservation
-                    id={id}
-                    className="rounded-none border-none shadow-none first:rounded-t-2xl last:rounded-b-2xl"
-                  />
-                </Fragment>
+              {goal.biomarkers.map((biomarkerId) => (
+                <div key={biomarkerId} className="p-4">
+                  <Body2 className="font-medium">{biomarkerId}</Body2>
+                </div>
               ))}
             </div>
           </div>
         )}
-        {actionNodes.length > 0 ? (
-          <div className="space-y-4">{actionNodes}</div>
-        ) : null}
-        {activities.length > 0 && (
+
+        {actions.length > 0 && (
           <div className="space-y-4">
-            <H4>Select your protocol items:</H4>
-            <ProtocolActivitiesList
-              activities={activities}
-              tempSelections={tempSelections}
-              onSelectionChange={onSelectionChange}
-              getActivityKey={getActivityKey}
-            />
+            <H4>Recommended Actions</H4>
+            <div className="space-y-4">
+              {actions.map((action, index) => (
+                <div
+                  key={index}
+                  className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm"
+                >
+                  <Body2 className="font-medium">{action.title}</Body2>
+                  {action.description && (
+                    <Body3 className="mt-1 text-secondary">
+                      {action.description}
+                    </Body3>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         )}
-        {goalId != null && (
+
+        {goalId && (
           <div className="space-y-4">
             <H4>Ask Superpower AI</H4>
             <AiSuggestions

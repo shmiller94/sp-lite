@@ -13,16 +13,16 @@ import {
   useRecommendations,
   Recommendation,
 } from '@/features/homepage/api/get-recommendations';
-import { usePlans } from '@/features/protocol/api/get-plans';
+import { useProtocols } from '@/features/protocol/api';
 import { useAnalytics } from '@/hooks/use-analytics';
 
 export const RecommendationsList: React.FC = () => {
   const { data: recommendations, isLoading } = useRecommendations();
-  const { data: plans } = usePlans({});
+  const { data: protocols } = useProtocols();
 
   const hasCompletedPlans = useMemo(
-    () => plans?.actionPlans?.some((plan) => plan.status === 'completed'),
-    [plans],
+    () => protocols?.some((p) => p.status === 'completed'),
+    [protocols],
   );
 
   if (isLoading || hasCompletedPlans) {

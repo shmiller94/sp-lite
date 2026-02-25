@@ -3,7 +3,7 @@ import { Body1 } from '@/components/ui/typography';
 import { cn } from '@/lib/utils';
 
 import type { Activity } from '../api';
-import { getItemDetails } from '../utils/get-item-details';
+import { getItemDetails } from '../utils/legacy/get-item-details';
 
 import { ProtocolMarkdown } from './protocol-markdown';
 

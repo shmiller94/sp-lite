@@ -80,7 +80,7 @@ export const twoFactorHandlers = [
         });
 
         await persistDb('otpCode');
-      } catch (e) {
+      } catch (_e) {
         return HttpResponse.json({ success: false }, { status: 404 });
       }
 

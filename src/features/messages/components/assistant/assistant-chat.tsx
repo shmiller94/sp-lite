@@ -1,8 +1,13 @@
-import { useChat } from '@ai-sdk/react';
+import { type UseChatHelpers, useChat } from '@ai-sdk/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useLocation } from '@tanstack/react-router';
-import { DefaultChatTransport, FileUIPart } from 'ai';
-import { useEffect, useMemo, useState } from 'react';
+import {
+  type ChatRequestOptions,
+  type UIMessage,
+  DefaultChatTransport,
+  FileUIPart,
+} from 'ai';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { env } from '@/config/env';
 import { useCreateFollowups } from '@/features/messages/api/create-followups';
@@ -37,6 +42,7 @@ export function AssistantChat({
   // input is handled by custom store to avoid additional effects to sync preset inputs
   const input = useAssistantStore((s) => s.input);
   const setInput = useAssistantStore((s) => s.setInput);
+  const registerSendMessage = useAssistantStore((s) => s.registerSendMessage);
   const initialMessages = useAssistantStore((s) => s.initialMessages);
   const clearInitialMessages = useAssistantStore((s) => s.clearInitialMessages);
   const hasSetInitialMessages = useAssistantStore(
@@ -180,6 +186,47 @@ export function AssistantChat({
 
   const visibleSuggestions = shouldShowSuggestions ? followupsData : [];
 
+  const handleSendMessage = useCallback(
+    (
+      message: Parameters<UseChatHelpers<UIMessage>['sendMessage']>[0],
+      options?: ChatRequestOptions,
+    ) => {
+      setInput('');
+      if (hasSetInitialMessages) {
+        clearInitialMessages();
+        setHasSetInitialMessages(false);
+      }
+      if (assistantContext) {
+        queryClient.cancelQueries({
+          queryKey: ['followups', assistantContext, 3],
+        });
+      }
+      if (messages.length === 0) {
+        queryClient.cancelQueries({
+          queryKey: ['followups', followupsContext, 3],
+        });
+      }
+      setShouldGenerateFollowups(false);
+      return sendMessage(message, options);
+    },
+    [
+      setInput,
+      hasSetInitialMessages,
+      clearInitialMessages,
+      setHasSetInitialMessages,
+      assistantContext,
+      queryClient,
+      messages.length,
+      followupsContext,
+      sendMessage,
+    ],
+  );
+
+  // Register sendMessage so the store can dispatch sends directly
+  useEffect(() => {
+    registerSendMessage(handleSendMessage);
+  }, [handleSendMessage, registerSendMessage]);
+
   return (
     <div
       className={cn('flex h-full w-full flex-col justify-end overflow-hidden')}
@@ -198,7 +245,7 @@ export function AssistantChat({
           {visibleSuggestions.map((suggestion) => (
             <ChatSuggestion
               key={suggestion}
-              onClick={() => setInput(suggestion)}
+              onClick={() => handleSendMessage({ text: suggestion, files: [] })}
               suggestion={suggestion}
             />
           ))}
@@ -214,25 +261,7 @@ export function AssistantChat({
           <MultimodalInput
             input={input}
             setInput={setInput}
-            sendMessage={(message, options) => {
-              setInput('');
-              if (hasSetInitialMessages) {
-                clearInitialMessages();
-                setHasSetInitialMessages(false);
-              }
-              if (assistantContext) {
-                queryClient.cancelQueries({
-                  queryKey: ['followups', assistantContext, 3],
-                });
-              }
-              if (messages.length === 0) {
-                queryClient.cancelQueries({
-                  queryKey: ['followups', followupsContext, 3],
-                });
-              }
-              setShouldGenerateFollowups(false);
-              return sendMessage(message, options);
-            }}
+            sendMessage={handleSendMessage}
             status={status}
             attachments={attachments}
             setAttachments={setAttachments}

@@ -200,7 +200,7 @@ export function ChatShareDialog({
       const url = `${env.WEBSITE_URL}/share/chat/${chatId}`;
       await navigator.clipboard.writeText(url);
       toast.success('Copied link to clipboard');
-    } catch (e) {
+    } catch (_e) {
       toast.error('Failed to copy link');
     }
   };

@@ -12,7 +12,7 @@ import {
   buildQuestionnaireStatusMap,
   getQuestionnaireStatus,
 } from '@/features/onboarding/utils/get-questionnaire-status';
-import { revealLatestQueryOptions } from '@/features/protocol/api/reveal-latest';
+import { revealLatestQueryOptions } from '@/features/protocol/api/reveal';
 import { getQuestionnaireResponseListQueryOptions } from '@/features/questionnaires/api/questionnaire-response';
 import { getTaskQueryOptions } from '@/features/tasks/api/get-task';
 import { authenticatedUserQueryOptions } from '@/lib/auth';
@@ -60,10 +60,8 @@ export const Route = createFileRoute('/_app')({
 
     const revealPermissiblePaths = [
       '/protocol/reveal',
-      '/protocol/autopilot',
       '/onboarding', // Prevent infinite redirect loop
       '/intake', // Medical intake for legacy members
-      '/action-plan/intro', // Videos
     ];
     let onPermissiblePath = false;
     for (const path of revealPermissiblePaths) {
@@ -79,6 +77,20 @@ export const Route = createFileRoute('/_app')({
 
     if (user.adminActor !== null && user.adminActor !== undefined) {
       return;
+    }
+
+    const revealData = await queryClient
+      .ensureQueryData(revealLatestQueryOptions())
+      .catch(() => null);
+
+    if (
+      revealData?.shouldShow === true &&
+      revealData?.lastCompletedPhase !== 'completed'
+    ) {
+      throw redirect({
+        to: '/protocol/reveal',
+        replace: true,
+      });
     }
 
     const intakeDismissed = isIntakeDismissed();
@@ -103,33 +115,17 @@ export const Route = createFileRoute('/_app')({
     const shouldFetchLegacyIntakes =
       shouldRunLegacyIntakeChecks && createdAtIsValid && isLegacyMember;
 
-    const [revealLatest, intakeResponses] = await Promise.all([
-      queryClient
-        .ensureQueryData(revealLatestQueryOptions)
-        .catch(() => undefined),
-      shouldFetchLegacyIntakes
-        ? queryClient
-            .ensureQueryData(
-              getQuestionnaireResponseListQueryOptions({
-                questionnaireName:
-                  'onboarding-primer,onboarding-medical-history,onboarding-female-health,onboarding-lifestyle',
-                status: 'completed',
-              }),
-            )
-            .catch(() => undefined)
-        : Promise.resolve(undefined),
-    ]);
-
-    if (
-      revealLatest?.carePlanId != null &&
-      revealLatest?.showReveal === true &&
-      revealLatest?.revealCompleted !== true
-    ) {
-      throw redirect({
-        to: '/protocol/reveal',
-        replace: true,
-      });
-    }
+    const intakeResponses = shouldFetchLegacyIntakes
+      ? await queryClient
+          .ensureQueryData(
+            getQuestionnaireResponseListQueryOptions({
+              questionnaireName:
+                'onboarding-primer,onboarding-medical-history,onboarding-female-health,onboarding-lifestyle',
+              status: 'completed',
+            }),
+          )
+          .catch(() => undefined)
+      : undefined;
 
     if (import.meta.env.DEV) {
       return;

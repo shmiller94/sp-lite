@@ -241,7 +241,7 @@ export async function requireAuth(token?: string) {
     }
 
     return { user: sanitizeUser(user), login };
-  } catch (err: any) {
+  } catch (_err: any) {
     return { error: 'Unauthorized', user: null };
   }
 }

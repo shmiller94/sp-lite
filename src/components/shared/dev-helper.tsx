@@ -11,10 +11,16 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
+import { env } from '@/config/env';
 import { INTAKE_QUESTIONNAIRE } from '@/const/questionnaire';
 import type { StepId } from '@/features/onboarding/config/step-config';
 import { STEP_IDS } from '@/features/onboarding/config/step-config';
 import { useOnboardingFlowStore } from '@/features/onboarding/stores/onboarding-flow-store';
+import {
+  useCompleteReveal,
+  useResetReveal,
+  useRevealLatest,
+} from '@/features/protocol/api/reveal';
 import { useQuestionnaire } from '@/features/questionnaires/api/questionnaire';
 import {
   useCreateQuestionnaireResponse,
@@ -46,7 +52,7 @@ const SEQUENCE_STEPS: Array<{ id: StepId; label: string }> = [
 ];
 
 export function DevHelper() {
-  const isDev = import.meta.env.DEV;
+  const isDev = env.DEV_TOOLS_ENABLED;
 
   const [open, setOpen] = React.useState(false);
   const [bypassCarePlan, setBypassCarePlan] = React.useState(() =>
@@ -101,6 +107,11 @@ function DevHelperMenuContent({
   const goToStep = useOnboardingFlowStore((state) => state.goTo);
   const updateQuestionnaireResponseMutation = useUpdateQuestionnaireResponse();
   const createQuestionnaireResponseMutation = useCreateQuestionnaireResponse();
+  const revealLatestQuery = useRevealLatest({ enabled: true });
+  const completeRevealMutation = useCompleteReveal();
+  const resetRevealMutation = useResetReveal();
+
+  const protocolId = revealLatestQuery.data?.protocolId ?? null;
   const getQuestionnaireResponseQuery = useQuestionnaireResponse({
     identifier: INTAKE_QUESTIONNAIRE,
     statuses: ['in-progress', 'stopped'],
@@ -308,8 +319,8 @@ function DevHelperMenuContent({
     }
   };
 
-  const onJumpToStep = (stepId: StepId) => {
-    goToStep(stepId);
+  const onJumpToStep = (stepId: string) => {
+    goToStep(stepId as any);
     toast.success(`Jumped to ${stepId}`);
   };
 
@@ -323,7 +334,7 @@ function DevHelperMenuContent({
     window.location.reload();
   };
 
-  const questionnaireItems: JSX.Element[] = [];
+  const questionnaireItems: React.JSX.Element[] = [];
   for (const name of ONBOARDING_QUESTIONNAIRES) {
     questionnaireItems.push(
       <CommandItem
@@ -338,7 +349,7 @@ function DevHelperMenuContent({
     );
   }
 
-  const sequenceItems: JSX.Element[] = [];
+  const sequenceItems: React.JSX.Element[] = [];
   for (const step of SEQUENCE_STEPS) {
     sequenceItems.push(
       <CommandItem
@@ -384,6 +395,45 @@ function DevHelperMenuContent({
           <span>Complete All Questionnaires</span>
         </CommandItem>
         {questionnaireItems}
+      </CommandGroup>
+
+      <CommandGroup heading="Protocol Reveal">
+        <CommandItem
+          onSelect={async () => {
+            if (!protocolId) {
+              toast.error('No revealable protocol found');
+              return;
+            }
+            closeMenu();
+            try {
+              await resetRevealMutation.mutateAsync(protocolId);
+              toast.success('Reveal reset, refreshing...');
+              window.location.reload();
+            } catch {
+              toast.error('Failed to reset reveal');
+            }
+          }}
+        >
+          <span>Reset reveal</span>
+        </CommandItem>
+        <CommandItem
+          onSelect={async () => {
+            if (!protocolId) {
+              toast.error('No revealable protocol found');
+              return;
+            }
+            closeMenu();
+            try {
+              await completeRevealMutation.mutateAsync(protocolId);
+              toast.success('Reveal completed, refreshing...');
+              window.location.reload();
+            } catch {
+              toast.error('Failed to complete reveal');
+            }
+          }}
+        >
+          <span>Complete reveal</span>
+        </CommandItem>
       </CommandGroup>
 
       {isOnboarding ? (

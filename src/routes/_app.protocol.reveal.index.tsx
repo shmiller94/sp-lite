@@ -2,25 +2,20 @@ import { createFileRoute, Navigate } from '@tanstack/react-router';
 
 import { Head } from '@/components/seo';
 import { Spinner } from '@/components/ui/spinner';
-import { useRevealLatest } from '@/features/protocol/api';
-import { useRevealStepper } from '@/features/protocol/components/reveal/reveal-stepper';
+import { useRevealLatest } from '@/features/protocol/api/reveal';
+import { getInitialStepForPhase } from '@/features/protocol/components/reveal/protocol-stepper';
 
 export const Route = createFileRoute('/_app/protocol/reveal/')({
   component: ProtocolRevealIndexComponent,
 });
 
 function ProtocolRevealIndexComponent() {
-  const { data: revealData } = useRevealLatest();
-  const carePlanId: string | null = revealData?.carePlanId ?? null;
-  const { initialStep, isLoading, protocol } = useRevealStepper(
-    carePlanId ?? undefined,
-    undefined,
-  );
+  const { data: revealData, isLoading } = useRevealLatest();
 
   if (isLoading) {
     return (
       <>
-        <Head title="Your Health Protocol" />
+        <Head title="Protocol Reveal" />
         <div className="flex min-h-[60vh] items-center justify-center">
           <Spinner variant="primary" />
         </div>
@@ -28,17 +23,13 @@ function ProtocolRevealIndexComponent() {
     );
   }
 
-  if (revealData?.revealCompleted) {
+  const lastCompletedPhase = revealData?.lastCompletedPhase ?? 'not_started';
+
+  if (lastCompletedPhase === 'completed') {
     return <Navigate to="/protocol" replace />;
   }
 
-  if (carePlanId == null || protocol == null || initialStep == null) {
-    console.error('Missing care plan id or protocol', {
-      carePlanId,
-      protocol,
-    });
-    return <Navigate to="/protocol" replace />;
-  }
+  const initialStep = getInitialStepForPhase(lastCompletedPhase);
 
   return (
     <Navigate

@@ -539,7 +539,7 @@ export const useCheckout = ({
 
       // Create subscription with HSA/FSA checkout session ID so backend can process accordingly
       await createSubscription('hsa_fsa', checkoutSessionId);
-    } catch (e: any) {
+    } catch (_e: any) {
       toast.error('Something went wrong. Please try again.');
     }
   };

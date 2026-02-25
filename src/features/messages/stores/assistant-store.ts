@@ -2,12 +2,17 @@ import type { UIMessage } from 'ai';
 import type { SetStateAction } from 'react';
 import { create } from 'zustand';
 
+type SendMessageFn = (message: { text: string; files: [] }) => void;
+
 interface AssistantState {
   isExpanded: boolean;
   input: string;
   initialMessages: UIMessage[];
   hasSetInitialMessages: boolean;
-  open: (input?: string) => void;
+  /** Registered by AssistantChat so callers can send messages directly */
+  _sendMessage: SendMessageFn | null;
+  registerSendMessage: (fn: SendMessageFn) => void;
+  open: (input?: string, options?: { autoSend?: boolean }) => void;
   openWithMessages: (initialMessages: UIMessage[]) => void;
   close: () => void;
   toggle: (input?: string) => void;
@@ -17,16 +22,32 @@ interface AssistantState {
   setHasSetInitialMessages: (value: boolean) => void;
 }
 
-export const useAssistantStore = create<AssistantState>()((set) => ({
+export const useAssistantStore = create<AssistantState>()((set, get) => ({
   isExpanded: false,
   input: '',
   initialMessages: [],
   hasSetInitialMessages: false,
-  open: (input) =>
+  _sendMessage: null,
+  registerSendMessage: (fn) => set({ _sendMessage: fn }),
+  open: (input, options) => {
+    const autoSend = options?.autoSend ?? true;
+
     set((s) => ({
       isExpanded: true,
       input: typeof input === 'string' ? input : s.input,
-    })),
+    }));
+
+    if (autoSend && typeof input === 'string') {
+      // Defer so the store update (isExpanded) is processed first
+      queueMicrotask(() => {
+        const { _sendMessage } = get();
+        if (_sendMessage) {
+          _sendMessage({ text: input, files: [] });
+          set({ input: '' });
+        }
+      });
+    }
+  },
   openWithMessages: (initialMessages) =>
     set(() => ({
       isExpanded: true,

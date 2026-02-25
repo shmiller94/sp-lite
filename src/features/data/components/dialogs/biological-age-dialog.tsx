@@ -49,9 +49,9 @@ export const BiologicalAgeDialog = ({
   disabled?: boolean;
 }) => {
   const [open, setOpen] = useState(false);
-  const navigate = useNavigate({ from: '/data' });
+  const navigate = useNavigate();
   const modal = useSearch({
-    from: '/_app/data',
+    strict: false,
     select: (s) => s.modal,
   });
   const [sharingOptionsOpen, setSharingOptionsOpen] = useState(false);
@@ -81,12 +81,12 @@ export const BiologicalAgeDialog = ({
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
     void navigate({
-      search: (prev) => {
-        return {
-          ...prev,
-          modal: nextOpen ? 'biological-age' : undefined,
-        };
-      },
+      // useNavigate without `from` types search as `never` since the route is unknown.
+      // We omit `from` so this dialog works on any route (e.g. /data, /protocol/reveal).
+      search: ((prev: Record<string, unknown>) => ({
+        ...prev,
+        modal: nextOpen ? 'biological-age' : undefined,
+      })) as never,
     });
   };
 

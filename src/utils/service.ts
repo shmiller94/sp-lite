@@ -262,3 +262,43 @@ export const getServiceBadge = (serviceName: string): string | null => {
       return null;
   }
 };
+
+/**
+ * Protocol/test ID to human-readable display name.
+ * Mirrors ts-ai-chat test-catalog abstract slugs and concrete ActivityDefinition IDs.
+ * Unknown IDs are returned as-is.
+ */
+const PROTOCOL_ID_DISPLAY: Record<string, string> = {
+  'advanced-blood-panel': 'Advanced Blood Panel',
+  'v2-advanced-blood-panel-male-quest': 'Advanced Blood Panel',
+  'v2-advanced-blood-panel-female-quest': 'Advanced Blood Panel',
+  'v2-advanced-blood-panel-male-bioref': 'Advanced Blood Panel',
+  'v2-advanced-blood-panel-female-bioref': 'Advanced Blood Panel',
+  'autoimmunity-panel': 'Autoimmunity & Celiac Panel',
+  'v2-autoimmunity-bundle-quest': 'Autoimmunity & Celiac Panel',
+  'v2-autoimmunity-bundle-bioref': 'Autoimmunity & Celiac Panel',
+  'baseline-blood-panel': 'Superpower Blood Panel',
+  'v2-baseline-blood-panel-quest': 'Superpower Blood Panel',
+  'v2-baseline-blood-panel-bioref': 'Superpower Blood Panel',
+  'cardiovascular-panel': 'Cardiovascular Panel',
+  'v2-cardiovascular-bundle-quest': 'Cardiovascular Panel',
+  'v2-cardiovascular-bundle-bioref': 'Cardiovascular Panel',
+  'fertility-panel': 'Female Fertility Panel',
+  'v2-fertility-bundle-quest': 'Female Fertility Panel',
+  'v2-fertility-bundle-bioref': 'Female Fertility Panel',
+  'metabolic-panel': 'Metabolic Panel',
+  'v2-metabolic-bundle-quest': 'Metabolic Panel',
+  'v2-metabolic-bundle-bioref': 'Metabolic Panel',
+  'methylation-panel': 'Methylation Panel',
+  'v2-methylation-bundle-quest': 'Methylation Panel',
+  'v2-methylation-bundle-bioref': 'Methylation Panel',
+  'nutrients-panel': 'Nutrient & Antioxidant Panel',
+  'v2-nutrients-bundle-quest': 'Nutrient & Antioxidant Panel',
+  'v2-nutrients-bundle-bioref': 'Nutrient & Antioxidant Panel',
+  'gut-microbiome-analysis': 'Gut Microbiome Analysis',
+};
+
+export function protocolIdToDisplay(protocolId: string): string {
+  const display = PROTOCOL_ID_DISPLAY[protocolId];
+  return display ?? protocolId;
+}

@@ -238,9 +238,9 @@ module.exports = {
       addUtilities({
         '.rounded-mask': {
           '-webkit-mask-image':
-            'radial-gradient(ellipse at center, black 40%, transparent 70%)',
+            'radial-gradient(ellipse at center, black 25%, #00000050 60%, transparent 70%)',
           'mask-image':
-            'radial-gradient(ellipse at center, black 40%, transparent 70%)',
+            'radial-gradient(ellipse at center, black 25%, #00000050 60%, transparent 70%)',
           '-webkit-mask-size': '100% 100%',
           'mask-size': '100% 100%',
           '-webkit-mask-position': 'center',
