@@ -385,7 +385,7 @@ export const MobileNavbar = () => {
             className={cn(
               'shrink-0 transition-colors',
               pathname.startsWith('/concierge')
-                ? 'text-zinc-900'
+                ? 'text-vermillion-900'
                 : 'text-zinc-300 group-hover:text-secondary',
             )}
           />
