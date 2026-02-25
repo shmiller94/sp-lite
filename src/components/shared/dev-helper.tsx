@@ -12,7 +12,6 @@ import {
   CommandList,
 } from '@/components/ui/command';
 import { env } from '@/config/env';
-import { INTAKE_QUESTIONNAIRE } from '@/const/questionnaire';
 import type { StepId } from '@/features/onboarding/config/step-config';
 import { STEP_IDS } from '@/features/onboarding/config/step-config';
 import { useOnboardingFlowStore } from '@/features/onboarding/stores/onboarding-flow-store';
@@ -24,7 +23,6 @@ import {
 import { useQuestionnaire } from '@/features/questionnaires/api/questionnaire';
 import {
   useCreateQuestionnaireResponse,
-  useQuestionnaireResponse,
   useQuestionnaireResponseList,
   useUpdateQuestionnaireResponse,
 } from '@/features/questionnaires/api/questionnaire-response';
@@ -112,13 +110,6 @@ function DevHelperMenuContent({
   const resetRevealMutation = useResetReveal();
 
   const protocolId = revealLatestQuery.data?.protocolId ?? null;
-  const getQuestionnaireResponseQuery = useQuestionnaireResponse({
-    identifier: INTAKE_QUESTIONNAIRE,
-    statuses: ['in-progress', 'stopped'],
-  });
-
-  const intakeResponseId =
-    getQuestionnaireResponseQuery.data?.questionnaireResponse?.id;
 
   const onboardingPrimerQuery = useQuestionnaire({
     identifier: ONBOARDING_QUESTIONNAIRES[0],
@@ -183,34 +174,6 @@ function DevHelperMenuContent({
       }
     }
     return fallback;
-  };
-
-  const onCompleteIntake = () => {
-    if (
-      getQuestionnaireResponseQuery.data?.questionnaireResponse?.status ===
-      'completed'
-    ) {
-      toast.info('Intake already completed');
-      return;
-    }
-
-    if (intakeResponseId == null) {
-      toast.error('No intake questionnaire response found');
-      return;
-    }
-
-    updateQuestionnaireResponseMutation.mutate(
-      {
-        id: intakeResponseId,
-        data: { status: 'completed', item: [] },
-      },
-      {
-        onSuccess: () => {
-          toast.success('Completed intake, refreshing...');
-          window.location.reload();
-        },
-      },
-    );
   };
 
   const onCompleteAllQuestionnaires = async () => {
@@ -367,14 +330,6 @@ function DevHelperMenuContent({
   return (
     <>
       <CommandGroup heading="Intake Actions">
-        <CommandItem
-          onSelect={() => {
-            onCompleteIntake();
-            closeMenu();
-          }}
-        >
-          <span>Complete intake</span>
-        </CommandItem>
         <CommandItem
           onSelect={() => {
             onToggleBypassCarePlan();

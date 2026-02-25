@@ -1,21 +1,36 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 import { type StepId } from '../config/step-config';
 
+/**
+ * Shared flow store for onboarding + intake navigation.
+ *
+ * Key model:
+ * - `validSteps` is recomputed from fresh query-derived context.
+ * - `currentStep` is persisted so users can resume after hard reload.
+ * - `syncFlow` reconciles those two worlds.
+ *
+ * Reconciliation rules:
+ * - Same user + still-valid step -> resume previous step.
+ * - User changed or step no longer valid -> start from first valid step.
+ * - No meaningful change -> no-op to avoid unnecessary re-renders.
+ */
 interface OnboardingFlowStore {
   currentStep: StepId | null;
+  userId: string | null;
   validSteps: StepId[];
   isInitialized: boolean;
   isLastStep: boolean;
   isFirstStep: boolean;
 
   // Actions
-  initialize: (steps: StepId[]) => void;
-  /** Update valid steps without changing current step. Used when context changes (e.g., gender set). */
-  updateSteps: (steps: StepId[]) => void;
+  /** Canonical reconciliation entrypoint used by flow hooks. */
+  syncFlow: (steps: StepId[], userId: string | null) => void;
   next: () => void;
   prev: () => void;
   goTo: (stepId: StepId) => void;
+  /** Full reset used when flow is completed or session is cleared. */
   reset: () => void;
 }
 
@@ -31,80 +46,109 @@ const computeStepFlags = (
 });
 
 export const useOnboardingFlowStore = create<OnboardingFlowStore>()(
-  (set, get) => ({
-    currentStep: null,
-    validSteps: [],
-    isInitialized: false,
-    isLastStep: false,
-    isFirstStep: false,
+  persist(
+    (set, get) => ({
+      currentStep: null,
+      userId: null,
+      validSteps: [],
+      isInitialized: false,
+      isLastStep: false,
+      isFirstStep: false,
 
-    initialize: (steps) => {
-      const currentStep = steps[0] ?? null;
-      set({
-        validSteps: steps,
-        currentStep,
-        isInitialized: true,
-        ...computeStepFlags(currentStep, steps),
-      });
-    },
+      // Single reconciliation path used by both onboarding/intake hooks.
+      syncFlow: (steps, userId) => {
+        const {
+          currentStep,
+          userId: currentUserId,
+          validSteps: currentValidSteps,
+          isInitialized,
+        } = get();
+        const userChanged = userId !== currentUserId;
+        // Compare by value, not reference, because hooks may create new arrays.
+        let stepsChanged = steps.length !== currentValidSteps.length;
+        if (!stepsChanged) {
+          for (const [index, step] of steps.entries()) {
+            if (step !== currentValidSteps[index]) {
+              stepsChanged = true;
+              break;
+            }
+          }
+        }
 
-    updateSteps: (steps) => {
-      const { currentStep } = get();
-      // Keep current step if it's still valid, otherwise go to first step
-      const newCurrentStep =
-        currentStep && steps.includes(currentStep)
-          ? currentStep
-          : (steps[0] ?? null);
-      set({
-        validSteps: steps,
-        currentStep: newCurrentStep,
-        ...computeStepFlags(newCurrentStep, steps),
-      });
-    },
+        // Avoid redundant store writes/re-renders when nothing meaningful changed.
+        if (isInitialized && !userChanged && !stepsChanged) return;
 
-    next: () => {
-      const { validSteps, currentStep } = get();
-      if (!currentStep) return;
-      const idx = validSteps.indexOf(currentStep);
-      const nextStep = validSteps[idx + 1];
-      if (nextStep) {
+        // Same user resumes where they left off if that step is still valid.
+        const resumeStep =
+          !userChanged && currentStep !== null && steps.includes(currentStep)
+            ? currentStep
+            : (steps[0] ?? null);
         set({
-          currentStep: nextStep,
-          ...computeStepFlags(nextStep, validSteps),
+          validSteps: steps,
+          currentStep: resumeStep,
+          userId,
+          isInitialized: true,
+          ...computeStepFlags(resumeStep, steps),
         });
-      }
-    },
+      },
 
-    prev: () => {
-      const { validSteps, currentStep } = get();
-      if (!currentStep) return;
-      const idx = validSteps.indexOf(currentStep);
-      const prevStep = validSteps[idx - 1];
-      if (prevStep) {
+      next: () => {
+        const { validSteps, currentStep } = get();
+        // Flow has not been initialized yet.
+        if (!currentStep) return;
+        const idx = validSteps.indexOf(currentStep);
+        const nextStep = validSteps[idx + 1];
+        if (nextStep) {
+          set({
+            currentStep: nextStep,
+            ...computeStepFlags(nextStep, validSteps),
+          });
+        }
+      },
+
+      prev: () => {
+        const { validSteps, currentStep } = get();
+        // Flow has not been initialized yet.
+        if (!currentStep) return;
+        const idx = validSteps.indexOf(currentStep);
+        const prevStep = validSteps[idx - 1];
+        if (prevStep) {
+          set({
+            currentStep: prevStep,
+            ...computeStepFlags(prevStep, validSteps),
+          });
+        }
+      },
+
+      goTo: (stepId) => {
+        const { validSteps } = get();
+        // Prevent navigation to steps excluded by current context.
+        if (validSteps.includes(stepId)) {
+          set({
+            currentStep: stepId,
+            ...computeStepFlags(stepId, validSteps),
+          });
+        }
+      },
+
+      reset: () =>
         set({
-          currentStep: prevStep,
-          ...computeStepFlags(prevStep, validSteps),
-        });
-      }
-    },
-
-    goTo: (stepId) => {
-      const { validSteps } = get();
-      if (validSteps.includes(stepId)) {
-        set({
-          currentStep: stepId,
-          ...computeStepFlags(stepId, validSteps),
-        });
-      }
-    },
-
-    reset: () =>
-      set({
-        currentStep: null,
-        validSteps: [],
-        isInitialized: false,
-        isLastStep: false,
-        isFirstStep: false,
+          currentStep: null,
+          userId: null,
+          validSteps: [],
+          isInitialized: false,
+          isLastStep: false,
+          isFirstStep: false,
+        }),
+    }),
+    {
+      // Persist in localStorage by default via zustand/persist.
+      name: 'onboarding-flow-step',
+      // Persist only what is needed to resume on hard reload.
+      partialize: (state) => ({
+        currentStep: state.currentStep,
+        userId: state.userId,
       }),
-  }),
+    },
+  ),
 );

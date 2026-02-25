@@ -4,12 +4,15 @@ import { Head } from '@/components/seo';
 import { Button } from '@/components/ui/button';
 import { Body1, H2 } from '@/components/ui/typography';
 import { Sequence } from '@/features/onboarding/components/sequence';
+import { useOnboardingFlowStore } from '@/features/onboarding/stores/onboarding-flow-store';
 
 export const CompletionStep = () => {
   const navigate = useNavigate();
 
-  const handleContinue = () => {
-    void navigate({ to: '/', replace: true });
+  const handleContinue = async () => {
+    await navigate({ to: '/', replace: true });
+    // Clear persisted resume state only after route transition.
+    useOnboardingFlowStore.getState().reset();
   };
 
   return (

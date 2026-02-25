@@ -11,14 +11,16 @@ const TEST_STEPS: StepId[] = [
   STEP_IDS.PHLEBOTOMY_BOOKING,
 ];
 
+const TEST_USER_ID = 'user-123';
+
 // Note: Zustand mock auto-resets stores after each test (see __mocks__/zustand.ts)
 describe('useOnboardingFlowStore', () => {
-  describe('initialize()', () => {
+  describe('syncFlow()', () => {
     it('sets currentStep to first step', () => {
       const { result } = renderHook(() => useOnboardingFlowStore());
 
       act(() => {
-        result.current.initialize(TEST_STEPS);
+        result.current.syncFlow(TEST_STEPS, TEST_USER_ID);
       });
 
       expect(result.current.currentStep).toBe(STEP_IDS.UPDATE_INFO);
@@ -28,7 +30,7 @@ describe('useOnboardingFlowStore', () => {
       const { result } = renderHook(() => useOnboardingFlowStore());
 
       act(() => {
-        result.current.initialize(TEST_STEPS);
+        result.current.syncFlow(TEST_STEPS, TEST_USER_ID);
       });
 
       expect(result.current.validSteps).toEqual(TEST_STEPS);
@@ -38,17 +40,84 @@ describe('useOnboardingFlowStore', () => {
       const { result } = renderHook(() => useOnboardingFlowStore());
 
       act(() => {
-        result.current.initialize(TEST_STEPS);
+        result.current.syncFlow(TEST_STEPS, TEST_USER_ID);
       });
 
       expect(result.current.isInitialized).toBe(true);
+    });
+
+    it('resumes from persisted step if still valid', () => {
+      const { result } = renderHook(() => useOnboardingFlowStore());
+
+      // Simulate a previous session: initialize and navigate to middle step
+      act(() => {
+        result.current.syncFlow(TEST_STEPS, TEST_USER_ID);
+      });
+      act(() => {
+        result.current.next(); // Move to INTAKE
+      });
+      expect(result.current.currentStep).toBe(STEP_IDS.INTAKE);
+
+      // Simulate re-mount: re-initialize with same steps (persisted currentStep is INTAKE)
+      act(() => {
+        result.current.syncFlow(TEST_STEPS, TEST_USER_ID);
+      });
+
+      // Should resume at INTAKE, not reset to first step
+      expect(result.current.currentStep).toBe(STEP_IDS.INTAKE);
+    });
+
+    it('falls back to first step if persisted step is no longer valid', () => {
+      const { result } = renderHook(() => useOnboardingFlowStore());
+
+      // Simulate a previous session at INTAKE
+      act(() => {
+        result.current.syncFlow(TEST_STEPS, TEST_USER_ID);
+      });
+      act(() => {
+        result.current.next(); // Move to INTAKE
+      });
+      expect(result.current.currentStep).toBe(STEP_IDS.INTAKE);
+
+      // Re-initialize with steps that don't include INTAKE
+      const newSteps: StepId[] = [
+        STEP_IDS.UPDATE_INFO,
+        STEP_IDS.PHLEBOTOMY_BOOKING,
+      ];
+      act(() => {
+        result.current.syncFlow(newSteps, TEST_USER_ID);
+      });
+
+      // Should fall back to first step
+      expect(result.current.currentStep).toBe(STEP_IDS.UPDATE_INFO);
+    });
+
+    it('resets to first step when user changes', () => {
+      const { result } = renderHook(() => useOnboardingFlowStore());
+
+      // User A initializes and navigates to middle step
+      act(() => {
+        result.current.syncFlow(TEST_STEPS, 'user-a');
+      });
+      act(() => {
+        result.current.next(); // Move to INTAKE
+      });
+      expect(result.current.currentStep).toBe(STEP_IDS.INTAKE);
+
+      // User B logs in and initializes with same steps
+      act(() => {
+        result.current.syncFlow(TEST_STEPS, 'user-b');
+      });
+
+      // Should start at first step, not resume user A's position
+      expect(result.current.currentStep).toBe(STEP_IDS.UPDATE_INFO);
     });
 
     it('handles empty steps array', () => {
       const { result } = renderHook(() => useOnboardingFlowStore());
 
       act(() => {
-        result.current.initialize([]);
+        result.current.syncFlow([], TEST_USER_ID);
       });
 
       expect(result.current.currentStep).toBeNull();
@@ -60,7 +129,7 @@ describe('useOnboardingFlowStore', () => {
       const { result } = renderHook(() => useOnboardingFlowStore());
 
       act(() => {
-        result.current.initialize([STEP_IDS.PHLEBOTOMY_BOOKING]);
+        result.current.syncFlow([STEP_IDS.PHLEBOTOMY_BOOKING], TEST_USER_ID);
       });
 
       expect(result.current.currentStep).toBe(STEP_IDS.PHLEBOTOMY_BOOKING);
@@ -73,7 +142,7 @@ describe('useOnboardingFlowStore', () => {
       const { result } = renderHook(() => useOnboardingFlowStore());
 
       act(() => {
-        result.current.initialize(TEST_STEPS);
+        result.current.syncFlow(TEST_STEPS, TEST_USER_ID);
       });
 
       act(() => {
@@ -87,7 +156,7 @@ describe('useOnboardingFlowStore', () => {
       const { result } = renderHook(() => useOnboardingFlowStore());
 
       act(() => {
-        result.current.initialize(TEST_STEPS);
+        result.current.syncFlow(TEST_STEPS, TEST_USER_ID);
       });
 
       // Navigate to last step
@@ -126,7 +195,7 @@ describe('useOnboardingFlowStore', () => {
       const { result } = renderHook(() => useOnboardingFlowStore());
 
       act(() => {
-        result.current.initialize(TEST_STEPS);
+        result.current.syncFlow(TEST_STEPS, TEST_USER_ID);
       });
 
       // Go to second step
@@ -148,7 +217,7 @@ describe('useOnboardingFlowStore', () => {
       const { result } = renderHook(() => useOnboardingFlowStore());
 
       act(() => {
-        result.current.initialize(TEST_STEPS);
+        result.current.syncFlow(TEST_STEPS, TEST_USER_ID);
       });
 
       expect(result.current.currentStep).toBe(STEP_IDS.UPDATE_INFO);
@@ -182,7 +251,7 @@ describe('useOnboardingFlowStore', () => {
       const { result } = renderHook(() => useOnboardingFlowStore());
 
       act(() => {
-        result.current.initialize(TEST_STEPS);
+        result.current.syncFlow(TEST_STEPS, TEST_USER_ID);
       });
 
       act(() => {
@@ -196,7 +265,7 @@ describe('useOnboardingFlowStore', () => {
       const { result } = renderHook(() => useOnboardingFlowStore());
 
       act(() => {
-        result.current.initialize(TEST_STEPS);
+        result.current.syncFlow(TEST_STEPS, TEST_USER_ID);
       });
 
       const initialStep = result.current.currentStep;
@@ -227,7 +296,7 @@ describe('useOnboardingFlowStore', () => {
       const { result } = renderHook(() => useOnboardingFlowStore());
 
       act(() => {
-        result.current.initialize(TEST_STEPS);
+        result.current.syncFlow(TEST_STEPS, TEST_USER_ID);
       });
 
       // Navigate to a different step
@@ -254,7 +323,7 @@ describe('useOnboardingFlowStore', () => {
       const { result } = renderHook(() => useOnboardingFlowStore());
 
       act(() => {
-        result.current.initialize(TEST_STEPS);
+        result.current.syncFlow(TEST_STEPS, TEST_USER_ID);
       });
 
       act(() => {
@@ -268,7 +337,7 @@ describe('useOnboardingFlowStore', () => {
       const { result } = renderHook(() => useOnboardingFlowStore());
 
       act(() => {
-        result.current.initialize(TEST_STEPS);
+        result.current.syncFlow(TEST_STEPS, TEST_USER_ID);
       });
 
       expect(result.current.isLastStep).toBe(false);
@@ -284,7 +353,7 @@ describe('useOnboardingFlowStore', () => {
       const { result } = renderHook(() => useOnboardingFlowStore());
 
       act(() => {
-        result.current.initialize([STEP_IDS.PHLEBOTOMY_BOOKING]);
+        result.current.syncFlow([STEP_IDS.PHLEBOTOMY_BOOKING], TEST_USER_ID);
       });
 
       expect(result.current.isLastStep).toBe(true);
@@ -296,7 +365,7 @@ describe('useOnboardingFlowStore', () => {
       const { result } = renderHook(() => useOnboardingFlowStore());
 
       act(() => {
-        result.current.initialize(TEST_STEPS);
+        result.current.syncFlow(TEST_STEPS, TEST_USER_ID);
       });
 
       expect(result.current.isFirstStep).toBe(true);
@@ -306,7 +375,7 @@ describe('useOnboardingFlowStore', () => {
       const { result } = renderHook(() => useOnboardingFlowStore());
 
       act(() => {
-        result.current.initialize(TEST_STEPS);
+        result.current.syncFlow(TEST_STEPS, TEST_USER_ID);
       });
 
       act(() => {
@@ -326,19 +395,19 @@ describe('useOnboardingFlowStore', () => {
       const { result } = renderHook(() => useOnboardingFlowStore());
 
       act(() => {
-        result.current.initialize([STEP_IDS.PHLEBOTOMY_BOOKING]);
+        result.current.syncFlow([STEP_IDS.PHLEBOTOMY_BOOKING], TEST_USER_ID);
       });
 
       expect(result.current.isFirstStep).toBe(true);
     });
   });
 
-  describe('updateSteps()', () => {
-    it('updates validSteps while keeping current step', () => {
+  describe('syncFlow() with changed steps', () => {
+    it('updates validSteps while keeping current step for same user', () => {
       const { result } = renderHook(() => useOnboardingFlowStore());
 
       act(() => {
-        result.current.initialize(TEST_STEPS);
+        result.current.syncFlow(TEST_STEPS, TEST_USER_ID);
       });
 
       // Navigate to middle step
@@ -356,7 +425,7 @@ describe('useOnboardingFlowStore', () => {
       ];
 
       act(() => {
-        result.current.updateSteps(newSteps);
+        result.current.syncFlow(newSteps, TEST_USER_ID);
       });
 
       // Should still be on INTAKE
@@ -364,11 +433,11 @@ describe('useOnboardingFlowStore', () => {
       expect(result.current.validSteps).toEqual(newSteps);
     });
 
-    it('goes to first step if current step no longer valid', () => {
+    it('goes to first step if current step is no longer valid', () => {
       const { result } = renderHook(() => useOnboardingFlowStore());
 
       act(() => {
-        result.current.initialize(TEST_STEPS);
+        result.current.syncFlow(TEST_STEPS, TEST_USER_ID);
       });
 
       // Navigate to middle step
@@ -384,7 +453,7 @@ describe('useOnboardingFlowStore', () => {
       ];
 
       act(() => {
-        result.current.updateSteps(newSteps);
+        result.current.syncFlow(newSteps, TEST_USER_ID);
       });
 
       // Should go to first step
@@ -392,11 +461,11 @@ describe('useOnboardingFlowStore', () => {
       expect(result.current.validSteps).toEqual(newSteps);
     });
 
-    it('updates step flags correctly', () => {
+    it('updates step flags correctly when valid steps change', () => {
       const { result } = renderHook(() => useOnboardingFlowStore());
 
       act(() => {
-        result.current.initialize(TEST_STEPS);
+        result.current.syncFlow(TEST_STEPS, TEST_USER_ID);
       });
 
       // Navigate to middle step
@@ -410,7 +479,7 @@ describe('useOnboardingFlowStore', () => {
       const newSteps: StepId[] = [STEP_IDS.UPDATE_INFO, STEP_IDS.INTAKE];
 
       act(() => {
-        result.current.updateSteps(newSteps);
+        result.current.syncFlow(newSteps, TEST_USER_ID);
       });
 
       expect(result.current.currentStep).toBe(STEP_IDS.INTAKE);
@@ -424,7 +493,7 @@ describe('useOnboardingFlowStore', () => {
       const { result } = renderHook(() => useOnboardingFlowStore());
 
       act(() => {
-        result.current.initialize(TEST_STEPS);
+        result.current.syncFlow(TEST_STEPS, TEST_USER_ID);
       });
 
       expect(result.current.currentStep).toBe(STEP_IDS.UPDATE_INFO);
@@ -452,7 +521,7 @@ describe('useOnboardingFlowStore', () => {
       const { result } = renderHook(() => useOnboardingFlowStore());
 
       act(() => {
-        result.current.initialize(TEST_STEPS);
+        result.current.syncFlow(TEST_STEPS, TEST_USER_ID);
       });
 
       // Go to last step

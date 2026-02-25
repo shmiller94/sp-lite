@@ -1,9 +1,10 @@
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import {
   STEP_IDS,
   type StepId,
 } from '@/features/onboarding/config/step-config';
+import { useSyncFlowStore } from '@/features/onboarding/hooks/use-sync-flow-store';
 import { useOnboardingFlowStore } from '@/features/onboarding/stores/onboarding-flow-store';
 import {
   buildQuestionnaireStatusMap,
@@ -43,7 +44,7 @@ const getIntakeSteps = (ctx: IntakeContext): StepId[] => {
 
 /** Fetches user + questionnaire data and initializes the flow store. */
 export const useIntakeFlow = () => {
-  const store = useOnboardingFlowStore();
+  const isInitialized = useOnboardingFlowStore((state) => state.isInitialized);
   const { data: user, isLoading: userLoading } = useUser();
   const { data: responses, isLoading: questionnairesLoading } =
     useQuestionnaireResponseList({
@@ -71,23 +72,12 @@ export const useIntakeFlow = () => {
     };
   }, [isLoading, user, responses]);
 
-  useEffect(() => {
-    if (!ctx) return;
-    const steps = getIntakeSteps(ctx);
+  const userId = user?.id ?? '';
 
-    if (!store.isInitialized) {
-      store.initialize(steps);
-    } else {
-      const changed =
-        steps.length !== store.validSteps.length ||
-        steps.some((s, i) => s !== store.validSteps[i]);
-      if (changed) store.updateSteps(steps);
-    }
-  }, [ctx, store]);
+  const validSteps = useMemo(() => (ctx ? getIntakeSteps(ctx) : null), [ctx]);
 
-  useEffect(() => {
-    return () => useOnboardingFlowStore.getState().reset();
-  }, []);
+  // Uses the same reconciliation path as onboarding to keep behavior consistent.
+  useSyncFlowStore({ validSteps, userId });
 
-  return { isLoading, isInitialized: store.isInitialized };
+  return { isLoading, isInitialized };
 };

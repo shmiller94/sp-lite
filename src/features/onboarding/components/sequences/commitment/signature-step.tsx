@@ -9,6 +9,7 @@ import { Body1, H2 } from '@/components/ui/typography';
 
 import { useOnboardingNavigation } from '../../../hooks/use-onboarding-navigation';
 import { useSequence } from '../../../hooks/use-screen-sequence';
+import { useOnboardingFlowStore } from '../../../stores/onboarding-flow-store';
 import { Sequence } from '../../sequence';
 
 export const SignatureStep = () => {
@@ -29,7 +30,9 @@ export const SignatureStep = () => {
       setIsProcessing(true);
       toast.success('Success!');
       await new Promise((resolve) => setTimeout(resolve, 1200));
-      void navigate({ to: '/' });
+      await navigate({ to: '/' });
+      // Clear persisted resume state only after route transition.
+      useOnboardingFlowStore.getState().reset();
       return;
     }
 

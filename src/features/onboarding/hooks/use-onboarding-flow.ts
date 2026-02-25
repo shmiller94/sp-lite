@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import {
   ADVANCED_BLOOD_PANEL,
@@ -21,6 +21,8 @@ import {
   getQuestionnaireStatus,
 } from '../utils/get-questionnaire-status';
 
+import { useSyncFlowStore } from './use-sync-flow-store';
+
 // TODO: Get valid names from  orpc/types.generated
 const ONBOARDING_QUESTIONNAIRES = [
   'onboarding-primer',
@@ -38,7 +40,7 @@ const hasService = (services: { name: string }[] | undefined, name: string) =>
  * Single mount point that fetches all required data and initializes the flow store.
  */
 export const useOnboardingFlow = () => {
-  const store = useOnboardingFlowStore();
+  const isInitialized = useOnboardingFlowStore((state) => state.isInitialized);
 
   // Fetch user profile data
   const { data: user, isLoading: isUserLoading } = useUser();
@@ -177,35 +179,18 @@ export const useOnboardingFlow = () => {
     claimedBenefitsData,
   ]);
 
-  // Initialize or update store when flow context changes
-  useEffect(() => {
-    if (!flowContext) return;
+  const userId = user?.id ?? '';
 
-    const validSteps = getValidSteps(flowContext);
+  const validSteps = useMemo(
+    () => (flowContext ? getValidSteps(flowContext) : null),
+    [flowContext],
+  );
 
-    if (!store.isInitialized) {
-      store.initialize(validSteps);
-    } else {
-      // Only update if steps have changed
-      const stepsChanged =
-        validSteps.length !== store.validSteps.length ||
-        validSteps.some((step, i) => step !== store.validSteps[i]);
-
-      if (stepsChanged) {
-        store.updateSteps(validSteps);
-      }
-    }
-  }, [flowContext, store]);
-
-  // Reset store on unmount to clean up state for next mount
-  useEffect(() => {
-    return () => {
-      useOnboardingFlowStore.getState().reset();
-    };
-  }, []);
+  // Centralized sync handles initialize/resume/step-updates in one place.
+  useSyncFlowStore({ validSteps, userId });
 
   return {
     isLoading,
-    isInitialized: store.isInitialized,
+    isInitialized,
   };
 };
