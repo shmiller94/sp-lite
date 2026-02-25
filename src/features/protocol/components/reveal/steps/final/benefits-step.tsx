@@ -14,23 +14,23 @@ import { ProtocolStepLayout } from '../../../layouts/protocol-step-layout';
 const MOCK_KEY_ISSUES = [
   {
     id: 'insufficient-dosage',
-    title: 'Insufficient Dosage',
+    title: 'Insufficient dosage',
     description:
       'For example, many Vitamin D supplements have 300 IUs but you may need 3000.',
     icon: IconLaw,
   },
   {
-    id: 'wrong-forms',
-    title: 'Wrong Forms',
+    id: 'cheap-ingredients',
+    title: 'Cheap ingredients',
     description:
       'For example, most supplements have the wrong form of folate, B12 etc.',
     icon: IconLab,
   },
   {
-    id: 'no-cofactors',
-    title: 'No co-factors',
+    id: 'hard-to-absorb',
+    title: 'Hard to absorb',
     description:
-      'You need copper to absorb zinc, and vitamin K to absorb vitamin D etc.',
+      'You need co-factors like copper to absorb zinc, and vitamin K to absorb vitamin D.',
     icon: IconExposure1,
   },
   {
