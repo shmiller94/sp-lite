@@ -52,7 +52,7 @@ export const RestEasyStep = () => {
       >
         <div className="mb-4 text-center">
           <H2>Rest easy.</H2>
-          <H2>We&apos;re in this with you</H2>
+          <H2>We&apos;re in this with you.</H2>
         </div>
 
         <div className="mx-auto w-full max-w-md space-y-6">

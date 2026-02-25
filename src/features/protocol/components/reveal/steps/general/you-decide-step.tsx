@@ -10,15 +10,15 @@ import { ProtocolStepLayout } from '../../../layouts/protocol-step-layout';
 
 const MOCK_STEPS = [
   {
-    title: 'Use iodized salt and a selenium‑rich food daily.',
+    title: 'Use iodized salt and a selenium‑rich food daily',
     image: '/protocol/decision/healthy-food.webp',
   },
   {
-    title: 'Take a Vitamin D + K2 Supplement',
+    title: 'Take a vitamin D + K2 supplement',
     image: '/protocol/decision/empty.webp',
   },
   {
-    title: 'Hit 1–1,6 g/kg protein daily',
+    title: 'Hit 1–1.6 g/kg protein daily',
     image: '/protocol/decision/healthy-food.webp',
   },
   {

@@ -110,8 +110,8 @@ export const UnderstandingStep = () => {
           We have a comprehensive understanding of your health
         </H2>
         <Body1 className="text-secondary">
-          This is includes your goals, preferences, biomarker data and
-          additional tests
+          This includes your goals, preferences, biomarker data, and additional
+          tests.
         </Body1>
       </div>
 

@@ -104,7 +104,7 @@ const TESTAMONIALS = [
       {
         icon: IconDeepSearch,
         title:
-          'Superpower revealed critically low ferritin at 30, plus low Vitamin D & elevated cholesterol',
+          'Superpower revealed critically low ferritin at 30 ng/mL, plus low Vitamin D & elevated cholesterol',
       },
       {
         icon: IconEmojiSmile,
@@ -129,7 +129,7 @@ const TESTAMONIALS = [
       {
         icon: IconDeepSearch,
         title:
-          'Superpower caught testosterone at 300 (optimal 500–700) & provided a full game plan',
+          'Superpower caught testosterone at 300 ng/dL (optimal 500–700 ng/dL) & provided a full game plan',
       },
       {
         icon: IconEmojiSmile,

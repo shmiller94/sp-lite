@@ -146,7 +146,8 @@ export const ProtocolReviewStep = () => {
       <div className="text-center">
         <H2 className="text-2xl">Review Your Protocol</H2>
         <Body1 className="text-secondary">
-          Based on your health history and goals.
+          Take a moment to step back and review your selection. Make sure it
+          aligns with your health goals and feels right for you.
         </Body1>
       </div>
 

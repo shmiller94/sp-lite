@@ -23,7 +23,7 @@ const MOCK_OVERVIEW_ACTIONS = [
         }}
       />
     ),
-    title: 'Review Key Results',
+    title: 'Review key results',
     description:
       "We'll surface the biomarkers worth bringing to your attention.",
   },
