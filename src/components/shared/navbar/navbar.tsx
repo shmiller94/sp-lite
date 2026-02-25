@@ -1,4 +1,4 @@
-import { Link, useLocation, useMatchRoute } from '@tanstack/react-router';
+import { Link, useLocation } from '@tanstack/react-router';
 import {
   ChevronDown,
   Ellipsis,
@@ -100,7 +100,6 @@ export const DesktopNavbar = () => {
   const { checkAccess } = useAuthorization();
   const { pathname } = useLocation();
   const { track } = useAnalytics();
-  const matchRoute = useMatchRoute();
 
   const isLight = lightNavPaths.includes(pathname);
   const isBlurred = useScrollThreshold({
@@ -150,29 +149,25 @@ export const DesktopNavbar = () => {
         </div>
         <div className="relative flex flex-1 items-center justify-center">
           <div className="relative flex items-center justify-center rounded-full bg-black p-1 shadow-xl shadow-black/5 transition-all duration-200 lg:gap-2">
-            {allLinks.map((link, idx) => {
-              const isActive =
-                matchRoute({ to: link.to, fuzzy: true }) !== false;
-              return (
-                <Link
-                  key={idx}
-                  to={link.to}
-                  onClick={() => {
-                    if (link.name === 'Marketplace') {
-                      track('click_marketplace_button');
-                    }
-                  }}
-                  className={cn(
-                    'group relative z-10 truncate px-4 py-1.5 transition-all duration-150 active:scale-[98%]',
-                    isActive
-                      ? 'rounded-full bg-primary text-white'
-                      : 'text-secondary hover:text-secondary/75',
-                  )}
-                >
-                  <span className="truncate">{link.name}</span>
-                </Link>
-              );
-            })}
+            {allLinks.map((link) => (
+              <Link
+                key={link.name}
+                to={link.to}
+                activeOptions={{ exact: link.to === '/' }}
+                onClick={() => {
+                  if (link.name === 'Marketplace') {
+                    track('click_marketplace_button');
+                  }
+                }}
+                className="group relative z-10 truncate px-4 py-1.5 text-secondary transition-all duration-150 hover:text-secondary/75 active:scale-[98%]"
+                activeProps={{
+                  className:
+                    'rounded-full bg-primary text-white hover:text-white',
+                }}
+              >
+                <span className="truncate">{link.name}</span>
+              </Link>
+            ))}
           </div>
         </div>
         <div className="h-10 flex-1">
@@ -181,17 +176,9 @@ export const DesktopNavbar = () => {
               to="/invite"
               className={cn(
                 'group relative z-10 truncate px-4 py-1.5 transition-all duration-150',
-                isLight
-                  ? isBlurred
-                    ? 'text-black hover:text-secondary'
-                    : 'text-white'
-                  : (() => {
-                      const active =
-                        matchRoute({ to: '/invite', fuzzy: true }) !== false;
-                      return active
-                        ? 'text-black hover:text-secondary'
-                        : 'hover:text-secondary text-black';
-                    })(),
+                isLight && !isBlurred
+                  ? 'text-white'
+                  : 'text-black hover:text-secondary',
               )}
             >
               <span className="truncate">Invite Friend</span>
@@ -222,26 +209,20 @@ export const DesktopNavbar = () => {
                 align="end"
                 sideOffset={5}
               >
-                {profileDropdownItems.map((link, i) => {
-                  const isActive =
-                    matchRoute({ to: link.to, fuzzy: true }) !== false;
-                  return (
-                    <Link
-                      key={i}
-                      to={link.to}
-                      data-testid={link.testid}
-                      className={cn(
-                        'flex cursor-pointer items-center gap-3 rounded-[10px] transition duration-200 ease-in-out',
-                        isActive && 'bg-accent',
-                      )}
-                    >
-                      <DropdownMenuItem className="w-full gap-3 rounded-[10px] p-4">
-                        <link.icon width={14} height={14} />
-                        <p className="text-sm">{link.name}</p>
-                      </DropdownMenuItem>
-                    </Link>
-                  );
-                })}
+                {profileDropdownItems.map((link) => (
+                  <Link
+                    key={link.name}
+                    to={link.to}
+                    data-testid={link.testid}
+                    className="flex cursor-pointer items-center gap-3 rounded-[10px] transition duration-200 ease-in-out"
+                    activeProps={{ className: 'bg-accent' }}
+                  >
+                    <DropdownMenuItem className="w-full gap-3 rounded-[10px] p-4">
+                      <link.icon width={14} height={14} />
+                      <p className="text-sm">{link.name}</p>
+                    </DropdownMenuItem>
+                  </Link>
+                ))}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -262,8 +243,8 @@ const MobileNavLink = ({
   children: (props: { isActive: boolean }) => React.ReactNode;
   className?: string;
 }) => {
-  const matchRoute = useMatchRoute();
-  const isActive = matchRoute({ to, fuzzy: true }) !== false;
+  const { pathname } = useLocation();
+  const isActive = to === '/' ? pathname === '/' : pathname.startsWith(to);
 
   return (
     <Link to={to} onClick={onClick} className={className}>
@@ -375,20 +356,20 @@ export const MobileNavbar = () => {
       </div>
       <div className="flex aspect-square h-full shrink-0 items-center justify-center rounded-3xl border border-zinc-100 bg-white shadow-lg shadow-black/[.03]">
         <Link
-          to={'/concierge'}
-          className={cn(
-            'group flex aspect-square cursor-pointer flex-col items-center justify-center gap-2 rounded-[20px] p-4 transition-colors md:min-w-0 md:flex-row',
-          )}
+          to="/concierge"
+          className="group flex aspect-square cursor-pointer flex-col items-center justify-center gap-2 rounded-[20px] p-4 transition-colors md:min-w-0 md:flex-row"
         >
-          <CircleAiIcon
-            size={32}
-            className={cn(
-              'shrink-0 transition-colors',
-              pathname.startsWith('/concierge')
-                ? 'text-vermillion-900'
-                : 'text-zinc-300 group-hover:text-secondary',
-            )}
-          />
+          {({ isActive }) => (
+            <CircleAiIcon
+              size={32}
+              className={cn(
+                'shrink-0 transition-colors',
+                isActive
+                  ? 'text-vermillion-900'
+                  : 'text-zinc-300 group-hover:text-secondary',
+              )}
+            />
+          )}
         </Link>
       </div>
     </div>
