@@ -9,7 +9,8 @@ import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/sonner';
 import { TransactionSpinner } from '@/components/ui/spinner/transaction-spinner';
 import { useUpgradeCredit } from '@/features/orders/api';
-import { usePaymentMethods } from '@/features/settings/api';
+import { usePaymentMethodSelection } from '@/features/settings/hooks';
+import { CurrentPaymentMethodCard } from '@/features/users/components/payment';
 import { useGender } from '@/hooks/use-gender';
 import { useUser } from '@/lib/auth';
 import { formatMoney } from '@/utils/format-money';
@@ -121,12 +122,13 @@ const WhyTakeTheTest = ({
 const OrderButtons = ({ price }: { price: number }) => {
   const { next } = useOnboardingNavigation();
   const { trackOnboardingCreditPurchase } = useOnboardingAnalytics();
-  const { data: paymentMethodsData } = usePaymentMethods();
+  const { activePaymentMethod, isFlexSelected, isSelectingPaymentMethod } =
+    usePaymentMethodSelection();
   const upgradeOrderMutation = useUpgradeCredit();
-  const firstPaymentMethod = paymentMethodsData?.paymentMethods?.[0];
 
   const upgradeOrder = async () => {
-    if (!firstPaymentMethod?.externalPaymentMethodId) {
+    const paymentMethodId = activePaymentMethod?.externalPaymentMethodId;
+    if (paymentMethodId == null) {
       toast.error('No payment method available');
       return;
     }
@@ -134,14 +136,14 @@ const OrderButtons = ({ price }: { price: number }) => {
     await upgradeOrderMutation.mutateAsync({
       data: {
         upgradeType: 'advanced',
-        paymentMethodId: firstPaymentMethod?.externalPaymentMethodId,
+        paymentMethodId,
       },
     });
 
     trackOnboardingCreditPurchase({
       credits: [{ id: 'advanced-panel', price }],
       totalValue: price,
-      paymentProvider: firstPaymentMethod?.paymentProvider ?? 'unknown',
+      paymentProvider: activePaymentMethod?.paymentProvider ?? 'unknown',
     });
     toast.success('One-time Advanced Panel upgrade successful!');
     next();
@@ -151,31 +153,38 @@ const OrderButtons = ({ price }: { price: number }) => {
     upgradeOrderMutation.isPending || upgradeOrderMutation.isSuccess;
 
   return (
-    <Detail.CTAGroup>
-      <Button
-        variant="vermillion"
-        className="w-full"
-        onClick={async () => await upgradeOrder()}
-        disabled={isPending}
-      >
-        {isPending ? (
-          <TransactionSpinner />
-        ) : (
-          <>
-            Order now{' '}
-            <span className="ml-2 opacity-80">{formatMoney(price)}</span>
-          </>
-        )}
-      </Button>
-      <Button
-        variant="outline"
-        className="w-full"
-        onClick={next}
-        disabled={isPending}
-      >
-        I&apos;m not interested
-      </Button>
-    </Detail.CTAGroup>
+    <div className="space-y-4">
+      <CurrentPaymentMethodCard />
+      <Detail.CTAGroup>
+        <Button
+          variant="vermillion"
+          className="w-full"
+          onClick={async () => await upgradeOrder()}
+          disabled={
+            isPending ||
+            isSelectingPaymentMethod ||
+            activePaymentMethod?.externalPaymentMethodId == null
+          }
+        >
+          {isPending ? (
+            <TransactionSpinner />
+          ) : (
+            <>
+              Purchase now{isFlexSelected ? ' with HSA/FSA' : ''}{' '}
+              <span className="ml-2 opacity-80">{formatMoney(price)}</span>
+            </>
+          )}
+        </Button>
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={next}
+          disabled={isPending}
+        >
+          I&apos;m not interested
+        </Button>
+      </Detail.CTAGroup>
+    </div>
   );
 };
 

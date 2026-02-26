@@ -10,7 +10,8 @@ import { toast } from '@/components/ui/sonner';
 import { TransactionSpinner } from '@/components/ui/spinner/transaction-spinner';
 import { Body1, H2 } from '@/components/ui/typography';
 import { useUpgradeCredit } from '@/features/orders/api';
-import { usePaymentMethods } from '@/features/settings/api';
+import { usePaymentMethodSelection } from '@/features/settings/hooks';
+import { CurrentPaymentMethodCard } from '@/features/users/components/payment';
 import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 import { formatMoney } from '@/utils/format-money';
@@ -177,7 +178,8 @@ const WhyRetestItem = ({
 const BundledDiscountContent = () => {
   const { next } = useOnboardingNavigation();
   const { data: user } = useUser();
-  const { data: paymentMethodsData } = usePaymentMethods();
+  const { activePaymentMethod, isFlexSelected, isSelectingPaymentMethod } =
+    usePaymentMethodSelection();
   const { trackOnboardingCreditPurchase } = useOnboardingAnalytics();
   const upgradeOrderMutation = useUpgradeCredit();
 
@@ -188,7 +190,6 @@ const BundledDiscountContent = () => {
   const [selectedFrequency, setSelectedFrequency] =
     useState<TestingFrequency | null>(defaultFrequency);
 
-  const firstPaymentMethod = paymentMethodsData?.paymentMethods?.[0];
   const isPending =
     upgradeOrderMutation.isPending || upgradeOrderMutation.isSuccess;
   const hasEligibleSelection = (selectedFrequency?.quantity ?? 0) > 0;
@@ -215,29 +216,6 @@ const BundledDiscountContent = () => {
     return pricing.price;
   }, [selectedFrequency, user]);
 
-  const buttonContent = useMemo(() => {
-    if (selectedPrice === null) {
-      return 'Update testing plan';
-    }
-
-    return (
-      <>
-        Update testing plan{' '}
-        <span className="text-white/80">
-          <NumberFlow
-            value={selectedPrice / 100}
-            format={{
-              style: 'currency',
-              currency: 'USD',
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0,
-            }}
-          />
-        </span>
-      </>
-    );
-  }, [selectedPrice]);
-
   const getOriginalPriceLabel = (frequency: TestingFrequency) => {
     if (frequency.quantity === 0) return undefined;
     const discount = getDiscountForFrequency(frequency);
@@ -252,7 +230,8 @@ const BundledDiscountContent = () => {
     // Do not allow skipping with included option
     if (selectedFrequency.quantity === 0) return;
 
-    if (!firstPaymentMethod?.externalPaymentMethodId) {
+    const paymentMethodId = activePaymentMethod?.externalPaymentMethodId;
+    if (paymentMethodId == null) {
       toast.error('No payment method available');
       return;
     }
@@ -263,7 +242,7 @@ const BundledDiscountContent = () => {
       return;
     }
 
-    const paymentProvider = firstPaymentMethod.paymentProvider ?? 'unknown';
+    const paymentProvider = activePaymentMethod?.paymentProvider ?? 'unknown';
     let plural = '';
     if (selectedFrequency.quantity > 1) {
       plural = 's';
@@ -273,7 +252,7 @@ const BundledDiscountContent = () => {
       await upgradeOrderMutation.mutateAsync({
         data: {
           upgradeType: 'baseline-bundle',
-          paymentMethodId: firstPaymentMethod.externalPaymentMethodId,
+          paymentMethodId,
           quantity: selectedFrequency.quantity,
         },
       });
@@ -337,14 +316,44 @@ const BundledDiscountContent = () => {
             ))}
           </div>
 
+          {hasEligibleSelection && (
+            <div className="pb-4">
+              <CurrentPaymentMethodCard />
+            </div>
+          )}
+
           {/* Update button */}
           <Button
             variant="vermillion"
             className="mb-8 w-full gap-1.5"
             onClick={handleUpdatePlan}
-            disabled={isPending || !hasEligibleSelection}
+            disabled={
+              isPending ||
+              isSelectingPaymentMethod ||
+              !hasEligibleSelection ||
+              activePaymentMethod?.externalPaymentMethodId == null
+            }
           >
-            {isPending ? <TransactionSpinner /> : buttonContent}
+            {isPending ? (
+              <TransactionSpinner />
+            ) : (
+              <>
+                Update testing plan{isFlexSelected ? ' with HSA/FSA' : ''}
+                {selectedPrice !== null && (
+                  <span className="ml-1 text-white/80">
+                    <NumberFlow
+                      value={selectedPrice / 100}
+                      format={{
+                        style: 'currency',
+                        currency: 'USD',
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      }}
+                    />
+                  </span>
+                )}
+              </>
+            )}
           </Button>
 
           {/* Why re-test section */}

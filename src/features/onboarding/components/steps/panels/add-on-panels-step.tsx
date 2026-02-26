@@ -5,11 +5,17 @@ import { Head } from '@/components/seo';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
+import { toast } from '@/components/ui/sonner';
 import { Body1, Body2, H2, H3 } from '@/components/ui/typography';
-import { SUPERPOWER_BLOOD_PANEL, TOTAL_TOXIN_TEST_ID } from '@/const/services';
+import {
+  ADVANCED_BLOOD_PANEL,
+  SUPERPOWER_BLOOD_PANEL,
+  TOTAL_TOXIN_TEST_ID,
+} from '@/const/services';
 import { useCreateCredit, useCredits } from '@/features/orders/api/credits';
 import { useServices } from '@/features/services/api';
-import { usePaymentMethods } from '@/features/settings/api';
+import { usePaymentMethodSelection } from '@/features/settings/hooks';
+import { CurrentPaymentMethodCard } from '@/features/users/components/payment';
 import { cn } from '@/lib/utils';
 import { HealthcareService } from '@/types/api';
 import { formatMoney } from '@/utils/format-money';
@@ -17,7 +23,7 @@ import { getServiceImage } from '@/utils/service';
 
 import { useOnboardingAnalytics } from '../../../hooks/use-onboarding-analytics';
 import { useOnboardingNavigation } from '../../../hooks/use-onboarding-navigation';
-import { useAddOnPanelStore } from '../../../stores/add-on-panel-store';
+import { useOnboardingCartStore } from '../../../stores/onboarding-cart-store';
 import { Sequence } from '../../sequence';
 
 const FILTER_OPTIONS = [
@@ -127,7 +133,7 @@ const TestCard = ({
       <Body2 className="text-zinc-500">{service.description}</Body2>
       <Body1 className="text-zinc-900">{formatMoney(service.price)}</Body1>
     </div>
-    <div className="relative shrink-0">
+    <div className="relative shrink-0 pr-1">
       <img
         src={getServiceImage(service.name)}
         alt={service.name}
@@ -138,7 +144,7 @@ const TestCard = ({
         onClick={onToggle}
         disabled={disabled}
         className={cn(
-          'absolute -bottom-1 -right-1 flex size-8 items-center justify-center rounded-full border shadow-md transition-colors',
+          'absolute -bottom-1 right-0 flex size-8 items-center justify-center rounded-full border shadow-md transition-colors',
           isSelected
             ? 'border-zinc-800 bg-zinc-950 text-white'
             : 'border-white bg-white text-zinc-900 hover:bg-zinc-50',
@@ -171,12 +177,13 @@ const TestCardSkeleton = () => (
 export const AddOnPanelsStep = () => {
   const { next, prev } = useOnboardingNavigation();
   const { trackOnboardingCreditPurchase } = useOnboardingAnalytics();
-  const { selectedPanelIds, togglePanel, clear } = useAddOnPanelStore();
+  const { selectedPanelIds, togglePanel, clear } = useOnboardingCartStore();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<FilterId>('all');
 
-  const { data: paymentMethodsData } = usePaymentMethods();
+  const { activePaymentMethod, isFlexSelected, isSelectingPaymentMethod } =
+    usePaymentMethodSelection();
   const creditsQuery = useCredits();
   const phlebotomyServicesQuery = useServices({ group: 'phlebotomy' });
   const testKitServicesQuery = useServices({ group: 'test-kit' });
@@ -198,6 +205,7 @@ export const AddOnPanelsStep = () => {
     const filteredServices = rawServices.filter(
       (service) =>
         service.id !== TOTAL_TOXIN_TEST_ID &&
+        service.name !== ADVANCED_BLOOD_PANEL &&
         service.name !== SUPERPOWER_BLOOD_PANEL,
     );
 
@@ -246,13 +254,32 @@ export const AddOnPanelsStep = () => {
     return result;
   }, [services, searchQuery, activeFilter]);
 
-  const totalPrice = useMemo(
-    () =>
-      services
-        .filter((s) => selectedPanelIds.has(s.id))
-        .reduce((sum, s) => sum + s.price, 0),
-    [services, selectedPanelIds],
-  );
+  const selectedServices = useMemo(() => {
+    const nextSelectedServices: HealthcareService[] = [];
+    for (const service of services) {
+      if (selectedPanelIds.has(service.id)) {
+        nextSelectedServices.push(service);
+      }
+    }
+    return nextSelectedServices;
+  }, [services, selectedPanelIds]);
+
+  const selectedServiceIds = useMemo(() => {
+    const serviceIds: string[] = [];
+    for (const service of selectedServices) {
+      serviceIds.push(service.id);
+    }
+    return serviceIds;
+  }, [selectedServices]);
+
+  const totalPrice = useMemo(() => {
+    let sum = 0;
+    for (const service of selectedServices) {
+      sum += service.price;
+    }
+    return sum;
+  }, [selectedServices]);
+  const hasSelectedServices = selectedServiceIds.length > 0;
 
   const handleToggle = useCallback(
     (service: HealthcareService) => {
@@ -262,29 +289,37 @@ export const AddOnPanelsStep = () => {
   );
 
   const handleContinue = async () => {
-    if (selectedPanelIds.size === 0) {
+    if (!hasSelectedServices) {
+      if (selectedPanelIds.size > 0) {
+        clear();
+      }
       next();
       return;
     }
 
-    const paymentProvider =
-      paymentMethodsData?.paymentMethods?.[0]?.paymentProvider ?? 'unknown';
+    const paymentMethodId = activePaymentMethod?.externalPaymentMethodId;
+    if (paymentMethodId == null) {
+      toast.error('No payment method available');
+      return;
+    }
+
+    const paymentProvider = activePaymentMethod?.paymentProvider ?? 'unknown';
 
     try {
       await createCreditMutation.mutateAsync({
         data: {
-          serviceIds: [...selectedPanelIds],
-          paymentMethodId: '',
+          serviceIds: selectedServiceIds,
+          paymentMethodId,
         },
       });
 
-      const selectedServices = services.filter((s) =>
-        selectedPanelIds.has(s.id),
-      );
-      const purchasedCredits = selectedServices.map((s) => ({
-        id: s.id,
-        price: s.price,
-      }));
+      const purchasedCredits: { id: string; price: number }[] = [];
+      for (const service of selectedServices) {
+        purchasedCredits.push({
+          id: service.id,
+          price: service.price,
+        });
+      }
 
       trackOnboardingCreditPurchase({
         credits: purchasedCredits,
@@ -292,6 +327,7 @@ export const AddOnPanelsStep = () => {
         paymentProvider,
       });
 
+      toast.success('Purchase successful');
       clear();
       next();
     } catch {
@@ -330,24 +366,33 @@ export const AddOnPanelsStep = () => {
         </Sequence.StepHeader>
 
         <div className="flex flex-1 flex-col overflow-hidden">
-          <div className="flex-1 overflow-y-auto px-4 pb-48">
-            <div className="mx-auto max-w-lg space-y-6 py-6">
-              <H2>Explore tests</H2>
+          <div
+            className={cn(
+              'flex-1 overflow-y-auto overflow-x-visible px-4',
+              hasSelectedServices ? 'pb-[24rem]' : 'pb-40',
+            )}
+          >
+            <div className="mx-auto max-w-lg py-6">
+              <div className="sticky top-0 z-10 -mx-4 bg-white px-4 pb-4">
+                <div className="space-y-6 pt-0.5">
+                  <H2>Explore tests</H2>
 
-              <ExploreTestsSearch
-                value={searchQuery}
-                onChange={setSearchQuery}
-              />
+                  <ExploreTestsSearch
+                    value={searchQuery}
+                    onChange={setSearchQuery}
+                  />
 
-              <FilterPills
-                activeFilter={activeFilter}
-                onFilterChange={setActiveFilter}
-              />
+                  <FilterPills
+                    activeFilter={activeFilter}
+                    onFilterChange={setActiveFilter}
+                  />
+                </div>
+              </div>
 
-              <div>
+              <div className="pt-2">
                 <H3 className="mb-2 text-lg text-zinc-400">Most recommended</H3>
 
-                <div className="divide-y divide-zinc-100">
+                <div className="divide-y divide-zinc-100 overflow-x-visible">
                   {isLoading &&
                     Array.from({ length: 5 }).map((_, i) => (
                       <TestCardSkeleton key={i} />
@@ -378,13 +423,21 @@ export const AddOnPanelsStep = () => {
 
           <div className="fixed inset-x-0 bottom-0 border-t border-zinc-100 bg-white px-4 pb-8 pt-4">
             <div className="mx-auto max-w-lg space-y-3">
+              {hasSelectedServices && <CurrentPaymentMethodCard />}
               <Button
                 onClick={handleContinue}
-                disabled={isPending}
+                disabled={
+                  isPending ||
+                  isSelectingPaymentMethod ||
+                  (hasSelectedServices &&
+                    activePaymentMethod?.externalPaymentMethodId == null)
+                }
                 className="w-full"
               >
-                Continue
-                {selectedPanelIds.size > 0 && (
+                {hasSelectedServices
+                  ? `Purchase selected tests${isFlexSelected ? ' with HSA/FSA' : ''}`
+                  : 'Continue'}
+                {hasSelectedServices && (
                   <span className="ml-2 opacity-80">
                     {formatMoney(totalPrice)}
                   </span>
@@ -397,7 +450,7 @@ export const AddOnPanelsStep = () => {
                 disabled={isPending}
                 className="w-full"
               >
-                Skip to schedule tests
+                Skip additional testing
               </Button>
             </div>
           </div>

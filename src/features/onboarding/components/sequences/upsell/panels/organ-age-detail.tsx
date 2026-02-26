@@ -45,6 +45,7 @@ export const OrganAgeDetail = () => {
   const { next } = useSequence();
   const { purchase, isPending, pricing } = usePanelPurchase({
     serviceName: ORGAN_AGE_PANEL,
+    mode: 'add-to-cart',
     onSuccess: next,
     onError: next,
     onUnavailable: next,
@@ -79,6 +80,7 @@ export const OrganAgeDetail = () => {
 
         <div className="hidden space-y-2 py-4 md:block">
           <PanelCTAButtons
+            mode="add-to-cart"
             price={pricing.totalPrice}
             isPending={isPending}
             onOrder={purchase}
@@ -160,6 +162,7 @@ export const OrganAgeDetail = () => {
           {...pricing}
         />
         <PanelCTAButtons
+          mode="add-to-cart"
           price={pricing.totalPrice}
           isPending={isPending}
           onOrder={purchase}

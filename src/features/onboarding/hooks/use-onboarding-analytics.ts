@@ -13,6 +13,11 @@ type TrackOnboardingCreditPurchaseParams = {
   paymentProvider: string;
 };
 
+type TrackOnboardingCreditAddedToCartParams = {
+  id: string;
+  price: number;
+};
+
 export const useOnboardingAnalytics = () => {
   const { track } = useAnalytics();
 
@@ -37,7 +42,24 @@ export const useOnboardingAnalytics = () => {
     [track],
   );
 
+  const trackOnboardingCreditAddedToCart = useCallback(
+    ({ id, price }: TrackOnboardingCreditAddedToCartParams): void => {
+      // Non blocking fire-and-forget
+      void Promise.resolve(
+        track('onboarding_credits_added_to_cart', {
+          credit_id: id,
+          credit_price: price,
+          value: price,
+        }),
+      ).catch((error) => {
+        console.error('Failed to track onboarding credit add to cart:', error);
+      });
+    },
+    [track],
+  );
+
   return {
     trackOnboardingCreditPurchase,
+    trackOnboardingCreditAddedToCart,
   };
 };

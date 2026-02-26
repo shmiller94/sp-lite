@@ -7,10 +7,15 @@ import { useServices } from '@/features/services/api';
 import { usePaymentMethods } from '@/features/settings/api';
 import { HealthcareService } from '@/types/api';
 
+import { useOnboardingCartStore } from '../stores/onboarding-cart-store';
+
 import { useOnboardingAnalytics } from './use-onboarding-analytics';
+
+type PanelPurchaseMode = 'direct-purchase' | 'add-to-cart';
 
 type UsePanelPurchaseOptions = {
   serviceName: string;
+  mode?: PanelPurchaseMode;
   onSuccess?: () => void;
   onError?: () => void;
   /** Called when service is unavailable after loading completes */
@@ -35,6 +40,7 @@ type UsePanelPurchaseReturn = {
 
 export const usePanelPurchase = ({
   serviceName,
+  mode = 'direct-purchase',
   onSuccess,
   onError,
   onUnavailable,
@@ -43,9 +49,14 @@ export const usePanelPurchase = ({
   const servicesQuery = useServices({ group });
   const paymentMethodsQuery = usePaymentMethods();
   const createCreditMutation = useCreateCredit();
-  const { trackOnboardingCreditPurchase } = useOnboardingAnalytics();
+  const addPanel = useOnboardingCartStore((state) => state.addPanel);
+  const { trackOnboardingCreditPurchase, trackOnboardingCreditAddedToCart } =
+    useOnboardingAnalytics();
 
-  const isLoading = servicesQuery.isLoading || paymentMethodsQuery.isLoading;
+  const isDirectPurchase = mode === 'direct-purchase';
+  const isLoading =
+    servicesQuery.isLoading ||
+    (isDirectPurchase && paymentMethodsQuery.isLoading);
 
   const service = useMemo(() => {
     const services = servicesQuery.data?.services ?? [];
@@ -85,6 +96,17 @@ export const usePanelPurchase = ({
       return;
     }
 
+    if (mode === 'add-to-cart') {
+      addPanel(service.id);
+      trackOnboardingCreditAddedToCart({
+        id: service.id,
+        price: service.price ?? 0,
+      });
+      toast.success('Added to cart!');
+      onSuccess?.();
+      return;
+    }
+
     if (!paymentMethodId) {
       toast.error('No payment method available');
       onError?.();
@@ -112,19 +134,22 @@ export const usePanelPurchase = ({
     toast.success('Purchase successful!');
     onSuccess?.();
   }, [
+    mode,
+    addPanel,
     service?.id,
     service?.price,
     paymentMethodId,
     firstPaymentMethod?.paymentProvider,
     createCreditMutation,
     trackOnboardingCreditPurchase,
+    trackOnboardingCreditAddedToCart,
     onSuccess,
     onError,
   ]);
 
   return {
     purchase,
-    isPending: createCreditMutation.isPending,
+    isPending: isDirectPurchase ? createCreditMutation.isPending : false,
     service,
     isLoading,
     isAvailable,

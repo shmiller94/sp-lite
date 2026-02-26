@@ -9,6 +9,7 @@ import { Detail } from './detail';
 import { usePanelId, useUpsellPanelIds } from './panel-id-context';
 
 type PanelCTAButtonsProps = {
+  mode?: 'add-to-cart' | 'buy-now';
   price: number;
   isPending: boolean;
   onOrder: () => void;
@@ -16,6 +17,7 @@ type PanelCTAButtonsProps = {
 };
 
 export const PanelCTAButtons = ({
+  mode = 'buy-now',
   price,
   isPending,
   onOrder,
@@ -24,6 +26,7 @@ export const PanelCTAButtons = ({
   const panelId = usePanelId();
   const shownPanelIds = useUpsellPanelIds();
   const { track } = useAnalytics();
+  const ctaText = mode === 'add-to-cart' ? 'Add to cart' : 'Buy now';
 
   const handleOrder = useCallback(() => {
     if (panelId) {
@@ -57,7 +60,7 @@ export const PanelCTAButtons = ({
           <TransactionSpinner />
         ) : (
           <>
-            Buy now{' '}
+            {ctaText}{' '}
             <span className="ml-2 opacity-80">{formatMoney(price)}</span>
           </>
         )}

@@ -73,6 +73,7 @@ export const NutrientsDetail = () => {
   const { next } = useSequence();
   const { purchase, isPending, pricing } = usePanelPurchase({
     serviceName: NUTRIENT_AND_ANTIOXIDANT_PANEL,
+    mode: 'add-to-cart',
     onSuccess: next,
     onError: next,
     onUnavailable: next,
@@ -108,6 +109,7 @@ export const NutrientsDetail = () => {
         <div className="hidden space-y-8 py-6 md:block">
           <WhyTakeTheTest />
           <PanelCTAButtons
+            mode="add-to-cart"
             price={pricing.totalPrice}
             isPending={isPending}
             onOrder={purchase}
@@ -179,6 +181,7 @@ export const NutrientsDetail = () => {
           {...pricing}
         />
         <PanelCTAButtons
+          mode="add-to-cart"
           price={pricing.totalPrice}
           isPending={isPending}
           onOrder={purchase}

@@ -54,8 +54,10 @@ export const useUpdateTask = ({
         $set: set,
       });
 
+      const taskQueryKey = getTaskQueryOptions(variables.taskName).queryKey;
+      queryClient.setQueryData(taskQueryKey, data);
       queryClient.invalidateQueries({
-        queryKey: getTaskQueryOptions(variables.taskName).queryKey,
+        queryKey: taskQueryKey,
       });
       onSuccess?.(data, variables, onMutateResult, mutationFunctionContext);
     },

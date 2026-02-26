@@ -1,49 +1,59 @@
 import { useNavigate } from '@tanstack/react-router';
 import { X } from 'lucide-react';
-import { useCallback, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import SignatureCanvas from 'react-signature-canvas';
 
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/sonner';
 import { Body1, H2 } from '@/components/ui/typography';
+import { useOnboardingFlowStore } from '@/features/onboarding/stores/onboarding-flow-store';
+import { useUpdateTask } from '@/features/tasks/api/update-task';
 
 import { useOnboardingNavigation } from '../../../hooks/use-onboarding-navigation';
 import { useSequence } from '../../../hooks/use-screen-sequence';
-import { useOnboardingFlowStore } from '../../../stores/onboarding-flow-store';
 import { Sequence } from '../../sequence';
 
 export const SignatureStep = () => {
   const navigate = useNavigate();
   const { next } = useSequence();
   const { isLastStep } = useOnboardingNavigation();
+  const { mutateAsync: updateTaskProgress } = useUpdateTask();
+  const resetFlow = useOnboardingFlowStore((state) => state.reset);
   const signatureRef = useRef<SignatureCanvas>(null);
   const [isEmpty, setIsEmpty] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleClear = useCallback(() => {
+  const handleClear = () => {
     signatureRef.current?.clear();
     setIsEmpty(true);
-  }, []);
+  };
 
-  const handleNext = useCallback(async () => {
-    if (isLastStep) {
-      setIsProcessing(true);
-      toast.success('Success!');
-      await new Promise((resolve) => setTimeout(resolve, 1200));
-      await navigate({ to: '/' });
-      // Clear persisted resume state only after route transition.
-      useOnboardingFlowStore.getState().reset();
+  const handleNext = async () => {
+    if (!isLastStep) {
+      next();
       return;
     }
 
-    next();
-  }, [isLastStep, navigate, next]);
-
-  const handleSignature = useCallback(() => {
-    if (signatureRef.current && !signatureRef.current.isEmpty()) {
-      setIsEmpty(false);
+    try {
+      setIsProcessing(true);
+      toast.success('Success!');
+      await new Promise((resolve) => setTimeout(resolve, 1200));
+      await updateTaskProgress({
+        taskName: 'onboarding',
+        data: { status: 'completed' },
+      });
+      await navigate({ to: '/', replace: true });
+      resetFlow();
+    } catch {
+      toast.error('Could not finish onboarding. Please try again.');
+      setIsProcessing(false);
     }
-  }, []);
+  };
+
+  const handleSignature = () => {
+    if (signatureRef.current === null || signatureRef.current.isEmpty()) return;
+    setIsEmpty(false);
+  };
 
   return (
     <Sequence.StepLayout centered>
