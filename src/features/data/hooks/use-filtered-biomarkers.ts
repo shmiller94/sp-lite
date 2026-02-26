@@ -28,7 +28,7 @@ export const filterBiomarkers = ({
   selectedRange,
   searchQuery,
 }: FilterBiomarkersParams): Biomarker[] => {
-  let filtered = biomarkers;
+  let filtered = biomarkers.filter((b) => b.value?.[0]?.quantity);
 
   if (selectedCategories.length > 0) {
     const selectedCategorySet = new Set(selectedCategories);
