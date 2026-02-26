@@ -79,9 +79,21 @@ export const Route = createFileRoute('/_app')({
       return;
     }
 
-    const revealData = await queryClient
+    const revealMock = {
+      shouldShow: false as const,
+      lastCompletedPhase: 'completed' as const,
+    };
+    const revealPromise = queryClient
       .ensureQueryData(revealLatestQueryOptions())
-      .catch(() => null);
+      .catch(() => (import.meta.env.DEV ? revealMock : null));
+    const revealData = import.meta.env.DEV
+      ? await Promise.race([
+          revealPromise,
+          new Promise<typeof revealMock>((resolve) =>
+            setTimeout(() => resolve(revealMock), 3000),
+          ),
+        ])
+      : await revealPromise;
 
     if (
       revealData?.shouldShow === true &&
