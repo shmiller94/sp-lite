@@ -316,16 +316,32 @@ const BundledDiscountContent = () => {
             ))}
           </div>
 
+          {/* Why re-test section */}
+          <div className="mb-6">
+            <h3 className="mb-4 text-lg font-medium text-zinc-900">
+              Why re-test?
+            </h3>
+            <div className="space-y-4">
+              {WHY_RETEST_ITEMS.map((item) => (
+                <WhyRetestItem
+                  key={item.title}
+                  title={item.title}
+                  description={item.description}
+                />
+              ))}
+            </div>
+          </div>
+
           {hasEligibleSelection && (
             <div className="pb-4">
               <CurrentPaymentMethodCard />
             </div>
           )}
 
-          {/* Update button */}
+          {/* Purchase button */}
           <Button
             variant="vermillion"
-            className="mb-8 w-full gap-1.5"
+            className="mb-4 w-full gap-1.5"
             onClick={handleUpdatePlan}
             disabled={
               isPending ||
@@ -338,7 +354,8 @@ const BundledDiscountContent = () => {
               <TransactionSpinner />
             ) : (
               <>
-                Update testing plan{isFlexSelected ? ' with HSA/FSA' : ''}
+                Buy additional testing now
+                {isFlexSelected ? ' with HSA/FSA' : ''}
                 {selectedPrice !== null && (
                   <span className="ml-1 text-white/80">
                     <NumberFlow
@@ -355,22 +372,6 @@ const BundledDiscountContent = () => {
               </>
             )}
           </Button>
-
-          {/* Why re-test section */}
-          <div className="mb-8">
-            <h3 className="mb-4 text-lg font-medium text-zinc-900">
-              Why re-test?
-            </h3>
-            <div className="space-y-4">
-              {WHY_RETEST_ITEMS.map((item) => (
-                <WhyRetestItem
-                  key={item.title}
-                  title={item.title}
-                  description={item.description}
-                />
-              ))}
-            </div>
-          </div>
 
           {/* Not interested button */}
           <Button
