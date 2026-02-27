@@ -20,7 +20,7 @@ export const RX_CONSENT_PAYMENT_GROUP_LINKID = 'consent-payment';
 // Used for RX questionnaires to identify the consent question within the consent-payment group.
 export const RX_CONSENT_QUESTION_LINKID = 'consent-payment.consent';
 
-// Used for RX questionnaires to prefill the billing period for front-door experiments.
+// Used for RX questionnaires to prefill the billing period programmatically.
 export const RX_BILLING_PERIOD_LINKID = 'consent-payment.billing-period';
 
 // Used for Rx questionnaires to skip the gender question.

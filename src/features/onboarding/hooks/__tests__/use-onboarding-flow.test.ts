@@ -51,10 +51,10 @@ describe('useOnboardingFlow', () => {
       isLoading: false,
     });
 
-    useQuestionnaireResponseListMock.mockReturnValue({
+    useQuestionnaireResponseListMock.mockImplementation(() => ({
       data: undefined,
       isLoading: false,
-    });
+    }));
 
     useServicesMock.mockReturnValue({
       data: {
@@ -81,5 +81,14 @@ describe('useOnboardingFlow', () => {
     expect(result.current.isLoading).toBe(false);
     expect(result.current.isInitialized).toBe(true);
     expect(useOnboardingFlowStore.getState().isInitialized).toBe(true);
+    expect(useQuestionnaireResponseListMock.mock.calls.length).toBeGreaterThan(
+      0,
+    );
+    for (const call of useQuestionnaireResponseListMock.mock.calls) {
+      expect(call[0]).toEqual({
+        status: 'in-progress,completed,stopped',
+        _sort: '-_lastUpdated',
+      });
+    }
   });
 });

@@ -4,7 +4,7 @@ import {
 } from '@medplum/fhirtypes';
 
 import { SanitizedRichText } from '@/components/shared/sanitized-rich-text';
-import { Body1, Body2 } from '@/components/ui/typography';
+import { Body1 } from '@/components/ui/typography';
 import { cn } from '@/lib/utils';
 
 import { ConsentPaymentSummary } from './consent-payment-summary';
@@ -16,7 +16,6 @@ import {
 import { QuestionnaireFormItem } from './questionnaire-item';
 import { useQuestionnaireStore } from './stores/questionnaire-store';
 import { QuestionnaireItemType } from './utils';
-import { isGLP1FrontDoorExperiment } from './utils/questionnaire-utils';
 
 interface QuestionnaireFormRepeatableItemProps {
   item: QuestionnaireItem;
@@ -47,8 +46,6 @@ export const QuestionnaireFormRepeatableItem = ({
   const checkForQuestionEnabled = useQuestionnaireStore(
     (s) => s.checkForQuestionEnabled,
   );
-  const qr = useQuestionnaireStore((s) => s.response);
-  const isFrontdoorExperiment = isGLP1FrontDoorExperiment(qr ?? undefined);
 
   // If https://superpower.com/fhir/StructureDefinition/questionnaire-description is available in the extension array, use it as the description
   const description = item.extension?.find(
@@ -108,23 +105,17 @@ export const QuestionnaireFormRepeatableItem = ({
                 : 'mb-5 text-2xl',
           )}
         />
-        {/* NOTE: consider moving to separate component / different approach
-         if we continue to have conditional descriptions for the same question. */}
-        {isFrontdoorExperiment && item.linkId === RX_CONSENT_PAYMENT_LINKID && (
-          <Body2 className="text-secondary">
-            Your Rx prescription is included with your Superpower membership.
-          </Body2>
-        )}
-        {!isFrontdoorExperiment && description && (
+        {description != null && description.length > 0 && (
           <SanitizedRichText
             content={description}
             variant="body2"
             textClassName="text-secondary"
           />
         )}
-        {!description && isMultipleChoice && (
-          <Body1 className="text-secondary">Select all that apply.</Body1>
-        )}
+        {(description == null || description.length === 0) &&
+          isMultipleChoice != null && (
+            <Body1 className="text-secondary">Select all that apply.</Body1>
+          )}
       </div>
 
       {isRxConsentPaymentQuestion && <ConsentPaymentSummary />}

@@ -44,6 +44,9 @@ export const StepRenderer = () => {
     case STEP_IDS.FINISH_TWIN:
       content = <FinishTwinSequence />;
       break;
+    case STEP_IDS.RX_ASSESSMENT:
+      content = <Steps.RxAssessmentStep />;
+      break;
     case STEP_IDS.PRIMER_INTRO:
       content = <QuestionnaireSequence.OnboardingPrimerIntroStep />;
       break;

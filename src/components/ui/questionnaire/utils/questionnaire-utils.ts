@@ -15,10 +15,8 @@ import {
 
 import { User } from '@/types/api';
 
-import { RX_ASSESSMENTS } from '../../../../const/questionnaire';
 import {
   RX_BILLING_PERIOD_LINKID,
-  RX_CONSENT_PAYMENT_LINKID,
   RX_IDENTITY_VERIFICATION_LINKID,
   RX_SEX_ASSIGNED_AT_BIRTH_LINKID,
 } from '../const/special-linkids';
@@ -45,29 +43,19 @@ export enum QuestionnaireItemType {
   quantity = 'quantity',
 }
 
-// Used for RX questionnaires to identify the front-door experiment.
-export const FRONTDOOR_EXPERIMENT_SYSTEM =
-  'https://superpower.com/fhir/experiment';
-export const GLP_FRONTDOOR_EXPERIMENT_VALUE = 'glp-frontdoor-experiment';
+const RX_QUESTIONNAIRE_NAME_RE = /^rx-assessment-[a-z0-9-]+$/;
 
 /**
- * Checks if a questionnaire response is a GLP-1 front-door experiment.
- */
-export function isGLP1FrontDoorExperiment(
-  response?: QuestionnaireResponse,
-): boolean {
-  return (
-    response?.identifier?.system === FRONTDOOR_EXPERIMENT_SYSTEM &&
-    response?.identifier?.value === GLP_FRONTDOOR_EXPERIMENT_VALUE
-  );
-}
-
-/**
- * Checks if a questionnaire is an Rx questionnaire by verifying if its name exists in the RX_ASSESSMENTS list.
+ * Checks if a questionnaire is an Rx questionnaire.
+ *
+ * Most Rx questionnaires follow the `rx-assessment-*` naming convention.
  */
 export function isRxQuestionnaire(questionnaire: Questionnaire): boolean {
-  // TODO: this unfortunately uses 'any' because front door experiment names are coupled to the questionnaire name.
-  return RX_ASSESSMENTS.includes(questionnaire.name as any);
+  const questionnaireName = questionnaire.name;
+  if (questionnaireName == null) {
+    return false;
+  }
+  return RX_QUESTIONNAIRE_NAME_RE.test(questionnaireName);
 }
 
 /**
@@ -128,26 +116,6 @@ export function shouldSkipBillingPeriodQuestion(
 }
 
 /**
- * Checks if a question should be skipped for front-door experiment users or semaglutide questionnaires.
- * Front-door users already paid, so we skip billing-period and payment questions.
- * For semaglutide questionnaires, billing-period is auto-set to 1 month, so we skip it.
- */
-export function shouldSkipFrontDoorQuestion(
-  item: QuestionnaireItem,
-  response?: QuestionnaireResponse,
-): boolean {
-  // For frontdoor experiments, skip both billing-period and payment
-  if (isGLP1FrontDoorExperiment(response)) {
-    return (
-      item.linkId === RX_BILLING_PERIOD_LINKID ||
-      item.linkId === RX_CONSENT_PAYMENT_LINKID
-    );
-  }
-
-  return false;
-}
-
-/**
  * TODO: ideally this logic lives on the server side, but FHIR QR native components is blocking this
  * Consolidated function to check if a question should be skipped.
  * Calls all individual skip functions (gender, identity, etc.) and returns true
@@ -157,12 +125,11 @@ export function shouldSkipQuestion(
   item: QuestionnaireItem,
   questionnaire: Questionnaire,
   user: User,
-  response: QuestionnaireResponse,
+  _response: QuestionnaireResponse,
 ): boolean {
   return (
     shouldSkipGenderQuestion(item, questionnaire, user) ||
     shouldSkipIdentityQuestion(item, questionnaire, user) ||
-    shouldSkipFrontDoorQuestion(item, response) ||
     shouldSkipBillingPeriodQuestion(item)
   );
 }

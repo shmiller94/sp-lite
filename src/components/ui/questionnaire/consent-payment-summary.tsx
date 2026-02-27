@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 
 import { ProgressiveImage } from '@/components/ui/progressive-image';
-import { isGLP1FrontDoorExperiment } from '@/components/ui/questionnaire/utils/questionnaire-utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/components/ui/sonner';
 import { useMarketplace } from '@/features/marketplace/api/get-marketplace';
@@ -43,9 +42,6 @@ function getIntervalLabel(intervalCount: number): string {
 export const ConsentPaymentSummary = () => {
   const questionnaireName = useQuestionnaireStore((s) => s.questionnaire?.name);
   const questionnaireResponse = useQuestionnaireStore((s) => s.response);
-  const isFrontdoorExperiment = isGLP1FrontDoorExperiment(
-    questionnaireResponse,
-  );
   const { prescription, isLoading } =
     useConsentPaymentPrescription(questionnaireName);
 
@@ -64,19 +60,13 @@ export const ConsentPaymentSummary = () => {
     ? getIntervalLabel(matchedPrice.interval_count)
     : '/month';
 
-  const formattedPrice = isFrontdoorExperiment
-    ? formatCurrency(0)
-    : displayPrice != null
-      ? formatCurrency(displayPrice)
-      : null;
+  const formattedPrice =
+    displayPrice != null ? formatCurrency(displayPrice) : null;
 
-  const showSkeleton = isLoading || !formattedPrice || !prescription;
+  const showSkeleton =
+    isLoading || formattedPrice == null || prescription == null;
 
-  if (
-    !isLoading &&
-    (!formattedPrice || !prescription) &&
-    !isFrontdoorExperiment
-  ) {
+  if (!isLoading && (formattedPrice == null || prescription == null)) {
     toast.error('Failed to fetch pricing information. Please contact support.');
   }
 

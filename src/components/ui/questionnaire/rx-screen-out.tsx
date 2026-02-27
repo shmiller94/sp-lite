@@ -1,12 +1,9 @@
-import { QuestionnaireResponse } from '@medplum/fhirtypes';
 import { useNavigate } from '@tanstack/react-router';
 import { m } from 'framer-motion';
 
 import { SuperpowerLogo } from '@/components/icons/superpower-logo';
 import { Button } from '@/components/ui/button';
 import { Body2, H3, H4 } from '@/components/ui/typography';
-
-import { isGLP1FrontDoorExperiment } from './utils/questionnaire-utils';
 
 const RX_SCREEN_OUT_TEXT = [
   {
@@ -31,41 +28,8 @@ const RX_SCREEN_OUT_TEXT = [
   },
 ];
 
-const RX_SCREEN_OUT_FRONT_DOOR_TEXT = [
-  {
-    title:
-      'Thank you for taking the time to share your health information with us.',
-    heading: 'Our clinical decision',
-    body: [
-      'After reviewing your responses, our clinical team is not able to safely prescribe GLP-1 medication at this time. This decision is based on medical guidelines and safety considerations designed to protect your long-term health.',
-    ],
-  },
-  {
-    heading: 'What happens next?',
-    body: [
-      'We know this may be disappointing if you were hoping to start GLP-1s, and we appreciate the time you took to complete the intake.',
-      'Because we’re unable to move forward with treatment, your payment has been fully refunded to your original payment method, and you will not be enrolled in a Superpower membership.',
-    ],
-  },
-  {
-    heading: 'Questions about your refund or care?',
-    body: [
-      'If you have any questions about this decision or your refund, please reach out to our concierge at concierge@superpower.com and we’ll be happy to review it with you.',
-    ],
-  },
-];
-
-export const RxScreenOut = ({
-  response,
-}: {
-  response: QuestionnaireResponse;
-}) => {
-  const isFrontDoorExperiment = isGLP1FrontDoorExperiment(response);
+export const RxScreenOut = () => {
   const navigate = useNavigate();
-
-  const text = isFrontDoorExperiment
-    ? RX_SCREEN_OUT_FRONT_DOOR_TEXT
-    : RX_SCREEN_OUT_TEXT;
 
   return (
     <div className="min-h-screen bg-zinc-100 px-8">
@@ -77,19 +41,15 @@ export const RxScreenOut = ({
         >
           <SuperpowerLogo className="w-32" />
         </m.div>
-        <RxScreenOutInformation text={text} />
-        {/* NOTE: We don't render this button if it's a front door experiment since
-          their Superpower membership is cancelled; we don't want them going anywhere unintended! */}
-        {!isFrontDoorExperiment && (
-          <Button
-            className="mt-10 w-full"
-            onClick={() => {
-              void navigate({ to: '/' });
-            }}
-          >
-            I Understand
-          </Button>
-        )}
+        <RxScreenOutInformation text={RX_SCREEN_OUT_TEXT} />
+        <Button
+          className="mt-10 w-full"
+          onClick={() => {
+            void navigate({ to: '/' });
+          }}
+        >
+          I Understand
+        </Button>
       </div>
 
       <div className="fixed bottom-0 left-1/2 z-10 -translate-x-1/2">
@@ -128,11 +88,7 @@ export const RxScreenOut = ({
   );
 };
 
-function RxScreenOutInformation({
-  text,
-}: {
-  text: typeof RX_SCREEN_OUT_TEXT | typeof RX_SCREEN_OUT_FRONT_DOOR_TEXT;
-}) {
+function RxScreenOutInformation({ text }: { text: typeof RX_SCREEN_OUT_TEXT }) {
   return (
     <m.section
       id="main"

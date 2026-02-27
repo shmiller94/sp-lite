@@ -10,7 +10,10 @@ import {
 } from '@/const/services';
 import { useGetBenefitClaims } from '@/features/b2b/api';
 import { useCredits } from '@/features/orders/api/credits';
-import { useQuestionnaireResponseList } from '@/features/questionnaires/api/questionnaire-response';
+import {
+  type ListQuestionnaireResponsesResponse,
+  useQuestionnaireResponseList,
+} from '@/features/questionnaires/api/questionnaire-response';
 import { useServices } from '@/features/services/api';
 import { useUser } from '@/lib/auth';
 
@@ -20,20 +23,35 @@ import {
   buildQuestionnaireStatusMap,
   getQuestionnaireStatus,
 } from '../utils/get-questionnaire-status';
+import { getRxQuestionnaireContext } from '../utils/get-rx-questionnaire-context';
 
 import { useSyncFlowStore } from './use-sync-flow-store';
 
-// TODO: Get valid names from  orpc/types.generated
+// TODO: Get valid names from orpc/types.generated
 const ONBOARDING_QUESTIONNAIRES = [
   'onboarding-primer',
   'onboarding-medical-history',
   'onboarding-female-health',
   'onboarding-lifestyle',
 ] as const;
+const ONBOARDING_QUESTIONNAIRE_NAME_SET = new Set<string>(
+  ONBOARDING_QUESTIONNAIRES,
+);
 
 // Helper to check if a service exists in the services list
-const hasService = (services: { name: string }[] | undefined, name: string) =>
-  services?.some((s) => s.name === name) ?? false;
+const hasService = (services: { name: string }[] | undefined, name: string) => {
+  if (services == null) {
+    return false;
+  }
+
+  for (const service of services) {
+    if (service.name === name) {
+      return true;
+    }
+  }
+
+  return false;
+};
 
 /**
  * Orchestrator hook for the onboarding flow.
@@ -45,12 +63,14 @@ export const useOnboardingFlow = () => {
   // Fetch user profile data
   const { data: user, isLoading: isUserLoading } = useUser();
 
-  // Fetch all onboarding questionnaire responses in one call
-  const { data: questionnaireResponses, isLoading: isQuestionnairesLoading } =
-    useQuestionnaireResponseList({
-      questionnaireName: ONBOARDING_QUESTIONNAIRES.join(','),
-      status: 'in-progress,completed,stopped',
-    });
+  // Fetch all questionnaire responses once; derive onboarding and RX state locally.
+  const {
+    data: questionnaireResponses,
+    isLoading: isQuestionnaireResponsesLoading,
+  } = useQuestionnaireResponseList({
+    status: 'in-progress,completed,stopped',
+    _sort: '-_lastUpdated',
+  });
 
   // Fetch add-on services (phlebotomy group)
   const { data: addOnServices, isLoading: isServicesLoading } = useServices({
@@ -66,7 +86,7 @@ export const useOnboardingFlow = () => {
 
   const isLoading =
     isUserLoading ||
-    isQuestionnairesLoading ||
+    isQuestionnaireResponsesLoading ||
     isServicesLoading ||
     isClaimedBenefitsLoading;
 
@@ -74,8 +94,21 @@ export const useOnboardingFlow = () => {
   const flowContext = useMemo((): FlowContext | null => {
     if (isLoading) return null;
 
+    const onboardingQuestionnaireResponses: ListQuestionnaireResponsesResponse =
+      [];
+    for (const response of questionnaireResponses ?? []) {
+      const questionnaireName = response.identifier?.value;
+      if (questionnaireName == null) {
+        continue;
+      }
+      if (!ONBOARDING_QUESTIONNAIRE_NAME_SET.has(questionnaireName)) {
+        continue;
+      }
+      onboardingQuestionnaireResponses.push(response);
+    }
+
     const questionnaireStatusMap = buildQuestionnaireStatusMap(
-      questionnaireResponses,
+      onboardingQuestionnaireResponses,
     );
 
     // Helper to check if a questionnaire is completed
@@ -98,12 +131,20 @@ export const useOnboardingFlow = () => {
     const lifestyleCompleted = isQuestionnaireCompleted('onboarding-lifestyle');
     // Credits check
     const credits = creditsData?.credits ?? [];
-    const userHasAdvancedUpgrade = credits.some(
-      (c) => c.serviceName === ADVANCED_BLOOD_PANEL,
-    );
-    const userHasOrganAge = credits.some(
-      (c) => c.serviceName === ORGAN_AGE_PANEL,
-    );
+    let userHasAdvancedUpgrade = false;
+    let userHasOrganAge = false;
+    let baselineCreditsCount = 0;
+    for (const credit of credits) {
+      if (credit.serviceName === ADVANCED_BLOOD_PANEL) {
+        userHasAdvancedUpgrade = true;
+      }
+      if (credit.serviceName === ORGAN_AGE_PANEL) {
+        userHasOrganAge = true;
+      }
+      if (credit.serviceName === SUPERPOWER_BLOOD_PANEL) {
+        baselineCreditsCount++;
+      }
+    }
 
     // Service availability
     const services = addOnServices?.services;
@@ -121,13 +162,17 @@ export const useOnboardingFlow = () => {
     // Resume flow context
     const hasAdditionalCredits = userHasAdvancedUpgrade || credits.length > 1;
 
-    const hasStartedIntake = ONBOARDING_QUESTIONNAIRES.some((name) =>
-      questionnaireStatusMap.has(name),
-    );
+    let hasStartedIntake = false;
+    for (const name of ONBOARDING_QUESTIONNAIRES) {
+      if (questionnaireStatusMap.has(name)) {
+        hasStartedIntake = true;
+        break;
+      }
+    }
 
-    const baselineCreditsCount = credits.filter(
-      (c) => c.serviceName === SUPERPOWER_BLOOD_PANEL,
-    ).length;
+    const rxQuestionnaireContext = getRxQuestionnaireContext(
+      questionnaireResponses,
+    );
 
     // Calculate user age if birthdate is available
     let userAge: number | null = null;
@@ -165,6 +210,7 @@ export const useOnboardingFlow = () => {
       hasAdditionalCredits,
       baselineCreditsCount,
       hasStartedIntake,
+      rxQuestionnaireContext,
       hasOrganAgeService,
       hasFatigueService,
       hasHormoneService,

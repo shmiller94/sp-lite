@@ -12,7 +12,6 @@ import { QuestionnaireForm } from '@/components/ui/questionnaire';
 import { RX_BILLING_PERIOD_LINKID } from '@/components/ui/questionnaire/const/special-linkids';
 import { RxScreenOut } from '@/components/ui/questionnaire/rx-screen-out';
 import { Spinner } from '@/components/ui/spinner';
-import { RxQuestionnaireName } from '@/const/questionnaire';
 import { useQuestionnaireResponseController } from '@/features/questionnaires/hooks/use-questionnaire-response-controller';
 import { isMemberIneligible } from '@/features/questionnaires/utils/is-member-ineligible';
 import { useUser } from '@/lib/auth';
@@ -64,7 +63,7 @@ export const RxQuestionnaire = ({
   name,
   onSubmit,
 }: {
-  name: RxQuestionnaireName;
+  name: string;
   onSubmit?: () => void;
 }) => {
   const billingCode = useSearch({
@@ -117,11 +116,7 @@ export const RxQuestionnaire = ({
   }
 
   if (showIneligibleScreen && questionnaireResponse != null) {
-    return (
-      <RxScreenOut
-        response={questionnaireResponse as unknown as QuestionnaireResponse}
-      />
-    );
+    return <RxScreenOut />;
   }
 
   const handleSave = (item: QuestionnaireResponseItem[]) => {
@@ -135,7 +130,7 @@ export const RxQuestionnaire = ({
       (questionnaire as Questionnaire).item ?? [],
     );
 
-    // NOTE(audric): server-side also handles frontdoor screenout logic.
+    // NOTE(audric): server-side also handles screenout logic.
     submit(item, {
       onSuccess: () => {
         if (isIneligible == true) {

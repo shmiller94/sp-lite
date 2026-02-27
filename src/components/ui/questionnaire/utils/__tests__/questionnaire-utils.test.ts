@@ -1,8 +1,11 @@
 import { TypedValue } from '@medplum/core';
 import { Questionnaire, QuestionnaireItem } from '@medplum/fhirtypes';
 
+import { RX_ASSESSMENTS } from '@/const/questionnaire';
+
 import {
   QuestionnaireItemType,
+  isRxQuestionnaire,
   isMultipleChoice,
   getNewMultiSelectValues,
   formatReferenceString,
@@ -261,6 +264,39 @@ describe('questionnaire-utils', () => {
       };
 
       expect(getNumberOfPages(questionnaire)).toBe(1);
+    });
+  });
+
+  describe('isRxQuestionnaire', () => {
+    it('matches all known rx-assessment questionnaire names', () => {
+      for (const name of RX_ASSESSMENTS) {
+        const questionnaire: Questionnaire = {
+          resourceType: 'Questionnaire',
+          status: 'active',
+          name,
+        };
+
+        expect(isRxQuestionnaire(questionnaire)).toBe(true);
+      }
+    });
+
+    it('returns false for non rx questionnaire names', () => {
+      const questionnaire: Questionnaire = {
+        resourceType: 'Questionnaire',
+        status: 'active',
+        name: 'onboarding-primer',
+      };
+
+      expect(isRxQuestionnaire(questionnaire)).toBe(false);
+    });
+
+    it('returns false when questionnaire name is missing', () => {
+      const questionnaire: Questionnaire = {
+        resourceType: 'Questionnaire',
+        status: 'active',
+      };
+
+      expect(isRxQuestionnaire(questionnaire)).toBe(false);
     });
   });
 });

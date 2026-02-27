@@ -15,6 +15,7 @@ const baseContext: FlowContext = {
   hasAdditionalCredits: false,
   baselineCreditsCount: 1,
   hasStartedIntake: false,
+  rxQuestionnaireContext: { status: 'none' },
   hasOrganAgeService: true,
   hasFatigueService: true,
   hasHormoneService: true,
@@ -120,6 +121,15 @@ describe('getValidSteps', () => {
       const steps = getValidSteps(ctx);
       expect(steps).not.toContain(STEP_IDS.ADVANCED_UPGRADE);
     });
+
+    it('excludes advanced-upgrade for members with any matching RX questionnaire response', () => {
+      const ctx = {
+        ...baseContext,
+        rxQuestionnaireContext: { status: 'completed' as const },
+      };
+      const steps = getValidSteps(ctx);
+      expect(steps).not.toContain(STEP_IDS.ADVANCED_UPGRADE);
+    });
   });
 
   describe('bundled-discount step', () => {
@@ -162,6 +172,15 @@ describe('getValidSteps', () => {
       const steps = getValidSteps(ctx);
       expect(steps).toContain(STEP_IDS.BUNDLED_DISCOUNT);
     });
+
+    it('excludes bundled-discount for members with any matching RX questionnaire response', () => {
+      const ctx = {
+        ...baseContext,
+        rxQuestionnaireContext: { status: 'completed' as const },
+      };
+      const steps = getValidSteps(ctx);
+      expect(steps).not.toContain(STEP_IDS.BUNDLED_DISCOUNT);
+    });
   });
 
   describe('organ-age step', () => {
@@ -195,6 +214,86 @@ describe('getValidSteps', () => {
       };
       const steps = getValidSteps(ctx);
       expect(steps).not.toContain(STEP_IDS.ORGAN_AGE);
+    });
+
+    it('excludes organ-age for members with any matching RX questionnaire response', () => {
+      const ctx = {
+        ...baseContext,
+        rxQuestionnaireContext: { status: 'completed' as const },
+      };
+      const steps = getValidSteps(ctx);
+      expect(steps).not.toContain(STEP_IDS.ORGAN_AGE);
+    });
+  });
+
+  describe('rx-assessment step', () => {
+    it('includes rx-assessment when a required RX questionnaire response exists', () => {
+      const ctx = {
+        ...baseContext,
+        rxQuestionnaireContext: {
+          status: 'required' as const,
+          questionnaireName: 'rx-assessment-metabolic',
+        },
+      };
+      const steps = getValidSteps(ctx);
+      expect(steps).toContain(STEP_IDS.RX_ASSESSMENT);
+    });
+
+    it('does not skip pre-intake steps when rx-assessment is required and intake not started', () => {
+      const ctx = {
+        ...baseContext,
+        hasStartedIntake: false,
+        rxQuestionnaireContext: {
+          status: 'required' as const,
+          questionnaireName: 'rx-assessment-metabolic',
+        },
+      };
+      const steps = getValidSteps(ctx);
+
+      expect(steps[0]).toBe(STEP_IDS.HEARD_ABOUT_US);
+      expect(steps).toContain(STEP_IDS.UPDATE_INFO);
+      expect(steps).toContain(STEP_IDS.INTRODUCTION);
+      expect(steps).toContain(STEP_IDS.DIGITAL_TWIN);
+
+      expect(steps).not.toContain(STEP_IDS.ADVANCED_UPGRADE);
+      expect(steps).not.toContain(STEP_IDS.BUNDLED_DISCOUNT);
+      expect(steps).not.toContain(STEP_IDS.ORGAN_AGE);
+
+      const finishTwinIdx = steps.indexOf(STEP_IDS.FINISH_TWIN);
+      const rxAssessmentIdx = steps.indexOf(STEP_IDS.RX_ASSESSMENT);
+      const primerIntroIdx = steps.indexOf(STEP_IDS.PRIMER_INTRO);
+
+      expect(finishTwinIdx).not.toBe(-1);
+      expect(rxAssessmentIdx).not.toBe(-1);
+      expect(primerIntroIdx).not.toBe(-1);
+      expect(finishTwinIdx).toBeLessThan(rxAssessmentIdx);
+      expect(rxAssessmentIdx).toBeLessThan(primerIntroIdx);
+    });
+
+    it('hides rx-assessment once there is no required RX questionnaire response', () => {
+      const ctx = {
+        ...baseContext,
+        rxQuestionnaireContext: { status: 'completed' as const },
+      };
+      const steps = getValidSteps(ctx);
+      expect(steps).not.toContain(STEP_IDS.RX_ASSESSMENT);
+    });
+
+    it('places rx-assessment between finish-twin and primer-intro', () => {
+      const ctx = {
+        ...baseContext,
+        rxQuestionnaireContext: {
+          status: 'required' as const,
+          questionnaireName: 'rx-assessment-metabolic',
+        },
+      };
+      const steps = getValidSteps(ctx);
+      const finishTwinIdx = steps.indexOf(STEP_IDS.FINISH_TWIN);
+      const rxAssessmentIdx = steps.indexOf(STEP_IDS.RX_ASSESSMENT);
+      const primerIntroIdx = steps.indexOf(STEP_IDS.PRIMER_INTRO);
+
+      expect(finishTwinIdx).toBeLessThan(rxAssessmentIdx);
+      expect(rxAssessmentIdx).toBeLessThan(primerIntroIdx);
     });
   });
 
@@ -466,6 +565,7 @@ describe('getValidSteps', () => {
         hasAdditionalCredits: true,
         baselineCreditsCount: 2,
         hasStartedIntake: true,
+        rxQuestionnaireContext: { status: 'none' },
         hasOrganAgeService: false,
         hasFatigueService: false,
         hasHormoneService: false,
@@ -478,6 +578,22 @@ describe('getValidSteps', () => {
   });
 
   describe('resume questionnaire flow', () => {
+    it('starts at rx-assessment when a required RX questionnaire response exists', () => {
+      const ctx = {
+        ...baseContext,
+        hasStartedIntake: true,
+        rxQuestionnaireContext: {
+          status: 'required' as const,
+          questionnaireName: 'rx-assessment-metabolic',
+        },
+      };
+      const steps = getValidSteps(ctx);
+
+      expect(steps[0]).toBe(STEP_IDS.RX_ASSESSMENT);
+      expect(steps).not.toContain(STEP_IDS.FINISH_TWIN);
+      expect(steps).toContain(STEP_IDS.PRIMER_INTRO);
+    });
+
     it('starts at primer intro when any questionnaire has status and primer incomplete', () => {
       const ctx = {
         ...baseContext,

@@ -1,3 +1,5 @@
+import { type RxQuestionnaireContext } from '../utils/get-rx-questionnaire-context';
+
 // Step IDs - single source of truth for all step identifiers
 export const STEP_IDS = {
   UPDATE_INFO: 'update-info',
@@ -17,6 +19,7 @@ export const STEP_IDS = {
   LIFESTYLE_INTRO: 'lifestyle-intro',
   LIFESTYLE: 'lifestyle',
   FINISH_TWIN: 'finish-twin',
+  RX_ASSESSMENT: 'rx-assessment',
   ADD_ON_PANELS: 'add-on-panels',
   UPSELL_PANELS: 'upsell-panels',
   PHLEBOTOMY_BOOKING: 'phlebotomy-booking',
@@ -29,7 +32,7 @@ export const STEP_IDS = {
 export type StepId = (typeof STEP_IDS)[keyof typeof STEP_IDS];
 
 // Context for step visibility - derived from orchestrator's data fetching
-export type FlowContext = {
+export interface FlowContext {
   // User state
   userInfoCompleted: boolean;
   userGender: 'male' | 'female' | null;
@@ -50,6 +53,15 @@ export type FlowContext = {
   // Resume state
   hasStartedIntake: boolean; // any questionnaire in-progress/stopped/completed
 
+  /**
+   * Rx intake status derived from QuestionnaireResponses.
+   *
+   * - `none`: member has no non-symptom-tracker Rx intake response
+   * - `required`: member has an in-progress/stopped Rx intake response to complete
+   * - `completed`: member has a completed Rx intake response
+   */
+  rxQuestionnaireContext: RxQuestionnaireContext;
+
   // Service availability
   hasOrganAgeService: boolean;
   hasFatigueService: boolean;
@@ -57,12 +69,12 @@ export type FlowContext = {
 
   // B2B
   hasClaimedBenefits: boolean;
-};
+}
 
-type StepConfig = {
+interface StepConfig {
   id: StepId;
   shouldShow: (ctx: FlowContext) => boolean;
-};
+}
 
 // Step definitions with visibility predicates
 // Order matters - this is the default step order
@@ -83,11 +95,13 @@ const STEP_CONFIGS: StepConfig[] = [
     id: STEP_IDS.DIGITAL_TWIN,
     shouldShow: (ctx) => !ctx.hasAdditionalCredits && !ctx.hasStartedIntake,
   },
+  // Hide purchase/upsell steps when the member has any Rx intake response.
   {
     id: STEP_IDS.ADVANCED_UPGRADE,
     shouldShow: (ctx) =>
       !ctx.hasStartedIntake &&
       !ctx.userHasAdvancedUpgrade &&
+      ctx.rxQuestionnaireContext.status === 'none' &&
       !ctx.hasClaimedBenefits,
   },
   {
@@ -95,15 +109,23 @@ const STEP_CONFIGS: StepConfig[] = [
     shouldShow: (ctx) =>
       !ctx.hasClaimedBenefits &&
       !ctx.hasStartedIntake &&
+      ctx.rxQuestionnaireContext.status === 'none' &&
       ctx.baselineCreditsCount <= 1,
   },
   {
     id: STEP_IDS.ORGAN_AGE,
-    shouldShow: (ctx) => !ctx.userHasOrganAge && !ctx.hasClaimedBenefits,
+    shouldShow: (ctx) =>
+      !ctx.userHasOrganAge &&
+      !ctx.hasClaimedBenefits &&
+      ctx.rxQuestionnaireContext.status === 'none',
   },
   {
     id: STEP_IDS.FINISH_TWIN,
     shouldShow: (ctx) => !ctx.hasClaimedBenefits,
+  },
+  {
+    id: STEP_IDS.RX_ASSESSMENT,
+    shouldShow: (ctx) => ctx.rxQuestionnaireContext.status === 'required',
   },
   {
     id: STEP_IDS.PRIMER_INTRO,
@@ -188,15 +210,28 @@ const getFirstIncompleteQuestionnaireIntro = (
     },
   ];
 
-  return questionnaireResumeOrder.find(
-    (item) => (item.isEnabled ?? true) && !item.isCompleted,
-  )?.introStep;
+  for (const item of questionnaireResumeOrder) {
+    if (item.isEnabled === false) {
+      continue;
+    }
+    if (item.isCompleted) {
+      continue;
+    }
+
+    return item.introStep;
+  }
+
+  return undefined;
 };
 
 export const getValidSteps = (ctx: FlowContext): StepId[] => {
-  const steps = STEP_CONFIGS.filter((step) => step.shouldShow(ctx)).map(
-    (step) => step.id,
-  );
+  const steps: StepId[] = [];
+  for (const step of STEP_CONFIGS) {
+    if (!step.shouldShow(ctx)) {
+      continue;
+    }
+    steps.push(step.id);
+  }
 
   if (!ctx.hasStartedIntake) {
     return steps;
@@ -205,14 +240,21 @@ export const getValidSteps = (ctx: FlowContext): StepId[] => {
   // If any questionnaire has been started or completed, resume at the first
   // unfinished questionnaire intro, skipping all steps before it.
   const firstIncompleteIntro = getFirstIncompleteQuestionnaireIntro(ctx);
-  if (!firstIncompleteIntro) {
+  if (firstIncompleteIntro == null) {
     return steps;
   }
 
-  const firstIncompleteIndex = steps.indexOf(firstIncompleteIntro);
-  if (firstIncompleteIndex === -1) {
+  let startIndex = steps.indexOf(firstIncompleteIntro);
+  if (startIndex === -1) {
     return steps;
   }
 
-  return steps.slice(firstIncompleteIndex);
+  if (ctx.rxQuestionnaireContext.status === 'required') {
+    const rxAssessmentIndex = steps.indexOf(STEP_IDS.RX_ASSESSMENT);
+    if (rxAssessmentIndex !== -1 && rxAssessmentIndex < startIndex) {
+      startIndex = rxAssessmentIndex;
+    }
+  }
+
+  return steps.slice(startIndex);
 };

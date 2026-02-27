@@ -1,7 +1,7 @@
 const INTAKE_QUESTIONNAIRE = 'onboarding-intake';
 
-// GLP-1 FRONTDOOR EXPERIMENT
-export const GLP_FRONTDOOR_EXPERIMENT = 'glp-frontdoor-experiment';
+export const NON_SYMPTOM_RX_VALUE_RE =
+  /^rx-assessment-(?!.*-symptom-tracker$)[a-z0-9-]+$/;
 
 // RX ASSESSMENTS
 const RX_ASSESSMENT_GHK_CU = 'rx-assessment-ghk-cu';
@@ -167,11 +167,7 @@ type RxQuestionnaireName =
   | typeof RX_TRT_INJECTABLE
   | typeof RX_TRT_INJECTABLE_SYMPTOM_TRACKER
   | typeof RX_TIRZEPATIDE
-  | typeof RX_TIRZEPATIDE_SYMPTOM_TRACKER
-  // The following questionnaire 'names' are identifiers on the QuestionnaireResponse
-  // used for front-door experiments. TODO: decouple the front door experiment name from the
-  // actual questionnaire name.
-  | typeof GLP_FRONTDOOR_EXPERIMENT;
+  | typeof RX_TIRZEPATIDE_SYMPTOM_TRACKER;
 
 export {
   INTAKE_QUESTIONNAIRE,
