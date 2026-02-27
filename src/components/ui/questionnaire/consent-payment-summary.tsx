@@ -36,7 +36,8 @@ function getBillingCodeFromResponse(
 function getIntervalLabel(intervalCount: number): string {
   if (intervalCount <= 30) return '/month';
   if (intervalCount <= 90) return '/quarter';
-  return '/6 months';
+  if (intervalCount <= 180) return '/6 months';
+  return '/year';
 }
 
 export const ConsentPaymentSummary = () => {

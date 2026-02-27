@@ -1408,6 +1408,12 @@ export const ENCLOMIPHENE = {
       'Medical evaluation',
       'Unlimited messaging',
     ],
+    annual: [
+      '12 month supply of medication',
+      'Free 2-day shipping',
+      'Medical evaluation',
+      'Unlimited messaging',
+    ],
   },
   science: {
     activeIngredients: `Enclomiphene citrate, the active pharmaceutical ingredient, is the primary component of enclomiphene. It's formulated with inactive ingredients like microcrystalline cellulose, lactose monohydrate, magnesium stearate, and colloidal silicon dioxide to form tablets for oral administration.`,

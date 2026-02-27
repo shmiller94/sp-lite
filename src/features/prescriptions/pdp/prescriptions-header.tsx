@@ -200,7 +200,8 @@ export const Header = ({ className, prescription }: HeaderProps) => {
 const getIntervalLabel = (intervalCount: number): string => {
   if (intervalCount <= 30) return 'Monthly';
   if (intervalCount <= 90) return 'Quarterly';
-  return 'Biannual';
+  if (intervalCount <= 180) return 'Biannual';
+  return 'Annual';
 };
 
 const getPerMonthPrice = (amount: number, intervalCount: number): number => {
@@ -217,6 +218,7 @@ type BillingTierIncludes = {
   monthly: string[];
   quarterly: string[];
   biannual: string[];
+  annual?: string[];
 };
 
 type BillingTierSelectorProps = {
@@ -231,7 +233,8 @@ const getIncludesForTier = (
   if (Array.isArray(includes)) return includes;
   if (intervalCount <= 30) return includes.monthly;
   if (intervalCount <= 90) return includes.quarterly;
-  return includes.biannual;
+  if (intervalCount <= 180) return includes.biannual;
+  return includes.annual ?? includes.biannual;
 };
 
 const BillingTierSelector = ({
