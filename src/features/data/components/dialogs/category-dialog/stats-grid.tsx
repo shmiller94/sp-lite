@@ -8,7 +8,7 @@ export const StatsGrid = ({ biomarkers }: { biomarkers: Biomarker[] }) => {
   const optimal = biomarkers.filter((b) => b.status === 'OPTIMAL').length;
   const normal = biomarkers.filter((b) => b.status === 'NORMAL').length;
   const outOfRange = biomarkers.filter(
-    (b) => b.status === 'HIGH' || b.status === 'LOW',
+    (b) => b.status === 'HIGH' || b.status === 'LOW' || b.status === 'ABNORMAL',
   ).length;
 
   return (

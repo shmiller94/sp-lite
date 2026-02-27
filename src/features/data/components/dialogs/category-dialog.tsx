@@ -48,7 +48,12 @@ export const CategoryDialog = ({
     for (const b of biomarkers) {
       if (b.status === 'OPTIMAL') optimal += 1;
       else if (b.status === 'NORMAL') inRange += 1;
-      else if (b.status === 'HIGH' || b.status === 'LOW') outOfRange += 1;
+      else if (
+        b.status === 'HIGH' ||
+        b.status === 'LOW' ||
+        b.status === 'ABNORMAL'
+      )
+        outOfRange += 1;
     }
 
     return { total, optimal, inRange, outOfRange };

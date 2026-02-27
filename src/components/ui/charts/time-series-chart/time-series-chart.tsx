@@ -9,6 +9,7 @@ import { STATUS_TO_COLOR } from '@/const/status-to-color';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { Biomarker } from '@/types/api';
+import { getDisplayComparator } from '@/utils/get-display-comparator';
 
 import { ChartTooltip } from '../chart-tooltip';
 import { RangeStack } from '../range-stack';
@@ -43,6 +44,7 @@ interface DisplayedPoint {
   position: { x: number; y: number };
   pointIndex: number;
   source?: string;
+  rangeLabel?: string;
 }
 
 export const TimeSeriesChart = ({
@@ -209,7 +211,8 @@ function useTimeSeriesDisplayedPoint({
   >;
   sortedValues: Array<{
     timestamp: string;
-    quantity: { value: number };
+    quantity?: { value: number; comparator?: string };
+    valueRange?: { low: number; high: number };
     source?: string;
   }>;
   currentPage: number;
@@ -292,7 +295,19 @@ function useTimeSeriesDisplayedPoint({
           const originalValue = sortedValues[globalPointIndex];
           if (originalValue) {
             setDisplayedPoint({
-              value: originalValue.quantity.value,
+              value:
+                originalValue.quantity?.value ??
+                (originalValue.valueRange
+                  ? (originalValue.valueRange.low +
+                      originalValue.valueRange.high) /
+                    2
+                  : 0),
+              rangeLabel: originalValue.valueRange
+                ? `${originalValue.valueRange.low}-${originalValue.valueRange.high}`
+                : originalValue.quantity?.comparator &&
+                    originalValue.quantity.comparator !== 'EQUALS'
+                  ? `${getDisplayComparator(originalValue.quantity.comparator)}${originalValue.quantity.value}`
+                  : undefined,
               timestamp: originalValue.timestamp,
               source: originalValue.source || 'quest',
               position: {
@@ -541,49 +556,85 @@ function TimeSeriesChartSvg({
           />
         ))}
 
-        {data.dataPoints.map((point, index) => (
-          <g key={point.id}>
-            {displayedPoint?.pointIndex === index && (
+        {data.dataPoints.map((point, index) => {
+          const isNextTest = point.status === 'next-test';
+          const color = isNextTest
+            ? '#9CA3AF'
+            : STATUS_TO_COLOR[
+                point.status.toLowerCase() as keyof typeof STATUS_TO_COLOR
+              ] || STATUS_TO_COLOR.pending;
+          const isHovered = displayedPoint?.pointIndex === index;
+          // Range biomarkers render as pills (rounded rects) spanning low-to-high;
+          // quantity biomarkers render as circles.
+          const isPill = point.yLow !== undefined && point.yHigh !== undefined;
+
+          if (isPill) {
+            const yLow = point.yLow!;
+            const yHigh = point.yHigh!;
+            const pillWidth = 8;
+            const pillTop = Math.min(yHigh, yLow);
+            const pillHeight = Math.max(pillWidth, Math.abs(yLow - yHigh));
+            const rx = pillWidth / 2;
+
+            return (
+              <g key={point.id}>
+                {isHovered && (
+                  <rect
+                    x={point.x - pillWidth / 2 - 2}
+                    y={pillTop - 2}
+                    width={pillWidth + 4}
+                    height={pillHeight + 4}
+                    rx={rx + 2}
+                    fill={color}
+                    opacity={0.25}
+                  />
+                )}
+                <rect
+                  x={point.x - pillWidth / 2}
+                  y={pillTop}
+                  width={pillWidth}
+                  height={pillHeight}
+                  rx={rx}
+                  fill={color}
+                  stroke="white"
+                  strokeWidth={config.strokeWidth}
+                />
+              </g>
+            );
+          }
+
+          return (
+            <g key={point.id}>
+              {isHovered && (
+                <circle
+                  cx={point.x}
+                  cy={point.y}
+                  r={config.circleRadius! + 3}
+                  fill="none"
+                  stroke={color}
+                  strokeWidth={4}
+                  strokeOpacity={0.4}
+                />
+              )}
               <circle
                 cx={point.x}
                 cy={point.y}
-                r={config.circleRadius! + 3}
-                fill="none"
-                stroke={
-                  point.status === 'next-test'
-                    ? '#9CA3AF'
-                    : STATUS_TO_COLOR[
-                        point.status.toLowerCase() as keyof typeof STATUS_TO_COLOR
-                      ] || STATUS_TO_COLOR.pending
-                }
-                strokeWidth={4}
-                strokeOpacity={0.4}
+                r={config.circleRadius! + 1}
+                fill="white"
+                stroke="white"
+                strokeWidth={2}
               />
-            )}
-            <circle
-              cx={point.x}
-              cy={point.y}
-              r={config.circleRadius! + 1}
-              fill="white"
-              stroke="white"
-              strokeWidth={2}
-            />
-            <circle
-              cx={point.x}
-              cy={point.y}
-              r={config.circleRadius!}
-              fill={
-                point.status === 'next-test'
-                  ? '#9CA3AF'
-                  : STATUS_TO_COLOR[
-                      point.status.toLowerCase() as keyof typeof STATUS_TO_COLOR
-                    ] || STATUS_TO_COLOR.pending
-              }
-              stroke="white"
-              strokeWidth={1}
-            />
-          </g>
-        ))}
+              <circle
+                cx={point.x}
+                cy={point.y}
+                r={config.circleRadius!}
+                fill={color}
+                stroke="white"
+                strokeWidth={1}
+              />
+            </g>
+          );
+        })}
       </g>
 
       <line
@@ -688,7 +739,8 @@ function TimeSeriesChartTooltipPortal({
           />
           <div className="text-xs">
             <div className="font-semibold">
-              {displayedPoint.value.toFixed(2)} {biomarkerUnit}
+              {displayedPoint.rangeLabel ?? displayedPoint.value.toFixed(2)}{' '}
+              {biomarkerUnit}
             </div>
             <div className="text-muted-foreground">
               {format(new Date(displayedPoint.timestamp), 'MMM dd, yyyy')} (

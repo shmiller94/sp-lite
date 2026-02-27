@@ -1,7 +1,9 @@
 import { STATUS_TO_COLOR } from '@/const/status-to-color';
 import type { BiomarkerResult } from '@/types/api';
 
-// returns interpretation values based on newest value
+// Extracts the newest value's numeric amount and mapped status color key.
+// For range biomarkers, uses the midpoint of valueRange.low/high as the numeric value.
+// Used by sparkline and time-series charts to determine the "current" status color.
 export const getNewestValue = (
   values: BiomarkerResult[] | undefined,
 ):
@@ -24,8 +26,14 @@ export const getNewestValue = (
     PENDING: 'out of range',
   };
 
+  const value =
+    newestValue.quantity?.value ??
+    (newestValue.valueRange
+      ? (newestValue.valueRange.low + newestValue.valueRange.high) / 2
+      : 0);
+
   return {
-    value: newestValue.quantity.value,
+    value,
     status: statusMap[newestValue.status] || 'out of range',
   };
 };

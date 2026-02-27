@@ -7,6 +7,8 @@ export const STATUS_TO_COLOR = {
   high_light: 'rgba(255, 225, 248, 1)',
   low: 'rgba(255, 104, 222, 1)',
   low_light: 'rgba(255, 225, 248, 1)',
+  abnormal: 'rgba(255, 104, 222, 1)',
+  abnormal_light: 'rgba(255, 225, 248, 1)',
   pending: 'rgba(161, 161, 170, 1)',
   pending_light: 'rgba(244, 244, 245, 1)',
   'out of range': 'rgba(255, 104, 222, 1)',

@@ -22,7 +22,7 @@ export const ScoreShareCard = () => {
   const { firstName, lastName } = user;
 
   const latestHealthScore =
-    latestHealthScoreQuery.data.healthScore.quantity.value;
+    latestHealthScoreQuery.data.healthScore.quantity?.value ?? 0;
 
   return (
     <div className="flex min-h-96 justify-center">

@@ -1,4 +1,10 @@
-import { Biomarker, Lab, Range } from '@/types/api';
+import {
+  Biomarker,
+  BiomarkerResult,
+  CodedRange,
+  Lab,
+  Range,
+} from '@/types/api';
 
 export interface BiomarkerRangeInfo {
   ranges: Range[];
@@ -88,4 +94,44 @@ export const getRangesBySource = (
   }
 
   return [];
+};
+
+export interface CodedBiomarkerRangeInfo {
+  ranges: CodedRange[];
+  lastValue: BiomarkerResult | null;
+  lastValueSource: Lab;
+  sortedValues: BiomarkerResult[];
+}
+
+// Same as getBiomarkerRanges but for codedValue biomarkers.
+// Returns CodedRange[] (code + status pairs) from biomarker.codedRanges
+// instead of numeric Range[] from biomarker.ranges.
+export const getCodedBiomarkerRanges = (
+  biomarker: Biomarker,
+): CodedBiomarkerRangeInfo => {
+  const sortedValues = [...biomarker.value].sort(
+    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+  );
+
+  const lastValue = sortedValues[0] || null;
+  let lastValueSource: Lab = lastValue?.source || 'quest';
+
+  let ranges = biomarker.codedRanges?.[lastValueSource] || [];
+
+  if (ranges.length === 0 && biomarker.codedRanges) {
+    for (const source of PREFERENCE_ORDER) {
+      if (biomarker.codedRanges[source]?.length) {
+        ranges = biomarker.codedRanges[source] || [];
+        lastValueSource = source;
+        break;
+      }
+    }
+  }
+
+  return {
+    ranges: ranges || [],
+    lastValue,
+    lastValueSource,
+    sortedValues,
+  };
 };

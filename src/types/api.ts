@@ -187,6 +187,15 @@ export type Lab = 'quest' | 'labcorp' | 'bioref' | 'custom'; // custom is e.g. f
 
 export type LabRanges = Record<Lab, Range[]>;
 
+export type BiomarkerDataType = 'quantity' | 'codedValue' | 'text' | 'range';
+
+export interface CodedRange {
+  code: string;
+  status: 'optimal' | 'abnormal';
+}
+
+export type LabCodedRanges = Record<Lab, CodedRange[]>;
+
 /* CATEGORIES */
 export type CategoryValue = 'A' | 'B' | 'C' | '-';
 
@@ -207,6 +216,8 @@ export type Biomarker = Entity<{
   unit: string;
   favorite: boolean;
   ranges: LabRanges;
+  codedRanges: LabCodedRanges;
+  dataType: BiomarkerDataType;
   value: BiomarkerResult[];
   metadata: BiomarkerMetadata;
   recommendedTests: BiomarkerRecommendedTests;
@@ -230,8 +241,17 @@ export type BiomarkerComponent = {
   relatedObservations: string[];
 };
 
+export interface ValueRange {
+  low: number;
+  high: number;
+  unit?: string;
+}
+
 export type BiomarkerResult = Entity<{
-  quantity: Quantity;
+  quantity?: Quantity;
+  valueCoded?: string;
+  valueText?: string;
+  valueRange?: ValueRange;
   timestamp: string;
   orderIds: string[];
   status?: BiomarkerStatus;
@@ -260,6 +280,7 @@ export type BiomarkerStatus =
   | 'HIGH'
   | 'NORMAL'
   | 'OPTIMAL'
+  | 'ABNORMAL'
   | 'UNKNOWN'
   | 'PENDING'
   | 'RECOMMENDED';

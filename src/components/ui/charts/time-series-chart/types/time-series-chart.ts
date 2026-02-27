@@ -5,6 +5,10 @@ export interface DataPoint {
   timestamp: string;
   status: string;
   id: string;
+  // For range biomarkers: SVG Y coordinates of the low and high values.
+  // When present, the chart renders a pill (rounded rect) instead of a circle.
+  yLow?: number;
+  yHigh?: number;
 }
 
 export interface TimeScale {

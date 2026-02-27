@@ -32,7 +32,7 @@ export const AgeShareCard = ({
   const { firstName, lastName } = user;
 
   const biologicalAge =
-    mostRecent(biologicalAgeMarker?.value ?? [])?.quantity.value ?? null;
+    mostRecent(biologicalAgeMarker?.value ?? [])?.quantity?.value ?? null;
 
   const ageDifference = biologicalAge
     ? Math.round(

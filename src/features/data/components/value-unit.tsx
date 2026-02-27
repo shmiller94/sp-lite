@@ -2,35 +2,54 @@ import React from 'react';
 
 import { Body2 } from '@/components/ui/typography';
 import { cn } from '@/lib/utils';
-import { BiomarkerResult } from '@/types/api';
+import { BiomarkerDataType, BiomarkerResult } from '@/types/api';
 import { getDisplayComparator } from '@/utils/get-display-comparator';
 
 interface ValueUnitProps {
   result?: BiomarkerResult;
   baseUnit: string;
   textClassName?: string;
+  dataType?: BiomarkerDataType;
 }
 
-/**
- *
- * @param result - biomarker result value, should be typically received via mostRecent() function
- * @param baseUnit - biomarker's unit
- * @param className - in case you need to apply styles to text inside
- */
+// Renders a biomarker's value + unit based on its dataType.
+// codedValue -> shows valueCoded text, text -> shows valueText,
+// quantity (default) -> shows comparator symbol + numeric value + unit.
 export const BiomarkerValueUnit = ({
   result,
   baseUnit,
   textClassName,
-}: ValueUnitProps) => {
+  dataType = 'quantity',
+}: ValueUnitProps): React.JSX.Element => {
+  if (dataType === 'codedValue') {
+    return (
+      <div className="flex gap-1">
+        <Body2 className={cn('md:text-base', textClassName)}>
+          {result?.valueCoded ?? '-'}
+        </Body2>
+      </div>
+    );
+  }
+
+  if (dataType === 'text') {
+    return (
+      <div className="flex gap-1">
+        <Body2 className={cn('md:text-base', textClassName)}>
+          {result?.valueText ?? '-'}
+        </Body2>
+      </div>
+    );
+  }
+
   const value =
-    result?.quantity.value !== undefined ? result?.quantity.value : '-';
-  const unit = result?.quantity.unit || baseUnit || '';
+    result?.quantity?.value !== undefined ? result?.quantity?.value : '-';
+  const unit = result?.quantity?.unit || baseUnit || '';
 
   return (
     <div className="flex gap-1">
-      {result?.quantity.comparator && (
+      {result?.quantity?.comparator && (
         <Body2 className={cn('', textClassName)}>
-          {getDisplayComparator(result?.quantity.comparator)}
+          {getDisplayComparator(result?.quantity?.comparator)}
         </Body2>
       )}
       <Body2 className={cn('md:text-base', textClassName)}>{value}</Body2>

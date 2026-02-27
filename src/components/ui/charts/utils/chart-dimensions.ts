@@ -39,12 +39,21 @@ export const calculateChartDimensions = (
   }
 
   if (!optimalRange) {
-    const totalRange = maxValue - minValue || 1;
+    let chartMinValue = minValue;
+    let chartMaxValue = maxValue;
+
+    if (chartMaxValue <= chartMinValue) {
+      const padding = chartMinValue === 0 ? 1 : Math.abs(chartMinValue) * 0.5;
+      chartMinValue -= padding;
+      chartMaxValue += padding;
+    }
+
+    const totalRange = chartMaxValue - chartMinValue || 1;
     return {
       minValue,
       maxValue,
-      chartMinValue: minValue,
-      chartMaxValue: maxValue,
+      chartMinValue,
+      chartMaxValue,
       totalRange,
       optimalLow: minValue,
       optimalHigh: maxValue,
@@ -73,17 +82,48 @@ export const calculateChartDimensions = (
     optimalRange.high?.value !== undefined
   ) {
     optimalHigh = optimalRange.high.value;
-    optimalLow = Math.min(minValue, optimalHigh * 0.5);
+    optimalLow = 0;
   } else {
     optimalLow = minValue;
     optimalHigh = maxValue;
   }
 
   if (!normalRange) {
+    const hasOnlyHigh =
+      optimalRange.high?.value !== undefined &&
+      optimalRange.low?.value === undefined;
+    const hasOnlyLow =
+      optimalRange.low?.value !== undefined &&
+      optimalRange.high?.value === undefined;
+
     const rangeSpan = optimalHigh - optimalLow;
     const rangeExtension = rangeSpan * rangeExtensionFactor;
-    const chartMinValue = Math.min(minValue, optimalLow - rangeExtension);
-    const chartMaxValue = Math.max(maxValue, optimalHigh + rangeExtension);
+    let chartMinValue = Math.min(minValue, optimalLow - rangeExtension);
+    let chartMaxValue = Math.max(maxValue, optimalHigh + rangeExtension);
+
+    if (chartMaxValue <= chartMinValue) {
+      const padding = chartMinValue === 0 ? 2 : Math.abs(chartMinValue) * 0.5;
+
+      if (hasOnlyHigh) {
+        chartMaxValue += padding;
+        chartMinValue -= padding * 0.05;
+      } else if (hasOnlyLow) {
+        chartMinValue -= padding;
+        chartMaxValue += padding * 0.25;
+      } else {
+        chartMinValue -= padding;
+        chartMaxValue += padding;
+      }
+    }
+
+    // For one-sided ">=X" ranges, extend optimal zone to the chart's upper edge
+    // so the green shaded area covers the entire region above the threshold.
+    // Note: hasOnlyHigh ("<=X") sets optimalLow=0 above and does NOT extend here,
+    // because optimalHigh is already the meaningful boundary.
+    if (hasOnlyLow) {
+      optimalHigh = chartMaxValue;
+    }
+
     const totalRange = chartMaxValue - chartMinValue || 1;
 
     return {
@@ -103,18 +143,25 @@ export const calculateChartDimensions = (
   const normalHigh = normalRange.high?.value ?? optimalHigh;
 
   const rangeExtension = (normalHigh - normalLow) * rangeExtensionFactor;
-  const chartMinValue = Math.min(
+  let chartMinValue = Math.min(
     minValue,
     normalLow,
     optimalLow,
     normalLow - rangeExtension,
   );
-  const chartMaxValue = Math.max(
+  let chartMaxValue = Math.max(
     maxValue,
     normalHigh,
     optimalHigh,
     normalHigh + rangeExtension,
   );
+
+  if (chartMaxValue <= chartMinValue) {
+    const padding = chartMinValue === 0 ? 1 : Math.abs(chartMinValue) * 0.5;
+    chartMinValue -= padding;
+    chartMaxValue += padding;
+  }
+
   const totalRange = chartMaxValue - chartMinValue || 1;
 
   return {
@@ -146,7 +193,10 @@ export const convertValueToY = (
   return isFinite(result) ? result : 50;
 };
 
-// Maps a numeric value from one chart dimension to another by piecewise
+// Maps a numeric value from one chart dimension space to another using piecewise
+// linear interpolation across 6 breakpoints. Needed because biomarker values can
+// come from different lab sources (Quest, Labcorp, etc.) with different reference
+// ranges. This maps each value into a shared coordinate space for consistent Y positioning.
 export const mapValueAcrossDimensions = (
   value: number,
   from: ChartDimensions,

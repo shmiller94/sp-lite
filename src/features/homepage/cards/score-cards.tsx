@@ -159,7 +159,7 @@ export function ScoreCards() {
   }
 
   const latestBiologicalAge =
-    latestBiologicalAgeQuery.data.bioAge.quantity.value;
+    latestBiologicalAgeQuery.data.bioAge.quantity?.value ?? 0;
 
   const ageDifference =
     Math.round((yearsSinceDate(user.dateOfBirth) - latestBiologicalAge) * 10) /
@@ -169,7 +169,9 @@ export function ScoreCards() {
     <div className="grid w-full grid-cols-1 gap-2 xl:grid-cols-2">
       <SuperpowerScore
         isLoading={latestHealthScoreQuery.isLoading}
-        superpowerScore={latestHealthScoreQuery.data.healthScore.quantity.value}
+        superpowerScore={
+          latestHealthScoreQuery.data.healthScore.quantity?.value ?? 0
+        }
       />
       <BiologicalAge
         isLoading={latestBiologicalAgeQuery.isLoading}

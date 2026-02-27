@@ -95,7 +95,10 @@ const ExplanationTab = ({ biomarker }: { biomarker: Biomarker }) => {
 
   const metadata = [...content];
 
-  if (importance.length > 0) {
+  const isTextType = biomarker.dataType === 'text';
+  const isQualitativeType = biomarker.dataType === 'codedValue';
+
+  if (!isTextType && importance.length > 0) {
     metadata.unshift({
       title: `Why ${pluralizeIs(name)} ${name} important?`,
       text: importance,
@@ -103,11 +106,17 @@ const ExplanationTab = ({ biomarker }: { biomarker: Biomarker }) => {
     } as MetadataContent);
   }
 
-  metadata.unshift({
-    title: `What ${pluralizeIs(name)} ${name}?`,
-    text: description,
-    status: 'UNKNOWN',
-  } as MetadataContent);
+  if (!isTextType) {
+    const questionTitle = isQualitativeType
+      ? `What does ${name} mean?`
+      : `What ${pluralizeIs(name)} ${name}?`;
+
+    metadata.unshift({
+      title: questionTitle,
+      text: description,
+      status: 'UNKNOWN',
+    } as MetadataContent);
+  }
 
   return (
     <div className="flex flex-col gap-6">

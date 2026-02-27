@@ -12,7 +12,7 @@ export const useBiologicalAge = () => {
     (b) => b.name == 'Biological Age',
   );
   const biologicalAge =
-    mostRecent(biologicalAgeMarker?.value ?? [])?.quantity.value ?? null;
+    mostRecent(biologicalAgeMarker?.value ?? [])?.quantity?.value ?? null;
 
   const ageDifference = biologicalAge
     ? Math.round(

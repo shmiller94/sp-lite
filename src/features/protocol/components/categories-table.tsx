@@ -66,10 +66,10 @@ const BiomarkerRow = ({ biomarker, showDivider }: BiomarkerRowProps) => {
               className="font-medium tabular-nums"
               style={{ color: isOutOfRange ? colors.default : undefined }}
             >
-              {latestResult?.quantity.value || '--'}
+              {latestResult?.quantity?.value || '--'}
             </span>
             <span className="text-zinc-500">
-              {latestResult?.quantity.unit || 'mg/dL'}
+              {latestResult?.quantity?.unit || 'mg/dL'}
             </span>
           </div>
           <div className="w-20 shrink-0 rounded-md bg-zinc-100 px-2 py-0.5 text-center text-sm tabular-nums text-zinc-400">

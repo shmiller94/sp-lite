@@ -15,7 +15,7 @@ export const BiologicalAgeInfo = () => {
   }
 
   const bioAgeValue =
-    mostRecent(bioAgeMarker.value ?? [])?.quantity.value ?? null;
+    mostRecent(bioAgeMarker.value ?? [])?.quantity?.value ?? null;
 
   return (
     <div className="flex flex-col items-end pb-0.5 text-sm">

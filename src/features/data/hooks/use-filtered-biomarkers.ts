@@ -21,6 +21,10 @@ interface FilterConfig {
   search?: boolean;
 }
 
+// Pure filter function that reduces the biomarker list by active UI filters:
+// categories (include list), search query (name/category substring),
+// status range (optimal/normal/out-of-range including ABNORMAL), and
+// selected order (biomarkers with results matching specific order IDs).
 export const filterBiomarkers = ({
   biomarkers,
   selectedCategories,
@@ -28,7 +32,7 @@ export const filterBiomarkers = ({
   selectedRange,
   searchQuery,
 }: FilterBiomarkersParams): Biomarker[] => {
-  let filtered = biomarkers.filter((b) => b.value?.[0]?.quantity);
+  let filtered = biomarkers;
 
   if (selectedCategories.length > 0) {
     const selectedCategorySet = new Set(selectedCategories);
@@ -75,7 +79,8 @@ export const filterBiomarkers = ({
           if (status === 'NORMAL') next.push(biomarker);
           break;
         case 'out of range':
-          if (status === 'HIGH' || status === 'LOW') next.push(biomarker);
+          if (status === 'HIGH' || status === 'LOW' || status === 'ABNORMAL')
+            next.push(biomarker);
           break;
         default:
           next.push(biomarker);

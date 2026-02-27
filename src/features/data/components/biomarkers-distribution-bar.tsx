@@ -108,6 +108,7 @@ export const BiomarkersDistributionBar = ({
   const numOutOfRange = biomarkerStatusCount(filteredBiomarkers ?? [], [
     'HIGH',
     'LOW',
+    'ABNORMAL',
   ]);
   const numTotalBiomarkers = numInRange + numNormal + numOutOfRange;
 

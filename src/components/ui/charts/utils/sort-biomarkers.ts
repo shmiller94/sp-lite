@@ -1,10 +1,14 @@
 import { Biomarker, BiomarkerStatus } from '@/types/api';
 
+// Sorts biomarkers by clinical urgency: out-of-range first (HIGH/LOW/ABNORMAL),
+// then NORMAL, OPTIMAL, PENDING, and finally UNKNOWN/RECOMMENDED.
+// Within the same priority tier, sorts alphabetically by name.
 export const sortBiomarkers = (biomarkers: Biomarker[]): Biomarker[] => {
   return biomarkers.sort((a, b) => {
     const statusOrder: Record<BiomarkerStatus, number> = {
       HIGH: 1,
       LOW: 1,
+      ABNORMAL: 1,
       NORMAL: 2,
       OPTIMAL: 3,
       PENDING: 4,

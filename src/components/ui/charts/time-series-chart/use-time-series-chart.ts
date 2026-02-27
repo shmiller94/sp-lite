@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 
 import { STATUS_TO_COLOR } from '@/const/status-to-color';
-import type { Biomarker, Comparator } from '@/types/api';
+import type { Biomarker, BiomarkerResult, Comparator } from '@/types/api';
+import { getComparatorRange } from '@/utils/get-comparator-range';
 
 import type { ChartDimensions } from '../types/chart';
 import {
@@ -24,6 +25,16 @@ import type {
   XAxisLabel,
   YAxisLabel,
 } from './types/time-series-chart';
+
+// Extracts a single numeric value from any biomarker result type.
+// For range results, uses the midpoint so chart Y-positioning and line
+// connections work the same as quantity results.
+const getNumericValue = (result: BiomarkerResult): number => {
+  if (result.quantity) return result.quantity.value;
+  if (result.valueRange)
+    return (result.valueRange.low + result.valueRange.high) / 2;
+  return 0;
+};
 
 const convertYToValue = (
   dimensions: ChartDimensions,
@@ -231,7 +242,10 @@ export const useTimeSeriesChart = ({
   const startIndex = Math.max(0, endIndex - itemsPerPage);
   const pageValues = sortedValues.slice(startIndex, endIndex);
 
-  const values = pageValues.map((v) => v.quantity.value);
+  const values = pageValues.flatMap((v) => {
+    if (v.valueRange) return [v.valueRange.low, v.valueRange.high];
+    return [v.quantity?.value ?? 0];
+  });
 
   const { ranges } = getBiomarkerRanges(biomarker);
   const dimensions = calculateChartDimensions(
@@ -325,7 +339,7 @@ export const useTimeSeriesChart = ({
             CHART_CONFIG.RANGE_EXTENSION_FACTOR,
           );
           const mappedLast = mapValueAcrossDimensions(
-            last.quantity.value,
+            getNumericValue(last),
             lastDims,
             dimensions,
           );
@@ -345,8 +359,24 @@ export const useTimeSeriesChart = ({
           CHART_CONFIG.RANGE_EXTENSION_FACTOR,
         );
 
+        const numericValue = getNumericValue(point);
+
+        // For comparator quantities, use midpoint of the range so the line
+        // connects to the center of the pill (same approach as range values).
+        const compRange =
+          point.quantity?.comparator && point.quantity.comparator !== 'EQUALS'
+            ? getComparatorRange(
+                point.quantity.comparator,
+                point.quantity.value,
+                dimensions.chartMaxValue,
+              )
+            : undefined;
+        const valueForY = compRange
+          ? (compRange.low + compRange.high) / 2
+          : numericValue;
+
         const mappedValue = mapValueAcrossDimensions(
-          point.quantity.value,
+          valueForY,
           pointDimensions,
           dimensions,
         );
@@ -355,18 +385,89 @@ export const useTimeSeriesChart = ({
 
         status = getValueStatus(
           pointDimensions,
-          point.quantity.value,
+          numericValue,
           newestValueInfo,
         ) as 'optimal' | 'normal' | 'high' | 'low' | 'out of range';
+      }
+
+      // For range biomarkers, compute SVG Y coordinates for the low and high ends
+      // so the chart can render a pill (rounded rect) instead of a circle dot.
+      let yLow: number | undefined;
+      let yHigh: number | undefined;
+
+      if (!isNextTest && point.valueRange) {
+        const pointSource = (point as any).source || 'quest';
+        const pointRanges = getRangesBySource(biomarker, pointSource) || ranges;
+        const pointDimensions = calculateChartDimensions(
+          pointRanges,
+          values,
+          CHART_CONFIG.RANGE_EXTENSION_FACTOR,
+        );
+
+        const mappedLow = mapValueAcrossDimensions(
+          point.valueRange.low,
+          pointDimensions,
+          dimensions,
+        );
+        const mappedHigh = mapValueAcrossDimensions(
+          point.valueRange.high,
+          pointDimensions,
+          dimensions,
+        );
+        yLow =
+          CHART_CONFIG.TOP_PADDING +
+          (convertValueToY(dimensions, mappedLow) / 100) * chartHeight;
+        yHigh =
+          CHART_CONFIG.TOP_PADDING +
+          (convertValueToY(dimensions, mappedHigh) / 100) * chartHeight;
+      } else if (
+        !isNextTest &&
+        point.quantity?.comparator &&
+        point.quantity.comparator !== 'EQUALS'
+      ) {
+        const compRange = getComparatorRange(
+          point.quantity.comparator,
+          point.quantity.value,
+          dimensions.chartMaxValue,
+        );
+        if (compRange) {
+          const pointSource = (point as any).source || 'quest';
+          const pointRanges =
+            getRangesBySource(biomarker, pointSource) || ranges;
+          const pointDimensions = calculateChartDimensions(
+            pointRanges,
+            values,
+            CHART_CONFIG.RANGE_EXTENSION_FACTOR,
+          );
+
+          const mappedLow = mapValueAcrossDimensions(
+            compRange.low,
+            pointDimensions,
+            dimensions,
+          );
+          const mappedHigh = mapValueAcrossDimensions(
+            compRange.high,
+            pointDimensions,
+            dimensions,
+          );
+          yLow =
+            CHART_CONFIG.TOP_PADDING +
+            (convertValueToY(dimensions, mappedLow) / 100) * chartHeight;
+          yHigh =
+            CHART_CONFIG.TOP_PADDING +
+            (convertValueToY(dimensions, mappedHigh) / 100) * chartHeight;
+        }
       }
 
       return {
         x,
         y,
-        value: point.quantity.value,
+        value: getNumericValue(point),
         timestamp: point.timestamp,
         status,
         id: point.id || `point-${startIndex + index}`,
+        yLow,
+        yHigh,
       };
     },
   );

@@ -5,9 +5,14 @@ import { useCallback, useMemo, useState } from 'react';
 
 import NumberFlow from '@/components/shared/number-flow';
 import { Button } from '@/components/ui/button';
+import { CodedValueChart } from '@/components/ui/charts/coded-value-chart';
+import { TextValueChart } from '@/components/ui/charts/text-value-chart';
 import { TimeSeriesChart } from '@/components/ui/charts/time-series-chart/time-series-chart';
 import { TimeSeriesChartPlaceholder } from '@/components/ui/charts/time-series-chart/time-series-chart.placeholder';
-import { getBiomarkerRanges } from '@/components/ui/charts/utils/get-biomarker-ranges';
+import {
+  getBiomarkerRanges,
+  getCodedBiomarkerRanges,
+} from '@/components/ui/charts/utils/get-biomarker-ranges';
 import {
   Dialog,
   DialogClose,
@@ -22,6 +27,7 @@ import { useAnalytics } from '@/hooks/use-analytics';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 import { cn } from '@/lib/utils';
 import { Biomarker } from '@/types/api';
+import { getDisplayComparator } from '@/utils/get-display-comparator';
 
 import { STATUS_TO_COLOR } from '../../../../const/status-to-color';
 
@@ -63,7 +69,8 @@ export const BiomarkerDialog = ({
           <Body1 className="line-clamp-2 text-zinc-500">{biomarker.name}</Body1>
         </DialogTitle>
         <div className="-mr-3 flex items-center gap-2">
-          {biomarker.status !== 'RECOMMENDED' ? (
+          {biomarker.status !== 'RECOMMENDED' &&
+          biomarker.dataType !== 'text' ? (
             <BiomarkerStatusBadge biomarker={biomarker} />
           ) : null}
           <DialogClose asChild>
@@ -100,10 +107,15 @@ export const BiomarkerDialog = ({
             </Button>
             <TimeSeriesChartPlaceholder />
           </div>
+        ) : // Select the appropriate detail chart based on dataType
+        biomarker.dataType === 'codedValue' ? (
+          <CodedValueChart biomarker={biomarker} />
+        ) : biomarker.dataType === 'text' ? (
+          <TextValueChart biomarker={biomarker} />
         ) : (
           <TimeSeriesChart biomarker={biomarker} />
         )}
-        {biomarker.status !== 'RECOMMENDED' ? (
+        {biomarker.status !== 'RECOMMENDED' && biomarker.dataType !== 'text' ? (
           <div className="mb-4 grid gap-2 min-[375px]:grid-cols-2">
             <LatestResultCard biomarker={biomarker} />
             <OptimalRangeCard biomarker={biomarker} />
@@ -155,11 +167,17 @@ export const BiomarkerDialog = ({
   );
 };
 
+// Shows the newest result value in a card. Handles all dataTypes:
+// codedValue -> capitalized text, range -> "low-high unit", quantity -> animated number + unit
 const LatestResultCard = ({ biomarker }: { biomarker: Biomarker }) => {
   const statusColor =
     STATUS_TO_COLOR[
       biomarker.status.toLowerCase() as keyof typeof STATUS_TO_COLOR
     ];
+
+  const isCodedValue = biomarker.dataType === 'codedValue';
+  const isRange = biomarker.dataType === 'range';
+  const latestRange = biomarker.value[0]?.valueRange;
 
   return (
     <div className="flex flex-col gap-1 rounded-2xl border px-3 py-2 shadow-sm">
@@ -170,21 +188,56 @@ const LatestResultCard = ({ biomarker }: { biomarker: Biomarker }) => {
           color: statusColor,
         }}
       >
-        <NumberFlow value={biomarker.value[0]?.quantity.value || 0} />{' '}
-        <Body1 className="inline-block text-zinc-500">{biomarker.unit}</Body1>
+        {isCodedValue ? (
+          <span className="capitalize">
+            {biomarker.value[0]?.valueCoded || '-'}
+          </span>
+        ) : isRange && latestRange ? (
+          <>
+            {latestRange.low}-{latestRange.high}{' '}
+            <Body1 className="inline-block text-zinc-500">
+              {latestRange.unit || biomarker.unit}
+            </Body1>
+          </>
+        ) : (
+          <>
+            {getDisplayComparator(biomarker.value[0]?.quantity?.comparator)}
+            <NumberFlow value={biomarker.value[0]?.quantity?.value || 0} />{' '}
+            <Body1 className="inline-block text-zinc-500">
+              {biomarker.unit}
+            </Body1>
+          </>
+        )}
       </H4>
     </div>
   );
 };
 
+// Shows the optimal reference range. For codedValue biomarkers, displays the
+// optimal coded value text. For numeric biomarkers, shows the optimal range bounds.
 const OptimalRangeCard = ({ biomarker }: { biomarker: Biomarker }) => {
-  const { lastValueSource } = getBiomarkerRanges(biomarker);
+  const isCodedValue = biomarker.dataType === 'codedValue';
+
+  const { lastValueSource } = isCodedValue
+    ? getCodedBiomarkerRanges(biomarker)
+    : getBiomarkerRanges(biomarker);
+
+  const optimalCodedValue = useMemo(() => {
+    if (!isCodedValue) return null;
+
+    const codedRanges = biomarker.codedRanges?.[lastValueSource] || [];
+    const optimal = codedRanges.find((range) => range.status === 'optimal');
+
+    return optimal?.code || null;
+  }, [isCodedValue, biomarker.codedRanges, lastValueSource]);
 
   const optimalRange = useMemo(() => {
+    if (isCodedValue) return undefined;
+
     return biomarker.ranges[lastValueSource].find(
       (range) => range.status === 'OPTIMAL',
     );
-  }, [biomarker.ranges, lastValueSource]);
+  }, [isCodedValue, biomarker.ranges, lastValueSource]);
 
   const formattedRange = formatOptimalRange(optimalRange);
 
@@ -197,26 +250,32 @@ const OptimalRangeCard = ({ biomarker }: { biomarker: Biomarker }) => {
           color: STATUS_TO_COLOR.optimal,
         }}
       >
-        {formattedRange.type === 'range' && (
+        {isCodedValue ? (
+          <span className="capitalize">{optimalCodedValue || '-'}</span>
+        ) : (
           <>
-            <NumberFlow value={formattedRange.lowValue} />
-            -
-            <NumberFlow value={formattedRange.highValue} />
-          </>
-        )}
-        {formattedRange.type === 'single' && (
-          <>
-            {formattedRange.symbol}
-            <NumberFlow value={formattedRange.value} />
-          </>
-        )}
-        {formattedRange.type === 'none' && '-'}
-        {formattedRange.type !== 'none' && (
-          <>
-            {' '}
-            <Body1 className="inline-block text-zinc-500">
-              {biomarker.unit}
-            </Body1>
+            {formattedRange.type === 'range' && (
+              <>
+                <NumberFlow value={formattedRange.lowValue} />
+                -
+                <NumberFlow value={formattedRange.highValue} />
+              </>
+            )}
+            {formattedRange.type === 'single' && (
+              <>
+                {formattedRange.symbol}
+                <NumberFlow value={formattedRange.value} />
+              </>
+            )}
+            {formattedRange.type === 'none' && '-'}
+            {formattedRange.type !== 'none' && (
+              <>
+                {' '}
+                <Body1 className="inline-block text-zinc-500">
+                  {biomarker.unit}
+                </Body1>
+              </>
+            )}
           </>
         )}
       </H4>

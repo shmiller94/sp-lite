@@ -256,7 +256,7 @@ const BiomarkerSelectCard = ({
   onClick,
 }: BiomarkerSelectCardProps) => {
   const { lastValueSource } = getBiomarkerRanges(biomarker);
-  const latestValue = biomarker.value[0]?.quantity.value;
+  const latestValue = biomarker.value[0]?.quantity?.value;
 
   const optimalRange = useMemo(() => {
     return biomarker.ranges[lastValueSource]?.find(

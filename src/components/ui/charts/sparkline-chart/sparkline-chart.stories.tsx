@@ -19,6 +19,8 @@ const baseBiomarker: Biomarker = {
   category: 'metabolism',
   unit: 'mg/dL',
   favorite: false,
+  dataType: 'quantity',
+  codedRanges: { quest: [], labcorp: [], bioref: [], custom: [] },
   metadata: {
     source: [],
     content: [],

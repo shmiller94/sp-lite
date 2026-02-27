@@ -27,6 +27,7 @@ export const BiomarkersList = () => {
   const numOutOfRange = biomarkerStatusCount(biomarkers.data.biomarkers, [
     'HIGH',
     'LOW',
+    'ABNORMAL',
   ]);
 
   /*

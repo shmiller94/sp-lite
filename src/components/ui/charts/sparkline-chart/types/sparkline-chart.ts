@@ -21,6 +21,16 @@ export interface Circle {
   strokeOpacity?: number;
 }
 
+export interface Pill {
+  key: string;
+  x: number;
+  yTop: number;
+  height: number;
+  width: number;
+  color: string;
+  pointIndex: number;
+}
+
 export interface RangeBackgroundBounds {
   top: number;
   bottom: number;

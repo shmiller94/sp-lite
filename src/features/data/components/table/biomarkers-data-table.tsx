@@ -11,8 +11,9 @@ import {
   Row,
   useReactTable,
 } from '@tanstack/react-table';
-import { ChevronDown, Lock } from 'lucide-react';
+import { ChevronDown, Lock, MessageSquareText } from 'lucide-react';
 import {
+  memo,
   useCallback,
   useDeferredValue,
   useEffect,
@@ -22,8 +23,13 @@ import {
 import { InView } from 'react-intersection-observer';
 
 import { Button } from '@/components/ui/button';
+import { CodedValueSparkline } from '@/components/ui/charts/coded-value-sparkline';
+import { RangeSparkline } from '@/components/ui/charts/range-sparkline';
 import { SparklineChart } from '@/components/ui/charts/sparkline-chart/sparkline-chart';
-import { getBiomarkerRanges } from '@/components/ui/charts/utils/get-biomarker-ranges';
+import {
+  getBiomarkerRanges,
+  getCodedBiomarkerRanges,
+} from '@/components/ui/charts/utils/get-biomarker-ranges';
 import {
   Table,
   TableBody,
@@ -36,6 +42,7 @@ import { Body1, Body2, H4 } from '@/components/ui/typography';
 import { useScreenSize } from '@/features/data/hooks/use-screen-size';
 import { cn } from '@/lib/utils';
 import { Biomarker } from '@/types/api';
+import { getDisplayComparator } from '@/utils/get-display-comparator';
 
 import { STATUS_TO_COLOR } from '../../../../const/status-to-color';
 
@@ -88,7 +95,14 @@ function BiomarkersTableBodyContent({
   );
 }
 
-function LazySparklineChart({ biomarker }: { biomarker: Biomarker }) {
+// Lazy-loaded sparkline wrappers: defer chart rendering until the row scrolls into
+// view (InView with 200px rootMargin). Prevents rendering hundreds of SVG charts
+// at once when the data table has many biomarkers.
+const LazySparklineChart = memo(function LazySparklineChart({
+  biomarker,
+}: {
+  biomarker: Biomarker;
+}) {
   return (
     <InView triggerOnce rootMargin="200px">
       {({ ref, inView }) => (
@@ -102,7 +116,47 @@ function LazySparklineChart({ biomarker }: { biomarker: Biomarker }) {
       )}
     </InView>
   );
-}
+});
+
+const LazyCodedValueSparkline = memo(function LazyCodedValueSparkline({
+  biomarker,
+}: {
+  biomarker: Biomarker;
+}) {
+  return (
+    <InView triggerOnce rootMargin="200px">
+      {({ ref, inView }) => (
+        <div ref={ref} className="-ml-8 md:ml-0">
+          {inView ? (
+            <CodedValueSparkline biomarker={biomarker} />
+          ) : (
+            <div className="h-16" />
+          )}
+        </div>
+      )}
+    </InView>
+  );
+});
+
+const LazyRangeSparkline = memo(function LazyRangeSparkline({
+  biomarker,
+}: {
+  biomarker: Biomarker;
+}) {
+  return (
+    <InView triggerOnce rootMargin="200px">
+      {({ ref, inView }) => (
+        <div ref={ref} className="-ml-8 md:ml-0">
+          {inView ? (
+            <RangeSparkline biomarker={biomarker} />
+          ) : (
+            <div className="h-16" />
+          )}
+        </div>
+      )}
+    </InView>
+  );
+});
 
 const getColumns = (
   screenSize: 'mobile' | 'tablet' | 'desktop' | 'widescreen' = 'desktop',
@@ -177,6 +231,15 @@ const getColumns = (
             </Body2>
           );
 
+        if (biomarker.dataType === 'text') {
+          return (
+            <span className="flex items-center gap-1.5 whitespace-nowrap text-black">
+              <MessageSquareText className="size-4 shrink-0 text-zinc-400" />
+              <Body2 className={cn(!isDesktop && 'text-sm')}>Lab Comment</Body2>
+            </span>
+          );
+        }
+
         return (
           <div className="flex items-center gap-2">
             <div
@@ -201,20 +264,53 @@ const getColumns = (
       accessorKey: 'value',
       size: 120,
       header: () => <span className="text-sm text-zinc-400">Value</span>,
+      // Renders the latest value differently depending on dataType:
+      // codedValue -> capitalized text, text -> MessageSquareText icon,
+      // range -> "low-high unit", quantity -> "value unit"
       cell: ({ row }: { row: Row<Biomarker> }) => {
         const biomarker = row.original;
         // should always return latest because we sort on backend
         const currentValue = biomarker.value?.[0];
 
         const formatCurrentValue = () => {
+          if (biomarker.dataType === 'codedValue') {
+            const latestValue = currentValue?.valueCoded;
+            return latestValue ? (
+              <span className="capitalize text-black">{latestValue}</span>
+            ) : (
+              '-'
+            );
+          }
+
+          if (biomarker.dataType === 'text') {
+            return null;
+          }
+
+          if (biomarker.dataType === 'range') {
+            const range = currentValue?.valueRange;
+            if (!range) return 'No value';
+            const displayUnit = range.unit || biomarker.unit;
+            return (
+              <span>
+                <span className="text-black">
+                  {range.low}-{range.high}
+                </span>{' '}
+                <span className="text-zinc-500">{displayUnit}</span>
+              </span>
+            );
+          }
+
           if (!currentValue?.quantity) return 'No value';
 
-          const { value, unit } = currentValue.quantity;
+          const { value, unit, comparator } = currentValue.quantity;
           const displayUnit = unit || biomarker.unit;
 
           return (
             <span>
-              <span className="text-black">{value}</span>{' '}
+              <span className="text-black">
+                {getDisplayComparator(comparator)}
+                {value}
+              </span>{' '}
               <span className="text-zinc-500">{displayUnit}</span>
             </span>
           );
@@ -236,10 +332,42 @@ const getColumns = (
         <span className="text-sm text-zinc-400">Optimal Range</span>
       ),
       cell: ({ row }: { row: Row<Biomarker> }) => {
-        const { ranges } = getBiomarkerRanges(row.original);
-        const optimalRange = ranges.find((r) => r.status === 'OPTIMAL');
+        const biomarker = row.original;
 
         const formatRange = () => {
+          if (biomarker.dataType === 'codedValue') {
+            const { ranges: codedRanges } = getCodedBiomarkerRanges(biomarker);
+            const optimalCoded = codedRanges.find(
+              (r) => r.status === 'optimal',
+            );
+
+            const code = optimalCoded?.code;
+            return code ? <span className="capitalize">{code}</span> : '-';
+          }
+
+          if (biomarker.dataType === 'text') {
+            const latestText = biomarker.value?.[0]?.valueText || '';
+            if (!latestText) return null;
+
+            return (
+              <span
+                className="line-clamp-4 inline-block max-h-16 overflow-hidden text-xs leading-4 text-zinc-400"
+                style={{
+                  width: '320px',
+                  maskImage:
+                    'linear-gradient(to bottom, black 70%, transparent 100%)',
+                  WebkitMaskImage:
+                    'linear-gradient(to bottom, black 70%, transparent 100%)',
+                }}
+              >
+                {latestText}
+              </span>
+            );
+          }
+
+          const { ranges } = getBiomarkerRanges(biomarker);
+          const optimalRange = ranges.find((r) => r.status === 'OPTIMAL');
+
           if (!optimalRange) return 'No optimal range';
 
           const { low, high } = optimalRange;
@@ -255,7 +383,7 @@ const getColumns = (
           return 'Range not specified';
         };
 
-        if (row.original.status === 'RECOMMENDED') return null;
+        if (biomarker.status === 'RECOMMENDED') return null;
 
         return (
           <Body2
@@ -275,6 +403,9 @@ const getColumns = (
       header: () => (
         <span className="text-sm text-zinc-400 md:ml-8">History</span>
       ),
+      // Renders the appropriate sparkline chart type based on biomarker.dataType.
+      // codedValue -> CodedValueSparkline, range -> RangeSparkline,
+      // text -> null (no sparkline), quantity -> SparklineChart
       cell: ({ row }: { row: Row<Biomarker> }) => {
         const biomarker = row.original;
 
@@ -295,6 +426,18 @@ const getColumns = (
 
         if (biomarker.status === 'PENDING' || biomarker.status === 'UNKNOWN') {
           return <div className="h-16" />;
+        }
+
+        if (biomarker.dataType === 'codedValue') {
+          return <LazyCodedValueSparkline biomarker={biomarker} />;
+        }
+
+        if (biomarker.dataType === 'range') {
+          return <LazyRangeSparkline biomarker={biomarker} />;
+        }
+
+        if (biomarker.dataType === 'text') {
+          return null;
         }
 
         return <LazySparklineChart biomarker={biomarker} />;

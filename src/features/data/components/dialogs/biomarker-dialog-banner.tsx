@@ -12,7 +12,7 @@ export const BiomarkerDialogBanner = ({
   biomarkerName,
   result,
 }: BiomarkerDialogBannerProps) => {
-  const hasLessThanComparator = result.quantity.comparator === 'LESS_THAN';
+  const hasLessThanComparator = result.quantity?.comparator === 'LESS_THAN';
 
   if (!hasLessThanComparator) return null;
 

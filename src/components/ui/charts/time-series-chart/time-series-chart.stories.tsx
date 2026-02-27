@@ -21,6 +21,8 @@ const biomarker: Biomarker = {
   unit: '%',
   status: 'OPTIMAL',
   favorite: false,
+  dataType: 'quantity',
+  codedRanges: { quest: [], labcorp: [], bioref: [], custom: [] },
   value: [
     {
       id: '1',
@@ -292,6 +294,8 @@ const singleValueBiomarker: Biomarker = {
   unit: '%',
   status: 'OPTIMAL',
   favorite: false,
+  dataType: 'quantity',
+  codedRanges: { quest: [], labcorp: [], bioref: [], custom: [] },
   recommendedTests: {
     rx: [],
     services: [],
@@ -383,6 +387,8 @@ const extremeBoundaryBiomarker: Biomarker = {
   unit: 'mg/dL',
   status: 'HIGH',
   favorite: false,
+  dataType: 'quantity',
+  codedRanges: { quest: [], labcorp: [], bioref: [], custom: [] },
   recommendedTests: {
     rx: [],
     services: [],
@@ -656,6 +662,8 @@ const extremeDateClusteringBiomarker: Biomarker = {
   unit: 'mg/dL',
   status: 'OPTIMAL',
   favorite: false,
+  dataType: 'quantity',
+  codedRanges: { quest: [], labcorp: [], bioref: [], custom: [] },
   recommendedTests: {
     rx: [],
     services: [],

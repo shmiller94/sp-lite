@@ -5,7 +5,7 @@ import { useLatestHealthScore } from '@/features/data/api';
 
 export const ProtocolChart = () => {
   const latestHealthScoreQuery = useLatestHealthScore();
-  const value = latestHealthScoreQuery.data?.healthScore?.quantity.value ?? 0;
+  const value = latestHealthScoreQuery.data?.healthScore?.quantity?.value ?? 0;
 
   return (
     <div className="relative mb-4 flex w-full items-center justify-center rounded-[18px] border border-zinc-200 bg-white py-8 shadow-xl shadow-black/[.03]">

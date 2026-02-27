@@ -21,6 +21,10 @@ interface RangeSegment {
   color: string;
 }
 
+// Builds colored vertical segments for the range stack indicator bar.
+// Walks the chart dimension zones from top to bottom (high -> normal -> optimal -> normal -> low).
+// For one-sided "<=X" ranges where optimalLow <= 0, everything below optimalHigh
+// is merged into a single green (optimal) segment extending to the chart bottom.
 const getVerticalSegments = (
   dimensions: ChartDimensions,
   valueToY: (val: number) => number,
@@ -122,24 +126,46 @@ const getVerticalSegments = (
     const optimalHighY = getY(optimalHigh);
     const optimalLowY = getY(optimalLow);
     const optimalStartY = Math.max(currentY, optimalHighY) + segmentGap / 2;
-    const optimalHeight = Math.max(0, optimalLowY - optimalStartY - segmentGap);
-    if (optimalHeight > 0) {
-      segments.push({
-        y: optimalStartY,
-        height: optimalHeight,
-        color: STATUS_TO_COLOR.optimal,
-      });
-      currentY = optimalLowY + segmentGap;
-    }
 
-    if (chartMinValue < optimalLow) {
-      const height = Math.max(0, svgHeight - padding - currentY - segmentGap);
+    // For one-sided "<=X" ranges where optimalLow <= 0, merge the optimal
+    // segment with the below-optimal area so everything below optimalHigh is green
+    const isOneSidedHigh = optimalLow <= 0;
+
+    if (isOneSidedHigh) {
+      const height = Math.max(
+        4,
+        svgHeight - padding - optimalStartY - segmentGap,
+      );
       if (height > 0) {
         segments.push({
-          y: currentY,
+          y: optimalStartY,
           height,
-          color: STATUS_TO_COLOR.low,
+          color: STATUS_TO_COLOR.optimal,
         });
+      }
+    } else {
+      const optimalHeight = Math.max(
+        0,
+        optimalLowY - optimalStartY - segmentGap,
+      );
+      if (optimalHeight > 0) {
+        segments.push({
+          y: optimalStartY,
+          height: optimalHeight,
+          color: STATUS_TO_COLOR.optimal,
+        });
+        currentY = optimalLowY + segmentGap;
+      }
+
+      if (chartMinValue < optimalLow) {
+        const height = Math.max(0, svgHeight - padding - currentY - segmentGap);
+        if (height > 0) {
+          segments.push({
+            y: currentY,
+            height,
+            color: STATUS_TO_COLOR.low,
+          });
+        }
       }
     }
   }

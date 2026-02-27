@@ -18,7 +18,7 @@ export const SuperpowerScoreStep = () => {
   const latestHealthScoreQuery = useLatestHealthScore();
 
   const isLoading = latestHealthScoreQuery.isLoading || isUserLoading;
-  const value = latestHealthScoreQuery.data?.healthScore?.quantity.value ?? 0;
+  const value = latestHealthScoreQuery.data?.healthScore?.quantity?.value ?? 0;
 
   const overviewCopy = MESSAGES.find(
     (m) => m.scoreRange[0] <= value! && m.scoreRange[1] >= value!,

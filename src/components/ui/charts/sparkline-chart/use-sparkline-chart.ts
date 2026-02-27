@@ -7,6 +7,8 @@ import {
 import { getNewestValue } from '@/components/ui/charts/utils/get-newest-value';
 import { STATUS_TO_COLOR } from '@/const/status-to-color';
 import type { Biomarker } from '@/types/api';
+import { getComparatorRange } from '@/utils/get-comparator-range';
+import { getDisplayComparator } from '@/utils/get-display-comparator';
 
 import type { ChartDimensions } from '../types/chart';
 import {
@@ -20,6 +22,7 @@ import { CHART_CONFIG } from './config';
 import type {
   Circle,
   LineSegment,
+  Pill,
   RangeBackgroundBounds,
 } from './types/sparkline-chart';
 
@@ -32,7 +35,14 @@ const getRangeBackgroundBounds = (
     dimensions.normalHigh !== dimensions.optimalHigh;
 
   if (value >= dimensions.optimalLow && value <= dimensions.optimalHigh) {
-    return { top: dimensions.optimalHigh, bottom: dimensions.optimalLow };
+    // For one-sided "<=X" ranges (e.g. Metamyelocyte <=0), optimalLow is 0 so
+    // top and bottom would be equal, yielding zero-height rect. Extend bottom
+    // to chartMinValue to make the green background zone visible.
+    const bottom =
+      dimensions.optimalLow <= 0
+        ? dimensions.chartMinValue
+        : dimensions.optimalLow;
+    return { top: dimensions.optimalHigh, bottom };
   }
 
   if (hasNormalRange) {
@@ -95,7 +105,7 @@ export const useSparklineChart = ({
     return calculateChartDimensions(
       ranges,
       sortedValues
-        .map((v) => v.quantity.value)
+        .map((v) => v.quantity?.value ?? 0)
         .filter((v) => Number.isFinite(v)),
       CHART_CONFIG.RANGE_EXTENSION_FACTOR,
     );
@@ -124,25 +134,38 @@ export const useSparklineChart = ({
           getRangesBySource(biomarker, (v.source as any) || 'quest') || ranges;
         const srcDims = calculateChartDimensions(
           srcRanges,
-          sortedValues.map((sv) => sv.quantity.value),
+          sortedValues.map((sv) => sv.quantity?.value ?? 0),
           CHART_CONFIG.RANGE_EXTENSION_FACTOR,
         );
-        const mapped = mapValueAcrossDimensions(
-          v.quantity.value,
-          srcDims,
-          dimensions,
-        );
+        const rawValue = v.quantity?.value ?? 0;
+        const comparator = v.quantity?.comparator;
+        const compRange =
+          comparator && comparator !== 'EQUALS'
+            ? getComparatorRange(comparator, rawValue, dimensions.chartMaxValue)
+            : undefined;
+
+        // For comparator quantities, use midpoint of the range so the line
+        // connects to the center of the pill (same approach as range-sparkline).
+        const valueForY = compRange
+          ? (compRange.low + compRange.high) / 2
+          : rawValue;
+        const mapped = mapValueAcrossDimensions(valueForY, srcDims, dimensions);
         const y =
           (valueToY(mapped) / 100) * (SVG_HEIGHT - 2 * PADDING) + PADDING;
+
+        const comparatorLabel = compRange
+          ? `${getDisplayComparator(comparator)}${rawValue}`
+          : undefined;
 
         return {
           x: Number.isFinite(x) ? x : svgWidth / 2,
           y: Number.isFinite(y) ? y : SVG_HEIGHT / 2,
-          value: v.quantity.value,
+          value: rawValue,
           timestamp: v.timestamp,
           index,
           source: v.source || 'quest',
-          status: getValueStatus(srcDims, v.quantity.value, newestValueInfo),
+          status: getValueStatus(srcDims, rawValue, newestValueInfo),
+          comparatorLabel,
         };
       }),
     [
@@ -161,7 +184,7 @@ export const useSparklineChart = ({
 
   const chartData = useMemo(() => {
     if (!sortedValues.length) {
-      return { lines: [], circles: [], backgroundRect: null };
+      return { lines: [], circles: [], pills: [], backgroundRect: null };
     }
 
     const lastValue = sortedValues[sortedValues.length - 1];
@@ -170,11 +193,11 @@ export const useSparklineChart = ({
       ranges;
     const lastSrcDims = calculateChartDimensions(
       lastSrcRanges,
-      sortedValues.map((sv) => sv.quantity.value),
+      sortedValues.map((sv) => sv.quantity?.value ?? 0),
       CHART_CONFIG.RANGE_EXTENSION_FACTOR,
     );
     const lastMapped = mapValueAcrossDimensions(
-      lastValue.quantity.value,
+      lastValue.quantity?.value ?? 0,
       lastSrcDims,
       dimensions,
     );
@@ -185,8 +208,10 @@ export const useSparklineChart = ({
     );
     const rangeBounds = getRangeBackgroundBounds(dimensions, lastMapped);
 
+    const PILL_WIDTH = 10;
     const lines: LineSegment[] = [];
     const circles: Circle[] = [];
+    const pills: Pill[] = [];
 
     const topY =
       (valueToY(rangeBounds.top) / 100) * (SVG_HEIGHT - 2 * PADDING) + PADDING;
@@ -219,11 +244,11 @@ export const useSparklineChart = ({
                     ) || ranges;
                   const srcDims = calculateChartDimensions(
                     srcRanges,
-                    sortedValues.map((sv) => sv.quantity.value),
+                    sortedValues.map((sv) => sv.quantity?.value ?? 0),
                     CHART_CONFIG.RANGE_EXTENSION_FACTOR,
                   );
                   const mapped = mapValueAcrossDimensions(
-                    firstValue.quantity.value,
+                    firstValue.quantity?.value ?? 0,
                     srcDims,
                     dimensions,
                   );
@@ -255,11 +280,11 @@ export const useSparklineChart = ({
                     ) || ranges;
                   const srcDims = calculateChartDimensions(
                     srcRanges,
-                    sortedValues.map((sv) => sv.quantity.value),
+                    sortedValues.map((sv) => sv.quantity?.value ?? 0),
                     CHART_CONFIG.RANGE_EXTENSION_FACTOR,
                   );
                   const mapped = mapValueAcrossDimensions(
-                    firstValue.quantity.value,
+                    firstValue.quantity?.value ?? 0,
                     srcDims,
                     dimensions,
                   );
@@ -286,18 +311,64 @@ export const useSparklineChart = ({
         return;
       }
 
-      const circleRadius =
-        sortedValues.length === 1 ? CIRCLE_RADIUS + 1 : CIRCLE_RADIUS;
+      const color = STATUS_TO_COLOR[status as keyof typeof STATUS_TO_COLOR];
+      const comparator = v.quantity?.comparator;
+      const compRange =
+        comparator && comparator !== 'EQUALS'
+          ? getComparatorRange(
+              comparator,
+              v.quantity?.value ?? 0,
+              dimensions.chartMaxValue,
+            )
+          : undefined;
 
-      circles.push({
-        key: `${v.timestamp}-${index}`,
-        cx: x,
-        cy: y,
-        r: circleRadius,
-        fill: STATUS_TO_COLOR[status as keyof typeof STATUS_TO_COLOR],
-        stroke: 'white',
-        strokeWidth: STROKE_WIDTH,
-      });
+      if (compRange) {
+        const srcRanges =
+          getRangesBySource(biomarker, (v.source as any) || 'quest') || ranges;
+        const srcDims = calculateChartDimensions(
+          srcRanges,
+          sortedValues.map((sv) => sv.quantity?.value ?? 0),
+          CHART_CONFIG.RANGE_EXTENSION_FACTOR,
+        );
+        const mappedLow = mapValueAcrossDimensions(
+          compRange.low,
+          srcDims,
+          dimensions,
+        );
+        const mappedHigh = mapValueAcrossDimensions(
+          compRange.high,
+          srcDims,
+          dimensions,
+        );
+        const yLow =
+          (valueToY(mappedLow) / 100) * (SVG_HEIGHT - 2 * PADDING) + PADDING;
+        const yHigh =
+          (valueToY(mappedHigh) / 100) * (SVG_HEIGHT - 2 * PADDING) + PADDING;
+        const pillHeight = Math.max(4, Math.abs(yLow - yHigh));
+
+        pills.push({
+          key: `pill-${v.timestamp}-${index}`,
+          x: x - PILL_WIDTH / 2,
+          yTop: Math.min(yHigh, yLow),
+          height: pillHeight,
+          width: PILL_WIDTH,
+          color,
+          pointIndex: index,
+        });
+      } else {
+        const circleRadius =
+          sortedValues.length === 1 ? CIRCLE_RADIUS + 1 : CIRCLE_RADIUS;
+
+        circles.push({
+          key: `${v.timestamp}-${index}`,
+          cx: x,
+          cy: y,
+          r: circleRadius,
+          fill: color,
+          stroke: 'white',
+          strokeWidth: STROKE_WIDTH,
+        });
+      }
 
       if (index < sortedValues.length - 1) {
         const nextValue = sortedValues[index + 1];
@@ -317,11 +388,11 @@ export const useSparklineChart = ({
           getRangesBySource(biomarker, (v.source as any) || 'quest') || ranges;
         const startSrcDims = calculateChartDimensions(
           startSrcRanges,
-          sortedValues.map((sv) => sv.quantity.value),
+          sortedValues.map((sv) => sv.quantity?.value ?? 0),
           CHART_CONFIG.RANGE_EXTENSION_FACTOR,
         );
         const startMapped = mapValueAcrossDimensions(
-          v.quantity.value,
+          v.quantity?.value ?? 0,
           startSrcDims,
           dimensions,
         );
@@ -331,11 +402,11 @@ export const useSparklineChart = ({
           ranges;
         const endSrcDims = calculateChartDimensions(
           endSrcRanges,
-          sortedValues.map((sv) => sv.quantity.value),
+          sortedValues.map((sv) => sv.quantity?.value ?? 0),
           CHART_CONFIG.RANGE_EXTENSION_FACTOR,
         );
         const endMapped = mapValueAcrossDimensions(
-          nextValue.quantity.value,
+          nextValue.quantity?.value ?? 0,
           endSrcDims,
           dimensions,
         );
@@ -433,7 +504,7 @@ export const useSparklineChart = ({
           }
         : null;
 
-    return { lines, circles, backgroundRect };
+    return { lines, circles, pills, backgroundRect };
   }, [
     sortedValues,
     dimensions,
@@ -468,7 +539,7 @@ export const useSparklineChart = ({
   const rangeStack = useMemo(() => {
     return {
       range: ranges,
-      values: sortedValues.map((v) => v.quantity.value),
+      values: sortedValues.map((v) => v.quantity?.value ?? 0),
       dimensions,
     };
   }, [ranges, sortedValues, dimensions]);
@@ -480,6 +551,7 @@ export const useSparklineChart = ({
       pointPositions,
       lines: chartData.lines,
       circles: chartData.circles,
+      pills: chartData.pills,
       backgroundRect: chartData.backgroundRect,
     },
     rangeStack,

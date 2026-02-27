@@ -4,15 +4,18 @@ import { createPortal } from 'react-dom';
 
 import { STATUS_TO_COLOR } from '@/const/status-to-color';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Biomarker, Lab } from '@/types/api';
+import type { Biomarker } from '@/types/api';
 
 import { ChartTooltip } from '../chart-tooltip';
 import { RangeStack } from '../range-stack';
+import { CHART_CONFIG } from '../sparkline-chart/config';
 
-import { CHART_CONFIG } from './config';
-import { useSparklineChart } from './use-sparkline-chart';
+import { useRangeSparkline } from './use-range-sparkline';
 
-const SparklineLineChart = ({
+// Inner SVG chart for range-type sparkline in the data table.
+// Renders pills (rounded rects spanning low-to-high) for each range value,
+// connecting lines between midpoints, and hover highlights.
+const RangeSparklineChart = ({
   biomarker,
   maxValuesToShow,
   svgWidth,
@@ -25,17 +28,18 @@ const SparklineLineChart = ({
   svgWidth: number;
   onHover: (data: {
     index: number;
-    value: number;
+    low: number;
+    high: number;
+    unit: string;
     timestamp: string;
     position: { x: number; y: number };
     status: string;
-    source: Lab;
-    comparatorLabel?: string;
+    source: string;
   }) => void;
   onHoverEnd: () => void;
   hoveredPointIndex?: number | null;
 }) => {
-  const { meta, data, config } = useSparklineChart({
+  const { meta, data, config } = useRangeSparkline({
     biomarker,
     maxValuesToShow,
     svgWidth,
@@ -43,14 +47,14 @@ const SparklineLineChart = ({
 
   const svgRef = useRef<SVGSVGElement>(null);
   const lastPointRef = useRef<number | null>(null);
-  const debounceTimerRef = useRef<number | null>(null);
+  const debounceTimerRef = useRef<number | undefined>(undefined);
   const isTouchDevice = useRef<boolean>(false);
 
   const handleInteraction = useCallback(
     (clientX: number) => {
-      if (!svgRef.current) return;
+      if (!svgRef.current || !data.pointPositions.length) return;
 
-      if (debounceTimerRef.current !== null) {
+      if (debounceTimerRef.current) {
         window.cancelAnimationFrame(debounceTimerRef.current);
       }
 
@@ -70,7 +74,9 @@ const SparklineLineChart = ({
           lastPointRef.current = nearestPoint.index;
           onHover({
             index: nearestPoint.index,
-            value: nearestPoint.value,
+            low: nearestPoint.low,
+            high: nearestPoint.high,
+            unit: nearestPoint.unit,
             timestamp: nearestPoint.timestamp,
             position: {
               x: rect.left + nearestPoint.x + window.scrollX,
@@ -80,9 +86,8 @@ const SparklineLineChart = ({
                 config.TOOLTIP_OFFSET +
                 window.scrollY,
             },
-            status: nearestPoint.status as string,
-            source: nearestPoint.source as Lab,
-            comparatorLabel: nearestPoint.comparatorLabel,
+            status: nearestPoint.status,
+            source: nearestPoint.source,
           });
         }
       });
@@ -123,9 +128,9 @@ const SparklineLineChart = ({
   const handleTouchEnd = useCallback(
     (e: React.TouchEvent<SVGSVGElement>) => {
       e.preventDefault();
-      if (debounceTimerRef.current !== null) {
+      if (debounceTimerRef.current) {
         window.cancelAnimationFrame(debounceTimerRef.current);
-        debounceTimerRef.current = null;
+        debounceTimerRef.current = undefined;
       }
       lastPointRef.current = null;
       onHoverEnd();
@@ -139,9 +144,9 @@ const SparklineLineChart = ({
 
   const handleMouseLeave = useCallback(() => {
     if (!isTouchDevice.current) {
-      if (debounceTimerRef.current !== null) {
+      if (debounceTimerRef.current) {
         window.cancelAnimationFrame(debounceTimerRef.current);
-        debounceTimerRef.current = null;
+        debounceTimerRef.current = undefined;
       }
       lastPointRef.current = null;
       onHoverEnd();
@@ -150,9 +155,8 @@ const SparklineLineChart = ({
 
   useEffect(() => {
     return () => {
-      if (debounceTimerRef.current !== null) {
+      if (debounceTimerRef.current) {
         window.cancelAnimationFrame(debounceTimerRef.current);
-        debounceTimerRef.current = null;
       }
     };
   }, []);
@@ -160,23 +164,6 @@ const SparklineLineChart = ({
   if (!meta.hasData) {
     return <div className="relative flex overflow-visible" />;
   }
-
-  const hoveredCircles = data.pointPositions
-    .filter((pos, index) => hoveredPointIndex === index && !pos.comparatorLabel)
-    .map((position) => (
-      <circle
-        key={`${position.timestamp}-outline`}
-        cx={position.x}
-        cy={position.y}
-        r={config.CIRCLE_RADIUS + 2}
-        fill="none"
-        stroke={
-          STATUS_TO_COLOR[position.status as keyof typeof STATUS_TO_COLOR]
-        }
-        strokeWidth={4}
-        strokeOpacity={0.4}
-      />
-    ));
 
   return (
     <div className="relative flex overflow-visible">
@@ -214,20 +201,8 @@ const SparklineLineChart = ({
             opacity={line.opacity}
           />
         ))}
-        {hoveredCircles}
-        {data.circles.map((circle) => (
-          <circle
-            key={circle.key}
-            cx={circle.cx}
-            cy={circle.cy}
-            r={circle.r}
-            fill={circle.fill}
-            stroke={circle.stroke}
-            strokeWidth={circle.strokeWidth}
-          />
-        ))}
-        {data.pills.map((pill) => {
-          const isHovered = hoveredPointIndex === pill.pointIndex;
+        {data.pills.map((pill, index) => {
+          const isHovered = hoveredPointIndex === index;
           const rx = pill.width / 2;
           return (
             <g key={pill.key}>
@@ -260,7 +235,10 @@ const SparklineLineChart = ({
   );
 };
 
-export const SparklineChart = ({
+// Data table sparkline for range biomarkers (e.g. "0-5 /[HPF]").
+// Wraps the inner pill chart with a CSS fade-in mask, a RangeStack indicator
+// on the right, and a portal tooltip showing "low-high unit" on hover.
+export const RangeSparkline = ({
   biomarker,
   maxValuesToShow = 4,
 }: {
@@ -272,19 +250,21 @@ export const SparklineChart = ({
     ? CHART_CONFIG.SVG_WIDTH_MOBILE
     : CHART_CONFIG.SVG_WIDTH_DESKTOP;
 
-  const { rangeStack } = useSparklineChart({
+  const { rangeStack } = useRangeSparkline({
     biomarker,
     maxValuesToShow,
     svgWidth,
   });
+
   const [displayedPoint, setDisplayedPoint] = useState<{
     index: number;
-    value: number;
+    low: number;
+    high: number;
+    unit: string;
     timestamp: string;
     position: { x: number; y: number };
     status: string;
-    source: Lab;
-    comparatorLabel?: string;
+    source: string;
   } | null>(null);
 
   return (
@@ -297,7 +277,7 @@ export const SparklineChart = ({
       className="relative flex items-center justify-end gap-0 overflow-visible"
     >
       <div className="relative py-1">
-        <SparklineLineChart
+        <RangeSparklineChart
           biomarker={biomarker}
           maxValuesToShow={maxValuesToShow}
           svgWidth={svgWidth}
@@ -331,9 +311,8 @@ export const SparklineChart = ({
               />
               <div className="text-xs">
                 <div className="font-semibold">
-                  {displayedPoint.comparatorLabel ??
-                    displayedPoint.value.toFixed(2)}{' '}
-                  {biomarker.unit}
+                  {displayedPoint.low}-{displayedPoint.high}{' '}
+                  {displayedPoint.unit}
                 </div>
                 <div className="text-muted-foreground">
                   {format(new Date(displayedPoint.timestamp), 'MMM dd, yyyy')} (
