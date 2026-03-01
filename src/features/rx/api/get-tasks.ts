@@ -12,8 +12,9 @@ export const getRxTasks = (
 
 export const getRxTasksQueryOptions = (id?: string) => {
   return queryOptions({
-    queryKey: ['rx-tasks'],
-    queryFn: () => getRxTasks(id),
+    queryKey: ['rx-tasks', id],
+    queryFn: () => getRxTasks(id!),
+    enabled: !!id,
   });
 };
 
