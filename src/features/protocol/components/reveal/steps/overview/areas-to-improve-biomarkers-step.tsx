@@ -14,23 +14,31 @@ export const AreasToImproveBiomarkersStep = () => {
     next();
   }, [next]);
 
+  // Only include quantity biomarkers that have values
+  const quantityBiomarkers = useMemo(() => {
+    return biomarkers.filter((b) => b.value?.[0]?.quantity);
+  }, [biomarkers]);
+
   // Build CategoryGroup[] for CategoriesTable
   // Assumes latest results are being shown
   const categoryGroups = useMemo(() => {
     return areasToImprove.map((category) => ({
       category: category.category,
       value: category.value,
-      biomarkers: getCategoryBiomarkers(category.category),
+      biomarkers: getCategoryBiomarkers(category.category).filter(
+        (b) => b.value?.[0]?.quantity,
+      ),
     }));
   }, [areasToImprove, getCategoryBiomarkers]);
 
   // Count out-of-range biomarkers (HIGH or LOW status) across ALL biomarkers
   const outOfRangeBiomarkerCount = useMemo(() => {
-    return biomarkers.filter((b) => b.status === 'HIGH' || b.status === 'LOW')
-      .length;
-  }, [biomarkers]);
+    return quantityBiomarkers.filter(
+      (b) => b.status === 'HIGH' || b.status === 'LOW',
+    ).length;
+  }, [quantityBiomarkers]);
 
-  const totalBiomarkerCount = biomarkers.length;
+  const totalBiomarkerCount = quantityBiomarkers.length;
 
   return (
     <ProtocolStepLayout>

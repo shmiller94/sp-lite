@@ -14,6 +14,11 @@ export const HealthWinnersBiomarkersStep = () => {
     next();
   }, [next]);
 
+  // Only include quantity biomarkers that have values
+  const quantityBiomarkers = useMemo(() => {
+    return biomarkers.filter((b) => b.value?.[0]?.quantity);
+  }, [biomarkers]);
+
   // Build CategoryGroup[] for CategoriesTable
   // Filter out out-of-range biomarkers since this is the health winners view
   const categoryGroups = useMemo(() => {
@@ -21,7 +26,10 @@ export const HealthWinnersBiomarkersStep = () => {
       category: category.category,
       value: category.value,
       biomarkers: getCategoryBiomarkers(category.category)
-        .filter((b) => b.status !== 'HIGH' && b.status !== 'LOW')
+        .filter(
+          (b) =>
+            b.value?.[0]?.quantity && b.status !== 'HIGH' && b.status !== 'LOW',
+        )
         .sort((a, b) =>
           a.status === 'OPTIMAL' && b.status !== 'OPTIMAL'
             ? -1
@@ -34,10 +42,10 @@ export const HealthWinnersBiomarkersStep = () => {
 
   // Count optimal biomarkers across ALL biomarkers (not just winning categories)
   const optimalBiomarkerCount = useMemo(() => {
-    return biomarkers.filter((b) => b.status === 'OPTIMAL').length;
-  }, [biomarkers]);
+    return quantityBiomarkers.filter((b) => b.status === 'OPTIMAL').length;
+  }, [quantityBiomarkers]);
 
-  const totalBiomarkerCount = biomarkers.length;
+  const totalBiomarkerCount = quantityBiomarkers.length;
 
   return (
     <ProtocolStepLayout>
