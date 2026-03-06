@@ -1,7 +1,7 @@
 import { useChat, type UseChatHelpers } from '@ai-sdk/react';
 import { useQueryClient } from '@tanstack/react-query';
-import { useNavigate, useSearch } from '@tanstack/react-router';
-import { DefaultChatTransport, FileUIPart, type UIMessage } from 'ai';
+import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
+import { FileUIPart, type UIMessage } from 'ai';
 import {
   useCallback,
   useEffect,
@@ -13,37 +13,45 @@ import {
 } from 'react';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/sonner';
-import { env } from '@/config/env';
-import { useHistory } from '@/features/messages/api/get-history';
+import { getHistoryQueryOptions } from '@/features/messages/api/get-history';
 import {
+  DEFAULT_MESSAGES_PAGE_SIZE,
   getMessages,
   getMessagesQueryOptions,
 } from '@/features/messages/api/get-messages';
 import { useChatStore } from '@/features/messages/stores/chat-store';
+import { createChatV2Transport } from '@/features/messages/utils/chatv2-transport';
 import { extractTiming } from '@/features/messages/utils/extract-timing';
 import { useAnalytics } from '@/hooks/use-analytics';
-import { cn, getActiveLogin } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 
 import { classifyChatError } from './chat-error-utils';
 import { Greeting } from './greeting';
 import { Messages } from './messages';
 import { MultimodalInput } from './multimodal-input';
 import { SuggestedActions } from './suggested-actions';
+
 const publicErrors = [
   'Too many requests, please try again later.',
   'This chat has ended. Please start a new chat.',
-];
+] as const;
+
 const conciergeLoadErrorMessage =
   'Currently chat is under heavy load. Please try again later.';
 
-/** Check if an assistant message has actual text content */
-const hasAssistantContent = (message: UIMessage | undefined): boolean => {
+function hasAssistantContent(message: UIMessage | undefined): boolean {
   if (!message || message.role !== 'assistant') return false;
-  return (message.parts ?? []).some(
-    (p) => p.type === 'text' && p.text && p.text.length > 0,
-  );
-};
+
+  for (const part of message.parts ?? []) {
+    if (part.type !== 'text') continue;
+    if (part.text.length === 0) continue;
+    return true;
+  }
+
+  return false;
+}
 
 const isObjectRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
@@ -108,6 +116,85 @@ const getErrorBody = (err: unknown): string => {
   return String(err);
 };
 
+function parseJsonErrorCode(text: string): string | null {
+  const trimmed = text.trim();
+  if (!trimmed.startsWith('{')) return null;
+
+  try {
+    const json = JSON.parse(trimmed) as Record<string, unknown>;
+    if (typeof json.code === 'string') return json.code;
+
+    const message = json.message;
+    if (typeof message === 'string') {
+      const nested = parseJsonErrorCode(message);
+      if (nested) return nested;
+    }
+
+    const error = json.error;
+    if (error && typeof error === 'object' && !Array.isArray(error)) {
+      const nestedCode = (error as Record<string, unknown>).code;
+      if (typeof nestedCode === 'string') return nestedCode;
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+function hasUserMessages(messages: UIMessage[]): boolean {
+  for (const message of messages) {
+    if (message.role === 'user') return true;
+  }
+
+  return false;
+}
+
+function hasInProgressParts(message: UIMessage): boolean {
+  for (const part of message.parts ?? []) {
+    if (!isObjectRecord(part) || !('state' in part)) continue;
+    const state = (part as { state?: unknown }).state;
+    if (typeof state === 'string' && state.includes('streaming')) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function getLastFinishStepReason(message: UIMessage): string | null {
+  const meta = message.metadata as Record<string, unknown> | undefined;
+  const events = meta?.events;
+  if (!events || typeof events !== 'object' || Array.isArray(events)) {
+    return null;
+  }
+
+  let maxSeq = -1;
+  let reason: string | null = null;
+
+  for (const [key, value] of Object.entries(events)) {
+    const seq = Number(key);
+    if (!Number.isFinite(seq)) continue;
+    if (!value || typeof value !== 'object' || Array.isArray(value)) continue;
+
+    const ev = value as Record<string, unknown>;
+    if (ev.type !== 'finish-step') continue;
+    if (typeof ev.finishReason !== 'string') continue;
+
+    if (seq > maxSeq) {
+      maxSeq = seq;
+      reason = ev.finishReason;
+    }
+  }
+
+  return reason;
+}
+
+function isNetworkError(err: unknown): boolean {
+  const message = getErrorMessage(err).toLowerCase();
+  return message.includes('fetch') || message.includes('network');
+}
+
 export function Chat({
   id,
   initialMessages,
@@ -122,13 +209,19 @@ export function Chat({
       chatId={id}
       messages={controller.messages}
       setMessages={controller.setMessages}
-      effectiveStatus={controller.effectiveStatus}
+      status={controller.status}
       showLoadErrorBanner={controller.showLoadErrorBanner}
+      showReconnectBanner={controller.showReconnectBanner}
+      assistantBusyMessage={controller.assistantBusyMessage}
+      onReconnect={controller.onReconnect}
       input={controller.input}
       setInput={controller.setInput}
       attachments={controller.attachments}
       setAttachments={controller.setAttachments}
       sendMessage={controller.sendMessage}
+      hasMoreOlder={controller.hasMoreOlder}
+      isLoadingOlder={controller.isLoadingOlder}
+      onLoadOlder={controller.onLoadOlder}
     />
   );
 }
@@ -144,67 +237,42 @@ function useConciergeChatController({
     from: '/_app/concierge',
     select: (s) => s.defaultMessage,
   });
+  const hasIdParam = useParams({
+    strict: false,
+    select: (params) => typeof params.id === 'string' && params.id.length > 0,
+  });
   const queryClient = useQueryClient();
-  const { refetch } = useHistory();
   const { track } = useAnalytics();
   const navigate = useNavigate({ from: '/concierge' });
 
   const lastReportedErrorRef = useRef<string | null>(null);
-  const recoveryInProgressRef = useRef(false);
-  const resumeAttemptedRef = useRef(false);
-  const recoveryAttemptedRef = useRef(false);
-  const lastSyncedCountRef = useRef(0);
+  const clearErrorAfterFinishRef = useRef(false);
+  const pendingSendSnapshotRef = useRef<UIMessage[] | null>(null);
+  const pendingSendInputRef = useRef<string | null>(null);
 
   const [input, setInput] = useState(defaultMessage ?? '');
   const [attachments, setAttachments] = useState<Array<FileUIPart>>([]);
-  const [recoveryFailed, setRecoveryFailed] = useState(false);
   const [showLoadErrorBanner, setShowLoadErrorBanner] = useState(false);
+  const [showReconnectBanner, setShowReconnectBanner] = useState(false);
+  const [assistantBusyMessage, setAssistantBusyMessage] = useState<
+    string | null
+  >(null);
+
+  const [isLoadingOlder, setIsLoadingOlder] = useState(false);
+  const [hasMoreOlder, setHasMoreOlder] = useState(
+    initialMessages.length >= DEFAULT_MESSAGES_PAGE_SIZE,
+  );
 
   const sessionStartTime = useChatStore((s) => s.sessionStartTime);
   const setSessionStartTime = useChatStore((s) => s.setSessionStartTime);
   const incrementMessageCount = useChatStore((s) => s.incrementMessageCount);
   const addResponseTime = useChatStore((s) => s.addResponseTime);
 
-  const transport = useMemo(
-    () =>
-      new DefaultChatTransport<UIMessage>({
-        api: `${env.API_URL}/chat/chatv2`,
-        credentials: 'include',
-        headers: () => {
-          const accessToken = getActiveLogin()?.accessToken;
-          return {
-            Accept: 'application/json',
-            ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-          };
-        },
-        prepareSendMessagesRequest: ({ id, messages }) => {
-          let lastUser: UIMessage | undefined;
-          for (let i = messages.length - 1; i >= 0; i = i - 1) {
-            const m = messages[i];
-            if (m.role === 'user') {
-              lastUser = m;
-              break;
-            }
-          }
-
-          if (!lastUser) throw new Error('No user message to send.');
-
-          return {
-            api: `${env.API_URL}/chat/chatv2`,
-            body: { id, message: lastUser },
-          };
-        },
-        prepareReconnectToStreamRequest: ({ id }) => ({
-          api: `${env.API_URL}/chat/chatv2/${id}/stream`,
-        }),
-      }),
-    [], // Intentionally empty - reads fresh token inside headers()
-  );
+  const transport = useMemo(() => createChatV2Transport<UIMessage>(), []);
 
   const reportChatError = useCallback(
     (errorBody: string) => {
       const normalizedError = errorBody.trim() || 'Unknown chat error';
-
       if (lastReportedErrorRef.current === normalizedError) return;
       lastReportedErrorRef.current = normalizedError;
 
@@ -216,108 +284,54 @@ function useConciergeChatController({
     [id, track],
   );
 
-  const recoverFromServer = useCallback(
-    async (setMessages: (messages: UIMessage[]) => void) => {
-      if (recoveryInProgressRef.current) {
-        return {
-          success: false as const,
-          errorBody: 'Recovery already in progress.',
-        };
-      }
-      recoveryInProgressRef.current = true;
-
-      try {
-        const serverMessages = await getMessages({ chatId: id });
-        if (!serverMessages) {
-          recoveryInProgressRef.current = false;
-          return {
-            success: false as const,
-            errorBody: 'Recovery failed: assistant response was empty.',
-          };
-        }
-
-        if (serverMessages.length === 0) {
-          recoveryInProgressRef.current = false;
-          return {
-            success: false as const,
-            errorBody: 'Recovery failed: assistant response was empty.',
-          };
-        }
-
-        const lastMessage = serverMessages[serverMessages.length - 1];
-        if (!hasAssistantContent(lastMessage)) {
-          recoveryInProgressRef.current = false;
-          return {
-            success: false as const,
-            errorBody: 'Recovery failed: assistant response was empty.',
-          };
-        }
-
-        setMessages(serverMessages);
-        queryClient.setQueryData(
-          getMessagesQueryOptions(id).queryKey,
-          serverMessages,
-        );
-        recoveryInProgressRef.current = false;
-        return { success: true as const, errorBody: null };
-      } catch (err) {
-        let recoveryErrorMessage = 'Recovery failed: unable to fetch messages.';
-        if (err instanceof Error) {
-          if (err.message) {
-            recoveryErrorMessage = err.message;
-          }
-        }
-
-        recoveryInProgressRef.current = false;
-        return {
-          success: false as const,
-          errorBody: recoveryErrorMessage,
-        };
-      }
-    },
-    [id, queryClient],
-  );
-
-  const clearRecoveryFailed = useCallback(() => {
-    setRecoveryFailed(false);
-  }, []);
-
-  const markRecoveryFailed = useCallback(
-    (errorBody: string | null | undefined) => {
-      setRecoveryFailed(true);
-      setShowLoadErrorBanner(true);
-      reportChatError(errorBody ?? 'Recovery failed: unknown chat error.');
-    },
-    [reportChatError],
-  );
-
-  const { messages, setMessages, sendMessage, resumeStream, status } = useChat({
+  const {
+    messages,
+    setMessages,
+    sendMessage,
+    resumeStream,
+    stop,
+    status,
+    clearError,
+  } = useChat({
     id,
     transport,
     messages: initialMessages,
     generateId: () => crypto.randomUUID(),
-    onFinish: ({ message }) => {
-      refetch();
+    onFinish: ({ message, isAbort, isDisconnect, isError }) => {
+      if (isAbort) return;
 
-      // make sure that the chat message cache is fresh here
-      // e.g. so that navigating away and back shows the latest messages.
-      queryClient.invalidateQueries({ queryKey: ['chat', id] });
+      void queryClient.invalidateQueries({
+        queryKey: getHistoryQueryOptions().queryKey,
+      });
+      void queryClient.invalidateQueries({
+        queryKey: getMessagesQueryOptions(id).queryKey,
+      });
 
-      if (message.role === 'user') {
-        let messageLength = 0;
-        for (const part of message.parts ?? []) {
-          if (part.type === 'text') {
-            messageLength += part.text.length;
-          }
-        }
-
-        track('sent_message_ai', { message_length: messageLength });
+      if (isDisconnect) {
+        console.debug('chat stream disconnected', { chatId: id });
+        setShowReconnectBanner(true);
+        setShowLoadErrorBanner(false);
         return;
       }
 
-      if (message.role !== 'assistant') return;
-      const timing = extractTiming(message, false);
+      if (isError) {
+        if (clearErrorAfterFinishRef.current) {
+          clearErrorAfterFinishRef.current = false;
+          setShowLoadErrorBanner(false);
+          setShowReconnectBanner(false);
+          clearError();
+        }
+        return;
+      }
 
+      pendingSendSnapshotRef.current = null;
+      pendingSendInputRef.current = null;
+      setShowReconnectBanner(false);
+      setShowLoadErrorBanner(false);
+
+      if (message.role !== 'assistant') return;
+
+      const timing = extractTiming(message, false);
       track('received_message_ai', {
         response_time: timing.totalMs,
       });
@@ -327,168 +341,490 @@ function useConciergeChatController({
       }
     },
     onError: (err) => {
+      console.warn('chat error', err);
+
+      clearErrorAfterFinishRef.current = false;
+      setAssistantBusyMessage(null);
+
       const safeMessage = getErrorMessage(err);
       const safeName = getErrorName(err);
       const errorBody = getErrorBody(err);
+      const errorCode =
+        parseJsonErrorCode(safeMessage) ?? parseJsonErrorCode(errorBody);
+
       const errorKind = classifyChatError({
         errorName: safeName,
         errorMessage: safeMessage,
         publicErrors,
       });
 
-      if (errorKind === 'validation') {
+      const safeMessageLower = safeMessage.toLowerCase();
+      const assistantResponseAlreadyInProgress =
+        errorCode === 'ASSISTANT_RESPONSE_IN_PROGRESS' ||
+        safeMessageLower.includes(
+          'assistant response is already being generated',
+        ) ||
+        errorBody.includes('ASSISTANT_RESPONSE_IN_PROGRESS');
+
+      if (assistantResponseAlreadyInProgress) {
+        const pendingSendSnapshot = pendingSendSnapshotRef.current;
+        const pendingSendInput = pendingSendInputRef.current;
+
+        if (pendingSendSnapshot != null) {
+          setMessages(pendingSendSnapshot);
+        }
+        if (pendingSendInput != null && pendingSendInput.length > 0) {
+          setInput(pendingSendInput);
+        }
+
+        pendingSendSnapshotRef.current = null;
+        pendingSendInputRef.current = null;
         setShowLoadErrorBanner(false);
+        setShowReconnectBanner(false);
+        setAssistantBusyMessage(
+          'I’m still finishing a reply. I can only generate one response at a time, but I’ll be ready for your next message in a moment.',
+        );
+        return;
+      }
+
+      if (errorKind === 'validation') {
+        clearErrorAfterFinishRef.current = true;
+        setShowLoadErrorBanner(false);
+        setShowReconnectBanner(false);
         track('ai_sdk_validation_error', {
           error_message: safeMessage,
           error_name: safeName,
           chat_id: id,
         });
-
-        // Don't show these validation errors to the user as they're internal SDK issues
-        refetch();
-        void navigate({ to: '/concierge/$id', params: { id } });
-
         return;
       }
 
       if (errorKind === 'public') {
         setShowLoadErrorBanner(false);
+        setShowReconnectBanner(false);
         toast(safeMessage);
         return;
       }
 
-      setShowLoadErrorBanner(true);
-      reportChatError(errorBody);
+      if (isNetworkError(err)) {
+        setShowLoadErrorBanner(false);
+        setShowReconnectBanner(true);
+        reportChatError(errorBody);
+        return;
+      }
 
-      // Fall back to server-side message recovery after a delay
-      setTimeout(() => recoverFromServer(setMessages), 1000);
+      setShowLoadErrorBanner(true);
+      setShowReconnectBanner(false);
+      reportChatError(errorBody);
     },
   });
 
-  useEffect(() => {
-    if (resumeAttemptedRef.current) return;
-    if (initialMessages.length === 0) return;
-    if (status !== 'ready') return;
-
-    resumeAttemptedRef.current = true;
-    resumeStream().catch(() => {});
-  }, [initialMessages.length, resumeStream, status]);
-
-  useEffect(() => {
-    if (status !== 'ready') {
-      recoveryAttemptedRef.current = false;
-      const timeoutId = setTimeout(() => {
-        clearRecoveryFailed();
-      }, 0);
-
-      return () => {
-        clearTimeout(timeoutId);
-      };
-    }
-
-    const lastMessage = messages[messages.length - 1];
-    const needsRecovery =
-      messages.length > 0 &&
-      (lastMessage?.role === 'user' ||
-        (lastMessage?.role === 'assistant' &&
-          !hasAssistantContent(lastMessage)));
-
-    if (needsRecovery && !recoveryAttemptedRef.current) {
-      recoveryAttemptedRef.current = true;
-
-      recoverFromServer(setMessages).then((result) => {
-        if (!result.success) {
-          markRecoveryFailed(result.errorBody);
-        }
+  const recoverFromServer = useCallback(async () => {
+    try {
+      const latestDesc = await getMessages({
+        chatId: id,
+        sort: 'desc',
+        limit: DEFAULT_MESSAGES_PAGE_SIZE,
       });
+      const latestAsc = latestDesc.slice().reverse();
+
+      if (latestAsc.length === 0) {
+        return { recovered: false, shouldReconnect: false } as const;
+      }
+
+      const lastServerMessage = latestAsc[latestAsc.length - 1];
+      if (
+        !hasAssistantContent(lastServerMessage) ||
+        (lastServerMessage && hasInProgressParts(lastServerMessage))
+      ) {
+        return { recovered: false, shouldReconnect: false } as const;
+      }
+
+      setMessages((prev) => {
+        const latestIds = new Set<string>();
+        for (const message of latestAsc) {
+          latestIds.add(message.id);
+        }
+
+        const merged: UIMessage[] = [];
+        for (const message of prev) {
+          if (latestIds.has(message.id)) continue;
+          merged.push(message);
+        }
+        for (const message of latestAsc) {
+          merged.push(message);
+        }
+        return merged;
+      });
+      queryClient.setQueryData(getMessagesQueryOptions(id).queryKey, latestAsc);
+
+      setAssistantBusyMessage(null);
+      setShowLoadErrorBanner(false);
+      setShowReconnectBanner(false);
+      clearError();
+
+      return { recovered: true, shouldReconnect: false } as const;
+    } catch (err) {
+      console.warn('Failed to recover chat from server', err);
+      return {
+        recovered: false,
+        shouldReconnect: isNetworkError(err),
+      } as const;
     }
+  }, [clearError, id, queryClient, setMessages]);
+
+  const navigateToPersistedChat = useCallback(() => {
+    return navigate({
+      to: '/concierge/$id',
+      params: { id },
+      search: (prev) => ({ ...prev, defaultMessage: undefined }),
+      replace: true,
+      resetScroll: false,
+    });
+  }, [id, navigate]);
+
+  const hasPersistedChatMessages = useCallback(async () => {
+    try {
+      const persistedMessages = await getMessages({
+        chatId: id,
+        sort: 'desc',
+        limit: DEFAULT_MESSAGES_PAGE_SIZE,
+        hideToast: true,
+      });
+      return persistedMessages.length > 0;
+    } catch {
+      return false;
+    }
+  }, [id]);
+
+  const routeSyncStartedRef = useRef(false);
+  const requestPersistedChatRouteSync = useCallback(async () => {
+    if (hasIdParam) return false;
+    if (routeSyncStartedRef.current) return false;
+    routeSyncStartedRef.current = true;
+
+    try {
+      const ready = await hasPersistedChatMessages();
+      if (!ready) {
+        routeSyncStartedRef.current = false;
+        return false;
+      }
+
+      await navigateToPersistedChat();
+      return true;
+    } catch {
+      routeSyncStartedRef.current = false;
+      return false;
+    }
+  }, [hasIdParam, hasPersistedChatMessages, navigateToPersistedChat]);
+
+  const messagesRef = useRef(messages);
+  const oldestMessageRef = useRef<UIMessage | undefined>(messages[0]);
+  useEffect(() => {
+    messagesRef.current = messages;
+    oldestMessageRef.current = messages[0];
+  }, [messages]);
+
+  const resumeInFlightRef = useRef(false);
+  const resumeStartedRef = useRef(false);
+  const statusRef = useRef(status);
+
+  useEffect(() => {
+    statusRef.current = status;
+
+    if (!resumeInFlightRef.current) return;
+    if (status === 'submitted' || status === 'streaming') {
+      resumeStartedRef.current = true;
+    }
+  }, [status]);
+
+  const attemptResumeStream = useCallback(
+    async (options?: { force?: boolean }) => {
+      if (resumeInFlightRef.current) return;
+      const currentStatus = statusRef.current;
+      if (currentStatus === 'submitted' || currentStatus === 'streaming')
+        return;
+
+      const current = messagesRef.current;
+      const hasUser = hasUserMessages(current);
+      const last = current[current.length - 1];
+
+      const shouldResume =
+        options?.force === true
+          ? true
+          : hasUser &&
+            (last?.role === 'user' ||
+              (last?.role === 'assistant' &&
+                (hasInProgressParts(last) ||
+                  getLastFinishStepReason(last) === 'tool-calls')));
+
+      if (!shouldResume) return;
+
+      const shouldPruneAssistant = last?.role === 'assistant';
+
+      const snapshot = current;
+
+      resumeInFlightRef.current = true;
+      resumeStartedRef.current = false;
+
+      setShowLoadErrorBanner(false);
+      setShowReconnectBanner(false);
+      clearError();
+
+      if (shouldPruneAssistant) {
+        setMessages((prev) => {
+          const l = prev[prev.length - 1];
+          return l?.role === 'assistant' ? prev.slice(0, -1) : prev;
+        });
+      }
+
+      try {
+        await resumeStream();
+      } catch (err) {
+        console.debug('resumeStream failed', err);
+      }
+      const started = resumeStartedRef.current;
+      resumeInFlightRef.current = false;
+
+      if (started) return;
+
+      const recovery = await recoverFromServer();
+      if (recovery.recovered) return;
+
+      if (shouldPruneAssistant) {
+        setMessages(snapshot);
+      }
+
+      if (recovery.shouldReconnect) {
+        setShowLoadErrorBanner(false);
+        setShowReconnectBanner(true);
+        return;
+      }
+
+      setShowLoadErrorBanner(true);
+      setShowReconnectBanner(false);
+      reportChatError(
+        'Recovery failed: assistant response was not available on the server.',
+      );
+    },
+    [clearError, recoverFromServer, reportChatError, resumeStream, setMessages],
+  );
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      void attemptResumeStream();
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [attemptResumeStream]);
+
+  useEffect(() => {
+    return () => {
+      void stop().catch((err) => {
+        console.debug('chat stop failed', err);
+      });
+    };
+  }, [stop]);
+
+  const handleReconnect = useCallback(() => {
+    void attemptResumeStream({ force: true });
+  }, [attemptResumeStream]);
+
+  useEffect(() => {
+    if (hasIdParam) return;
+    if (!hasUserMessages(messages)) return;
+    if (status !== 'streaming' && status !== 'ready') return;
+
+    void requestPersistedChatRouteSync();
+  }, [hasIdParam, messages, requestPersistedChatRouteSync, status]);
+
+  useEffect(() => {
+    if (hasIdParam) return;
+    if (!hasUserMessages(messages)) return;
+    if (status !== 'error') return;
+    if (assistantBusyMessage != null) return;
+
+    let cancelled = false;
+    let timeoutId: number | null = null;
+    let attempts = 0;
+
+    const pollForPersistedChat = async () => {
+      attempts += 1;
+
+      const didSync = await requestPersistedChatRouteSync();
+      if (cancelled) return;
+      if (didSync) return;
+      if (attempts >= 10) return;
+
+      timeoutId = window.setTimeout(() => {
+        void pollForPersistedChat();
+      }, 500);
+    };
+
+    void pollForPersistedChat();
+
+    return () => {
+      cancelled = true;
+
+      if (timeoutId != null) {
+        window.clearTimeout(timeoutId);
+      }
+    };
   }, [
-    status,
+    assistantBusyMessage,
+    hasIdParam,
+    id,
     messages,
-    recoverFromServer,
-    setMessages,
-    clearRecoveryFailed,
-    markRecoveryFailed,
+    requestPersistedChatRouteSync,
+    status,
   ]);
 
-  const effectiveStatus =
-    recoveryFailed && status === 'ready' ? 'error' : status;
+  const onLoadOlder = useCallback(async () => {
+    if (!hasMoreOlder || isLoadingOlder) return;
 
-  useEffect(() => {
-    if (messages.length === 0 || messages.length === lastSyncedCountRef.current)
+    const oldest = oldestMessageRef.current;
+    if (!oldest) {
+      setHasMoreOlder(false);
       return;
-    lastSyncedCountRef.current = messages.length;
+    }
 
-    // Exclude partial streaming assistant response — resumeStream replays
-    // the full stream, so caching partial content causes duplicates.
-    const lastMsg = messages[messages.length - 1];
-    const isPartialAssistant =
-      lastMsg?.role === 'assistant' && status !== 'ready';
-    const messagesToCache = isPartialAssistant
-      ? messages.slice(0, -1)
-      : messages;
+    setIsLoadingOlder(true);
+    try {
+      const page = await getMessages({
+        chatId: id,
+        cursor: { id: oldest.id },
+        sort: 'desc',
+        limit: DEFAULT_MESSAGES_PAGE_SIZE,
+      });
 
-    queryClient.setQueryData(
-      getMessagesQueryOptions(id).queryKey,
-      messagesToCache,
-    );
-  }, [messages.length, messages, id, queryClient, status]);
+      if (page.length === 0) {
+        setHasMoreOlder(false);
+        return;
+      }
+
+      if (page.length < DEFAULT_MESSAGES_PAGE_SIZE) {
+        setHasMoreOlder(false);
+      }
+
+      const olderAsc = page.slice().reverse();
+
+      setMessages((prev) => {
+        const existingIds = new Set(prev.map((m) => m.id));
+        const unique = olderAsc.filter((m) => !existingIds.has(m.id));
+        return unique.length > 0 ? [...unique, ...prev] : prev;
+      });
+    } catch (err) {
+      console.warn('Failed to load older messages', err);
+    } finally {
+      setIsLoadingOlder(false);
+    }
+  }, [hasMoreOlder, id, isLoadingOlder, setMessages]);
 
   const handleSendMessage: typeof sendMessage = useCallback(
     (message, options) => {
       if (defaultMessage != null && defaultMessage.length > 0) {
         void navigate({
-          search: (prev) => {
-            return {
-              ...prev,
-              defaultMessage: undefined,
-            };
-          },
+          search: (prev) => ({ ...prev, defaultMessage: undefined }),
           replace: true,
         });
       }
 
+      pendingSendSnapshotRef.current = messagesRef.current;
+      let messageLength = 0;
+      let messageText = '';
+      if (message !== undefined) {
+        if ('text' in message && typeof message.text === 'string') {
+          messageLength = message.text.length;
+          messageText = message.text;
+        } else if ('parts' in message && Array.isArray(message.parts)) {
+          for (const part of message.parts) {
+            if (part.type === 'text') {
+              messageLength += part.text.length;
+              messageText += part.text;
+            }
+          }
+        }
+      }
+      pendingSendInputRef.current = messageText.length > 0 ? messageText : null;
+
+      track('sent_message_ai', {
+        message_length: messageLength,
+      });
+
       lastReportedErrorRef.current = null;
-      setRecoveryFailed(false);
       setShowLoadErrorBanner(false);
+      setShowReconnectBanner(false);
+      setAssistantBusyMessage(null);
       incrementMessageCount();
       setInput('');
       return sendMessage(message, options);
     },
-    [defaultMessage, incrementMessageCount, navigate, sendMessage],
+    [
+      defaultMessage,
+      incrementMessageCount,
+      navigate,
+      sendMessage,
+      track,
+      setAssistantBusyMessage,
+    ],
   );
 
-  // Auto-send when navigated with a defaultMessage query param
   const autoSentRef = useRef(false);
+  const autoSendTimeoutIdRef = useRef<number | null>(null);
+  const handleSendMessageRef = useRef(handleSendMessage);
+
   useEffect(() => {
-    if (defaultMessage && !autoSentRef.current && status === 'ready') {
+    handleSendMessageRef.current = handleSendMessage;
+  }, [handleSendMessage]);
+
+  useEffect(() => {
+    if (defaultMessage == null || defaultMessage.length === 0) return;
+    if (status !== 'ready') return;
+    if (autoSentRef.current) return;
+    if (autoSendTimeoutIdRef.current != null) return;
+
+    autoSendTimeoutIdRef.current = window.setTimeout(() => {
+      autoSendTimeoutIdRef.current = null;
+
+      if (autoSentRef.current) return;
+
+      const currentMessages = messagesRef.current;
+      if (hasUserMessages(currentMessages)) return;
+
       autoSentRef.current = true;
-      handleSendMessage({ text: defaultMessage, files: [] });
-    }
-  }, [defaultMessage, status]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    if (sessionStartTime != null) return;
-
-    const timeoutId = setTimeout(() => {
-      setSessionStartTime(Date.now());
+      void handleSendMessageRef.current({ text: defaultMessage, files: [] });
     }, 0);
 
     return () => {
-      clearTimeout(timeoutId);
+      if (autoSendTimeoutIdRef.current == null) return;
+      window.clearTimeout(autoSendTimeoutIdRef.current);
+      autoSendTimeoutIdRef.current = null;
     };
+  }, [defaultMessage, status]);
+
+  useEffect(() => {
+    if (sessionStartTime != null) return;
+    setSessionStartTime(Date.now());
   }, [sessionStartTime, setSessionStartTime]);
 
   return {
     messages,
     setMessages,
-    effectiveStatus,
+    status,
     showLoadErrorBanner,
+    showReconnectBanner,
+    assistantBusyMessage,
+    onReconnect: handleReconnect,
     input,
     setInput,
     attachments,
     setAttachments,
     sendMessage: handleSendMessage,
+    hasMoreOlder,
+    isLoadingOlder,
+    onLoadOlder,
   };
 }
 
@@ -496,27 +832,45 @@ interface ChatViewProps {
   chatId: string;
   messages: UseChatHelpers<UIMessage>['messages'];
   setMessages: UseChatHelpers<UIMessage>['setMessages'];
-  effectiveStatus: UseChatHelpers<UIMessage>['status'];
+  status: UseChatHelpers<UIMessage>['status'];
   showLoadErrorBanner: boolean;
+  showReconnectBanner: boolean;
+  assistantBusyMessage: string | null;
+  onReconnect: () => void;
   input: string;
   setInput: Dispatch<SetStateAction<string>>;
   attachments: Array<FileUIPart>;
   setAttachments: Dispatch<SetStateAction<Array<FileUIPart>>>;
   sendMessage: UseChatHelpers<UIMessage>['sendMessage'];
+  hasMoreOlder: boolean;
+  isLoadingOlder: boolean;
+  onLoadOlder: () => void | Promise<void>;
 }
 
 function ChatView({
   chatId,
   messages,
   setMessages,
-  effectiveStatus,
+  status,
   showLoadErrorBanner,
+  showReconnectBanner,
+  assistantBusyMessage,
+  onReconnect,
   input,
   setInput,
   attachments,
   setAttachments,
   sendMessage,
+  hasMoreOlder,
+  isLoadingOlder,
+  onLoadOlder,
 }: ChatViewProps) {
+  const showErrorUi =
+    status === 'error' ||
+    showLoadErrorBanner ||
+    showReconnectBanner ||
+    assistantBusyMessage != null;
+
   return (
     <div className="mx-auto flex size-full min-w-0 max-w-3xl flex-1 flex-col">
       <div
@@ -529,7 +883,10 @@ function ChatView({
           chatId={chatId}
           messages={messages}
           setMessages={setMessages}
-          status={effectiveStatus}
+          status={status}
+          hasMoreOlder={hasMoreOlder}
+          isLoadingOlder={isLoadingOlder}
+          onLoadOlder={onLoadOlder}
         />
 
         {messages.length === 0 && (
@@ -537,9 +894,9 @@ function ChatView({
             <Greeting />
             <div className="flex w-full">
               <SuggestedActions
-                onSendSuggestion={(text) =>
-                  sendMessage({ text, files: [] }, undefined)
-                }
+                onSendSuggestion={(text) => {
+                  void sendMessage({ text, files: [] }, undefined);
+                }}
               />
             </div>
           </div>
@@ -547,11 +904,34 @@ function ChatView({
       </div>
 
       <div className="sticky bottom-0 shrink-0">
-        {effectiveStatus === 'error' && showLoadErrorBanner && (
+        {showErrorUi && showReconnectBanner && (
+          <div className="mx-auto mb-3 w-full max-w-3xl px-1">
+            <Alert variant="destructive">
+              <AlertTitle>Connection lost</AlertTitle>
+              <AlertDescription className="flex items-center justify-between gap-3">
+                <span>Reconnect to continue the last response.</span>
+                <Button type="button" variant="outline" onClick={onReconnect}>
+                  Reconnect
+                </Button>
+              </AlertDescription>
+            </Alert>
+          </div>
+        )}
+
+        {showErrorUi && showLoadErrorBanner && (
           <div className="mx-auto mb-3 w-full max-w-3xl px-1">
             <Alert variant="destructive">
               <AlertTitle>Concierge is experiencing high demand</AlertTitle>
               <AlertDescription>{conciergeLoadErrorMessage}</AlertDescription>
+            </Alert>
+          </div>
+        )}
+
+        {showErrorUi && assistantBusyMessage != null && (
+          <div className="mx-auto mb-3 w-full max-w-3xl px-1">
+            <Alert variant="destructive">
+              <AlertTitle>One moment</AlertTitle>
+              <AlertDescription>{assistantBusyMessage}</AlertDescription>
             </Alert>
           </div>
         )}
@@ -561,7 +941,7 @@ function ChatView({
             input={input}
             setInput={setInput}
             sendMessage={sendMessage}
-            status={effectiveStatus}
+            status={status}
             attachments={attachments}
             setAttachments={setAttachments}
             disableFileUpload

@@ -1,22 +1,30 @@
 import { UseChatHelpers } from '@ai-sdk/react';
-import { useNavigate, useParams } from '@tanstack/react-router';
 import { UIMessage } from 'ai';
 import { ArrowDown } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 
-import { useHistory } from '../../api/get-history';
-
 import { PreviewMessage, ThinkingMessage } from './message';
+
+const BOTTOM_AUTO_SCROLL_THRESHOLD_PX = 24;
 
 interface MessagesProps {
   chatId: string;
   status: UseChatHelpers<UIMessage>['status'];
   messages: UseChatHelpers<UIMessage>['messages'];
   setMessages: UseChatHelpers<UIMessage>['setMessages'];
-  disableAutoNavigate?: boolean;
+  hasMoreOlder?: boolean;
+  isLoadingOlder?: boolean;
+  onLoadOlder?: () => void | Promise<void>;
 }
 
 function PureMessages({
@@ -24,32 +32,47 @@ function PureMessages({
   status,
   messages,
   setMessages,
-  disableAutoNavigate = false,
+  hasMoreOlder = false,
+  isLoadingOlder = false,
+  onLoadOlder,
 }: MessagesProps) {
-  const { data: history } = useHistory();
-  const navigate = useNavigate();
-  const params = useParams({ strict: false });
-  const id = params.id;
-
   // Smart scroll state
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const autoScrollEnabledRef = useRef(true);
   const lastTouchYRef = useRef<number | null>(null);
+  const prependAnchorRef = useRef<{
+    scrollHeight: number;
+    scrollTop: number;
+  } | null>(null);
+  const loadOlderInFlightRef = useRef(false);
 
-  // If the chat is ready and there are messages, navigate to the chat
-  useEffect(() => {
-    if (disableAutoNavigate) return;
-    if (status === 'ready' && messages.length > 0 && id == null) {
-      const recentChat = history?.find((h) => h.id === chatId);
-      if (recentChat) {
-        void navigate({
-          to: '/concierge/$id',
-          params: { id: recentChat.id },
-          replace: true,
-        });
+  const requestOlderMessages = useCallback(
+    (options?: { disableAutoScroll?: boolean }) => {
+      const container = scrollContainerRef.current;
+      if (!container) return;
+      if (!hasMoreOlder || isLoadingOlder) return;
+      if (loadOlderInFlightRef.current) return;
+      if (!onLoadOlder) return;
+
+      loadOlderInFlightRef.current = true;
+      if (options?.disableAutoScroll === true) {
+        autoScrollEnabledRef.current = false;
       }
-    }
-  }, [status, messages, history, chatId, navigate, id, disableAutoNavigate]);
+      prependAnchorRef.current = {
+        scrollHeight: container.scrollHeight,
+        scrollTop: container.scrollTop,
+      };
+
+      void Promise.resolve(onLoadOlder())
+        .catch((err) => {
+          console.warn('Failed to load older messages', err);
+        })
+        .finally(() => {
+          loadOlderInFlightRef.current = false;
+        });
+    },
+    [hasMoreOlder, isLoadingOlder, onLoadOlder],
+  );
 
   // Wheel event: detect desktop scroll-up gesture
   const handleWheel = useCallback((e: React.WheelEvent) => {
@@ -84,18 +107,56 @@ function PureMessages({
     const container = scrollContainerRef.current;
     if (!container) return;
 
-    const isAtBottom =
-      container.scrollHeight - container.scrollTop - container.clientHeight <=
-      24;
-    if (isAtBottom) {
-      autoScrollEnabledRef.current = true;
-    }
-  }, []);
+    const distanceFromBottom =
+      container.scrollHeight - container.scrollTop - container.clientHeight;
+    const isAtBottom = distanceFromBottom <= BOTTOM_AUTO_SCROLL_THRESHOLD_PX;
+    autoScrollEnabledRef.current = isAtBottom;
 
-  // Auto-scroll when content changes
+    const isNearTop = container.scrollTop <= 32;
+    if (
+      isNearTop &&
+      hasMoreOlder &&
+      !isLoadingOlder &&
+      !loadOlderInFlightRef.current &&
+      onLoadOlder
+    ) {
+      requestOlderMessages({ disableAutoScroll: true });
+    }
+  }, [hasMoreOlder, isLoadingOlder, onLoadOlder, requestOlderMessages]);
+
   useEffect(() => {
     const container = scrollContainerRef.current;
+    if (!container) return;
+    if (messages.length === 0) return;
+    if (!hasMoreOlder || isLoadingOlder) return;
+
+    const maxScrollTop = container.scrollHeight - container.clientHeight;
+    if (maxScrollTop > 32) return;
+
+    requestOlderMessages();
+  }, [hasMoreOlder, isLoadingOlder, messages.length, requestOlderMessages]);
+
+  useLayoutEffect(() => {
+    const anchor = prependAnchorRef.current;
+    const container = scrollContainerRef.current;
+    if (!anchor || !container) return;
+
+    const delta = container.scrollHeight - anchor.scrollHeight;
+    container.scrollTop = anchor.scrollTop + delta;
+    prependAnchorRef.current = null;
+  }, [messages.length]);
+
+  useEffect(() => {
+    if (!isLoadingOlder && prependAnchorRef.current) {
+      prependAnchorRef.current = null;
+    }
+  }, [isLoadingOlder]);
+
+  // Auto-scroll when content changes
+  useLayoutEffect(() => {
+    const container = scrollContainerRef.current;
     if (!container || !autoScrollEnabledRef.current) return;
+
     container.scrollTop = container.scrollHeight;
   }, [messages, status]);
 
@@ -125,6 +186,47 @@ function PureMessages({
         onTouchMove={handleTouchMove}
         onScroll={handleScroll}
       >
+        {isLoadingOlder && (
+          <>
+            <div className="mx-auto w-full max-w-3xl px-0.5">
+              <div className="ml-auto max-w-2xl">
+                <Skeleton variant="shimmer" className="ml-auto h-8 w-48" />
+              </div>
+            </div>
+            <div className="mx-auto w-full max-w-3xl px-0.5">
+              <div className="flex w-full gap-2">
+                <Skeleton
+                  variant="shimmer"
+                  className="mt-1 size-6 shrink-0 rounded-full"
+                />
+                <div className="flex flex-col gap-1.5">
+                  <Skeleton variant="shimmer" className="h-6 w-64" />
+                  <Skeleton variant="shimmer" className="h-6 w-80" />
+                  <Skeleton variant="shimmer" className="h-6 w-52" />
+                </div>
+              </div>
+            </div>
+            <div className="mx-auto w-full max-w-3xl px-0.5">
+              <div className="ml-auto max-w-2xl">
+                <Skeleton variant="shimmer" className="ml-auto h-8 w-48" />
+              </div>
+            </div>
+            <div className="mx-auto w-full max-w-3xl px-0.5">
+              <div className="flex w-full gap-2">
+                <Skeleton
+                  variant="shimmer"
+                  className="mt-1 size-6 shrink-0 rounded-full"
+                />
+                <div className="flex flex-col gap-1.5">
+                  <Skeleton variant="shimmer" className="h-6 w-64" />
+                  <Skeleton variant="shimmer" className="h-6 w-80" />
+                  <Skeleton variant="shimmer" className="h-6 w-52" />
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
         {messages.map((message, index) => (
           <div key={message.id}>
             <PreviewMessage
@@ -178,10 +280,10 @@ function ScrollDownButton({
     const el = scrollContainerRef.current;
     if (!el) return;
 
-    const threshold = 24; // px tolerance from bottom
     const update = () => {
       const atBottom =
-        el.scrollHeight - el.scrollTop - el.clientHeight <= threshold;
+        el.scrollHeight - el.scrollTop - el.clientHeight <=
+        BOTTOM_AUTO_SCROLL_THRESHOLD_PX;
       setShow(!atBottom);
     };
 

@@ -32,7 +32,7 @@ import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 import { cn } from '@/lib/utils';
 import { Visibility } from '@/types/api';
 
-import { useHistory } from '../api/get-history';
+import { useChat } from '../api/get-chat';
 import { useMessages } from '../api/get-messages';
 import { useUpdateChat } from '../api/update-chat';
 
@@ -122,17 +122,15 @@ export function ChatShareDialog({
       staleTime: 0,
     },
   });
-  const historyQuery = useHistory({
+  const chatQuery = useChat({
+    chatId,
     queryConfig: {
       enabled,
       staleTime: 0,
     },
   });
 
-  const selectedChat = useMemo(
-    () => historyQuery.data?.find((c) => c.id === chatId),
-    [historyQuery.data, chatId],
-  );
+  const selectedChat = chatQuery.data;
 
   const lastUserMessage = getLastUserMessage(messagesQuery.data);
   const lastAiMessage = getLastAiMessage(messagesQuery.data);

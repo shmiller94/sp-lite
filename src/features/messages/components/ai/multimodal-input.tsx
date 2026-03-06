@@ -24,7 +24,6 @@ import {
 } from '@/const';
 import { useUploadFiles } from '@/features/files/api';
 import { AttachmentsButton } from '@/features/messages/components/ai/attachements-button';
-import { useAnalytics } from '@/hooks/use-analytics';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 import { cn } from '@/lib/utils';
 
@@ -58,7 +57,6 @@ function PureMultimodalInput({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const inputWrapperRef = useRef<HTMLDivElement>(null);
   const { width } = useWindowDimensions();
-  const { track } = useAnalytics();
   const { mutateAsync: uploadFilesAsync } = useUploadFiles({
     context: 'ai-chat',
   });
@@ -119,12 +117,7 @@ function PureMultimodalInput({
   };
 
   const submitForm = useCallback(() => {
-    // Track the AI message event
-    track('sent_message_ai', {
-      message_length: input.length,
-    });
-
-    sendMessage({
+    void sendMessage({
       text: input,
       files: attachments,
     });
@@ -137,15 +130,7 @@ function PureMultimodalInput({
     if (width && width > 768) {
       textareaRef.current?.focus();
     }
-  }, [
-    sendMessage,
-    input,
-    attachments,
-    setAttachments,
-    resetHeight,
-    width,
-    track,
-  ]);
+  }, [sendMessage, input, attachments, setAttachments, resetHeight, width]);
 
   const uploadFiles = useCallback(
     async (files: File[]) => {
