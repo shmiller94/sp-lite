@@ -459,6 +459,7 @@ export type PhlebotomyLocation = {
   slots: Slot[];
   lat?: number;
   lng?: number;
+  timezone?: string;
 };
 
 export type LabCapability = 'APPOINTMENT_SCHEDULING' | 'WALK_IN';
