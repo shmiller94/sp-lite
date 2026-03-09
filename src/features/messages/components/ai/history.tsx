@@ -341,17 +341,17 @@ function ChatHistoryCollapsedBar({
 }) {
   return (
     <div className="absolute left-0 top-0 hidden w-10 flex-col items-center gap-3 pt-1 lg:flex">
-      <AnimatePresence>
-        {!isOpen && (
-          <>
-            <m.div
-              key="sidebar-toggle"
-              initial={{ opacity: 0, filter: 'blur(2px)' }}
-              animate={{ opacity: 1, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, transition: { duration: 0 } }}
-              transition={{ duration: 0.25, delay: 0.15 }}
-            >
-              <TooltipProvider delayDuration={0}>
+      <TooltipProvider delayDuration={300}>
+        <AnimatePresence>
+          {!isOpen && (
+            <>
+              <m.div
+                key="sidebar-toggle"
+                initial={{ opacity: 0, filter: 'blur(2px)' }}
+                animate={{ opacity: 1, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, transition: { duration: 0 } }}
+                transition={{ duration: 0.25, delay: 0.15 }}
+              >
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
@@ -368,16 +368,14 @@ function ChatHistoryCollapsedBar({
                   </TooltipTrigger>
                   <TooltipContent side="right">Show Sidebar</TooltipContent>
                 </Tooltip>
-              </TooltipProvider>
-            </m.div>
-            <m.div
-              key="new-chat"
-              initial={{ opacity: 0, filter: 'blur(2px)' }}
-              animate={{ opacity: 1, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, transition: { duration: 0 } }}
-              transition={{ duration: 0.25, delay: 0.2 }}
-            >
-              <TooltipProvider delayDuration={0}>
+              </m.div>
+              <m.div
+                key="new-chat"
+                initial={{ opacity: 0, filter: 'blur(2px)' }}
+                animate={{ opacity: 1, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, transition: { duration: 0 } }}
+                transition={{ duration: 0.25, delay: 0.2 }}
+              >
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
@@ -392,16 +390,14 @@ function ChatHistoryCollapsedBar({
                   </TooltipTrigger>
                   <TooltipContent side="right">New Chat</TooltipContent>
                 </Tooltip>
-              </TooltipProvider>
-            </m.div>
-            <m.div
-              key="care-team"
-              initial={{ opacity: 0, filter: 'blur(2px)' }}
-              animate={{ opacity: 1, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, transition: { duration: 0 } }}
-              transition={{ duration: 0.25, delay: 0.25 }}
-            >
-              <TooltipProvider delayDuration={0}>
+              </m.div>
+              <m.div
+                key="care-team"
+                initial={{ opacity: 0, filter: 'blur(2px)' }}
+                animate={{ opacity: 1, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, transition: { duration: 0 } }}
+                transition={{ duration: 0.25, delay: 0.25 }}
+              >
                 <Tooltip>
                   <CareTeamDialog
                     trigger={
@@ -418,16 +414,14 @@ function ChatHistoryCollapsedBar({
                   />
                   <TooltipContent side="right">Text Care Team</TooltipContent>
                 </Tooltip>
-              </TooltipProvider>
-            </m.div>
-            <m.div
-              key="search"
-              initial={{ opacity: 0, filter: 'blur(2px)' }}
-              animate={{ opacity: 1, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, transition: { duration: 0 } }}
-              transition={{ duration: 0.25, delay: 0.3 }}
-            >
-              <TooltipProvider delayDuration={0}>
+              </m.div>
+              <m.div
+                key="search"
+                initial={{ opacity: 0, filter: 'blur(2px)' }}
+                animate={{ opacity: 1, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, transition: { duration: 0 } }}
+                transition={{ duration: 0.25, delay: 0.3 }}
+              >
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
@@ -444,11 +438,11 @@ function ChatHistoryCollapsedBar({
                   </TooltipTrigger>
                   <TooltipContent side="right">Search (⌘K)</TooltipContent>
                 </Tooltip>
-              </TooltipProvider>
-            </m.div>
-          </>
-        )}
-      </AnimatePresence>
+              </m.div>
+            </>
+          )}
+        </AnimatePresence>
+      </TooltipProvider>
     </div>
   );
 }
