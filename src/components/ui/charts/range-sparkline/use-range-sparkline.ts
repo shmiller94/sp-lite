@@ -266,6 +266,7 @@ export const useRangeSparkline = ({
   }, [
     sortedValues,
     pointPositions,
+    CIRCLE_RADIUS,
     PADDING,
     PILL_WIDTH,
     STROKE_WIDTH,
