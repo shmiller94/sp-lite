@@ -1,5 +1,5 @@
 import { m } from 'framer-motion';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import NumberFlow from '@/components/shared/number-flow';
 import { Badge } from '@/components/ui/badge';
@@ -232,8 +232,13 @@ export const SupplementsStep = () => {
   }, [catalog]);
 
   // Match protocol supplements → cheapest marketplace variant → Amazon pricing
-  const supplements: SupplementDisplayItem[] = useMemo(() => {
+  const { supplements, outOfStockSupplements } = useMemo(() => {
     const items: SupplementDisplayItem[] = [];
+    const outOfStock: {
+      actionId: string;
+      productId: string;
+      productName: string;
+    }[] = [];
 
     for (const { action, productId } of protocolSupplements) {
       const product = getSupplementProduct(productId);
@@ -244,6 +249,11 @@ export const SupplementsStep = () => {
         product.inventoryQuantity !== undefined &&
         product.inventoryQuantity <= 0
       ) {
+        outOfStock.push({
+          actionId: action.id,
+          productId: product.id,
+          productName: product.name,
+        });
         continue;
       }
 
@@ -257,8 +267,22 @@ export const SupplementsStep = () => {
       });
     }
 
-    return items;
+    return { supplements: items, outOfStockSupplements: outOfStock };
   }, [protocolSupplements, getSupplementProduct, amazonLookup]);
+
+  const hasTrackedOutOfStock = useRef(false);
+  useEffect(() => {
+    if (outOfStockSupplements.length === 0 || hasTrackedOutOfStock.current)
+      return;
+    hasTrackedOutOfStock.current = true;
+    for (const item of outOfStockSupplements) {
+      track('protocol_reveal_supplement_out_of_stock', {
+        action_id: item.actionId,
+        product_id: item.productId,
+        product_name: item.productName,
+      });
+    }
+  }, [outOfStockSupplements, track]);
 
   const allIds = useMemo(
     () => new Set(supplements.map((s) => s.actionId)),

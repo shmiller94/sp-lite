@@ -19,6 +19,7 @@ import { Route as CheckEmailRouteImport } from './routes/check-email'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app.index'
 import { Route as AppVaultRouteImport } from './routes/_app.vault'
+import { Route as AppShopifyRedirectRouteImport } from './routes/_app.shopify-redirect'
 import { Route as AppServicesRouteImport } from './routes/_app.services'
 import { Route as AppRxSubscriptionsRouteImport } from './routes/_app.rx-subscriptions'
 import { Route as AppProtocolRouteImport } from './routes/_app.protocol'
@@ -107,6 +108,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
 const AppVaultRoute = AppVaultRouteImport.update({
   id: '/vault',
   path: '/vault',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppShopifyRedirectRoute = AppShopifyRedirectRouteImport.update({
+  id: '/shopify-redirect',
+  path: '/shopify-redirect',
   getParentRoute: () => AppRoute,
 } as any)
 const AppServicesRoute = AppServicesRouteImport.update({
@@ -330,6 +336,7 @@ export interface FileRoutesByFullPath {
   '/protocol': typeof AppProtocolRouteWithChildren
   '/rx-subscriptions': typeof AppRxSubscriptionsRouteWithChildren
   '/services': typeof AppServicesRouteWithChildren
+  '/shopify-redirect': typeof AppShopifyRedirectRoute
   '/vault': typeof AppVaultRoute
   '/onboarding': typeof AppMapsOnboardingRoute
   '/schedule': typeof AppMapsScheduleRoute
@@ -374,6 +381,7 @@ export interface FileRoutesByTo {
   '/intake': typeof AppIntakeRoute
   '/invite': typeof AppInviteRoute
   '/marketplace': typeof AppMarketplaceRoute
+  '/shopify-redirect': typeof AppShopifyRedirectRoute
   '/vault': typeof AppVaultRoute
   '/onboarding': typeof AppMapsOnboardingRoute
   '/schedule': typeof AppMapsScheduleRoute
@@ -425,6 +433,7 @@ export interface FileRoutesById {
   '/_app/protocol': typeof AppProtocolRouteWithChildren
   '/_app/rx-subscriptions': typeof AppRxSubscriptionsRouteWithChildren
   '/_app/services': typeof AppServicesRouteWithChildren
+  '/_app/shopify-redirect': typeof AppShopifyRedirectRoute
   '/_app/vault': typeof AppVaultRoute
   '/_app/': typeof AppIndexRoute
   '/_app/_maps/onboarding': typeof AppMapsOnboardingRoute
@@ -478,6 +487,7 @@ export interface FileRouteTypes {
     | '/protocol'
     | '/rx-subscriptions'
     | '/services'
+    | '/shopify-redirect'
     | '/vault'
     | '/onboarding'
     | '/schedule'
@@ -522,6 +532,7 @@ export interface FileRouteTypes {
     | '/intake'
     | '/invite'
     | '/marketplace'
+    | '/shopify-redirect'
     | '/vault'
     | '/onboarding'
     | '/schedule'
@@ -572,6 +583,7 @@ export interface FileRouteTypes {
     | '/_app/protocol'
     | '/_app/rx-subscriptions'
     | '/_app/services'
+    | '/_app/shopify-redirect'
     | '/_app/vault'
     | '/_app/'
     | '/_app/_maps/onboarding'
@@ -687,6 +699,13 @@ declare module '@tanstack/react-router' {
       path: '/vault'
       fullPath: '/vault'
       preLoaderRoute: typeof AppVaultRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/shopify-redirect': {
+      id: '/_app/shopify-redirect'
+      path: '/shopify-redirect'
+      fullPath: '/shopify-redirect'
+      preLoaderRoute: typeof AppShopifyRedirectRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/services': {
@@ -1140,6 +1159,7 @@ interface AppRouteChildren {
   AppProtocolRoute: typeof AppProtocolRouteWithChildren
   AppRxSubscriptionsRoute: typeof AppRxSubscriptionsRouteWithChildren
   AppServicesRoute: typeof AppServicesRouteWithChildren
+  AppShopifyRedirectRoute: typeof AppShopifyRedirectRoute
   AppVaultRoute: typeof AppVaultRoute
   AppIndexRoute: typeof AppIndexRoute
   AppPlansIdRoute: typeof AppPlansIdRoute
@@ -1159,6 +1179,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppProtocolRoute: AppProtocolRouteWithChildren,
   AppRxSubscriptionsRoute: AppRxSubscriptionsRouteWithChildren,
   AppServicesRoute: AppServicesRouteWithChildren,
+  AppShopifyRedirectRoute: AppShopifyRedirectRoute,
   AppVaultRoute: AppVaultRoute,
   AppIndexRoute: AppIndexRoute,
   AppPlansIdRoute: AppPlansIdRoute,
