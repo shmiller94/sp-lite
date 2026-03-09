@@ -18,6 +18,8 @@ interface AppEnv {
   POSTHOG_DEBUG?: string;
   MARKETING_SITE_URL: string;
   DEV_TOOLS_ENABLED?: boolean;
+  SENTRY_DSN?: string;
+  APP_ENV: string;
 }
 
 const raw = import.meta.env;
@@ -222,6 +224,22 @@ if (devToolsEnabledRaw === undefined) {
   DEV_TOOLS_ENABLED = import.meta.env.DEV;
 }
 
+const APP_ENV: string =
+  typeof raw.VITE_APP_ENV === 'string'
+    ? raw.VITE_APP_ENV
+    : import.meta.env.MODE;
+
+let SENTRY_DSN: string | undefined;
+const sentryDsnRaw = raw.VITE_APP_SENTRY_DSN;
+if (sentryDsnRaw === undefined) {
+  SENTRY_DSN = undefined;
+} else if (typeof sentryDsnRaw === 'string') {
+  SENTRY_DSN = sentryDsnRaw;
+} else {
+  issues.push('SENTRY_DSN');
+  SENTRY_DSN = undefined;
+}
+
 if (issues.length > 0) {
   let lines = '';
   for (const issue of issues) {
@@ -252,4 +270,6 @@ export const env: AppEnv = {
   POSTHOG_DEBUG,
   MARKETING_SITE_URL,
   DEV_TOOLS_ENABLED,
+  SENTRY_DSN,
+  APP_ENV,
 };
