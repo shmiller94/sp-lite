@@ -7,6 +7,7 @@ import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Body1, Body2, H2, H4 } from '@/components/ui/typography';
 import { useBiomarkers } from '@/features/data/api';
 import { AiSuggestions } from '@/features/messages/components/ai-suggestions';
+import { extractObservationId } from '@/features/messages/utils/parse-fhir-citation';
 import { useSupplementProductLookup } from '@/features/protocol/hooks/use-supplement-product-lookup';
 import { useGender } from '@/hooks/use-gender';
 import { Biomarker } from '@/types/api';
@@ -66,9 +67,9 @@ export const GoalDetailPage = ({
     const seenBiomarkerIds = new Set<string>();
 
     for (const reference of goal.biomarkers) {
-      // Extract observation ID from FHIR reference (e.g., "Observation/uuid" -> "uuid")
-      const observationId = reference.replace(/^Observation\//, '');
-      const biomarker = observationBiomarkerIndex.get(observationId);
+      const biomarker = observationBiomarkerIndex.get(
+        extractObservationId(reference),
+      );
 
       // Deduplicate - multiple observations may belong to the same biomarker
       if (biomarker && !seenBiomarkerIds.has(biomarker.id)) {
