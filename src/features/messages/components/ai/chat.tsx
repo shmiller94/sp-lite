@@ -27,10 +27,16 @@ import { extractTiming } from '@/features/messages/utils/extract-timing';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { cn } from '@/lib/utils';
 
+import {
+  useMessageQueue,
+  type QueuedMessage,
+} from '../../hooks/use-message-queue';
+
 import { classifyChatError } from './chat-error-utils';
 import { Greeting } from './greeting';
 import { Messages } from './messages';
 import { MultimodalInput } from './multimodal-input';
+import { QueuedMessages } from './queued-messages';
 import { SuggestedActions } from './suggested-actions';
 
 const publicErrors = [
@@ -222,6 +228,8 @@ export function Chat({
       hasMoreOlder={controller.hasMoreOlder}
       isLoadingOlder={controller.isLoadingOlder}
       onLoadOlder={controller.onLoadOlder}
+      queue={controller.queue}
+      removeFromQueue={controller.removeFromQueue}
     />
   );
 }
@@ -722,6 +730,32 @@ function useConciergeChatController({
     }
   }, [hasMoreOlder, id, isLoadingOlder, setMessages]);
 
+  const onQueueSend = useCallback(
+    (msg: { text: string; files: FileUIPart[] }) => {
+      pendingSendSnapshotRef.current = messagesRef.current;
+      pendingSendInputRef.current = msg.text.length > 0 ? msg.text : null;
+
+      track('sent_message_ai', { message_length: msg.text.length });
+      lastReportedErrorRef.current = null;
+      setShowLoadErrorBanner(false);
+      setShowReconnectBanner(false);
+      setAssistantBusyMessage(null);
+      incrementMessageCount();
+
+      sendMessage({ text: msg.text, files: msg.files });
+    },
+    [sendMessage, track, incrementMessageCount, setAssistantBusyMessage],
+  );
+
+  const {
+    queue,
+    enqueue,
+    remove: removeFromQueue,
+  } = useMessageQueue({
+    status,
+    onSend: onQueueSend,
+  });
+
   const handleSendMessage: typeof sendMessage = useCallback(
     (message, options) => {
       if (defaultMessage != null && defaultMessage.length > 0) {
@@ -749,23 +783,31 @@ function useConciergeChatController({
       }
       pendingSendInputRef.current = messageText.length > 0 ? messageText : null;
 
-      track('sent_message_ai', {
-        message_length: messageLength,
-      });
-
       lastReportedErrorRef.current = null;
       setShowLoadErrorBanner(false);
       setShowReconnectBanner(false);
       setAssistantBusyMessage(null);
-      incrementMessageCount();
       setInput('');
-      return sendMessage(message, options);
+
+      if (status === 'ready' || status === 'error') {
+        track('sent_message_ai', {
+          message_length: messageLength,
+        });
+        incrementMessageCount();
+        return sendMessage(message, options);
+      }
+
+      const msg = message as { text?: string; files?: FileUIPart[] };
+      enqueue({ text: msg.text ?? '', files: msg.files ?? [] });
+      return Promise.resolve();
     },
     [
       defaultMessage,
+      enqueue,
       incrementMessageCount,
       navigate,
       sendMessage,
+      status,
       track,
       setAssistantBusyMessage,
     ],
@@ -825,6 +867,8 @@ function useConciergeChatController({
     hasMoreOlder,
     isLoadingOlder,
     onLoadOlder,
+    queue,
+    removeFromQueue,
   };
 }
 
@@ -845,6 +889,8 @@ interface ChatViewProps {
   hasMoreOlder: boolean;
   isLoadingOlder: boolean;
   onLoadOlder: () => void | Promise<void>;
+  queue: QueuedMessage[];
+  removeFromQueue: (id: string) => void;
 }
 
 function ChatView({
@@ -864,6 +910,8 @@ function ChatView({
   hasMoreOlder,
   isLoadingOlder,
   onLoadOlder,
+  queue,
+  removeFromQueue,
 }: ChatViewProps) {
   const showErrorUi =
     status === 'error' ||
@@ -935,6 +983,8 @@ function ChatView({
             </Alert>
           </div>
         )}
+
+        <QueuedMessages queue={queue} onRemove={removeFromQueue} />
 
         <form className="mx-auto w-full pb-2">
           <MultimodalInput

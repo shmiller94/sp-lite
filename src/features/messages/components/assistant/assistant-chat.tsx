@@ -7,7 +7,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useCreateFollowups } from '@/features/messages/api/create-followups';
 import { getHistoryQueryOptions } from '@/features/messages/api/get-history';
 import { MultimodalInput } from '@/features/messages/components/ai/multimodal-input';
+import { QueuedMessages } from '@/features/messages/components/ai/queued-messages';
 import { AssistantMessages } from '@/features/messages/components/assistant/assistant-messages';
+import { useMessageQueue } from '@/features/messages/hooks/use-message-queue';
 import { useAssistantStore } from '@/features/messages/stores/assistant-store';
 import { createChatV2Transport } from '@/features/messages/utils/chatv2-transport';
 import { extractTiming } from '@/features/messages/utils/extract-timing';
@@ -154,7 +156,26 @@ export function AssistantChat({
   const shouldShowSuggestions =
     showInitialSuggestions || showAssistantSuggestions;
 
-  const visibleSuggestions = shouldShowSuggestions ? followupsData : [];
+  const onQueueSend = useCallback(
+    (msg: { text: string; files: FileUIPart[] }) => {
+      track('sent_message_ai', { message_length: msg.text.length });
+      setShouldGenerateFollowups(false);
+      sendMessage({ text: msg.text, files: msg.files });
+    },
+    [sendMessage, track],
+  );
+
+  const {
+    queue,
+    enqueue,
+    remove: removeFromQueue,
+  } = useMessageQueue({
+    status,
+    onSend: onQueueSend,
+  });
+
+  const visibleSuggestions =
+    shouldShowSuggestions && queue.length === 0 ? followupsData : [];
 
   const handleSendMessage = useCallback(
     (
@@ -163,20 +184,20 @@ export function AssistantChat({
     ) => {
       setInput('');
       let messageLength = 0;
+      let messageText = '';
       if (message !== undefined) {
         if ('text' in message && typeof message.text === 'string') {
           messageLength = message.text.length;
+          messageText = message.text;
         } else if ('parts' in message && Array.isArray(message.parts)) {
           for (const part of message.parts) {
             if (part.type === 'text') {
               messageLength += part.text.length;
+              messageText += part.text;
             }
           }
         }
       }
-      track('sent_message_ai', {
-        message_length: messageLength,
-      });
       if (hasSetInitialMessages) {
         clearInitialMessages();
         setHasSetInitialMessages(false);
@@ -192,7 +213,17 @@ export function AssistantChat({
         });
       }
       setShouldGenerateFollowups(false);
-      return sendMessage(message, options);
+
+      if (status === 'ready' || status === 'error') {
+        track('sent_message_ai', {
+          message_length: messageLength,
+        });
+        return sendMessage(message, options);
+      }
+
+      const msg = message as { text?: string; files?: FileUIPart[] };
+      enqueue({ text: msg.text ?? messageText, files: msg.files ?? [] });
+      return Promise.resolve();
     },
     [
       setInput,
@@ -204,6 +235,8 @@ export function AssistantChat({
       messages.length,
       followupsContext,
       sendMessage,
+      enqueue,
+      status,
       track,
     ],
   );
@@ -240,6 +273,7 @@ export function AssistantChat({
         </div>
       )}
       <div className="pt-2">
+        <QueuedMessages queue={queue} onRemove={removeFromQueue} />
         <form
           className={cn(
             'mx-auto flex w-full flex-col gap-6 pb-2',

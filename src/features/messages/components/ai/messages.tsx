@@ -248,16 +248,16 @@ function PureMessages({
             </div>
           )}
 
-        <ScrollDownButton
-          messagesLength={messages.length}
-          scrollContainerRef={scrollContainerRef}
-          onScrollToBottom={() => {
-            autoScrollEnabledRef.current = true;
-          }}
-        />
-
         <div className="min-h-[24px] min-w-[24px] shrink-0" />
       </div>
+
+      <ScrollDownButton
+        messagesLength={messages.length}
+        scrollContainerRef={scrollContainerRef}
+        onScrollToBottom={() => {
+          autoScrollEnabledRef.current = true;
+        }}
+      />
     </div>
   );
 }
@@ -305,7 +305,7 @@ function ScrollDownButton({
   return (
     <div
       className={cn(
-        'sticky bottom-5 z-30 mx-auto pr-2 transition-all duration-300 ease-out',
+        'absolute inset-x-0 bottom-5 z-30 flex justify-center transition-all duration-300 ease-out',
         !show && 'bottom-0 opacity-0 blur-[1px]',
       )}
     >
@@ -314,7 +314,7 @@ function ScrollDownButton({
         variant="ghost"
         size="icon"
         className={cn(
-          'mx-auto rounded-full border bg-white p-2 text-zinc-500 shadow-sm hover:bg-zinc-50 hover:text-black active:scale-[.98]',
+          'rounded-full border bg-white p-2 text-zinc-500 shadow-sm hover:bg-zinc-50 hover:text-black active:scale-[.98]',
           show ? 'pointer-events-auto' : 'pointer-events-none',
         )}
         onClick={handleClick}

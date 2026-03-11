@@ -419,7 +419,7 @@ function MultimodalInputView({
                 paddingRight: 96,
               }}
               rows={1}
-              disabled={status !== 'ready' && status !== 'error'}
+              disabled={false}
               className="size-full min-h-0 flex-1 scroll-p-4 overflow-hidden rounded-none border-none bg-transparent p-1 outline-none transition-all scrollbar scrollbar-track-transparent scrollbar-thumb-zinc-300 hover:scrollbar-thumb-zinc-400 focus-visible:bg-transparent focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
               onKeyDown={(event) => {
                 if (
@@ -449,7 +449,6 @@ function MultimodalInputView({
               input={input}
               submitForm={submitForm}
               uploadQueue={uploadQueue}
-              status={status}
             />
           </div>
         </div>
@@ -475,15 +474,11 @@ function PureSendButton({
   submitForm,
   input,
   uploadQueue,
-  status,
 }: {
   submitForm: () => void;
   input: string;
   uploadQueue: Array<string>;
-  status: UseChatHelpers<UIMessage>['status'];
 }) {
-  const canSend = status === 'ready' || status === 'error';
-
   return (
     <Button
       className={cn(
@@ -493,7 +488,7 @@ function PureSendButton({
         event.preventDefault();
         submitForm();
       }}
-      disabled={!canSend || input.trim().length === 0 || uploadQueue.length > 0}
+      disabled={input.trim().length === 0 || uploadQueue.length > 0}
     >
       <ArrowUpIcon size={14} />
     </Button>
@@ -504,6 +499,5 @@ const SendButton = memo(PureSendButton, (prevProps, nextProps) => {
   if (prevProps.uploadQueue.length !== nextProps.uploadQueue.length)
     return false;
   if (prevProps.input !== nextProps.input) return false;
-  if (prevProps.status !== nextProps.status) return false;
   return true;
 });
