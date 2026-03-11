@@ -3,6 +3,7 @@ import {
   breadcrumbsIntegration,
   browserTracingIntegration,
   consoleLoggingIntegration,
+  thirdPartyErrorFilterIntegration,
 } from '@sentry/react';
 
 import { env } from '@/config/env';
@@ -28,6 +29,10 @@ export function initSentry() {
       browserTracingIntegration(),
       breadcrumbsIntegration(),
       consoleLoggingIntegration(),
+      thirdPartyErrorFilterIntegration({
+        filterKeys: ['superpower-react-app'],
+        behaviour: 'drop-error-if-exclusively-contains-third-party-frames',
+      }),
     ],
     beforeSendTransaction(event) {
       // Always capture error transactions

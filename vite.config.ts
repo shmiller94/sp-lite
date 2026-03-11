@@ -83,6 +83,7 @@ if (process.env.SENTRY_AUTH_TOKEN) {
       org: 'superpowerdotcom',
       project: 'react-app',
       authToken: process.env.SENTRY_AUTH_TOKEN,
+      applicationKey: 'superpower-react-app',
       release: { name: process.env.VERCEL_GIT_COMMIT_SHA },
       sourcemaps: {
         filesToDeleteAfterUpload: process.env.VERCEL
