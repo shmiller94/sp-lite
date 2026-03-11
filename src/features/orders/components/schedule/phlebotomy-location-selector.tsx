@@ -2,6 +2,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Body1, Body2 } from '@/components/ui/typography';
+import { useCredits } from '@/features/orders/api/credits';
 import { CurrentAddressEditSuggestion } from '@/features/users/components/current-address-card';
 import { cn } from '@/lib/utils';
 import { CollectionMethodType } from '@/types/api';
@@ -38,6 +39,13 @@ export const PhlebotomyLocationSelector = () => {
     useCollectionMethods({
       creditIds,
     });
+  const { data: creditsData } = useCredits();
+  const hasAdvancedPanelSelected =
+    creditsData?.credits.some(
+      (credit) =>
+        selectedCreditIds.has(credit.id) &&
+        credit.serviceId.includes('advanced-blood-panel'),
+    ) ?? false;
 
   if (isLoading) {
     return (
@@ -59,42 +67,48 @@ export const PhlebotomyLocationSelector = () => {
           <CurrentAddressEditSuggestion />
         </div>
       ) : null}
-      {options.map((option) => (
-        <div
-          key={option.value}
-          className={cn(
-            'flex flex-1 space-x-4 rounded-2xl border bg-white px-4 py-5',
-            collectionMethod === option.value
-              ? 'border-vermillion-900 shadow-lg shadow-vermillion-900/10'
-              : 'border-zinc-200 hover:bg-zinc-50',
-            option.disabled ? 'opacity-50' : null,
-          )}
-          role="presentation"
-          onClick={() =>
-            option.disabled ? undefined : handleOptionClick(option.value)
-          }
-        >
-          <RadioGroupItem
-            value={option.value}
-            checked={collectionMethod === option.value}
-            disabled={option.disabled}
-            variant="vermillion"
-          />
-          <Label htmlFor={option.value} className="w-full">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Body1>{option.name}</Body1>
-                <Body2 className="text-balance text-zinc-500 sm:text-base">
-                  {option.description}
-                </Body2>
+      {options.map((option) => {
+        const isDisabled =
+          option.disabled ||
+          (option.value === 'AT_HOME' && hasAdvancedPanelSelected);
+
+        return (
+          <div
+            key={option.value}
+            className={cn(
+              'flex flex-1 space-x-4 rounded-2xl border bg-white px-4 py-5',
+              collectionMethod === option.value
+                ? 'border-vermillion-900 shadow-lg shadow-vermillion-900/10'
+                : 'border-zinc-200 hover:bg-zinc-50',
+              isDisabled ? 'opacity-50' : null,
+            )}
+            role="presentation"
+            onClick={() =>
+              isDisabled ? undefined : handleOptionClick(option.value)
+            }
+          >
+            <RadioGroupItem
+              value={option.value}
+              checked={collectionMethod === option.value}
+              disabled={isDisabled}
+              variant="vermillion"
+            />
+            <Label htmlFor={option.value} className="w-full">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Body1>{option.name}</Body1>
+                  <Body2 className="text-balance text-zinc-500 sm:text-base">
+                    {option.description}
+                  </Body2>
+                </div>
+                {option.price ? (
+                  <Body1>+{formatMoney(option.price)}</Body1>
+                ) : null}
               </div>
-              {option.price ? (
-                <Body1>+{formatMoney(option.price)}</Body1>
-              ) : null}
-            </div>
-          </Label>
-        </div>
-      ))}
+            </Label>
+          </div>
+        );
+      })}
     </RadioGroup>
   );
 };
