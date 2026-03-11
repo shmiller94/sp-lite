@@ -17,93 +17,88 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 import { Body1, H3 } from '@/components/ui/typography';
-import { FEMALE_RECOMMENDATIONS } from '@/features/orders/const/female-recommendations';
-import { TEST_STEPS } from '@/features/orders/const/test-steps';
-import { getNextRecommendedDay } from '@/features/orders/utils/get-next-recommended-day';
+import {
+  URINE_SAMPLE_FEMALE_NOTES,
+  URINE_SAMPLE_STEPS,
+} from '@/features/orders/const/urine-sample-steps';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
 import { useUser } from '@/lib/auth';
 
-interface BloodDrawRecommendationsProps {
-  onClose?: () => void;
-}
-
-export const BloodDrawRecommendations = ({
-  onClose,
-}: BloodDrawRecommendationsProps) => {
+export const UrineSampleRecommendations = () => {
   const [open, setOpen] = useState(true);
-  const recommendedDay = getNextRecommendedDay();
-
-  const handleOpenChange = (next: boolean) => {
-    setOpen(next);
-    if (!next) {
-      onClose?.();
-    }
-  };
 
   const { width } = useWindowDimensions();
   if (width <= 1024) {
     return (
-      <Sheet open={open} onOpenChange={handleOpenChange}>
+      <Sheet
+        open={open}
+        onOpenChange={(next) => {
+          setOpen(next);
+        }}
+      >
         <SheetContent className="flex max-h-full flex-col rounded-t-[10px] p-6">
           <SheetTitle className="sr-only">
-            Recommendations for testing
+            Preparing your urine sample
           </SheetTitle>
           <SheetDescription className="sr-only">
-            Book your test on or after {recommendedDay} for the most accurate
-            results.
+            You will also provide a urine sample during the same visit.
           </SheetDescription>
-          <BloodDrawRecommendationsContent recommendedDay={recommendedDay} />
+          <UrineSampleRecommendationsContent />
         </SheetContent>
       </Sheet>
     );
   }
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        setOpen(next);
+      }}
+    >
       <DialogContent className="w-full max-w-[592px] gap-0 p-10">
         <DialogTitle className="sr-only">
-          Recommendations for testing
+          Preparing your urine sample
         </DialogTitle>
         <DialogDescription className="sr-only">
-          Book your test on or after {recommendedDay} for the most accurate
-          results.
+          You will also provide a urine sample during the same visit.
         </DialogDescription>
         <div className="fixed right-10 top-8">
           <DialogClose>
             <X className="size-6 cursor-pointer p-1" />
           </DialogClose>
         </div>
-        <BloodDrawRecommendationsContent recommendedDay={recommendedDay} />
+        <UrineSampleRecommendationsContent />
       </DialogContent>
     </Dialog>
   );
 };
 
-const BloodDrawRecommendationsContent = ({
-  recommendedDay,
-}: {
-  recommendedDay: string;
-}) => {
+const UrineSampleRecommendationsContent = () => {
   const { data: user } = useUser();
+
   return (
     <>
-      <div className="space-y-4">
-        <H3>Recommendations for testing</H3>
-        <div className="space-y-8">
+      <div className="space-y-3">
+        <H3>Preparing your urine sample</H3>
+        <div className="space-y-3">
           <Body1 className="text-secondary">
-            Book your test on or after {recommendedDay} for the most accurate
-            results.
+            You will also provide a urine sample during the same visit. Here are
+            a few additional things to keep in mind:
           </Body1>
+          <IconList
+            items={URINE_SAMPLE_STEPS}
+            className="[&>:last-child_div]:mb-0"
+          />
           {user?.gender?.toLowerCase() === 'female' && (
-            <ul className="list-outside list-disc space-y-3 pl-5 marker:text-zinc-300 md:mb-0 md:mt-4">
-              {FEMALE_RECOMMENDATIONS.map((recommendation) => (
-                <li key={recommendation}>
-                  <Body1 className="text-secondary">{recommendation}</Body1>
-                </li>
+            <div className="space-y-3">
+              {URINE_SAMPLE_FEMALE_NOTES.map((note) => (
+                <p key={note} className="text-sm text-secondary">
+                  {note}
+                </p>
               ))}
-            </ul>
+            </div>
           )}
-          <IconList items={TEST_STEPS} />
         </div>
       </div>
       <div className="flex justify-end pt-6">
