@@ -34,6 +34,22 @@ export function initSentry() {
         behaviour: 'drop-error-if-exclusively-contains-third-party-frames',
       }),
     ],
+    beforeBreadcrumb(breadcrumb) {
+      if (
+        env.POSTHOG_HOST &&
+        (breadcrumb.category === 'fetch' || breadcrumb.category === 'xhr')
+      ) {
+        try {
+          const url = new URL(String(breadcrumb.data?.url ?? ''));
+          if (url.hostname === new URL(env.POSTHOG_HOST).hostname) {
+            return null;
+          }
+        } catch {
+          // unparseable URL — let the breadcrumb through
+        }
+      }
+      return breadcrumb;
+    },
     beforeSendTransaction(event) {
       // Always capture error transactions
       const statusCode = event.contexts?.response?.status_code as
