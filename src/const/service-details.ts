@@ -40,7 +40,7 @@ export const SERVICE_DETAILS: Record<string, ServiceDetails> = {
       {
         question: 'Test Process',
         answer:
-          '1. Order and schedule your blood panel.\n2. Fast and prepare for your appointment.\n3. Perform the phlebotomy visit and have your blood draw done.\n4. Receive your results within 10 days.\n5. The Superpower clinical team will review your results and create an action plan.',
+          '1. Order and schedule your blood panel.\n2. Fast and prepare for your appointment.\n3. Complete the phlebotomy visit and have your blood draw done.\n4. Receive your results and personalized protocol within 10 days.\n5. Text your Superpower care team or your Superpower AI with questions!',
       },
       {
         question: 'Pre-test considerations',
