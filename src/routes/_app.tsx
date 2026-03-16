@@ -223,7 +223,6 @@ function AppRootComponent() {
     '/schedule',
     '/orders',
     '/services',
-    '/onboarding',
     '/questionnaire',
     '/settings',
     '/protocol/reveal',
