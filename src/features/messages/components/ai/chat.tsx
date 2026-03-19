@@ -6,8 +6,8 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
+  useRef,
   type Dispatch,
   type SetStateAction,
 } from 'react';
@@ -228,6 +228,8 @@ export function Chat({
       hasMoreOlder={controller.hasMoreOlder}
       isLoadingOlder={controller.isLoadingOlder}
       onLoadOlder={controller.onLoadOlder}
+      ctxMessageId={controller.ctxMessageId}
+      preset={controller.preset}
       queue={controller.queue}
       removeFromQueue={controller.removeFromQueue}
     />
@@ -245,6 +247,18 @@ function useConciergeChatController({
     from: '/_app/concierge',
     select: (s) => s.defaultMessage,
   });
+  const preset = useSearch({
+    from: '/_app/concierge',
+    select: (s) => s.preset,
+  });
+  const ctxMessageId = useSearch({
+    from: '/_app/concierge',
+    select: (s) => s.ctxMessageId,
+  });
+  const autoSend = useSearch({
+    from: '/_app/concierge',
+    select: (s) => s.autoSend,
+  });
   const hasIdParam = useParams({
     strict: false,
     select: (params) => typeof params.id === 'string' && params.id.length > 0,
@@ -259,7 +273,9 @@ function useConciergeChatController({
   const pendingSendInputRef = useRef<string | null>(null);
 
   const [input, setInput] = useState(defaultMessage ?? '');
-  const [attachments, setAttachments] = useState<Array<FileUIPart>>([]);
+  const [attachments, setAttachments] = useState<Array<FileUIPart>>(() =>
+    useChatStore.getState().consumePendingFiles(),
+  );
   const [showLoadErrorBanner, setShowLoadErrorBanner] = useState(false);
   const [showReconnectBanner, setShowReconnectBanner] = useState(false);
   const [assistantBusyMessage, setAssistantBusyMessage] = useState<
@@ -742,7 +758,10 @@ function useConciergeChatController({
       setAssistantBusyMessage(null);
       incrementMessageCount();
 
-      sendMessage({ text: msg.text, files: msg.files });
+      sendMessage({
+        ...(msg.text ? { text: msg.text } : {}),
+        files: msg.files,
+      });
     },
     [sendMessage, track, incrementMessageCount, setAssistantBusyMessage],
   );
@@ -813,8 +832,10 @@ function useConciergeChatController({
     ],
   );
 
-  const autoSentRef = useRef(false);
-  const autoSendTimeoutIdRef = useRef<number | null>(null);
+  const defaultMessageAutoSentRef = useRef(false);
+  const defaultMessageAutoSendTimeoutIdRef = useRef<number | null>(null);
+  const attachmentAutoSentRef = useRef(false);
+  const attachmentAutoSendTimeoutIdRef = useRef<number | null>(null);
   const handleSendMessageRef = useRef(handleSendMessage);
 
   useEffect(() => {
@@ -824,27 +845,53 @@ function useConciergeChatController({
   useEffect(() => {
     if (defaultMessage == null || defaultMessage.length === 0) return;
     if (status !== 'ready') return;
-    if (autoSentRef.current) return;
-    if (autoSendTimeoutIdRef.current != null) return;
+    if (defaultMessageAutoSentRef.current) return;
+    if (defaultMessageAutoSendTimeoutIdRef.current != null) return;
 
-    autoSendTimeoutIdRef.current = window.setTimeout(() => {
-      autoSendTimeoutIdRef.current = null;
+    defaultMessageAutoSendTimeoutIdRef.current = window.setTimeout(() => {
+      defaultMessageAutoSendTimeoutIdRef.current = null;
 
-      if (autoSentRef.current) return;
+      if (defaultMessageAutoSentRef.current) return;
 
       const currentMessages = messagesRef.current;
       if (hasUserMessages(currentMessages)) return;
 
-      autoSentRef.current = true;
+      defaultMessageAutoSentRef.current = true;
       void handleSendMessageRef.current({ text: defaultMessage, files: [] });
     }, 0);
 
     return () => {
-      if (autoSendTimeoutIdRef.current == null) return;
-      window.clearTimeout(autoSendTimeoutIdRef.current);
-      autoSendTimeoutIdRef.current = null;
+      if (defaultMessageAutoSendTimeoutIdRef.current == null) return;
+      window.clearTimeout(defaultMessageAutoSendTimeoutIdRef.current);
+      defaultMessageAutoSendTimeoutIdRef.current = null;
     };
   }, [defaultMessage, status]);
+
+  useEffect(() => {
+    if (!autoSend) return;
+    if (attachments.length === 0) return;
+    if (status !== 'ready') return;
+    if (attachmentAutoSentRef.current) return;
+    if (attachmentAutoSendTimeoutIdRef.current != null) return;
+
+    const filesToSend = [...attachments];
+
+    attachmentAutoSendTimeoutIdRef.current = window.setTimeout(() => {
+      attachmentAutoSendTimeoutIdRef.current = null;
+
+      if (attachmentAutoSentRef.current) return;
+
+      attachmentAutoSentRef.current = true;
+      setAttachments([]);
+      void handleSendMessageRef.current({ files: filesToSend });
+    }, 100);
+
+    return () => {
+      if (attachmentAutoSendTimeoutIdRef.current == null) return;
+      window.clearTimeout(attachmentAutoSendTimeoutIdRef.current);
+      attachmentAutoSendTimeoutIdRef.current = null;
+    };
+  }, [autoSend, attachments, status, setAttachments]);
 
   useEffect(() => {
     if (sessionStartTime != null) return;
@@ -867,6 +914,8 @@ function useConciergeChatController({
     hasMoreOlder,
     isLoadingOlder,
     onLoadOlder,
+    ctxMessageId,
+    preset,
     queue,
     removeFromQueue,
   };
@@ -889,6 +938,8 @@ interface ChatViewProps {
   hasMoreOlder: boolean;
   isLoadingOlder: boolean;
   onLoadOlder: () => void | Promise<void>;
+  ctxMessageId?: string;
+  preset?: string;
   queue: QueuedMessage[];
   removeFromQueue: (id: string) => void;
 }
@@ -910,9 +961,35 @@ function ChatView({
   hasMoreOlder,
   isLoadingOlder,
   onLoadOlder,
+  ctxMessageId,
+  preset,
   queue,
   removeFromQueue,
 }: ChatViewProps) {
+  const navigate = useNavigate({ from: '/concierge' });
+
+  const isUploadLabsPreset = preset === 'upload-labs';
+  const hasUserMessages = messages.some((m) => m.role === 'user');
+  const showDropzone =
+    isUploadLabsPreset && !hasUserMessages && attachments.length === 0;
+
+  const setupActions = useMemo(
+    () => [
+      {
+        title: 'Upload past labs',
+        subtitle: 'See trends from your past labs.',
+        imageSrc: '/concierge/lab-upload.png',
+        onClick: () => {
+          void navigate({
+            to: '/concierge',
+            search: { preset: 'upload-labs' },
+          });
+        },
+      },
+    ],
+    [navigate],
+  );
+
   const showErrorUi =
     status === 'error' ||
     showLoadErrorBanner ||
@@ -935,6 +1012,7 @@ function ChatView({
           hasMoreOlder={hasMoreOlder}
           isLoadingOlder={isLoadingOlder}
           onLoadOlder={onLoadOlder}
+          ctxMessageId={ctxMessageId}
         />
 
         {messages.length === 0 && (
@@ -945,6 +1023,7 @@ function ChatView({
                 onSendSuggestion={(text) => {
                   void sendMessage({ text, files: [] }, undefined);
                 }}
+                setupActions={setupActions}
               />
             </div>
           </div>
@@ -994,7 +1073,9 @@ function ChatView({
             status={status}
             attachments={attachments}
             setAttachments={setAttachments}
-            disableFileUpload
+            disableFileUpload={!isUploadLabsPreset}
+            allowSendWithAttachmentsOnly={isUploadLabsPreset}
+            showLabUploadDropzone={showDropzone}
           />
         </form>
 

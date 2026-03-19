@@ -1,6 +1,7 @@
 import { ActionableAccordion } from '@/components/shared/actionable-accordion';
 import { H4 } from '@/components/ui/typography';
 import { useCredits } from '@/features/orders/api/credits';
+import { CreditActionCard } from '@/features/orders/components/credit-action-card';
 
 export const FinishScheduleList = () => {
   const creditsQuery = useCredits();
@@ -18,7 +19,11 @@ export const FinishScheduleList = () => {
   return (
     <div className="space-y-2">
       <H4>Tasks</H4>
-      <ActionableAccordion credits={credits} />
+      <ActionableAccordion>
+        {credits.map((credit) => (
+          <CreditActionCard key={credit.id} credit={credit} />
+        ))}
+      </ActionableAccordion>
     </div>
   );
 };

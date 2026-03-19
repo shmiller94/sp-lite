@@ -13,6 +13,7 @@ import { getDisplayComparator } from '@/utils/get-display-comparator';
 
 import { ChartTooltip } from '../chart-tooltip';
 import { RangeStack } from '../range-stack';
+import { TooltipSource } from '../tooltip-source';
 
 import { CHART_CONFIG } from './config';
 import { Pagination } from './pagination';
@@ -45,6 +46,7 @@ interface DisplayedPoint {
   pointIndex: number;
   source?: string;
   rangeLabel?: string;
+  file?: { id: string; name: string };
 }
 
 export const TimeSeriesChart = ({
@@ -214,6 +216,7 @@ function useTimeSeriesDisplayedPoint({
     quantity?: { value: number; comparator?: string };
     valueRange?: { low: number; high: number };
     source?: string;
+    file?: { id: string; name: string };
   }>;
   currentPage: number;
   itemsPerPage: number;
@@ -310,6 +313,7 @@ function useTimeSeriesDisplayedPoint({
                   : undefined,
               timestamp: originalValue.timestamp,
               source: originalValue.source || 'quest',
+              file: originalValue.file,
               position: {
                 x: rect.left + nearestPoint.x + window.scrollX,
                 y: rect.top + nearestPoint.y - 40 + window.scrollY,
@@ -706,6 +710,7 @@ function TimeSeriesChartTooltipPortal({
       isOpen={true}
       position={displayedPoint.position}
       side="top"
+      interactive={true}
       className={cn(status === 'next-test' && '-mt-20 rounded-xl p-1.5')}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
@@ -744,7 +749,11 @@ function TimeSeriesChartTooltipPortal({
             </div>
             <div className="text-muted-foreground">
               {format(new Date(displayedPoint.timestamp), 'MMM dd, yyyy')} (
-              <span className="capitalize">{displayedPoint.source}</span>)
+              <TooltipSource
+                source={displayedPoint.source ?? 'quest'}
+                file={displayedPoint.file}
+              />
+              )
             </div>
           </div>
         </div>

@@ -257,6 +257,7 @@ export type BiomarkerResult = Entity<{
   status?: BiomarkerStatus;
   source?: Lab;
   component: BiomarkerComponent[];
+  file?: { id: string; name: string };
 }>;
 
 export interface BiomarkerMetadata {
@@ -669,6 +670,46 @@ export type PaginatedResponse<T> = {
 };
 
 /* FILES */
+export type FileUploadClassification =
+  | 'lab_results_pathology'
+  | 'diagnostic_reports'
+  | 'clinical_notes'
+  | 'medical_images'
+  | 'medical_other'
+  | 'non_medical';
+
+export type ExtractionCounts = {
+  total: number;
+  written: number;
+  flagged: number;
+  skipped: number;
+  issues?: Partial<
+    Record<
+      | 'skippedNoLoincMatch'
+      | 'skippedValueTypeMismatch'
+      | 'skippedUnparseableQuantityValue'
+      | 'skippedAmbiguousValue',
+      number
+    >
+  >;
+};
+
+export type FileExtraction = {
+  status: 'registered' | 'processing' | 'final' | 'failed';
+  phase: 'classifying' | 'extracting' | 'validating' | 'writing' | null;
+  reportDate: string | null;
+  counts: ExtractionCounts | null;
+  chatId: string | null;
+  messageId: string | null;
+  summaryChatId: string | null;
+  summaryMessageId: string | null;
+};
+
+export type FileIngestion = {
+  classification: FileUploadClassification | null;
+  extraction?: FileExtraction;
+};
+
 export type File = {
   id: string;
   name: string;
@@ -676,6 +717,7 @@ export type File = {
   uploadedAt: string;
   presignedUrl?: string;
   image?: string;
+  ingestion?: FileIngestion;
 };
 
 /* RDNS */

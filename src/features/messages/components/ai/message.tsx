@@ -61,12 +61,14 @@ interface UserMessageContentProps {
 const UserMessageContent = memo(function UserMessageContent({
   message,
 }: UserMessageContentProps) {
-  const text = message.parts
+  const messageParts = message.parts ?? [];
+  const text = messageParts
     .filter((p): p is { type: 'text'; text: string } => p.type === 'text')
     .map((p) => p.text)
     .join('');
 
-  const fileParts = message.parts?.filter((part) => part.type === 'file');
+  const fileParts = messageParts.filter((part) => part.type === 'file');
+  const hasText = text.trim().length > 0;
 
   return (
     <>
@@ -77,14 +79,16 @@ const UserMessageContent = memo(function UserMessageContent({
           ))}
         </div>
       )}
-      <div className="flex flex-row items-center gap-2">
-        <div
-          data-testid="message-content"
-          className="ml-auto rounded-2xl border border-zinc-200 bg-white px-3.5 py-2 text-black shadow-sm"
-        >
-          <div className="whitespace-pre-wrap">{text}</div>
+      {hasText && (
+        <div className="flex flex-row items-center gap-2">
+          <div
+            data-testid="message-content"
+            className="ml-auto rounded-2xl border border-zinc-200 bg-white px-3.5 py-2 text-black shadow-sm"
+          >
+            <div className="whitespace-pre-wrap">{text}</div>
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 });
@@ -271,6 +275,7 @@ const PurePreviewMessage = ({
   return (
     <AnimatePresence>
       <m.div
+        id={`message-${message.id}`}
         className="group/message mx-auto w-full max-w-3xl px-0.5"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

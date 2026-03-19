@@ -25,6 +25,7 @@ interface MessagesProps {
   hasMoreOlder?: boolean;
   isLoadingOlder?: boolean;
   onLoadOlder?: () => void | Promise<void>;
+  ctxMessageId?: string;
 }
 
 function PureMessages({
@@ -35,6 +36,7 @@ function PureMessages({
   hasMoreOlder = false,
   isLoadingOlder = false,
   onLoadOlder,
+  ctxMessageId,
 }: MessagesProps) {
   // Smart scroll state
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
@@ -159,6 +161,44 @@ function PureMessages({
 
     container.scrollTop = container.scrollHeight;
   }, [messages, status]);
+
+  // Scroll to a specific deep-linked message, loading older pages until it exists.
+  const lastScrolledTargetRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (ctxMessageId == null) {
+      lastScrolledTargetRef.current = null;
+      return;
+    }
+
+    if (messages.length === 0) return;
+
+    const targetKey = `${chatId}:${ctxMessageId}`;
+    if (lastScrolledTargetRef.current === targetKey) return;
+
+    const el = document.getElementById(`message-${ctxMessageId}`);
+    if (el == null) {
+      if (!hasMoreOlder || isLoadingOlder || onLoadOlder == null) return;
+
+      requestOlderMessages({ disableAutoScroll: true });
+      return;
+    }
+
+    lastScrolledTargetRef.current = targetKey;
+    autoScrollEnabledRef.current = false;
+
+    // Defer to ensure layout is settled after framer-motion animations
+    requestAnimationFrame(() => {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }, [
+    chatId,
+    ctxMessageId,
+    hasMoreOlder,
+    isLoadingOlder,
+    messages.length,
+    onLoadOlder,
+    requestOlderMessages,
+  ]);
 
   return (
     <div

@@ -19,6 +19,7 @@ import { toast } from '@/components/ui/sonner';
 import { Textarea } from '@/components/ui/textarea';
 import {
   acceptedFileContentTypes,
+  MAX_FILE_COUNT,
   MAX_FILE_SIZE_BYTES,
   MAX_FILE_SIZE_MB,
 } from '@/const';
@@ -29,6 +30,7 @@ import { cn } from '@/lib/utils';
 
 import { scrollToBottom } from '../../utils/scroll-to-bottom';
 
+import { LabUploadDropzone } from './lab-upload-dropzone';
 import { PreviewAttachment } from './preview-attachment';
 
 const MAX_HEIGHT = 256;
@@ -43,6 +45,8 @@ function PureMultimodalInput({
   className,
   /** TODO: Temporarily disable file upload button for AI concierge */
   disableFileUpload = false,
+  allowSendWithAttachmentsOnly = false,
+  showLabUploadDropzone = false,
 }: {
   input: string;
   setInput: Dispatch<SetStateAction<string>>;
@@ -53,6 +57,8 @@ function PureMultimodalInput({
   className?: string;
   showSuggestions?: boolean;
   disableFileUpload?: boolean;
+  allowSendWithAttachmentsOnly?: boolean;
+  showLabUploadDropzone?: boolean;
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const inputWrapperRef = useRef<HTMLDivElement>(null);
@@ -116,9 +122,14 @@ function PureMultimodalInput({
     adjustHeight();
   };
 
+  const hasContent =
+    input.trim().length > 0 ||
+    (allowSendWithAttachmentsOnly && attachments.length > 0);
+
   const submitForm = useCallback(() => {
+    const trimmedText = input.trim();
     void sendMessage({
-      text: input,
+      ...(trimmedText ? { text: trimmedText } : {}),
       files: attachments,
     });
 
@@ -176,6 +187,21 @@ function PureMultimodalInput({
         return isSupported;
       });
 
+      const currentCount = attachments.length;
+      if (currentCount + files.length > MAX_FILE_COUNT) {
+        const allowed = MAX_FILE_COUNT - currentCount;
+        if (allowed <= 0) {
+          toast.error(
+            `You can upload a maximum of ${MAX_FILE_COUNT} files at once.`,
+          );
+          return;
+        }
+        toast.error(
+          `You can upload a maximum of ${MAX_FILE_COUNT} files at once. Only the first ${allowed} will be uploaded.`,
+        );
+        files = files.slice(0, allowed);
+      }
+
       setUploadQueue(files.map((file) => file.name));
 
       try {
@@ -202,12 +228,13 @@ function PureMultimodalInput({
 
       setUploadQueue([]);
     },
-    [setAttachments, uploadFiles],
+    [attachments, setAttachments, uploadFiles],
   );
 
   const { getRootProps, isDragActive } = useDropzone({
     // We only want to handle files that can actually be stored for now
     accept: acceptedFileContentTypes,
+    maxFiles: MAX_FILE_COUNT,
     maxSize: MAX_FILE_SIZE_BYTES,
     onDrop: (acceptedFiles) => {
       const fileList = {
@@ -223,6 +250,16 @@ function PureMultimodalInput({
       } as ChangeEvent<HTMLInputElement>);
     },
     onDropRejected: (rejectedFiles) => {
+      const hasTooManyFilesError = rejectedFiles.some(({ errors }) =>
+        errors.some((error) => error.code === 'too-many-files'),
+      );
+      if (hasTooManyFilesError) {
+        toast.error(
+          `You can upload a maximum of ${MAX_FILE_COUNT} files at once.`,
+        );
+        return;
+      }
+
       rejectedFiles.forEach(({ file, errors }) => {
         const sizeError = errors.find((e) => e.code === 'file-too-large');
         if (sizeError) {
@@ -271,7 +308,9 @@ function PureMultimodalInput({
       status={status}
       className={className}
       disableFileUpload={disableFileUpload}
+      hasContent={hasContent}
       submitForm={submitForm}
+      showLabUploadDropzone={showLabUploadDropzone}
     />
   );
 }
@@ -294,7 +333,9 @@ interface MultimodalInputViewProps {
   status: UseChatHelpers<UIMessage>['status'];
   className: string | undefined;
   disableFileUpload: boolean;
+  hasContent: boolean;
   submitForm: () => void;
+  showLabUploadDropzone: boolean;
 }
 
 function MultimodalInputView({
@@ -313,7 +354,9 @@ function MultimodalInputView({
   status,
   className,
   disableFileUpload,
+  hasContent,
   submitForm,
+  showLabUploadDropzone,
 }: MultimodalInputViewProps) {
   const previews: React.ReactElement[] = [];
   for (const attachment of attachments) {
@@ -345,17 +388,28 @@ function MultimodalInputView({
 
   return (
     <div
-      className="relative flex w-full flex-col gap-8 outline-none"
+      className={cn(
+        'relative flex w-full flex-col outline-none',
+        showLabUploadDropzone ? 'gap-3' : 'gap-8',
+      )}
       {...getRootProps()}
     >
       <input
         type="file"
+        accept=".pdf,application/pdf"
         className="pointer-events-none fixed -left-4 -top-4 size-0.5 opacity-0"
         ref={fileInputRef}
         multiple
         onChange={handleFileChange}
         tabIndex={-1}
       />
+
+      {showLabUploadDropzone && (
+        <LabUploadDropzone
+          isDragActive={isDragActive}
+          onClick={() => fileInputRef.current?.click()}
+        />
+      )}
 
       <div className="flex w-full flex-1 flex-col gap-2 lg:flex-col lg:gap-4">
         <div
@@ -368,7 +422,7 @@ function MultimodalInputView({
             className,
           )}
         >
-          {isDragActive && (
+          {isDragActive && !showLabUploadDropzone && (
             <svg
               className="absolute inset-0 size-full text-vermillion-900 animate-in fade-in"
               fill="none"
@@ -429,8 +483,7 @@ function MultimodalInputView({
                 ) {
                   event.preventDefault();
 
-                  // same as send button disabled logic: block when input is empty/whitespace
-                  if (input.trim().length === 0 || uploadQueue.length > 0) {
+                  if (!hasContent || uploadQueue.length > 0) {
                     return;
                   }
 
@@ -446,7 +499,7 @@ function MultimodalInputView({
             )}
 
             <SendButton
-              input={input}
+              hasContent={hasContent}
               submitForm={submitForm}
               uploadQueue={uploadQueue}
             />
@@ -465,6 +518,13 @@ export const MultimodalInput = memo(
     if (!equal(prevProps.attachments, nextProps.attachments)) return false;
     if (prevProps.disableFileUpload !== nextProps.disableFileUpload)
       return false;
+    if (prevProps.showLabUploadDropzone !== nextProps.showLabUploadDropzone)
+      return false;
+    if (
+      prevProps.allowSendWithAttachmentsOnly !==
+      nextProps.allowSendWithAttachmentsOnly
+    )
+      return false;
 
     return true;
   },
@@ -472,11 +532,11 @@ export const MultimodalInput = memo(
 
 function PureSendButton({
   submitForm,
-  input,
+  hasContent,
   uploadQueue,
 }: {
   submitForm: () => void;
-  input: string;
+  hasContent: boolean;
   uploadQueue: Array<string>;
 }) {
   return (
@@ -488,7 +548,7 @@ function PureSendButton({
         event.preventDefault();
         submitForm();
       }}
-      disabled={input.trim().length === 0 || uploadQueue.length > 0}
+      disabled={!hasContent || uploadQueue.length > 0}
     >
       <ArrowUpIcon size={14} />
     </Button>
@@ -498,6 +558,6 @@ function PureSendButton({
 const SendButton = memo(PureSendButton, (prevProps, nextProps) => {
   if (prevProps.uploadQueue.length !== nextProps.uploadQueue.length)
     return false;
-  if (prevProps.input !== nextProps.input) return false;
+  if (prevProps.hasContent !== nextProps.hasContent) return false;
   return true;
 });

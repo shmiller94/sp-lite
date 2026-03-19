@@ -98,6 +98,7 @@ export const useCodedValueSparkline = ({
           timestamp: v.timestamp,
           index,
           source: v.source || 'quest',
+          file: v.file,
           status,
         };
       }),

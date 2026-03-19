@@ -1,57 +1,64 @@
-import { ReactNode } from 'react';
-
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetTitle,
-  SheetTrigger,
 } from '@/components/ui/sheet';
+import { useGetFile } from '@/features/files/api/get-file';
 import { PdfViewer } from '@/features/files/components/pdf-viewer';
 import { useWindowDimensions } from '@/hooks/use-window-dimensions';
-import { File } from '@/types/api';
 
-export const ViewPdfDialog = ({
-  file,
-  children,
+export function PdfPreviewDialog({
+  fileId,
+  open,
+  onOpenChange,
 }: {
-  file: File;
-  children: ReactNode;
-}) => {
-  const { id, name } = file;
+  fileId: string | undefined;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
   const { width } = useWindowDimensions();
+  const fileQuery = useGetFile({
+    fileId: fileId ?? '',
+    queryConfig: {
+      enabled: fileId != null,
+    },
+  });
+  const fileName = fileQuery.data?.file.name ?? 'PDF document';
+
+  if (fileId == null) {
+    return null;
+  }
 
   if (width <= 768) {
     return (
-      <Sheet>
-        <SheetTrigger asChild>{children}</SheetTrigger>
+      <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent className="flex max-h-full flex-col rounded-t-[10px]">
-          <SheetTitle className="sr-only">{name}</SheetTitle>
+          <SheetTitle className="sr-only">{fileName}</SheetTitle>
           <SheetDescription className="sr-only">
             PDF document viewer.
           </SheetDescription>
-          <PdfViewer id={id} name={name} />
+          <PdfViewer id={fileId} />
         </SheetContent>
       </Sheet>
     );
   }
+
   return (
-    <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="h-full max-h-[calc(100vh-48px)]">
-        <DialogTitle className="sr-only">{name}</DialogTitle>
+        <DialogTitle className="sr-only">{fileName}</DialogTitle>
         <DialogDescription className="sr-only">
           PDF document viewer.
         </DialogDescription>
-        <PdfViewer id={id} name={name} />
+        <PdfViewer id={fileId} />
       </DialogContent>
     </Dialog>
   );
-};
+}

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { Body1, H3, H4 } from '@/components/ui/typography';
 import { useCredits } from '@/features/orders/api/credits';
+import { CreditActionCard } from '@/features/orders/components/credit-action-card';
 import { useSubscriptions } from '@/features/rx/api/get-subscriptions';
 import { useRxTasks } from '@/features/rx/api/get-tasks';
 import { RxActionCard } from '@/features/rx/components/rx-action-card';
@@ -86,7 +87,11 @@ const RxTasksSection = ({
     <div className="space-y-2">
       <H4>Tasks</H4>
       {rxCredits.length > 0 ? (
-        <ActionableAccordion credits={rxCredits} />
+        <ActionableAccordion>
+          {rxCredits.map((credit) => (
+            <CreditActionCard key={credit.id} credit={credit} />
+          ))}
+        </ActionableAccordion>
       ) : null}
       {failedPayments > 0 ? (
         <RxActionCard config="FAILED_PAYMENT" variant="highlighted" />

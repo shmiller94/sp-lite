@@ -64,6 +64,16 @@ function createDraftSession({
         parts: [{ type: 'text', text }],
       },
     ];
+  } else if (preset === 'upload-labs') {
+    const name = userFirstName ?? 'there';
+    const text = `Hi ${name},\n\nI'd love to help you get a complete picture of your health journey!\n\nWhen you're ready, upload your past test results and health records so we can see how your biomarkers have changed over time.\n\n**Here's what to expect:**\n\n- Processing takes about 5 minutes\n- You'll receive a summary of your past results\n- Your historical biomarkers will appear on your data page\n- We'll use these insights to tailor your protocol recommendations just for you\n\nIf you have any questions along the way, I'm here to help!`;
+    initialMessages = [
+      {
+        id: presetMessageId,
+        role: 'assistant',
+        parts: [{ type: 'text', text }],
+      },
+    ];
   }
 
   return {
@@ -94,11 +104,17 @@ export function ConciergeChatPanel() {
   const { data: user } = useUser();
 
   const previousRouteIdRef = useRef<string | undefined>(routeId);
+  const previousPresetRef = useRef<string | undefined>(preset);
   const draftSessionRef = useRef<ConciergeChatSession | null>(null);
 
   if (routeId == null) {
     const enteredDraftFromPersistedRoute = previousRouteIdRef.current != null;
-    if (draftSessionRef.current == null || enteredDraftFromPersistedRoute) {
+    const presetChanged = preset !== previousPresetRef.current;
+    if (
+      draftSessionRef.current == null ||
+      enteredDraftFromPersistedRoute ||
+      presetChanged
+    ) {
       draftSessionRef.current = createDraftSession({
         chatId: crypto.randomUUID(),
         preset,
@@ -114,6 +130,7 @@ export function ConciergeChatPanel() {
   }
 
   previousRouteIdRef.current = routeId;
+  previousPresetRef.current = preset;
 
   const draftSession = draftSessionRef.current;
   const [persistedSession, setPersistedSession] =
