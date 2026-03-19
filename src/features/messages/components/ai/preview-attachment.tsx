@@ -40,7 +40,7 @@ export const PreviewAttachment = ({
           <X className="size-3 shrink-0" strokeWidth={2.5} />
         </Button>
       )}
-      <div className="flex shrink-0 items-center justify-center">
+      <div className="flex shrink-0 items-center justify-center pt-1.5">
         {isUploading ? (
           <Loader />
         ) : mediaType?.startsWith('image') ? (

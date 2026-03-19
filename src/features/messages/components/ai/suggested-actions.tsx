@@ -52,7 +52,7 @@ function PureSuggestedActions({
           type="button"
           onClick={action.onClick}
           className={cn(
-            'group flex w-full max-w-[548px] items-center justify-between gap-3 rounded-2xl border border-zinc-200 px-4 py-2 text-left shadow-lg shadow-black/5 outline-none transition-colors duration-300 animate-in fade-in slide-in-from-bottom-2 hover:bg-zinc-100 focus-visible:ring-2 focus-visible:ring-ring',
+            'group flex w-full max-w-[548px] items-center justify-between gap-3 rounded-2xl border border-zinc-200 pl-4 pr-2 text-left shadow-lg shadow-black/5 outline-none transition-colors duration-300 animate-in fade-in slide-in-from-bottom-2 hover:bg-zinc-100 focus-visible:ring-2 focus-visible:ring-ring',
           )}
         >
           <div>
@@ -68,11 +68,11 @@ function PureSuggestedActions({
             </div>
             <Body2 className="p-0 text-zinc-400">{action.subtitle}</Body2>
           </div>
-          <div className="p-1.5 transition-transform duration-200 group-hover:-translate-y-0.5">
+          <div className="mb-2 -translate-y-1.5 p-1.5 pb-0 rounded-mask">
             <img
               src={action.imageSrc}
               alt=""
-              className="h-10 w-auto shrink-0 object-contain"
+              className="size-16 w-auto shrink-0 translate-y-2.5 object-contain transition-all ease-out group-hover:rotate-3"
             />
           </div>
         </button>

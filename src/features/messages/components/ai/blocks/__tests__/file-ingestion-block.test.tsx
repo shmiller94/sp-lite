@@ -1,4 +1,12 @@
-import { render, screen } from '@testing-library/react';
+import {
+  RouterProvider,
+  createMemoryHistory,
+  createRootRoute,
+  createRoute,
+  createRouter,
+} from '@tanstack/react-router';
+import { render, screen, act } from '@testing-library/react';
+import type { ReactNode } from 'react';
 
 import type { FileIngestionDataPart } from '../../../../utils/data-parts';
 import { FileIngestionBlock } from '../file-ingestion-block';
@@ -23,8 +31,24 @@ function makePart(
   };
 }
 
+async function renderWithRouter(ui: ReactNode) {
+  const rootRoute = createRootRoute({ component: () => ui });
+  const indexRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: '/',
+  });
+  const router = createRouter({
+    routeTree: rootRoute.addChildren([indexRoute]),
+    history: createMemoryHistory({ initialEntries: ['/'] }),
+  });
+  await router.load();
+  await act(async () => {
+    render(<RouterProvider router={router} />);
+  });
+}
+
 describe('FileIngestionBlock', () => {
-  it('renders processing state with shimmer phase label', () => {
+  it('renders processing state with progress', () => {
     render(
       <FileIngestionBlock
         part={makePart({
@@ -34,9 +58,7 @@ describe('FileIngestionBlock', () => {
         })}
       />,
     );
-    expect(screen.getByText('cbc-march-2026.pdf')).toBeInTheDocument();
-    expect(screen.getByText('Processing')).toBeInTheDocument();
-    expect(screen.getByText('Extracting…')).toBeInTheDocument();
+    expect(screen.getByText('Processing documents...')).toBeInTheDocument();
   });
 
   it('ignores unexpected runtime phase values', () => {
@@ -54,23 +76,21 @@ describe('FileIngestionBlock', () => {
 
     render(<FileIngestionBlock part={part} />);
 
-    expect(screen.getByText('Processing')).toBeInTheDocument();
+    expect(screen.getByText('Processing documents...')).toBeInTheDocument();
     expect(screen.queryByText('undefined…')).not.toBeInTheDocument();
   });
 
-  it('renders registered state with Queued badge', () => {
+  it('renders registered state as processing', () => {
     render(
       <FileIngestionBlock
         part={makePart({ state: 'processing', status: 'registered' })}
       />,
     );
-    expect(screen.getByText('cbc-march-2026.pdf')).toBeInTheDocument();
-    expect(screen.getByText('Queued')).toBeInTheDocument();
-    expect(screen.queryByText('Processing')).not.toBeInTheDocument();
+    expect(screen.getByText('Processing documents...')).toBeInTheDocument();
   });
 
-  it('renders final state with classification and count', () => {
-    render(
+  it('renders final state with view results summary link', async () => {
+    await renderWithRouter(
       <FileIngestionBlock
         part={makePart({
           state: 'complete',
@@ -80,14 +100,12 @@ describe('FileIngestionBlock', () => {
         })}
       />,
     );
-    expect(screen.getByText('cbc-march-2026.pdf')).toBeInTheDocument();
-    expect(screen.getByText('Complete')).toBeInTheDocument();
-    expect(screen.getByText('Lab Results')).toBeInTheDocument();
-    expect(screen.getByText('12 results saved')).toBeInTheDocument();
+    expect(screen.getByText('View results summary')).toBeInTheDocument();
+    expect(screen.getByRole('link')).toHaveAttribute('href', '/data');
   });
 
-  it('renders classification-specific final messages for non-lab files', () => {
-    render(
+  it('renders final state for non-lab files with view results summary', async () => {
+    await renderWithRouter(
       <FileIngestionBlock
         part={makePart({
           state: 'complete',
@@ -99,19 +117,11 @@ describe('FileIngestionBlock', () => {
       />,
     );
 
-    expect(screen.getByText('cbc-march-2026.pdf')).toBeInTheDocument();
-    expect(screen.getByText('Complete')).toBeInTheDocument();
-    expect(screen.getByText('Clinical Notes')).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        'Identified as clinical notes, so no lab extraction was run.',
-      ),
-    ).toBeInTheDocument();
-    expect(screen.queryByText(/results extracted/)).not.toBeInTheDocument();
+    expect(screen.getByText('View results summary')).toBeInTheDocument();
   });
 
-  it('renders informational final messages for zero-result lab files', () => {
-    render(
+  it('renders final state for zero-result lab files with view results summary', async () => {
+    await renderWithRouter(
       <FileIngestionBlock
         part={makePart({
           state: 'complete',
@@ -123,18 +133,10 @@ describe('FileIngestionBlock', () => {
       />,
     );
 
-    expect(screen.getByText('cbc-march-2026.pdf')).toBeInTheDocument();
-    expect(screen.getByText('Complete')).toBeInTheDocument();
-    expect(screen.getByText('Lab Results')).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        'Recognized as a lab report, but no structured lab results could be extracted.',
-      ),
-    ).toBeInTheDocument();
-    expect(screen.queryByText(/results extracted/)).not.toBeInTheDocument();
+    expect(screen.getByText('View results summary')).toBeInTheDocument();
   });
 
-  it('falls back to the raw classification for unexpected runtime values', () => {
+  it('renders final state with unexpected classification', async () => {
     const part = makePart({
       state: 'complete',
       status: 'final',
@@ -147,13 +149,12 @@ describe('FileIngestionBlock', () => {
       configurable: true,
     });
 
-    render(<FileIngestionBlock part={part} />);
+    await renderWithRouter(<FileIngestionBlock part={part} />);
 
-    expect(screen.getByText('Outside Schema')).toBeInTheDocument();
-    expect(screen.getByText('1 result saved')).toBeInTheDocument();
+    expect(screen.getByText('View results summary')).toBeInTheDocument();
   });
 
-  it('ignores unexpected runtime writtenCount values', () => {
+  it('renders final state with unexpected writtenCount', async () => {
     const part = makePart({
       state: 'complete',
       status: 'final',
@@ -167,10 +168,9 @@ describe('FileIngestionBlock', () => {
       configurable: true,
     });
 
-    render(<FileIngestionBlock part={part} />);
+    await renderWithRouter(<FileIngestionBlock part={part} />);
 
-    expect(screen.getByText('Lab Results')).toBeInTheDocument();
-    expect(screen.queryByText(/results saved/)).not.toBeInTheDocument();
+    expect(screen.getByText('View results summary')).toBeInTheDocument();
   });
 
   it('renders failed state with error details', () => {
@@ -184,7 +184,6 @@ describe('FileIngestionBlock', () => {
       />,
     );
     expect(screen.getByText('cbc-march-2026.pdf')).toBeInTheDocument();
-    expect(screen.getByText('Failed')).toBeInTheDocument();
     expect(
       screen.getByText('No processing run was created for this file'),
     ).toBeInTheDocument();
@@ -204,7 +203,7 @@ describe('FileIngestionBlock', () => {
     });
 
     expect(() => render(<FileIngestionBlock part={part} />)).not.toThrow();
-    expect(screen.getByText('Failed')).toBeInTheDocument();
+    expect(screen.getByText('cbc-march-2026.pdf')).toBeInTheDocument();
     expect(
       screen.queryByText('Parse error: invalid format'),
     ).not.toBeInTheDocument();

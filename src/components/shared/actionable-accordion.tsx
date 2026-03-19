@@ -44,7 +44,7 @@ export const ActionableAccordionItem = ({
         <img
           src={imageSrc}
           alt=""
-          className="ml-1.5 size-12 shrink-0 object-contain"
+          className="ml-1.5 size-12 shrink-0 object-contain pt-1 rounded-mask"
         />
       </div>
 
