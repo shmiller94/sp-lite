@@ -21,7 +21,7 @@ export function LabUploadDropzone({
       )}
     >
       <img
-        src="/concierge/lab-upload.png"
+        src="/concierge/lab-upload.webp"
         alt=""
         className="h-14 w-auto object-contain transition-all duration-300 motion-safe:group-hover:-translate-y-0.5 motion-safe:group-hover:scale-[1.03]"
       />

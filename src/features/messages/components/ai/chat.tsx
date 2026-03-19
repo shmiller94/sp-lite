@@ -978,7 +978,7 @@ function ChatView({
       {
         title: 'Upload past labs',
         subtitle: 'See trends from your past labs.',
-        imageSrc: '/concierge/lab-upload.png',
+        imageSrc: '/concierge/lab-upload.webp',
         onClick: () => {
           void navigate({
             to: '/concierge',
