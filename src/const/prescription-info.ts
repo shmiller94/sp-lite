@@ -302,7 +302,6 @@ export const SEMAGLUTIDE = {
       'Free overnight shipping',
       'Medical evaluation',
       'Regular symptom tracking & progress monitoring',
-      'Regular lab testing every 6 months',
       'Unlimited messaging with your provider',
     ],
     quarterly: [
@@ -310,7 +309,6 @@ export const SEMAGLUTIDE = {
       'Free overnight shipping',
       'Medical evaluation',
       'Regular symptom tracking & progress monitoring',
-      'Regular lab testing every 6 months',
       'Unlimited messaging with your provider',
     ],
     biannual: [
@@ -318,7 +316,13 @@ export const SEMAGLUTIDE = {
       'Free overnight shipping',
       'Medical evaluation',
       'Regular symptom tracking & progress monitoring',
-      'Regular lab testing every 6 months',
+      'Unlimited messaging with your provider',
+    ],
+    annual: [
+      '12 months of medication, delivered in two shipments',
+      'Free overnight shipping',
+      'Medical evaluation',
+      'Regular symptom tracking & progress monitoring',
       'Unlimited messaging with your provider',
     ],
   },
@@ -1500,7 +1504,6 @@ export const TIRZEPATIDE = {
       'Free overnight shipping',
       'Medical evaluation',
       'Regular symptom tracking & progress monitoring',
-      'Regular lab testing every 6 months',
       'Unlimited messaging with your provider',
     ],
     quarterly: [
@@ -1508,7 +1511,6 @@ export const TIRZEPATIDE = {
       'Free overnight shipping',
       'Medical evaluation',
       'Regular symptom tracking & progress monitoring',
-      'Regular lab testing every 6 months',
       'Unlimited messaging with your provider',
     ],
     biannual: [
@@ -1516,7 +1518,13 @@ export const TIRZEPATIDE = {
       'Free overnight shipping',
       'Medical evaluation',
       'Regular symptom tracking & progress monitoring',
-      'Regular lab testing every 6 months',
+      'Unlimited messaging with your provider',
+    ],
+    annual: [
+      '12 months of medication, delivered in two shipments',
+      'Free overnight shipping',
+      'Medical evaluation',
+      'Regular symptom tracking & progress monitoring',
       'Unlimited messaging with your provider',
     ],
   },
