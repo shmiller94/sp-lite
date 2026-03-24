@@ -1,6 +1,6 @@
 import { UseChatHelpers } from '@ai-sdk/react';
 import { FileUIPart, UIMessage } from 'ai';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export interface QueuedMessage {
   id: string;
@@ -16,6 +16,8 @@ export function useMessageQueue({
   onSend: (msg: { text: string; files: FileUIPart[] }) => void;
 }) {
   const [queue, setQueue] = useState<QueuedMessage[]>([]);
+  const onSendRef = useRef(onSend);
+  onSendRef.current = onSend;
 
   const enqueue = useCallback((msg: { text: string; files: FileUIPart[] }) => {
     setQueue((prev) => [...prev, { id: crypto.randomUUID(), ...msg }]);
@@ -27,8 +29,8 @@ export function useMessageQueue({
     const [next, ...rest] = queue;
     setQueue(rest);
 
-    onSend({ text: next.text, files: next.files });
-  }, [status, queue, onSend]);
+    onSendRef.current({ text: next.text, files: next.files });
+  }, [status, queue]);
 
   const remove = useCallback((id: string) => {
     setQueue((prev) => prev.filter((msg) => msg.id !== id));
