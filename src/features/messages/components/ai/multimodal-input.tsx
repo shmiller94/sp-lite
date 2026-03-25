@@ -559,5 +559,6 @@ const SendButton = memo(PureSendButton, (prevProps, nextProps) => {
   if (prevProps.uploadQueue.length !== nextProps.uploadQueue.length)
     return false;
   if (prevProps.hasContent !== nextProps.hasContent) return false;
+  if (prevProps.submitForm !== nextProps.submitForm) return false;
   return true;
 });
