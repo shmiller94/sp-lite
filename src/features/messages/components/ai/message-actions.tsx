@@ -1,7 +1,5 @@
 import { isToolUIPart, type UIMessage } from 'ai';
-import equal from 'fast-deep-equal';
 import { BarChart, CopyIcon, Share, ThumbsUp, ThumbsDown } from 'lucide-react';
-import { memo } from 'react';
 import removeMarkdown from 'remove-markdown';
 
 import { Button } from '@/components/ui/button';
@@ -18,7 +16,7 @@ import { parseMessageParts } from '../../utils/parse-message-parts';
 import { ChatShareDialog } from '../chat-share-dialog';
 import { CitationsDialog } from '../citations-dialog';
 
-export function PureMessageActions({
+export function MessageActions({
   chatId,
   message,
   isLoading,
@@ -159,14 +157,3 @@ export function PureMessageActions({
     </TooltipProvider>
   );
 }
-
-export const MessageActions = memo(
-  PureMessageActions,
-  (prevProps, nextProps) => {
-    // Re-render if isLoading changes OR if the message content changes.
-    return (
-      prevProps.isLoading === nextProps.isLoading &&
-      equal(prevProps.message, nextProps.message)
-    );
-  },
-);
