@@ -4,11 +4,12 @@ import { useCallback } from 'react';
 import * as z from 'zod';
 
 import { PdfPreviewRouteHost } from '@/features/files/components/file-dialogs/pdf-preview-route-host';
+import { chatPresetSchema } from '@/features/messages/components/ai/preset-messages';
 import { ConciergeLayout } from '@/features/messages/layouts/concierge-layout';
 
 const conciergeSearchSchema = z.object({
   defaultMessage: z.string().optional(),
-  preset: z.string().optional(),
+  preset: chatPresetSchema.optional().catch(undefined),
   ctxMessageId: z.string().optional(),
   previewFileId: z.string().optional().catch(undefined),
   autoSend: z.boolean().optional(),

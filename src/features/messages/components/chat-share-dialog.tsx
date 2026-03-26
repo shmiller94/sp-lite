@@ -3,7 +3,7 @@ import { m } from 'framer-motion';
 import { Copy, Share, X } from 'lucide-react';
 import { forwardRef, useEffect, useMemo, useState } from 'react';
 import type React from 'react';
-import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
+import rehypeSanitize from 'rehype-sanitize';
 import { defaultRehypePlugins, Streamdown } from 'streamdown';
 
 import { AIIcon } from '@/components/icons/ai-icon';
@@ -35,26 +35,9 @@ import { Visibility } from '@/types/api';
 import { useChat } from '../api/get-chat';
 import { useMessages } from '../api/get-messages';
 import { useUpdateChat } from '../api/update-chat';
+import { sanitizeSchema } from '../utils/markdown-sanitize-schema';
 
 import { baseMarkdownComponents } from './ai/markdown-components';
-
-// Allow all URL protocols in sanitization (fhir://, product://, tel:, sms:, etc.)
-const sanitizeSchema = {
-  ...defaultSchema,
-  protocols: {
-    ...defaultSchema.protocols,
-    href: [
-      ...(defaultSchema.protocols?.href ?? []),
-      'tel',
-      'sms',
-      'fhir',
-      'product',
-      'memory',
-      'chat',
-      'marketplace',
-    ],
-  },
-};
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const rehypePlugins = [

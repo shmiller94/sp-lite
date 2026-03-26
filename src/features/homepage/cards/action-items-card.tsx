@@ -5,6 +5,8 @@ import {
   ActionableAccordion,
   ActionableAccordionItem,
 } from '@/components/shared/actionable-accordion';
+import { useUser } from '@/lib/auth';
+import { shouldShowImportMemory } from '@/utils/show-action-conditions';
 
 interface ActionItem {
   id: string;
@@ -16,6 +18,9 @@ interface ActionItem {
 
 export const ActionItemsCard = () => {
   const navigate = useNavigate();
+  const { data: user } = useUser();
+  const showImportMemory = shouldShowImportMemory(user?.createdAt);
+
   const actions: ActionItem[] = [
     {
       id: 'upload-labs',
@@ -30,6 +35,22 @@ export const ActionItemsCard = () => {
       },
     },
   ];
+
+  if (showImportMemory) {
+    actions.push({
+      id: 'import-memory-superpower-ai',
+      title: 'Continue from another AI',
+      description: 'Import your conversations and deepen your health story.',
+      imageSrc: '/concierge/other_llms.webp',
+      onClick: () => {
+        void navigate({
+          to: '/concierge',
+          search: { preset: 'import-memory' },
+        });
+      },
+    });
+  }
+
   const shouldForceOpen = actions.length < 3;
 
   const items: ReactElement[] = [];

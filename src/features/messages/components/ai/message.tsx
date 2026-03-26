@@ -3,7 +3,7 @@ import { UIMessage } from 'ai';
 import { AnimatePresence, m } from 'framer-motion';
 import { InfoIcon } from 'lucide-react';
 import React, { memo, useMemo, useState } from 'react';
-import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
+import rehypeSanitize from 'rehype-sanitize';
 import { defaultRehypePlugins, Streamdown } from 'streamdown';
 
 import { AIIcon } from '@/components/icons/ai-icon';
@@ -12,11 +12,7 @@ import { AnimatedIcon } from '@/features/messages/components/ai/animated-icon';
 import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 
-const LOADING_MESSAGES = [
-  'Evaluating health profile...',
-  'Analyzing latest results...',
-] as const;
-
+import { sanitizeSchema } from '../../utils/markdown-sanitize-schema';
 import { parseMessageParts } from '../../utils/parse-message-parts';
 
 import { CitationCards } from './citations';
@@ -24,23 +20,10 @@ import { createMarkdownComponents } from './markdown-components';
 import { MessageActions } from './message-actions';
 import { PreviewAttachment } from './preview-attachment';
 
-// Configure rehype-sanitize with additional allowed protocols
-const sanitizeSchema = {
-  ...defaultSchema,
-  protocols: {
-    ...defaultSchema.protocols,
-    href: [
-      ...(defaultSchema.protocols?.href ?? []),
-      'tel',
-      'sms',
-      'fhir',
-      'product',
-      'memory',
-      'chat',
-      'marketplace',
-    ],
-  },
-};
+const LOADING_MESSAGES = [
+  'Evaluating health profile...',
+  'Analyzing latest results...',
+] as const;
 
 const rehypePlugins = [
   defaultRehypePlugins.raw,

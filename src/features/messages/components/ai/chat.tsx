@@ -25,7 +25,9 @@ import { useChatStore } from '@/features/messages/stores/chat-store';
 import { createChatV2Transport } from '@/features/messages/utils/chatv2-transport';
 import { extractTiming } from '@/features/messages/utils/extract-timing';
 import { useAnalytics } from '@/hooks/use-analytics';
+import { useUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
+import { shouldShowImportMemory } from '@/utils/show-action-conditions';
 
 import {
   useMessageQueue,
@@ -752,6 +754,12 @@ function useConciergeChatController({
       pendingSendInputRef.current = msg.text.length > 0 ? msg.text : null;
 
       track('sent_message_ai', { message_length: msg.text.length });
+      if (preset === 'import-memory') {
+        track('import_memory_submitted', {
+          chat_id: id,
+          message_length: msg.text.length,
+        });
+      }
       lastReportedErrorRef.current = null;
       setShowLoadErrorBanner(false);
       setShowReconnectBanner(false);
@@ -763,7 +771,14 @@ function useConciergeChatController({
         files: msg.files,
       });
     },
-    [sendMessage, track, incrementMessageCount, setAssistantBusyMessage],
+    [
+      id,
+      sendMessage,
+      track,
+      incrementMessageCount,
+      setAssistantBusyMessage,
+      preset,
+    ],
   );
 
   const {
@@ -812,6 +827,12 @@ function useConciergeChatController({
         track('sent_message_ai', {
           message_length: messageLength,
         });
+        if (preset === 'import-memory') {
+          track('import_memory_submitted', {
+            chat_id: id,
+            message_length: messageLength,
+          });
+        }
         incrementMessageCount();
         return sendMessage(message, options);
       }
@@ -823,8 +844,10 @@ function useConciergeChatController({
     [
       defaultMessage,
       enqueue,
+      id,
       incrementMessageCount,
       navigate,
+      preset,
       sendMessage,
       status,
       track,
@@ -973,8 +996,11 @@ function ChatView({
   const showDropzone =
     isUploadLabsPreset && !hasUserMessages && attachments.length === 0;
 
-  const setupActions = useMemo(
-    () => [
+  const { data: user } = useUser();
+  const showImportMemory = shouldShowImportMemory(user?.createdAt);
+
+  const setupActions = useMemo(() => {
+    const actions = [
       {
         title: 'Upload past labs',
         subtitle: 'See trends from your past labs.',
@@ -986,9 +1012,24 @@ function ChatView({
           });
         },
       },
-    ],
-    [navigate],
-  );
+    ];
+
+    if (showImportMemory) {
+      actions.push({
+        title: 'Continue from another AI',
+        subtitle: 'Import your conversations and deepen your health story.',
+        imageSrc: '/concierge/other_llms.webp',
+        onClick: () => {
+          void navigate({
+            to: '/concierge',
+            search: { preset: 'import-memory' },
+          });
+        },
+      });
+    }
+
+    return actions;
+  }, [navigate, showImportMemory]);
 
   const showErrorUi =
     status === 'error' ||

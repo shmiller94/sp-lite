@@ -8,6 +8,7 @@ import { useMessages } from '@/features/messages/api/get-messages';
 import { useUser } from '@/lib/auth';
 
 import { Chat } from './chat';
+import { type Preset, PRESET_MESSAGES } from './preset-messages';
 
 interface ConciergeChatSession {
   chatId: string;
@@ -16,7 +17,7 @@ interface ConciergeChatSession {
 
 interface DraftSessionOptions {
   chatId: string;
-  preset: string | undefined;
+  preset: Preset | undefined;
   presetMessageId: string;
   userFirstName: string | undefined;
 }
@@ -53,32 +54,24 @@ function createDraftSession({
   presetMessageId,
   userFirstName,
 }: DraftSessionOptions): ConciergeChatSession {
-  let initialMessages: UIMessage[] = [];
-
-  if (preset === 'update-personalization') {
-    const text = `Hi ${userFirstName ?? 'there'}, what would you like to update about your medical history? This could be things like a new therapy, updated diet, new habits or anything else you would like us to remember about you.`;
-    initialMessages = [
-      {
-        id: presetMessageId,
-        role: 'assistant',
-        parts: [{ type: 'text', text }],
-      },
-    ];
-  } else if (preset === 'upload-labs') {
-    const name = userFirstName ?? 'there';
-    const text = `Hi ${name},\n\nI'd love to help you get a complete picture of your health journey!\n\nWhen you're ready, upload your past test results and health records so we can see how your biomarkers have changed over time.\n\n**Here's what to expect:**\n\n- Processing takes about 5 minutes\n- You'll receive a summary of your past results\n- Your historical biomarkers will appear on your data page\n- We'll use these insights to tailor your protocol recommendations just for you\n\nIf you have any questions along the way, I'm here to help!`;
-    initialMessages = [
-      {
-        id: presetMessageId,
-        role: 'assistant',
-        parts: [{ type: 'text', text }],
-      },
-    ];
+  if (preset === undefined) {
+    return { chatId, initialMessages: [] };
   }
 
   return {
     chatId,
-    initialMessages,
+    initialMessages: [
+      {
+        id: presetMessageId,
+        role: 'assistant',
+        parts: [
+          {
+            type: 'text',
+            text: `Hi ${userFirstName ?? 'there'}!\n\n${PRESET_MESSAGES[preset]}`,
+          },
+        ],
+      },
+    ],
   };
 }
 
