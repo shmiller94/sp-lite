@@ -1,138 +1,247 @@
 import { IconFileText } from '@central-icons-react/round-filled-radius-2-stroke-1.5/IconFileText';
+import { useQueryClient } from '@tanstack/react-query';
 import { m } from 'framer-motion';
-import { ChevronRight, CircleCheck } from 'lucide-react';
-import { memo, useEffect, useRef, useState } from 'react';
+import { memo, useCallback, useRef, useState } from 'react';
 
-import { Link } from '@/components/ui/link';
-import { FILE_CLASSIFICATION_LABELS } from '@/features/files/const/extraction-labels';
+import { FILE_EXTRACTION_PHASE_LABELS } from '@/features/files/const/extraction-labels';
 
 import type { FileIngestionDataPart } from '../../../utils/data-parts';
 
-/** Base duration in ms for the fake progress to approach ~95%. */
-const BASE_DURATION_MS = 1 * 60 * 1000;
-/** Tick interval for updating the fake progress. */
-const TICK_MS = 200;
+const COMPLETE_DISPLAY_MS = 5000;
 
-/**
- * Attempt to exponentially decelerate toward 95%.
- * progress(t) = 95 * (1 - e^(-3t/T)) where T = BASE_DURATION_MS
- * This reaches ~50% at ~T/4 (~75s) and ~86% at ~T/2 (~150s), then crawls.
- */
-function fakeProgress(elapsedMs: number): number {
-  const k = 3 / BASE_DURATION_MS;
-  return 95 * (1 - Math.exp(-k * elapsedMs));
+/** Map each phase/status to the start of its progress range. */
+const PHASE_PROGRESS: Record<string, number> = {
+  registered: 5,
+  classifying: 15,
+  extracting: 35,
+  validating: 65,
+  writing: 85,
+  final: 100,
+  failed: 0,
+};
+
+/** Derive a target progress % purely from the current status + phase. */
+function progressFromState(
+  status: string | null | undefined,
+  phase: string | null | undefined,
+  isComplete: boolean,
+): number {
+  if (isComplete) return 100;
+  if (status === 'registered') return PHASE_PROGRESS.registered;
+  if (typeof phase === 'string' && phase in PHASE_PROGRESS) {
+    return PHASE_PROGRESS[phase];
+  }
+  // processing but no phase yet
+  if (status === 'processing') return PHASE_PROGRESS.classifying;
+  return 0;
 }
 
 export const FileIngestionBlock = memo(function FileIngestionBlock({
-  part,
+  parts,
 }: {
-  part: FileIngestionDataPart;
+  parts: FileIngestionDataPart[];
 }) {
-  const { state, status, classification, filename, error } = part.data;
+  const queryClient = useQueryClient();
+  const latestByFile = new Map<string, FileIngestionDataPart>();
+  let unknownFileCount = 0;
+  for (const part of parts) {
+    const fileId = part.data.fileId;
+    const key = fileId ?? `unknown-${unknownFileCount}`;
+    if (fileId == null) unknownFileCount += 1;
+    latestByFile.set(key, part);
+  }
+  let anyProcessing = false;
+  let anyFailed = false;
+  let allComplete = latestByFile.size > 0;
+  let totalWritten = 0;
+  let processingPart: FileIngestionDataPart | null = null;
+  let failedPart: FileIngestionDataPart | null = null;
+  const completedFileIds: Array<string | undefined> = [];
 
-  const isFailed = state === 'complete' && status === 'failed';
-  const isComplete = state === 'complete' && status === 'final';
-  const isRegistered = status === 'registered';
-  const isProcessing =
-    isRegistered || (state === 'processing' && status === 'processing');
-
-  const classificationLabel =
-    typeof classification === 'string'
-      ? (FILE_CLASSIFICATION_LABELS[classification] ?? classification)
-      : null;
-  const filenameLabel =
-    typeof filename === 'string' && filename.length > 0 ? filename : 'Document';
-  const errorMessage =
-    typeof error === 'string' && error.length > 0 ? error : null;
-
-  // Fake progress state
-  const [progress, setProgress] = useState(0);
-  const startTimeRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    if (!isProcessing) return;
-
-    if (startTimeRef.current === null) {
-      startTimeRef.current = Date.now();
+  for (const part of latestByFile.values()) {
+    const data = part.data;
+    completedFileIds.push(data.fileId);
+    if (typeof data.writtenCount === 'number')
+      totalWritten += data.writtenCount;
+    if (data.status === 'registered' || data.status === 'processing') {
+      anyProcessing = true;
+      if (processingPart === null) processingPart = part;
     }
-
-    const interval = setInterval(() => {
-      const elapsed = Date.now() - (startTimeRef.current ?? Date.now());
-      setProgress(fakeProgress(elapsed));
-    }, TICK_MS);
-
-    return () => clearInterval(interval);
-  }, [isProcessing]);
-
-  // Snap to 100% when complete
-  useEffect(() => {
-    if (isComplete) {
-      setProgress(100);
+    if (data.state === 'complete' && data.status === 'failed') {
+      anyFailed = true;
+      if (failedPart === null) failedPart = part;
     }
-  }, [isComplete]);
-
-  const displayPercent = Math.round(isComplete ? 100 : progress);
-
-  const statusLabel = isProcessing
-    ? 'Processing documents...'
-    : isComplete
-      ? (classificationLabel ?? 'Document')
-      : isFailed
-        ? filenameLabel
-        : filenameLabel;
-
-  if (isComplete) {
-    return (
-      <Link
-        to="/data"
-        className="group my-1 flex items-center gap-3 rounded-full border border-zinc-100 bg-white px-4 py-3 pl-3 shadow shadow-black/[.03] transition-colors hover:bg-zinc-50"
-      >
-        <CircleCheck className="size-7 shrink-0 fill-vermillion-900 text-white" />
-        <span className="min-w-0 flex-1 truncate text-sm font-medium text-zinc-900">
-          View results summary
-        </span>
-        <ChevronRight className="size-5 shrink-0 text-zinc-300 transition-all duration-200 ease-out group-hover:translate-x-1 group-hover:text-zinc-400" />
-      </Link>
-    );
+    if (data.state !== 'complete' || data.status !== 'final')
+      allComplete = false;
   }
 
+  const completionKey = allComplete ? completedFileIds.join(',') : null;
+  const fileCount = latestByFile.size;
+  const phase = processingPart?.data.phase;
+  let phaseLabel: string | null = null;
+  if (typeof phase === 'string' && phase in FILE_EXTRACTION_PHASE_LABELS) {
+    phaseLabel = FILE_EXTRACTION_PHASE_LABELS[phase];
+  }
+  const processingLabel =
+    phaseLabel !== null
+      ? `${phaseLabel}...`
+      : fileCount <= 1
+        ? 'Processing...'
+        : `Processing ${fileCount} documents...`;
+  const completeLabel =
+    totalWritten > 0
+      ? `Extracted ${totalWritten} lab result${totalWritten !== 1 ? 's' : ''}`
+      : 'Processing complete';
+  const hasSeenProcessingRef = useRef(anyProcessing);
+  const invalidatedCompletionKeysRef = useRef<Set<string>>(new Set());
+  const dismissedCompletionKeysRef = useRef<Set<string>>(new Set());
+  const completionDismissTimeoutRef = useRef<ReturnType<
+    typeof setTimeout
+  > | null>(null);
+  const scheduledDismissCompletionKeyRef = useRef<string | null>(null);
+  const [, setDismissedVersion] = useState(0);
+
+  if (anyProcessing) hasSeenProcessingRef.current = true;
+
+  const showCompletion =
+    completionKey !== null &&
+    hasSeenProcessingRef.current &&
+    !dismissedCompletionKeysRef.current.has(completionKey);
+  let showState: 'processing' | 'complete' | 'failed' | 'hidden' = 'hidden';
+  if (anyProcessing) showState = 'processing';
+  else if (showCompletion) showState = 'complete';
+  else if (anyFailed) showState = 'failed';
+
+  const setCompleteBlockRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (node === null) {
+        if (completionDismissTimeoutRef.current !== null) {
+          clearTimeout(completionDismissTimeoutRef.current);
+          completionDismissTimeoutRef.current = null;
+        }
+        scheduledDismissCompletionKeyRef.current = null;
+        return;
+      }
+      if (completionKey === null) return;
+
+      if (!invalidatedCompletionKeysRef.current.has(completionKey)) {
+        invalidatedCompletionKeysRef.current.add(completionKey);
+        queryClient.invalidateQueries({ queryKey: ['biomarkers'] });
+        queryClient.invalidateQueries({ queryKey: ['files'] });
+        queryClient.invalidateQueries({ queryKey: ['summary'] });
+      }
+      if (
+        dismissedCompletionKeysRef.current.has(completionKey) ||
+        scheduledDismissCompletionKeyRef.current === completionKey
+      ) {
+        return;
+      }
+      if (completionDismissTimeoutRef.current !== null) {
+        clearTimeout(completionDismissTimeoutRef.current);
+      }
+      scheduledDismissCompletionKeyRef.current = completionKey;
+      completionDismissTimeoutRef.current = setTimeout(() => {
+        if (dismissedCompletionKeysRef.current.has(completionKey)) return;
+        dismissedCompletionKeysRef.current.add(completionKey);
+        setDismissedVersion((curr) => curr + 1);
+        completionDismissTimeoutRef.current = null;
+        if (scheduledDismissCompletionKeyRef.current === completionKey) {
+          scheduledDismissCompletionKeyRef.current = null;
+        }
+      }, COMPLETE_DISPLAY_MS);
+    },
+    [completionKey, queryClient],
+  );
+
+  const handleCompleteAnimationEnd = useCallback(() => {
+    if (completionKey === null) return;
+    if (dismissedCompletionKeysRef.current.has(completionKey)) return;
+    if (
+      completionDismissTimeoutRef.current !== null &&
+      scheduledDismissCompletionKeyRef.current === completionKey
+    ) {
+      clearTimeout(completionDismissTimeoutRef.current);
+      completionDismissTimeoutRef.current = null;
+      scheduledDismissCompletionKeyRef.current = null;
+    }
+    dismissedCompletionKeysRef.current.add(completionKey);
+    setDismissedVersion((curr) => curr + 1);
+  }, [completionKey]);
+
+  const progress = progressFromState(
+    processingPart?.data.status ?? (allComplete ? 'final' : null),
+    phase,
+    showState === 'complete',
+  );
+  const displayPercent = Math.round(progress);
+
+  if (showState === 'hidden') return null;
+  const isComplete = showState === 'complete';
+  let failedData: FileIngestionDataPart['data'] | null = null;
+  if (showState === 'failed' && failedPart !== null) {
+    failedData = failedPart.data;
+  }
+  const isFailed = failedData !== null;
+  const primaryLabel = isFailed
+    ? typeof failedData?.filename === 'string' && failedData.filename.length > 0
+      ? failedData.filename
+      : 'Document'
+    : isComplete
+      ? completeLabel
+      : processingLabel;
+  const secondaryLabel = isFailed
+    ? typeof failedData?.error === 'string' && failedData.error.length > 0
+      ? failedData.error
+      : null
+    : null;
+
   return (
-    <div className="my-1 flex items-center gap-1.5 rounded-full border border-zinc-100 bg-white px-4 py-2.5 pl-2">
-      {/* Icon */}
+    <m.div
+      ref={isComplete ? setCompleteBlockRef : undefined}
+      key={isComplete ? (completionKey ?? 'complete') : 'default'}
+      className="my-1 flex items-center gap-1.5 rounded-full border border-zinc-100 bg-white px-4 py-2.5 pl-2"
+      initial={isComplete ? { opacity: 1 } : undefined}
+      animate={isComplete ? { opacity: [1, 1, 0] } : undefined}
+      transition={
+        isComplete
+          ? {
+              duration: 0.35,
+              ease: 'easeOut',
+              delay: (COMPLETE_DISPLAY_MS - 350) / 1000,
+            }
+          : undefined
+      }
+      onAnimationComplete={isComplete ? handleCompleteAnimationEnd : undefined}
+    >
       <div className="flex size-9 shrink-0 items-center justify-center rounded-xl text-zinc-400">
         <IconFileText />
       </div>
-
-      {/* Right section: text row + progress bar */}
       <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-        {/* Text row */}
         <div className="flex items-center justify-between gap-2">
           <span className="truncate text-sm font-medium text-zinc-700">
-            {statusLabel}
+            {primaryLabel}
           </span>
-          {isProcessing && (
+          {showState === 'processing' && (
             <span className="shrink-0 text-sm tabular-nums text-zinc-700">
               {displayPercent}%
             </span>
           )}
         </div>
-
-        {isFailed && errorMessage !== null && (
-          <span className="truncate text-xs text-red-500">{errorMessage}</span>
+        {secondaryLabel !== null && (
+          <span className="truncate text-xs text-red-500">
+            {secondaryLabel}
+          </span>
         )}
-
-        {/* Progress bar */}
-        {isProcessing && (
+        {(showState === 'processing' || isComplete) && (
           <div className="h-[3px] w-full overflow-hidden rounded-full bg-zinc-200">
             <m.div
               className="h-full rounded-full bg-vermillion-900"
-              initial={{ width: '0%' }}
               animate={{ width: `${progress}%` }}
-              transition={{ duration: 0.3, ease: 'easeOut' }}
+              transition={{ duration: 0.6, ease: 'easeOut' }}
             />
           </div>
         )}
       </div>
-    </div>
+    </m.div>
   );
 });

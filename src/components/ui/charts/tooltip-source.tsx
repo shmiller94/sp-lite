@@ -1,3 +1,4 @@
+import { sourceDisplayName } from '@/components/ui/charts/utils/source-display-name';
 import { useOpenFile } from '@/features/files/hooks/use-open-file';
 
 interface TooltipSourceProps {
@@ -7,15 +8,16 @@ interface TooltipSourceProps {
 
 export function TooltipSource({ source, file }: TooltipSourceProps) {
   const openFile = useOpenFile();
+  const displayName = sourceDisplayName(source);
 
   if (!file) {
-    return <span className="capitalize">{source}</span>;
+    return <span>{displayName}</span>;
   }
 
   return (
     <>
-      <span className="capitalize">{source}</span>
-      {' — '}
+      <span>{displayName}</span>
+      {' - '}
       <button
         type="button"
         className="cursor-pointer underline decoration-dotted underline-offset-2 hover:text-foreground focus:outline-none"

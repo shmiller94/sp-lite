@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { STATUS_TO_COLOR } from '@/const/status-to-color';
@@ -20,6 +20,7 @@ interface SparklineDisplayedPoint {
   position: { x: number; y: number };
   status: string;
   source: Lab;
+  unit?: string;
   comparatorLabel?: string;
   file?: { id: string; name: string };
 }
@@ -42,6 +43,7 @@ const SparklineLineChart = ({
     position: { x: number; y: number };
     status: string;
     source: Lab;
+    unit?: string;
     comparatorLabel?: string;
     file?: { id: string; name: string };
   }) => void;
@@ -57,7 +59,28 @@ const SparklineLineChart = ({
   const svgRef = useRef<SVGSVGElement>(null);
   const lastPointRef = useRef<number | null>(null);
   const debounceTimerRef = useRef<number | null>(null);
+  const touchResetTimeoutRef = useRef<number | null>(null);
   const isTouchDevice = useRef<boolean>(false);
+
+  const setSvgRef = useCallback((node: SVGSVGElement | null) => {
+    svgRef.current = node;
+
+    if (node !== null) {
+      return;
+    }
+
+    if (debounceTimerRef.current !== null) {
+      window.cancelAnimationFrame(debounceTimerRef.current);
+      debounceTimerRef.current = null;
+    }
+
+    if (touchResetTimeoutRef.current !== null) {
+      window.clearTimeout(touchResetTimeoutRef.current);
+      touchResetTimeoutRef.current = null;
+    }
+
+    lastPointRef.current = null;
+  }, []);
 
   const handleInteraction = useCallback(
     (clientX: number) => {
@@ -95,6 +118,7 @@ const SparklineLineChart = ({
             },
             status: nearestPoint.status as string,
             source: nearestPoint.source as Lab,
+            unit: nearestPoint.unit,
             comparatorLabel: nearestPoint.comparatorLabel,
             file: nearestPoint.file,
           });
@@ -115,6 +139,11 @@ const SparklineLineChart = ({
 
   const handleTouchStart = useCallback(
     (e: React.TouchEvent<SVGSVGElement>) => {
+      if (touchResetTimeoutRef.current !== null) {
+        window.clearTimeout(touchResetTimeoutRef.current);
+        touchResetTimeoutRef.current = null;
+      }
+
       isTouchDevice.current = true;
       e.preventDefault();
       if (e.touches.length === 1) {
@@ -144,8 +173,13 @@ const SparklineLineChart = ({
       lastPointRef.current = null;
       onHoverEnd();
 
-      setTimeout(() => {
+      if (touchResetTimeoutRef.current !== null) {
+        window.clearTimeout(touchResetTimeoutRef.current);
+      }
+
+      touchResetTimeoutRef.current = window.setTimeout(() => {
         isTouchDevice.current = false;
+        touchResetTimeoutRef.current = null;
       }, 300);
     },
     [onHoverEnd],
@@ -161,15 +195,6 @@ const SparklineLineChart = ({
       onHoverEnd();
     }
   }, [onHoverEnd]);
-
-  useEffect(() => {
-    return () => {
-      if (debounceTimerRef.current !== null) {
-        window.cancelAnimationFrame(debounceTimerRef.current);
-        debounceTimerRef.current = null;
-      }
-    };
-  }, []);
 
   if (!meta.hasData) {
     return <div className="relative flex overflow-visible" />;
@@ -195,7 +220,7 @@ const SparklineLineChart = ({
   return (
     <div className="relative flex overflow-visible">
       <svg
-        ref={svgRef}
+        ref={setSvgRef}
         width={svgWidth}
         height={config.SVG_HEIGHT}
         className="touch-manipulation overflow-visible"
@@ -294,13 +319,15 @@ export const SparklineChart = ({
   const [displayedPoint, setDisplayedPoint] =
     useState<SparklineDisplayedPoint | null>(null);
   const hideTimeoutRef = useRef<number | null>(null);
+  const setContainerRef = useCallback((node: HTMLDivElement | null) => {
+    if (node !== null) {
+      return;
+    }
 
-  useEffect(() => {
-    return () => {
-      if (hideTimeoutRef.current !== null) {
-        window.clearTimeout(hideTimeoutRef.current);
-      }
-    };
+    if (hideTimeoutRef.current !== null) {
+      window.clearTimeout(hideTimeoutRef.current);
+      hideTimeoutRef.current = null;
+    }
   }, []);
 
   const handlePointHover = useCallback((point: SparklineDisplayedPoint) => {
@@ -336,6 +363,7 @@ export const SparklineChart = ({
 
   return (
     <div
+      ref={setContainerRef}
       style={{
         maskImage: 'linear-gradient(to right, transparent 20%, black 35%)',
         WebkitMaskImage:
@@ -383,7 +411,7 @@ export const SparklineChart = ({
                 <div className="font-semibold">
                   {displayedPoint.comparatorLabel ??
                     displayedPoint.value.toFixed(2)}{' '}
-                  {biomarker.unit}
+                  {displayedPoint.unit || biomarker.unit}
                 </div>
                 <div className="text-muted-foreground">
                   {format(new Date(displayedPoint.timestamp), 'MMM dd, yyyy')} (

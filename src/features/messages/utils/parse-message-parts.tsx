@@ -145,6 +145,7 @@ export function parseMessageParts(
       ? 'streaming'
       : undefined;
   let reasoningBlockAdded = false;
+  let fileIngestionBlockAdded = false;
 
   const pushParagraph = (
     paragraphText: string,
@@ -340,11 +341,18 @@ export function parseMessageParts(
       flushByBlankLines();
       flushRemainingText();
       if (isFileIngestionDataPart(part)) {
-        blocks.push({
-          kind: 'node',
-          key: `${message.id}:file-ingestion:${partIndex}`,
-          node: <FileIngestionBlock part={part} />,
-        });
+        // Collect all ingestion parts and render a single aggregated block
+        if (!fileIngestionBlockAdded) {
+          fileIngestionBlockAdded = true;
+          const allIngestionParts = message.parts.filter(
+            isFileIngestionDataPart,
+          );
+          blocks.push({
+            kind: 'node',
+            key: `${message.id}:file-ingestion`,
+            node: <FileIngestionBlock parts={allIngestionParts} />,
+          });
+        }
       } else {
         blocks.push({
           kind: 'node',

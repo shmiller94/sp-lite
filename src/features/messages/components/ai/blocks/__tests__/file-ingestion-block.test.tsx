@@ -1,10 +1,4 @@
-import {
-  RouterProvider,
-  createMemoryHistory,
-  createRootRoute,
-  createRoute,
-  createRouter,
-} from '@tanstack/react-router';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, act } from '@testing-library/react';
 import type { ReactNode } from 'react';
 
@@ -31,34 +25,77 @@ function makePart(
   };
 }
 
-async function renderWithRouter(ui: ReactNode) {
-  const rootRoute = createRootRoute({ component: () => ui });
-  const indexRoute = createRoute({
-    getParentRoute: () => rootRoute,
-    path: '/',
+function Wrapper({ children }: { children: ReactNode }) {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
   });
-  const router = createRouter({
-    routeTree: rootRoute.addChildren([indexRoute]),
-    history: createMemoryHistory({ initialEntries: ['/'] }),
-  });
-  await router.load();
-  await act(async () => {
-    render(<RouterProvider router={router} />);
-  });
+  return (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+}
+
+function renderBlock(parts: FileIngestionDataPart[]) {
+  return render(
+    <Wrapper>
+      <FileIngestionBlock parts={parts} />
+    </Wrapper>,
+  );
 }
 
 describe('FileIngestionBlock', () => {
-  it('renders processing state with progress', () => {
-    render(
-      <FileIngestionBlock
-        part={makePart({
-          state: 'processing',
-          status: 'processing',
-          phase: 'extracting',
-        })}
-      />,
-    );
-    expect(screen.getByText('Processing documents...')).toBeInTheDocument();
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('renders processing state with default label for single file', () => {
+    renderBlock([
+      makePart({ state: 'processing', status: 'processing', phase: null }),
+    ]);
+    expect(screen.getByText('Processing...')).toBeInTheDocument();
+  });
+
+  it('renders phase-specific label when phase is available', () => {
+    renderBlock([
+      makePart({
+        state: 'processing',
+        status: 'processing',
+        phase: 'extracting',
+      }),
+    ]);
+    expect(screen.getByText('Extracting...')).toBeInTheDocument();
+  });
+
+  it('renders classifying phase label', () => {
+    renderBlock([
+      makePart({
+        state: 'processing',
+        status: 'processing',
+        phase: 'classifying',
+      }),
+    ]);
+    expect(screen.getByText('Classifying...')).toBeInTheDocument();
+  });
+
+  it('renders multi-file processing label when no phase', () => {
+    renderBlock([
+      makePart({
+        fileId: 'f1',
+        state: 'processing',
+        status: 'processing',
+        phase: null,
+      }),
+      makePart({
+        fileId: 'f2',
+        state: 'processing',
+        status: 'processing',
+        phase: null,
+      }),
+    ]);
+    expect(screen.getByText('Processing 2 documents...')).toBeInTheDocument();
   });
 
   it('ignores unexpected runtime phase values', () => {
@@ -74,115 +111,104 @@ describe('FileIngestionBlock', () => {
       configurable: true,
     });
 
-    render(<FileIngestionBlock part={part} />);
+    renderBlock([part]);
 
-    expect(screen.getByText('Processing documents...')).toBeInTheDocument();
+    expect(screen.getByText('Processing...')).toBeInTheDocument();
     expect(screen.queryByText('undefined…')).not.toBeInTheDocument();
   });
 
   it('renders registered state as processing', () => {
-    render(
-      <FileIngestionBlock
-        part={makePart({ state: 'processing', status: 'registered' })}
-      />,
-    );
-    expect(screen.getByText('Processing documents...')).toBeInTheDocument();
+    renderBlock([makePart({ state: 'processing', status: 'registered' })]);
+    expect(screen.getByText('Processing...')).toBeInTheDocument();
   });
 
-  it('renders final state with view results summary link', async () => {
-    await renderWithRouter(
-      <FileIngestionBlock
-        part={makePart({
-          state: 'complete',
-          status: 'final',
-          classification: 'lab_results_pathology',
-          writtenCount: 12,
-        })}
-      />,
+  it('shows completion label after transitioning from processing, then auto-hides', () => {
+    const { rerender } = render(
+      <Wrapper>
+        <FileIngestionBlock
+          parts={[makePart({ state: 'processing', status: 'processing' })]}
+        />
+      </Wrapper>,
     );
-    expect(screen.getByText('View results summary')).toBeInTheDocument();
-    expect(screen.getByRole('link')).toHaveAttribute('href', '/data');
-  });
+    expect(screen.getByText('Processing...')).toBeInTheDocument();
 
-  it('renders final state for non-lab files with view results summary', async () => {
-    await renderWithRouter(
-      <FileIngestionBlock
-        part={makePart({
-          state: 'complete',
-          status: 'final',
-          classification: 'clinical_notes',
-          message:
-            'Identified as clinical notes, so no lab extraction was run.',
-        })}
-      />,
-    );
-
-    expect(screen.getByText('View results summary')).toBeInTheDocument();
-  });
-
-  it('renders final state for zero-result lab files with view results summary', async () => {
-    await renderWithRouter(
-      <FileIngestionBlock
-        part={makePart({
-          state: 'complete',
-          status: 'final',
-          classification: 'lab_results_pathology',
-          message:
-            'Recognized as a lab report, but no structured lab results could be extracted.',
-        })}
-      />,
-    );
-
-    expect(screen.getByText('View results summary')).toBeInTheDocument();
-  });
-
-  it('renders final state with unexpected classification', async () => {
-    const part = makePart({
-      state: 'complete',
-      status: 'final',
-      writtenCount: 1,
+    // Transition to complete
+    act(() => {
+      rerender(
+        <Wrapper>
+          <FileIngestionBlock
+            parts={[
+              makePart({
+                state: 'complete',
+                status: 'final',
+                writtenCount: 12,
+              }),
+            ]}
+          />
+        </Wrapper>,
+      );
     });
 
-    Object.defineProperty(part.data, 'classification', {
-      value: 'Outside Schema',
-      writable: true,
-      configurable: true,
+    expect(screen.getByText('Extracted 12 lab results')).toBeInTheDocument();
+
+    // After 5 seconds it should auto-hide
+    act(() => {
+      vi.advanceTimersByTime(5000);
     });
-
-    await renderWithRouter(<FileIngestionBlock part={part} />);
-
-    expect(screen.getByText('View results summary')).toBeInTheDocument();
+    expect(
+      screen.queryByText('Extracted 12 lab results'),
+    ).not.toBeInTheDocument();
   });
 
-  it('renders final state with unexpected writtenCount', async () => {
-    const part = makePart({
-      state: 'complete',
-      status: 'final',
-      classification: 'lab_results_pathology',
-      writtenCount: 1,
+  it('shows "Processing complete" when transitioning with writtenCount 0', () => {
+    const { rerender } = render(
+      <Wrapper>
+        <FileIngestionBlock
+          parts={[makePart({ state: 'processing', status: 'processing' })]}
+        />
+      </Wrapper>,
+    );
+
+    act(() => {
+      rerender(
+        <Wrapper>
+          <FileIngestionBlock
+            parts={[
+              makePart({
+                state: 'complete',
+                status: 'final',
+                writtenCount: 0,
+              }),
+            ]}
+          />
+        </Wrapper>,
+      );
     });
 
-    Object.defineProperty(part.data, 'writtenCount', {
-      value: undefined,
-      writable: true,
-      configurable: true,
-    });
+    expect(screen.getByText('Processing complete')).toBeInTheDocument();
+  });
 
-    await renderWithRouter(<FileIngestionBlock part={part} />);
-
-    expect(screen.getByText('View results summary')).toBeInTheDocument();
+  it('does not render for already-complete data on mount (history)', () => {
+    const { container } = renderBlock([
+      makePart({
+        state: 'complete',
+        status: 'final',
+        classification: 'lab_results_pathology',
+        writtenCount: 5,
+      }),
+    ]);
+    // Block should be hidden for historical data
+    expect(container.firstChild).toBeNull();
   });
 
   it('renders failed state with error details', () => {
-    render(
-      <FileIngestionBlock
-        part={makePart({
-          state: 'complete',
-          status: 'failed',
-          error: 'No processing run was created for this file',
-        })}
-      />,
-    );
+    renderBlock([
+      makePart({
+        state: 'complete',
+        status: 'failed',
+        error: 'No processing run was created for this file',
+      }),
+    ]);
     expect(screen.getByText('cbc-march-2026.pdf')).toBeInTheDocument();
     expect(
       screen.getByText('No processing run was created for this file'),
@@ -202,10 +228,103 @@ describe('FileIngestionBlock', () => {
       configurable: true,
     });
 
-    expect(() => render(<FileIngestionBlock part={part} />)).not.toThrow();
+    expect(() => renderBlock([part])).not.toThrow();
     expect(screen.getByText('cbc-march-2026.pdf')).toBeInTheDocument();
     expect(
       screen.queryByText('Parse error: invalid format'),
     ).not.toBeInTheDocument();
+  });
+
+  it('deduplicates parts by fileId keeping latest', () => {
+    renderBlock([
+      makePart({
+        fileId: 'f1',
+        state: 'processing',
+        status: 'registered',
+        phase: null,
+      }),
+      makePart({
+        fileId: 'f1',
+        state: 'processing',
+        status: 'processing',
+        phase: 'extracting',
+      }),
+    ]);
+    // Should show phase label from the latest part, not "Processing 2 documents..."
+    expect(screen.getByText('Extracting...')).toBeInTheDocument();
+  });
+
+  it('aggregates writtenCount across multiple completed files after transition', () => {
+    const { rerender } = render(
+      <Wrapper>
+        <FileIngestionBlock
+          parts={[
+            makePart({
+              fileId: 'f1',
+              state: 'processing',
+              status: 'processing',
+            }),
+            makePart({
+              fileId: 'f2',
+              state: 'processing',
+              status: 'processing',
+            }),
+          ]}
+        />
+      </Wrapper>,
+    );
+
+    act(() => {
+      rerender(
+        <Wrapper>
+          <FileIngestionBlock
+            parts={[
+              makePart({
+                fileId: 'f1',
+                state: 'complete',
+                status: 'final',
+                writtenCount: 5,
+              }),
+              makePart({
+                fileId: 'f2',
+                state: 'complete',
+                status: 'final',
+                writtenCount: 3,
+              }),
+            ]}
+          />
+        </Wrapper>,
+      );
+    });
+
+    expect(screen.getByText('Extracted 8 lab results')).toBeInTheDocument();
+  });
+
+  it('shows singular "lab result" for writtenCount of 1 after transition', () => {
+    const { rerender } = render(
+      <Wrapper>
+        <FileIngestionBlock
+          parts={[makePart({ state: 'processing', status: 'processing' })]}
+        />
+      </Wrapper>,
+    );
+
+    act(() => {
+      rerender(
+        <Wrapper>
+          <FileIngestionBlock
+            parts={[
+              makePart({
+                state: 'complete',
+                status: 'final',
+                writtenCount: 1,
+              }),
+            ]}
+          />
+        </Wrapper>,
+      );
+    });
+
+    expect(screen.getByText('Extracted 1 lab result')).toBeInTheDocument();
   });
 });
