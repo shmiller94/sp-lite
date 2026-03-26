@@ -39,7 +39,7 @@ const enableReactCompiler = process.env.REACT_COMPILER !== 'false';
 
 const plugins = [
   // meticulousRecorderPlugin is added dynamically below via defineConfig callback
-  devtools(),
+  devtools({ injectSource: { enabled: false } }),
   tanstackRouter({
     target: 'react',
     autoCodeSplitting: true,
