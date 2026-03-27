@@ -61,6 +61,9 @@ export interface User extends BaseUser {
   rdn?: Rdn;
   identityUpdatedTime?: string;
   identityVerificationStatus?: IdentityVerificationStatus;
+  access?: {
+    rx: boolean;
+  };
 }
 
 export type AdminActor = Entity<{
@@ -85,7 +88,6 @@ export type TokenResponse = {
 };
 
 /**
- /**
  * OAuth 2.0 Grant Type Identifiers
  * Standard identifiers defined here: https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-07#name-grant-types
  * Token exchange extension defined here: https://datatracker.ietf.org/doc/html/rfc8693

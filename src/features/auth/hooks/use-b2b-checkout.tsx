@@ -112,14 +112,14 @@ export const useB2BCheckout = ({
     setProcessing(true);
 
     let phiMarketingConsent: boolean | undefined = undefined;
-    if (data) {
+    if (data != null) {
       phiMarketingConsent = data.phiMarketingConsent;
     }
 
     let email: string | undefined = undefined;
-    if (user && user.email) {
+    if (user?.email != null) {
       email = user.email;
-    } else if (data && data.email) {
+    } else if (data?.email != null) {
       email = data.email;
     }
 
@@ -167,6 +167,14 @@ export const useB2BCheckout = ({
           await onSuccess(email);
         }
       }
+
+      /**
+       * Invalidate the authenticated-user query so access flags (e.g. access.rx)
+       * are refetched from the server after the benefit claim.
+       */
+      void queryClient.invalidateQueries({
+        queryKey: ['authenticated-user'],
+      });
 
       setProcessing(false);
     } catch (e) {
