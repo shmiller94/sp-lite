@@ -1,5 +1,6 @@
 import { isToolUIPart, type UIMessage } from 'ai';
 import { BarChart, CopyIcon, Share, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { useState } from 'react';
 import removeMarkdown from 'remove-markdown';
 
 import { Button } from '@/components/ui/button';
@@ -16,6 +17,8 @@ import { parseMessageParts } from '../../utils/parse-message-parts';
 import { ChatShareDialog } from '../chat-share-dialog';
 import { CitationsDialog } from '../citations-dialog';
 
+type Feedback = 'positive' | 'negative';
+
 export function MessageActions({
   chatId,
   message,
@@ -26,6 +29,7 @@ export function MessageActions({
   isLoading: boolean;
 }) {
   const { track } = useAnalytics();
+  const [feedback, setFeedback] = useState<Feedback>();
   if (isLoading) return null;
   if (message.role === 'user') return null;
 
@@ -35,7 +39,10 @@ export function MessageActions({
   );
 
   // Only hide if message has tool parts AND no text content
-  if (message.parts.some((part) => isToolUIPart(part)) && !hasTextContent) {
+  if (
+    message.parts.some((part) => isToolUIPart(part)) &&
+    hasTextContent === false
+  ) {
     return null;
   }
 
@@ -66,14 +73,21 @@ export function MessageActions({
     }
   };
 
-  const handleThumbsUp = () => {
-    track('message_feedback_positive', { chatId });
-    toast.success('Thank you. Your feedback has been received!');
-  };
+  const handleFeedback = (value: Feedback) => {
+    const next = feedback === value ? undefined : value;
+    setFeedback(next);
 
-  const handleThumbsDown = () => {
-    track('message_feedback_negative', { chatId });
-    toast.success('Thank you. Your feedback has been received!');
+    track('message_feedback', {
+      chat_id: chatId,
+      message_id: message.id,
+      feedback: next ?? 'none',
+    });
+
+    if (next == null) {
+      toast.success('Feedback removed.');
+    } else {
+      toast.success('Thank you. Your feedback has been received!');
+    }
   };
 
   return (
@@ -110,9 +124,11 @@ export function MessageActions({
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
-              className="flex size-8 items-center justify-center rounded-lg p-0 text-muted-foreground hover:bg-zinc-100"
+              className={`flex size-8 items-center justify-center rounded-lg p-0 hover:bg-zinc-100 ${feedback === 'positive' ? 'text-foreground' : 'text-muted-foreground'}`}
               variant="ghost"
-              onClick={handleThumbsUp}
+              aria-label="Mark response as good"
+              aria-pressed={feedback === 'positive'}
+              onClick={() => handleFeedback('positive')}
             >
               <ThumbsUp size={16} />
             </Button>
@@ -122,9 +138,11 @@ export function MessageActions({
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
-              className="flex size-8 items-center justify-center rounded-lg p-0 text-muted-foreground hover:bg-zinc-100"
+              className={`flex size-8 items-center justify-center rounded-lg p-0 hover:bg-zinc-100 ${feedback === 'negative' ? 'text-foreground' : 'text-muted-foreground'}`}
               variant="ghost"
-              onClick={handleThumbsDown}
+              aria-label="Mark response as poor"
+              aria-pressed={feedback === 'negative'}
+              onClick={() => handleFeedback('negative')}
             >
               <ThumbsDown size={16} />
             </Button>
