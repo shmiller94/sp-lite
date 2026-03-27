@@ -1,5 +1,6 @@
 interface AppEnv {
   API_URL: string;
+  AUTH_URL: string;
   SOCIAL_BASE_URL: string;
   STRIPE_PUBLISHABLE_KEY: string;
   ENABLE_API_MOCKING?: boolean;
@@ -32,6 +33,15 @@ if (typeof apiUrlRaw === 'string') {
 } else {
   issues.push('API_URL');
   API_URL = '';
+}
+
+let AUTH_URL: string;
+const authUrlRaw = raw.VITE_APP_AUTH_URL;
+if (typeof authUrlRaw === 'string') {
+  AUTH_URL = authUrlRaw;
+} else {
+  issues.push('AUTH_URL');
+  AUTH_URL = '';
 }
 
 let SOCIAL_BASE_URL: string;
@@ -252,6 +262,7 @@ if (issues.length > 0) {
 
 export const env: AppEnv = {
   API_URL,
+  AUTH_URL,
   SOCIAL_BASE_URL,
   STRIPE_PUBLISHABLE_KEY,
   ENABLE_API_MOCKING,

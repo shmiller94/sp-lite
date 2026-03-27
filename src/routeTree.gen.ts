@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 import { Route as SigninRouteImport } from './routes/signin'
+import { Route as SetpasswordRouteImport } from './routes/setpassword'
 import { Route as ResetpasswordRouteImport } from './routes/resetpassword'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as LogoutRouteImport } from './routes/logout'
@@ -37,7 +38,6 @@ import { Route as AppProtocolIndexRouteImport } from './routes/_app.protocol.ind
 import { Route as AppOrdersIndexRouteImport } from './routes/_app.orders.index'
 import { Route as AppDataIndexRouteImport } from './routes/_app.data.index'
 import { Route as AppConciergeIndexRouteImport } from './routes/_app.concierge.index'
-import { Route as SetpasswordIdSecretRouteImport } from './routes/setpassword.$id.$secret'
 import { Route as AppServicesIdRouteImport } from './routes/_app.services.$id'
 import { Route as AppRxSubscriptionsIdRouteImport } from './routes/_app.rx-subscriptions.$id'
 import { Route as AppQuestionnaireTypeRouteImport } from './routes/_app.questionnaire.$type'
@@ -69,6 +69,11 @@ const VerifyEmailRoute = VerifyEmailRouteImport.update({
 const SigninRoute = SigninRouteImport.update({
   id: '/signin',
   path: '/signin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SetpasswordRoute = SetpasswordRouteImport.update({
+  id: '/setpassword',
+  path: '/setpassword',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetpasswordRoute = ResetpasswordRouteImport.update({
@@ -199,11 +204,6 @@ const AppConciergeIndexRoute = AppConciergeIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppConciergeRoute,
 } as any)
-const SetpasswordIdSecretRoute = SetpasswordIdSecretRouteImport.update({
-  id: '/setpassword/$id/$secret',
-  path: '/setpassword/$id/$secret',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AppServicesIdRoute = AppServicesIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -324,6 +324,7 @@ export interface FileRoutesByFullPath {
   '/logout': typeof LogoutRoute
   '/register': typeof RegisterRoute
   '/resetpassword': typeof ResetpasswordRoute
+  '/setpassword': typeof SetpasswordRoute
   '/signin': typeof SigninRoute
   '/verify-email': typeof VerifyEmailRoute
   '/concierge': typeof AppConciergeRouteWithChildren
@@ -354,7 +355,6 @@ export interface FileRoutesByFullPath {
   '/questionnaire/$type': typeof AppQuestionnaireTypeRoute
   '/rx-subscriptions/$id': typeof AppRxSubscriptionsIdRoute
   '/services/$id': typeof AppServicesIdRoute
-  '/setpassword/$id/$secret': typeof SetpasswordIdSecretRoute
   '/concierge/': typeof AppConciergeIndexRoute
   '/data/': typeof AppDataIndexRoute
   '/orders/': typeof AppOrdersIndexRoute
@@ -374,6 +374,7 @@ export interface FileRoutesByTo {
   '/logout': typeof LogoutRoute
   '/register': typeof RegisterRoute
   '/resetpassword': typeof ResetpasswordRoute
+  '/setpassword': typeof SetpasswordRoute
   '/signin': typeof SigninRoute
   '/verify-email': typeof VerifyEmailRoute
   '/': typeof AppIndexRoute
@@ -398,7 +399,6 @@ export interface FileRoutesByTo {
   '/questionnaire/$type': typeof AppQuestionnaireTypeRoute
   '/rx-subscriptions/$id': typeof AppRxSubscriptionsIdRoute
   '/services/$id': typeof AppServicesIdRoute
-  '/setpassword/$id/$secret': typeof SetpasswordIdSecretRoute
   '/concierge': typeof AppConciergeIndexRoute
   '/data': typeof AppDataIndexRoute
   '/orders': typeof AppOrdersIndexRoute
@@ -420,6 +420,7 @@ export interface FileRoutesById {
   '/logout': typeof LogoutRoute
   '/register': typeof RegisterRoute
   '/resetpassword': typeof ResetpasswordRoute
+  '/setpassword': typeof SetpasswordRoute
   '/signin': typeof SigninRoute
   '/verify-email': typeof VerifyEmailRoute
   '/_app/_maps': typeof AppMapsRouteWithChildren
@@ -452,7 +453,6 @@ export interface FileRoutesById {
   '/_app/questionnaire/$type': typeof AppQuestionnaireTypeRoute
   '/_app/rx-subscriptions/$id': typeof AppRxSubscriptionsIdRoute
   '/_app/services/$id': typeof AppServicesIdRoute
-  '/setpassword/$id/$secret': typeof SetpasswordIdSecretRoute
   '/_app/concierge/': typeof AppConciergeIndexRoute
   '/_app/data/': typeof AppDataIndexRoute
   '/_app/orders/': typeof AppOrdersIndexRoute
@@ -475,6 +475,7 @@ export interface FileRouteTypes {
     | '/logout'
     | '/register'
     | '/resetpassword'
+    | '/setpassword'
     | '/signin'
     | '/verify-email'
     | '/concierge'
@@ -505,7 +506,6 @@ export interface FileRouteTypes {
     | '/questionnaire/$type'
     | '/rx-subscriptions/$id'
     | '/services/$id'
-    | '/setpassword/$id/$secret'
     | '/concierge/'
     | '/data/'
     | '/orders/'
@@ -525,6 +525,7 @@ export interface FileRouteTypes {
     | '/logout'
     | '/register'
     | '/resetpassword'
+    | '/setpassword'
     | '/signin'
     | '/verify-email'
     | '/'
@@ -549,7 +550,6 @@ export interface FileRouteTypes {
     | '/questionnaire/$type'
     | '/rx-subscriptions/$id'
     | '/services/$id'
-    | '/setpassword/$id/$secret'
     | '/concierge'
     | '/data'
     | '/orders'
@@ -570,6 +570,7 @@ export interface FileRouteTypes {
     | '/logout'
     | '/register'
     | '/resetpassword'
+    | '/setpassword'
     | '/signin'
     | '/verify-email'
     | '/_app/_maps'
@@ -602,7 +603,6 @@ export interface FileRouteTypes {
     | '/_app/questionnaire/$type'
     | '/_app/rx-subscriptions/$id'
     | '/_app/services/$id'
-    | '/setpassword/$id/$secret'
     | '/_app/concierge/'
     | '/_app/data/'
     | '/_app/orders/'
@@ -624,9 +624,9 @@ export interface RootRouteChildren {
   LogoutRoute: typeof LogoutRoute
   RegisterRoute: typeof RegisterRoute
   ResetpasswordRoute: typeof ResetpasswordRoute
+  SetpasswordRoute: typeof SetpasswordRoute
   SigninRoute: typeof SigninRoute
   VerifyEmailRoute: typeof VerifyEmailRoute
-  SetpasswordIdSecretRoute: typeof SetpasswordIdSecretRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -643,6 +643,13 @@ declare module '@tanstack/react-router' {
       path: '/signin'
       fullPath: '/signin'
       preLoaderRoute: typeof SigninRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/setpassword': {
+      id: '/setpassword'
+      path: '/setpassword'
+      fullPath: '/setpassword'
+      preLoaderRoute: typeof SetpasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/resetpassword': {
@@ -826,13 +833,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/concierge/'
       preLoaderRoute: typeof AppConciergeIndexRouteImport
       parentRoute: typeof AppConciergeRoute
-    }
-    '/setpassword/$id/$secret': {
-      id: '/setpassword/$id/$secret'
-      path: '/setpassword/$id/$secret'
-      fullPath: '/setpassword/$id/$secret'
-      preLoaderRoute: typeof SetpasswordIdSecretRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/_app/services/$id': {
       id: '/_app/services/$id'
@@ -1196,9 +1196,9 @@ const rootRouteChildren: RootRouteChildren = {
   LogoutRoute: LogoutRoute,
   RegisterRoute: RegisterRoute,
   ResetpasswordRoute: ResetpasswordRoute,
+  SetpasswordRoute: SetpasswordRoute,
   SigninRoute: SigninRoute,
   VerifyEmailRoute: VerifyEmailRoute,
-  SetpasswordIdSecretRoute: SetpasswordIdSecretRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

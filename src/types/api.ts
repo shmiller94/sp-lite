@@ -52,6 +52,7 @@ export interface User extends BaseUser {
   admin: boolean;
   carePlan?: string;
   authMethod: 'admin' | 'password';
+  authRole?: 'admin' | 'user';
   address: Address[];
   primaryAddress?: Address;
   adminActor?: AdminActor;
@@ -786,10 +787,6 @@ export interface ChatMessage {
 export interface VerifyEmailOTPResponse {
   success: boolean;
   user: User;
-  authTokens: {
-    accessToken: string;
-    refreshToken: string;
-  };
   redirectTo?: string;
   origin?: string;
 }
