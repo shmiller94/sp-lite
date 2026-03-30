@@ -570,7 +570,7 @@ export type InvoiceLine = {
 export type Wearable = {
   provider: string;
   logo: string;
-  status: string;
+  status: 'connected' | 'error';
 };
 
 /* ACTION PLAN */

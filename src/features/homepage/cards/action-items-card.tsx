@@ -5,6 +5,7 @@ import {
   ActionableAccordion,
   ActionableAccordionItem,
 } from '@/components/shared/actionable-accordion';
+import { useWearables } from '@/features/settings/api/get-wearables';
 import { useUser } from '@/lib/auth';
 import { shouldShowImportMemory } from '@/utils/show-action-conditions';
 
@@ -18,6 +19,10 @@ interface ActionItem {
 
 export const ActionItemsCard = () => {
   const navigate = useNavigate();
+  const { data: wearablesData } = useWearables();
+  const hasNoWearables =
+    (wearablesData?.wearables?.filter((w) => w.status === 'connected') ?? [])
+      .length === 0;
   const { data: user } = useUser();
   const showImportMemory = shouldShowImportMemory(user?.createdAt);
 
@@ -35,6 +40,22 @@ export const ActionItemsCard = () => {
       },
     },
   ];
+
+  if (hasNoWearables) {
+    actions.push({
+      id: 'connect-wearables',
+      title: 'Connect your wearables',
+      description:
+        'Download our iOS App to connect & get personalised insights from your wearable data.',
+      imageSrc: '/data/wearables.webp',
+      onClick: () => {
+        void navigate({
+          to: '/settings',
+          search: { tab: 'integrations' },
+        });
+      },
+    });
+  }
 
   if (showImportMemory) {
     actions.push({
