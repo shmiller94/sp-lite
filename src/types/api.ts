@@ -399,9 +399,28 @@ export type ServiceLabType = ServiceLabTypeEnum;
 
 export type CollectionMethodType = 'AT_HOME' | 'IN_LAB' | 'PHLEBOTOMY_KIT';
 
+export type RedrawDetails = {
+  address?: Address;
+  startTimestamp?: string;
+  endTimestamp?: string;
+  timezone?: string;
+  confirmationCode?: string;
+  appointmentType?: AppointmentType;
+  collectionMethod?: CollectionMethodType;
+};
+
 export type Order = Entity<{
   serviceName: string;
   serviceId: string;
+  hasRedraw?: boolean;
+  redrawStatus?:
+    | 'redraw_available'
+    | 'requisition_created'
+    | 'scheduled'
+    | 'skipped'
+    | 'cancelled'
+    | 'completed';
+  redrawDetails?: RedrawDetails;
   collectionMethod?: CollectionMethodType;
   status: OrderStatus;
   address?: Address;

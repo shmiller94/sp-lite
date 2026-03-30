@@ -3,25 +3,25 @@ import { useState } from 'react';
 
 import { Link } from '@/components/ui/link';
 import { Body2 } from '@/components/ui/typography';
-import { RedrawRescheduleFlow } from '@/features/redraw/components/redraw-reschedule-flow';
-import { getScheduledRedrawOrder } from '@/features/redraw/utils/get-scheduled-redraw-order';
 import { RequestGroup } from '@/types/api';
 
-import { RescheduleConfirmation } from './reschedule-confirmation';
-import { RescheduleDetails } from './reschedule-details';
-import { HealthcareServiceRescheduleFooter } from './reschedule-flow-footer';
-import { RescheduleMode } from './reschedule-mode';
+import { getScheduledRedrawOrder } from '../utils/get-scheduled-redraw-order';
 
-export const RescheduleFlow = ({
+import { RedrawRescheduleConfirmation } from './redraw-reschedule-confirmation';
+import { RedrawRescheduleDetails } from './redraw-reschedule-details';
+import { RedrawRescheduleFlowFooter } from './redraw-reschedule-flow-footer';
+import { RedrawRescheduleMode } from './redraw-reschedule-mode';
+
+export function RedrawRescheduleFlow({
   requestGroup,
 }: {
   requestGroup: RequestGroup;
-}) => {
-  const [mode, setMode] = useState<RescheduleMode>('default');
-  const scheduledRedrawOrder = getScheduledRedrawOrder(requestGroup);
+}) {
+  const [mode, setMode] = useState<RedrawRescheduleMode>('default');
+  const redrawOrder = getScheduledRedrawOrder(requestGroup);
 
-  if (scheduledRedrawOrder) {
-    return <RedrawRescheduleFlow requestGroup={requestGroup} />;
+  if (!redrawOrder) {
+    return null;
   }
 
   let content = null;
@@ -29,13 +29,17 @@ export const RescheduleFlow = ({
   switch (mode) {
     case 'default':
       content = (
-        <RescheduleDetails requestGroup={requestGroup} setMode={setMode} />
+        <RedrawRescheduleDetails
+          requestGroup={requestGroup}
+          redrawOrder={redrawOrder}
+          setMode={setMode}
+        />
       );
       break;
     case 'cancel':
     case 'reschedule':
       content = (
-        <RescheduleConfirmation requestGroup={requestGroup} mode={mode} />
+        <RedrawRescheduleConfirmation requestGroup={requestGroup} mode={mode} />
       );
       break;
   }
@@ -54,11 +58,11 @@ export const RescheduleFlow = ({
         </Link>
       </div>
       {content}
-      <HealthcareServiceRescheduleFooter
+      <RedrawRescheduleFlowFooter
         requestGroup={requestGroup}
         mode={mode}
         setMode={setMode}
       />
     </div>
   );
-};
+}
