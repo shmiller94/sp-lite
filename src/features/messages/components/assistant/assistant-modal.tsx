@@ -1,4 +1,5 @@
-import { ChevronsDownUp, Link, Maximize2, Minimize2 } from 'lucide-react';
+import { useNavigate } from '@tanstack/react-router';
+import { ChevronsDownUp, Link, Maximize2 } from 'lucide-react';
 import { useCallback, useMemo, useState, type Ref } from 'react';
 import { Resizable } from 'react-resizable';
 
@@ -10,10 +11,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import {
-  getDefaultAssistantSize,
-  useResizeAssistant,
-} from '@/features/messages/hooks/use-resize-assistant';
+import { useResizeAssistant } from '@/features/messages/hooks/use-resize-assistant';
 import { useAssistantStore } from '@/features/messages/stores/assistant-store';
 import { cn } from '@/lib/utils';
 
@@ -27,8 +25,10 @@ export const AssistantModal = () => {
   const open = useAssistantStore((s) => s.open);
   const close = useAssistantStore((s) => s.close);
   const input = useAssistantStore((s) => s.input);
+  const hasMessages = useAssistantStore((s) => s.hasMessages);
   const { width, height, setSize, minConstraints, maxConstraints } =
     useResizeAssistant();
+  const navigate = useNavigate();
 
   const [isResizing, setIsResizing] = useState(false);
   const collapsedHeight = 48; // equals Tailwind h-12
@@ -53,18 +53,22 @@ export const AssistantModal = () => {
     }
   }, [chatId, input]);
 
-  const isMaximized = useMemo(() => {
-    return width === maxConstraints[0] && height === maxConstraints[1];
-  }, [width, height, maxConstraints]);
+  const handleExpand = useCallback(() => {
+    const trimmedInput = input?.trim() ?? '';
 
-  const handleMaximizeToggle = useCallback(() => {
-    if (isMaximized) {
-      const defaultSize = getDefaultAssistantSize();
-      setSize(defaultSize);
+    if (hasMessages) {
+      void navigate({ to: '/concierge/$id', params: { id: chatId } });
+    } else if (trimmedInput.length > 0) {
+      void navigate({
+        to: '/concierge',
+        search: { defaultMessage: trimmedInput },
+      });
     } else {
-      setSize({ width: maxConstraints[0], height: maxConstraints[1] });
+      void navigate({ to: '/concierge' });
     }
-  }, [isMaximized, maxConstraints, setSize]);
+
+    close();
+  }, [hasMessages, chatId, input, navigate, close]);
 
   return (
     <Resizable
@@ -158,20 +162,14 @@ export const AssistantModal = () => {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
-                    onClick={handleMaximizeToggle}
+                    onClick={handleExpand}
                     variant="white"
                     className="aspect-square rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-primary"
                   >
-                    {isMaximized ? (
-                      <Minimize2 className="size-4" />
-                    ) : (
-                      <Maximize2 className="size-4" />
-                    )}
+                    <Maximize2 className="size-4" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>
-                  {isMaximized ? 'Shrink' : 'Maximize'}
-                </TooltipContent>
+                <TooltipContent>Open full chat</TooltipContent>
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger asChild>

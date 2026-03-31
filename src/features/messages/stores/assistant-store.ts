@@ -9,6 +9,7 @@ interface AssistantState {
   input: string;
   initialMessages: UIMessage[];
   hasSetInitialMessages: boolean;
+  hasMessages: boolean;
   /** Registered by AssistantChat so callers can send messages directly */
   _sendMessage: SendMessageFn | null;
   registerSendMessage: (fn: SendMessageFn) => void;
@@ -23,6 +24,7 @@ interface AssistantState {
   clearInput: () => void;
   clearInitialMessages: () => void;
   setHasSetInitialMessages: (value: boolean) => void;
+  setHasMessages: (value: boolean) => void;
 }
 
 export const useAssistantStore = create<AssistantState>()((set, get) => ({
@@ -30,6 +32,7 @@ export const useAssistantStore = create<AssistantState>()((set, get) => ({
   input: '',
   initialMessages: [],
   hasSetInitialMessages: false,
+  hasMessages: false,
   _sendMessage: null,
   registerSendMessage: (fn) => set({ _sendMessage: fn }),
   open: (input, options) => {
@@ -63,6 +66,7 @@ export const useAssistantStore = create<AssistantState>()((set, get) => ({
     set(() => ({
       isExpanded: false,
       hasSetInitialMessages: false,
+      hasMessages: false,
       initialMessages: [],
     })),
   toggle: (input) =>
@@ -78,4 +82,5 @@ export const useAssistantStore = create<AssistantState>()((set, get) => ({
   clearInitialMessages: () => set(() => ({ initialMessages: [] })),
   setHasSetInitialMessages: (value) =>
     set(() => ({ hasSetInitialMessages: value })),
+  setHasMessages: (value) => set(() => ({ hasMessages: value })),
 }));

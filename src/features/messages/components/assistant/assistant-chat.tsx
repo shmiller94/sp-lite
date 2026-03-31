@@ -45,6 +45,7 @@ export function AssistantChat({
   const setHasSetInitialMessages = useAssistantStore(
     (s) => s.setHasSetInitialMessages,
   );
+  const setHasMessages = useAssistantStore((s) => s.setHasMessages);
   const [attachments, setAttachments] = useState<Array<FileUIPart>>([]);
 
   const transport = useMemo(() => createChatV2Transport<UIMessage>(), []);
@@ -151,6 +152,7 @@ export function AssistantChat({
       options?: ChatRequestOptions,
     ) => {
       setInput('');
+      setHasMessages(true);
       let messageLength = 0;
       let messageText = '';
       if (message !== undefined) {
@@ -189,6 +191,7 @@ export function AssistantChat({
     },
     [
       setInput,
+      setHasMessages,
       hasSetInitialMessages,
       clearInitialMessages,
       setHasSetInitialMessages,
@@ -221,7 +224,7 @@ export function AssistantChat({
         />
       </div>
       {visibleSuggestions.length > 0 && (
-        <div className="mb-2 ml-auto flex w-full items-end gap-2 px-1">
+        <div className="mx-auto mb-2 flex w-full max-w-3xl items-end gap-2 px-1">
           {visibleSuggestions.map((suggestion) => (
             <ChatSuggestion
               key={suggestion}
@@ -237,7 +240,7 @@ export function AssistantChat({
         <QueuedMessages queue={queue} onRemove={removeFromQueue} />
         <form
           className={cn(
-            'mx-auto flex w-full flex-col gap-6 pb-2',
+            'mx-auto flex w-full max-w-3xl flex-col gap-6 pb-2',
             messages.length > 0 ? 'mt-auto' : null,
           )}
         >
