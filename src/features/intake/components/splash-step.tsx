@@ -35,10 +35,10 @@ export const SplashStep = () => {
           />
         </Sequence.StepMedia>
         <Sequence.StepContent className="mx-auto max-w-md text-center">
-          <H2>We've upgraded how we personalize your results</H2>
+          <H2>Update your health profile</H2>
           <Body1 className="text-zinc-500">
-            A few quick questions help us tailor your protocols and insights to
-            your current health.
+            Answer a few quick questions to personalize your protocol based on
+            how your health is today.
           </Body1>
         </Sequence.StepContent>
         <Sequence.StepFooter className="mx-auto w-full max-w-md">
