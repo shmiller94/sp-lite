@@ -243,7 +243,7 @@ export const getServiceImage = (name: string): string => {
 
 export const BEST_VALUE_SERVICES = [TOTAL_TOXIN_TEST];
 export const BEST_SELLER_SERVICES = [GUT_MICROBIOME_ANALYSIS];
-export const SALE_SERVICES = [SUPERPOWER_BLOOD_PANEL];
+export const SALE_SERVICES: string[] = [];
 
 export const getServiceBadge = (serviceName: string): string | null => {
   switch (true) {
