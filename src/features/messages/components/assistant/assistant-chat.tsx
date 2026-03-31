@@ -47,8 +47,6 @@ export function AssistantChat({
   );
   const [attachments, setAttachments] = useState<Array<FileUIPart>>([]);
 
-  const [shouldGenerateFollowups, setShouldGenerateFollowups] = useState(false);
-
   const transport = useMemo(() => createChatV2Transport<UIMessage>(), []);
 
   const { messages, setMessages, sendMessage, resumeStream, stop, status } =
@@ -71,14 +69,6 @@ export function AssistantChat({
         track('received_message_ai', {
           response_time: timing.totalMs,
         });
-
-        const assistantText = (message.parts || [])
-          .map((p) => (p.type === 'text' ? p.text : ''))
-          .join('')
-          .trim();
-        if (assistantText.length > 0) {
-          setShouldGenerateFollowups(true);
-        }
       },
     });
 
@@ -121,28 +111,10 @@ export function AssistantChat({
 
   const wantsInitialFollowups = isActive && messages.length === 0;
 
-  const lastIsAssistant = messages[messages.length - 1]?.role === 'assistant';
-
-  const assistantContext = useMemo(() => {
-    if (!lastIsAssistant) return '';
-
-    const m = messages[messages.length - 1];
-    return (m.parts || [])
-      .map((p) => (p.type === 'text' ? p.text : ''))
-      .join('')
-      .trim();
-  }, [messages, lastIsAssistant]);
-
-  const wantsAssistantFollowups = Boolean(
-    isActive && shouldGenerateFollowups && lastIsAssistant && assistantContext,
-  );
-
   let followupsQueryContext: string | null = null;
 
   if (wantsInitialFollowups) {
     followupsQueryContext = followupsContext;
-  } else if (wantsAssistantFollowups) {
-    followupsQueryContext = assistantContext;
   }
 
   const { data: followupsData = [] } = useCreateFollowups({
@@ -151,15 +123,11 @@ export function AssistantChat({
     enabled: Boolean(followupsQueryContext),
   });
 
-  const showInitialSuggestions = messages.length === 0;
-  const showAssistantSuggestions = messages.length !== 0 && lastIsAssistant;
-  const shouldShowSuggestions =
-    showInitialSuggestions || showAssistantSuggestions;
+  const shouldShowSuggestions = messages.length === 0;
 
   const onQueueSend = useCallback(
     (msg: { text: string; files: FileUIPart[] }) => {
       track('sent_message_ai', { message_length: msg.text.length });
-      setShouldGenerateFollowups(false);
       sendMessage({ text: msg.text, files: msg.files });
     },
     [sendMessage, track],
@@ -202,17 +170,11 @@ export function AssistantChat({
         clearInitialMessages();
         setHasSetInitialMessages(false);
       }
-      if (assistantContext) {
-        void queryClient.cancelQueries({
-          queryKey: ['followups', assistantContext, 3],
-        });
-      }
       if (messages.length === 0) {
         void queryClient.cancelQueries({
           queryKey: ['followups', followupsContext, 3],
         });
       }
-      setShouldGenerateFollowups(false);
 
       if (status === 'ready' || status === 'error') {
         track('sent_message_ai', {
@@ -230,7 +192,6 @@ export function AssistantChat({
       hasSetInitialMessages,
       clearInitialMessages,
       setHasSetInitialMessages,
-      assistantContext,
       queryClient,
       messages.length,
       followupsContext,
