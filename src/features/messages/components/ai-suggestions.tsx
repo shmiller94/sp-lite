@@ -46,6 +46,7 @@ export const AiSuggestions = ({
 
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const isRevealMode = pathname.startsWith('/protocol/reveal/');
+  const isConcierge = pathname.includes('/concierge');
 
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sheetMessage, setSheetMessage] = useState('');
@@ -86,7 +87,7 @@ export const AiSuggestions = ({
     const suggestionText = prefix ? `${prefix} ${suggestion}` : suggestion;
 
     const handleClick = () => {
-      if (isMobile) {
+      if (isMobile || isConcierge) {
         if (isRevealMode) {
           setSheetMessage(suggestionText);
           setSheetOpen(true);
@@ -132,7 +133,7 @@ export const AiSuggestions = ({
     return null;
 
   const handleAskOwn = () => {
-    if (isMobile) {
+    if (isMobile || isConcierge) {
       if (isRevealMode) {
         setSheetMessage('');
         setSheetOpen(true);
