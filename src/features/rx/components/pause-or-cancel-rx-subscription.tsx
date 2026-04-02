@@ -47,7 +47,7 @@ export const PauseOrCancelRxSubscriptionDialog = ({
         open={open}
         onOpenChange={(next) => {
           setOpen(next);
-          setMode(flow);
+          if (next) setMode(flow);
         }}
       >
         <SheetTrigger asChild>{children}</SheetTrigger>
