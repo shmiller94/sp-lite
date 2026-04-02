@@ -14,7 +14,7 @@ export const createOrderInputSchema = z.object({
   timezone: z.string().min(1, 'This is required.').optional(),
   appointmentType: z.enum(['SCHEDULED', 'UNSCHEDULED']).optional(),
   paymentMethodId: z.string().optional(),
-  collectionMethod: z.enum(['AT_HOME', 'PHLEBOTOMY_KIT', 'IN_LAB']).optional(),
+  collectionMethod: z.enum(['AT_HOME', 'IN_LAB']).optional(),
 });
 
 export type CreateOrderInput = z.infer<typeof createOrderInputSchema>;

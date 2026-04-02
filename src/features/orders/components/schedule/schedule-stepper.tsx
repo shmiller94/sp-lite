@@ -80,15 +80,6 @@ export const useScheduleFlowStepper = (): UseScheduleFlowStepperType => {
         { id: SCHEDULE_STEPS.SUCCESS },
       ];
       break;
-    case 'phlebotomy-kit':
-      steps = [
-        { id: SCHEDULE_STEPS.CREDITS_SELECT },
-        { id: SCHEDULE_STEPS.CONFIRM_ADDRESS },
-        { id: SCHEDULE_STEPS.SCHEDULER },
-        { id: SCHEDULE_STEPS.SUMMARY },
-        { id: SCHEDULE_STEPS.SUCCESS },
-      ];
-      break;
     default:
     // do nothing
   }

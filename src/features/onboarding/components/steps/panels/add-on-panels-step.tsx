@@ -187,7 +187,6 @@ export const AddOnPanelsStep = () => {
   const creditsQuery = useCredits();
   const phlebotomyServicesQuery = useServices({ group: 'phlebotomy' });
   const testKitServicesQuery = useServices({ group: 'test-kit' });
-  const phlebotomyKitServicesQuery = useServices({ group: 'phlebotomy-kit' });
   const createCreditMutation = useCreateCredit();
 
   const existingCreditIds = useMemo(() => {
@@ -199,7 +198,6 @@ export const AddOnPanelsStep = () => {
     const rawServices = [
       ...(phlebotomyServicesQuery.data?.services ?? []),
       ...(testKitServicesQuery.data?.services ?? []),
-      ...(phlebotomyKitServicesQuery.data?.services ?? []),
     ];
 
     const filteredServices = rawServices.filter(
@@ -213,8 +211,7 @@ export const AddOnPanelsStep = () => {
       const rank = (group?: string) => {
         if (group === 'test-kit') return 0;
         if (group === 'phlebotomy') return 1;
-        if (group === 'phlebotomy-kit') return 2;
-        return 3;
+        return 2;
       };
 
       const rankDiff = rank(a.group) - rank(b.group);
@@ -227,7 +224,6 @@ export const AddOnPanelsStep = () => {
   }, [
     phlebotomyServicesQuery.data?.services,
     testKitServicesQuery.data?.services,
-    phlebotomyKitServicesQuery.data?.services,
     existingCreditIds,
   ]);
 
@@ -343,7 +339,6 @@ export const AddOnPanelsStep = () => {
   const isLoading =
     phlebotomyServicesQuery.isLoading ||
     testKitServicesQuery.isLoading ||
-    phlebotomyKitServicesQuery.isLoading ||
     creditsQuery.isLoading;
   const isPending = createCreditMutation.isPending;
 

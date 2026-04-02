@@ -8,7 +8,7 @@ export const Route = createFileRoute('/_app/_maps/schedule')({
   validateSearch: zodValidator(
     z.object({
       mode: z
-        .enum(['test-kit', 'phlebotomy-kit', 'phlebotomy', 'advisory-call'])
+        .enum(['test-kit', 'phlebotomy', 'advisory-call'])
         .optional()
         .catch(undefined),
     }),

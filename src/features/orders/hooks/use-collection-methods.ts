@@ -1,9 +1,14 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
-import { COLLECTION_METHODS, type CollectionOptionType } from '@/const';
+import {
+  COLLECTION_METHODS,
+  type CollectionOptionType,
+  GRAIL_GALLERI_MULTI_CANCER_TEST,
+} from '@/const';
 import { useUser } from '@/lib/auth';
 import { useAuthorization } from '@/lib/authorization';
 
+import { useCredits } from '../api/credits';
 import { useUpgradeCreditPrice } from '../api/credits/get-upgrade-credit-price';
 
 /**
@@ -62,6 +67,24 @@ export const useCollectionMethods = ({
     void refetchUser();
   }, [shouldAttemptRefetch, refetchUser]);
 
+  const creditsQuery = useCredits();
+  const allCredits = creditsQuery.data?.credits ?? [];
+
+  const hasCancerPanelSelected = useMemo(() => {
+    if (!creditIds || creditIds.length === 0) return false;
+    return creditIds.some((id) => {
+      const credit = allCredits.find((c) => c.id === id);
+      return credit?.serviceName === GRAIL_GALLERI_MULTI_CANCER_TEST;
+    });
+  }, [creditIds, allCredits]);
+
+  const isNyNj = useMemo(() => {
+    const state = primaryAddress?.state?.toUpperCase();
+    return state === 'NY' || state === 'NJ';
+  }, [primaryAddress?.state]);
+
+  const shouldDisableInLab = hasCancerPanelSelected && isNyNj;
+
   const upgradePrice = upgradePriceQuery.data?.price ?? 0;
 
   // helper function to create collection method options with proper pricing
@@ -108,7 +131,7 @@ export const useCollectionMethods = ({
   if (isAdmin) {
     return {
       options: [
-        createInLabOption(),
+        createInLabOption({ disabled: shouldDisableInLab }),
         createAtHomedOption({ price: upgradePrice }),
       ],
       isLoading,
@@ -118,7 +141,7 @@ export const useCollectionMethods = ({
 
   return {
     options: [
-      createInLabOption(),
+      createInLabOption({ disabled: shouldDisableInLab }),
       createAtHomedOption({ price: upgradePrice }),
     ],
     isLoading,

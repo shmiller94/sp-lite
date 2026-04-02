@@ -53,10 +53,6 @@ export const scheduleStoreCreator = (initProps: ScheduleStoreProps) => {
       return initProps.initialCollectionMethod;
     }
 
-    if (initProps.mode === 'phlebotomy-kit') {
-      return 'PHLEBOTOMY_KIT';
-    }
-
     return null;
   };
 

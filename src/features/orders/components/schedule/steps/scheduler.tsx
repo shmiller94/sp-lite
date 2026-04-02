@@ -51,9 +51,7 @@ export const SchedulerStep = () => {
           <Body1 className="text-zinc-500">{instructions}</Body1>
         </div>
         {collectionMethod === 'IN_LAB' ? <InLabScheduler /> : null}
-        {['AT_HOME', 'PHLEBOTOMY_KIT'].includes(collectionMethod) ? (
-          <AtHomeScheduler />
-        ) : null}
+        {collectionMethod === 'AT_HOME' ? <AtHomeScheduler /> : null}
       </div>
       <ScheduleFlowFooter nextBtnDisabled={!slot} />
     </div>

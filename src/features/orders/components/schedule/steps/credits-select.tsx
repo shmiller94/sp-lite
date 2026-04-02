@@ -12,7 +12,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { Body1, H2 } from '@/components/ui/typography';
-import { MAX_TUBE_COUNT } from '@/const';
+import { MAX_TUBE_COUNT, GRAIL_GALLERI_MULTI_CANCER_TEST } from '@/const';
 import { useServices } from '@/features/services/api';
 import { cn } from '@/lib/utils';
 import { Credit, HealthcareService } from '@/types/api';
@@ -128,6 +128,15 @@ const CreditsSelectContent = ({
     onTotalTubesChange?.(totalTubes);
   }, [onTotalTubesChange, totalTubes]);
 
+  const isCancerPanelSelected = useMemo(() => {
+    return [...selectedIds].some((creditId) => {
+      const credit = uniqueCredits.find((c) => c.id === creditId);
+      if (!credit) return false;
+      const service = services.find((s) => s.id === credit.serviceId);
+      return service?.name === GRAIL_GALLERI_MULTI_CANCER_TEST;
+    });
+  }, [selectedIds, uniqueCredits, services]);
+
   const anyWouldExceed = useMemo(() => {
     return services.some((service) => {
       const serviceTubes = service.bloodTubeCount ?? 0;
@@ -147,6 +156,19 @@ const CreditsSelectContent = ({
         if (next.has(credit.id)) {
           next.delete(credit.id);
           return next;
+        }
+
+        const service = services.find((s) => s.id === credit.serviceId);
+        const isCancerPanel = service?.name === GRAIL_GALLERI_MULTI_CANCER_TEST;
+
+        // When selecting cancer panel, clear everything else
+        if (isCancerPanel) {
+          return new Set([credit.id]);
+        }
+
+        // Don't allow adding other items when cancer panel is selected
+        if (isCancerPanelSelected) {
+          return prev;
         }
 
         const serviceTubeCount =
@@ -172,7 +194,13 @@ const CreditsSelectContent = ({
         return next;
       });
     },
-    [setSelectedIds, uniqueCredits, tubeCountByServiceId],
+    [
+      setSelectedIds,
+      uniqueCredits,
+      tubeCountByServiceId,
+      services,
+      isCancerPanelSelected,
+    ],
   );
 
   return (
@@ -201,11 +229,16 @@ const CreditsSelectContent = ({
 
             const checked = selectedIds.has(credit.id);
 
+            const isCancerPanel =
+              service.name === GRAIL_GALLERI_MULTI_CANCER_TEST;
+
             const wouldExceed =
               !selectedIds.has(credit.id) &&
               totalTubes + (service.bloodTubeCount ?? 0) > MAX_TUBE_COUNT;
 
-            const disabled = wouldExceed || isLoading;
+            const disabledByCancer = isCancerPanelSelected && !isCancerPanel;
+
+            const disabled = disabledByCancer || wouldExceed || isLoading;
 
             return (
               <SelectableCard
@@ -221,7 +254,15 @@ const CreditsSelectContent = ({
                     : service.description
                 }
                 trigger={
-                  wouldExceed ? (
+                  disabledByCancer ? (
+                    <Badge variant="outline" className="text-right">
+                      Standalone test selected
+                    </Badge>
+                  ) : isCancerPanel && !checked ? (
+                    <Badge variant="outline" className="text-right">
+                      Standalone test
+                    </Badge>
+                  ) : wouldExceed ? (
                     <Badge variant="outline" className="text-right">
                       Requires another appointment
                     </Badge>

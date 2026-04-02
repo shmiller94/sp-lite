@@ -164,7 +164,6 @@ export type TaskName =
 /* HEALTHCARE SERVICE */
 export type ServiceGroup =
   | 'test-kit' // everything that is not phlebotomy
-  | 'phlebotomy-kit' // cancer test
   | 'phlebotomy'
   | 'advisory-call';
 
@@ -397,7 +396,7 @@ export enum ServiceLabTypeEnum {
 }
 export type ServiceLabType = ServiceLabTypeEnum;
 
-export type CollectionMethodType = 'AT_HOME' | 'IN_LAB' | 'PHLEBOTOMY_KIT';
+export type CollectionMethodType = 'AT_HOME' | 'IN_LAB';
 
 export type RedrawDetails = {
   address?: Address;
