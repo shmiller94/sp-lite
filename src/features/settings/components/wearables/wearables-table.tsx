@@ -21,11 +21,13 @@ import {
   WEARABLE_PROVIDERS,
   WearableProviderDefinition,
 } from '@/features/settings/const/wearable-providers';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { cn } from '@/lib/utils';
 import { Wearable } from '@/types/api';
 
 export function WearablesTable() {
   const { data, isLoading } = useWearables();
+  const { track } = useAnalytics();
   const queryClient = useQueryClient();
   const connectMutation = useConnectWearable();
   const [connectingProvider, setConnectingProvider] = useState<string | null>(
@@ -100,8 +102,18 @@ export function WearablesTable() {
                   );
                   if (connected) {
                     toast.success(`${name} is now connected!`);
+                    track('integrated_wearable', {
+                      provider,
+                      name,
+                      status: 'connected',
+                    });
                   } else {
                     toast.error(`Connecting ${name} was aborted.`);
+                    track('integrated_wearable', {
+                      provider,
+                      name,
+                      status: 'aborted',
+                    });
                   }
                 });
             }
