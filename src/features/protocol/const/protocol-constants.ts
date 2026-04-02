@@ -9,7 +9,7 @@ import { getServiceImage, protocolIdToDisplay } from '@/utils/service';
  */
 export const REVIEWING_CLINICIAN = {
   name: 'Dr. Anant',
-  avatarUrl: '/services/doctors/doc_1.webp',
+  avatarUrl: '/services/doctors/doc_2.webp',
 } as const;
 
 /**
