@@ -51,18 +51,11 @@ export const CareTeamDialog = ({
             <Body2 className="line-clamp-1 text-zinc-400">{`<24h on weekdays`}</Body2>
           </div>
         </div>
-        <div className="flex -space-x-2">
-          <img
-            className="size-8 min-w-8 rounded-full border-2 border-white object-cover"
-            src="/services/doctors/doc_1.webp"
-            alt="Superpower Concierge Doctor 1"
-          />
-          <img
-            className="size-8 min-w-8 rounded-full border-2 border-white object-cover"
-            src="/services/doctors/doc_2.webp"
-            alt="Superpower Concierge Doctor 2"
-          />
-        </div>
+        <img
+          className="h-8"
+          src="/services/doctors/doctors.webp"
+          alt="Superpower Concierge Team"
+        />
       </div>
       <CreateMessageForm />
     </div>

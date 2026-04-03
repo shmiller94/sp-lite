@@ -149,18 +149,11 @@ const SuccessDialog = ({
         <DialogHeader>
           <DialogTitle className="hidden">Message Sent</DialogTitle>
           <div className="flex w-full flex-col items-center justify-center gap-2">
-            <div className="flex -space-x-2">
-              <img
-                className="size-20 min-w-20 rounded-full border-2 border-white object-cover"
-                src="/services/doctors/doc_1.webp"
-                alt="Superpower Concierge Doctor 1"
-              />
-              <img
-                className="size-20 min-w-20 rounded-full border-2 border-white object-cover"
-                src="/services/doctors/doc_2.webp"
-                alt="Superpower Concierge Doctor 2"
-              />
-            </div>
+            <img
+              className="h-20"
+              src="/services/doctors/doctors.webp"
+              alt="Superpower Concierge Team"
+            />
             <div className="flex items-center gap-2">
               <Clock className="text-zinc-400" size={16} />
               <Body1 className="line-clamp-1 text-center text-zinc-400">{`<24h on weekdays`}</Body1>
