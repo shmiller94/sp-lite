@@ -54,13 +54,13 @@ export const CareTeamDialog = ({
         <div className="flex -space-x-2">
           <img
             className="size-8 min-w-8 rounded-full border-2 border-white object-cover"
-            src="/services/doctors/doc_2.webp"
-            alt="Superpower Concierge Doctor 2"
+            src="/services/doctors/doc_1.webp"
+            alt="Superpower Concierge Doctor 1"
           />
           <img
             className="size-8 min-w-8 rounded-full border-2 border-white object-cover"
-            src="/services/doctors/doc_3.webp"
-            alt="Superpower Concierge Doctor 3"
+            src="/services/doctors/doc_2.webp"
+            alt="Superpower Concierge Doctor 2"
           />
         </div>
       </div>
@@ -107,8 +107,8 @@ const Trigger = forwardRef<
   >
     <img
       className="size-5 rounded-full object-cover"
-      src="/services/doctors/doc_2.webp"
-      alt="Superpower Concierge Doctor 2"
+      src="/services/doctors/doc_1.webp"
+      alt="Superpower Concierge Doctor 1"
     />
     Care team
   </Button>

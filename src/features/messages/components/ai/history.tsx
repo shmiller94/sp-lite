@@ -405,7 +405,7 @@ function ChatHistoryCollapsedBar({
                         <button className="rounded-full transition-opacity hover:opacity-80">
                           <img
                             className="size-5 rounded-full object-cover"
-                            src="/services/doctors/doc_2.webp"
+                            src="/services/doctors/doc_1.webp"
                             alt="Text Care Team"
                           />
                         </button>
@@ -575,8 +575,8 @@ function ChatHistoryExpandedSidebar({
               >
                 <img
                   className="size-4 rounded-full object-cover"
-                  src="/services/doctors/doc_2.webp"
-                  alt="Superpower Concierge Doctor 2"
+                  src="/services/doctors/doc_1.webp"
+                  alt="Superpower Concierge Doctor 1"
                 />
                 Text Care Team
               </Button>

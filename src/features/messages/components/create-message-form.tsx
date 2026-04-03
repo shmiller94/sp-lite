@@ -152,13 +152,13 @@ const SuccessDialog = ({
             <div className="flex -space-x-2">
               <img
                 className="size-20 min-w-20 rounded-full border-2 border-white object-cover"
-                src="/services/doctors/doc_2.webp"
-                alt="Superpower Concierge Doctor 2"
+                src="/services/doctors/doc_1.webp"
+                alt="Superpower Concierge Doctor 1"
               />
               <img
                 className="size-20 min-w-20 rounded-full border-2 border-white object-cover"
-                src="/services/doctors/doc_3.webp"
-                alt="Superpower Concierge Doctor 3"
+                src="/services/doctors/doc_2.webp"
+                alt="Superpower Concierge Doctor 2"
               />
             </div>
             <div className="flex items-center gap-2">
