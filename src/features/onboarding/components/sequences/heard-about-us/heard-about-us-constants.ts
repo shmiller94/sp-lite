@@ -17,6 +17,7 @@ import {
   InstagramIcon,
   LinkedInIcon,
   PerplexityIcon,
+  RedditIcon,
   TikTokIcon,
   YouTubeIcon,
 } from '@/components/icons/marketing';
@@ -49,6 +50,7 @@ export const HEARD_ABOUT_US_CATEGORIES: HeardAboutUsCategory[] = [
       { value: 'instagram', label: 'Instagram', icon: InstagramIcon },
       { value: 'facebook', label: 'Facebook', icon: FacebookIcon },
       { value: 'youtube', label: 'YouTube', icon: YouTubeIcon },
+      { value: 'reddit', label: 'Reddit', icon: RedditIcon },
       { value: 'linkedin', label: 'LinkedIn', icon: LinkedInIcon },
       { value: 'other', label: 'Other', icon: MoreHorizontal },
     ],
