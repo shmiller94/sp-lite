@@ -35,7 +35,6 @@ import { Spinner } from '@/components/ui/spinner';
 import { Body1, Body2, H1 } from '@/components/ui/typography';
 import { useCheckoutContext } from '@/features/auth/stores';
 import {
-  type VerifyB2bEligibilityOtpResult,
   useBenefits,
   useSendB2bEligibilityOtp,
   useVerifyB2bEligibilityOtp,
@@ -45,10 +44,32 @@ import { api } from '@/lib/api-client';
 import { useLogout, useUser } from '@/lib/auth';
 import { registerInputSchema } from '@/lib/auth-schemas';
 import type { RegisterInput } from '@/lib/auth-schemas';
+import type { User } from '@/types/api';
 
 import { useB2BCheckout } from '../../hooks/use-b2b-checkout';
 
+import { ExistingMemberDetails } from './existing-member-details';
 import { MemberDetails } from './member-details';
+
+type ClaimBenefitStep =
+  | 'verify'
+  | 'new-account-details'
+  | 'existing-account-details';
+
+interface VerifiedBenefitDetails {
+  verifiedEmail: string;
+  claimGrantToken: string;
+}
+
+const currentAccountNeedsProfileCompletion = (user: User) => {
+  const hasSupportedGender = user.gender === 'MALE' || user.gender === 'FEMALE';
+  if (!hasSupportedGender) {
+    return true;
+  }
+
+  const postalCode = user.primaryAddress?.postalCode?.trim();
+  return postalCode == null || postalCode === '';
+};
 
 export const ClaimBenefitForm = () => {
   const navigate = useNavigate();
@@ -57,13 +78,14 @@ export const ClaimBenefitForm = () => {
   const logout = useLogout();
   const processing = useCheckoutContext((s) => s.processing);
 
-  const [step, setStep] = useState<1 | 2>(1);
-  const [claimGrantToken, setClaimGrantToken] = useState<string | null>(null);
-  const [benefitEmail, setBenefitEmail] = useState<string | null>(null);
-  const [accountChoiceDialogState, setAccountChoiceDialogState] = useState<{
-    verifiedEmail: string;
-    claimGrantToken: string;
-  } | null>(null);
+  const [step, setStep] = useState<ClaimBenefitStep>('verify');
+  const [verifiedBenefit, setVerifiedBenefit] =
+    useState<VerifiedBenefitDetails | null>(null);
+  const [existingAccountUser, setExistingAccountUser] = useState<User | null>(
+    null,
+  );
+  const [accountChoiceDialogState, setAccountChoiceDialogState] =
+    useState<VerifiedBenefitDetails | null>(null);
 
   const organizationId =
     useSearch({ from: '/claim-benefit', select: (s) => s.id }) ?? '';
@@ -99,7 +121,7 @@ export const ClaimBenefitForm = () => {
         toast.success('Success! Benefits have been added to your account.');
       }
 
-      if (!loginEmail) {
+      if (loginEmail == null || loginEmail === '') {
         // For new users with verified email, wait until onboarding task exists
         // so we don't route into app guards before onboarding setup finishes.
         if (!options?.hasExistingAccount) {
@@ -127,34 +149,52 @@ export const ClaimBenefitForm = () => {
 
   const handleContinueToNewAccountSignup = useCallback(
     (verifiedEmail: string, token: string) => {
-      setClaimGrantToken(token);
-      setBenefitEmail(verifiedEmail);
+      setVerifiedBenefit({
+        verifiedEmail,
+        claimGrantToken: token,
+      });
       trackRegistrationStarted(verifiedEmail);
-      setStep(2);
+      setStep('new-account-details');
     },
     [trackRegistrationStarted],
   );
 
   const handleContinueWithCurrentAccount = useCallback(
-    async (verifiedEmail: string, token: string) => {
-      setClaimGrantToken(token);
-      setBenefitEmail(verifiedEmail);
+    async (verifiedEmail: string, token: string, authenticatedUser?: User) => {
+      setVerifiedBenefit({
+        verifiedEmail,
+        claimGrantToken: token,
+      });
       trackRegistrationStarted(verifiedEmail);
+
+      const userToClaimWith = authenticatedUser ?? currentUser;
+      if (
+        userToClaimWith != null &&
+        currentAccountNeedsProfileCompletion(userToClaimWith)
+      ) {
+        setExistingAccountUser(userToClaimWith);
+        setStep('existing-account-details');
+        return;
+      }
+
       await submitBenefitClaim(undefined, {
         claimGrantToken: token,
         benefitEmail: verifiedEmail,
-        loginEmail: currentUser?.email ?? verifiedEmail,
+        loginEmail: userToClaimWith?.email ?? verifiedEmail,
         hasExistingAccount: true,
       });
     },
-    [currentUser?.email, submitBenefitClaim, trackRegistrationStarted],
+    [currentUser, submitBenefitClaim, trackRegistrationStarted],
   );
 
   const handleChooseBetweenCurrentOrNewAccount = useCallback(
     (verifiedEmail: string, token: string) => {
-      setClaimGrantToken(token);
-      setBenefitEmail(verifiedEmail);
-      setAccountChoiceDialogState({ verifiedEmail, claimGrantToken: token });
+      const nextVerifiedBenefit = {
+        verifiedEmail,
+        claimGrantToken: token,
+      };
+      setVerifiedBenefit(nextVerifiedBenefit);
+      setAccountChoiceDialogState(nextVerifiedBenefit);
     },
     [],
   );
@@ -166,61 +206,81 @@ export const ClaimBenefitForm = () => {
       return;
     }
 
-    trackRegistrationStarted(currentUser?.email ?? '');
-    await submitBenefitClaim(undefined, {
-      claimGrantToken: dialog.claimGrantToken,
-      benefitEmail: dialog.verifiedEmail,
-      loginEmail: currentUser?.email ?? dialog.verifiedEmail,
-      hasExistingAccount: true,
-    });
-  }, [
-    accountChoiceDialogState,
-    currentUser?.email,
-    submitBenefitClaim,
-    trackRegistrationStarted,
-  ]);
+    await handleContinueWithCurrentAccount(
+      dialog.verifiedEmail,
+      dialog.claimGrantToken,
+      currentUser,
+    );
+  }, [accountChoiceDialogState, currentUser, handleContinueWithCurrentAccount]);
 
   const handleCreateNewAccount = useCallback(async () => {
-    const verifiedEmail = accountChoiceDialogState?.verifiedEmail;
+    const dialog = accountChoiceDialogState;
     setAccountChoiceDialogState(null);
-    if (verifiedEmail) {
-      trackRegistrationStarted(verifiedEmail);
+    if (dialog != null) {
+      trackRegistrationStarted(dialog.verifiedEmail);
     }
     await logout.mutateAsync({});
-    setStep(2);
-  }, [
-    accountChoiceDialogState?.verifiedEmail,
-    logout,
-    trackRegistrationStarted,
-  ]);
+    setStep('new-account-details');
+  }, [accountChoiceDialogState, logout, trackRegistrationStarted]);
 
   const onPrevCallback = () => {
-    setStep(1);
-    setClaimGrantToken(null);
-    setBenefitEmail(null);
+    setStep('verify');
+    setVerifiedBenefit(null);
+    setExistingAccountUser(null);
+    setAccountChoiceDialogState(null);
   };
 
   const onSubmitCallback = async (data: RegisterInput) => {
     await submitBenefitClaim(data, {
-      claimGrantToken: claimGrantToken ?? '',
-      benefitEmail: (benefitEmail ?? '').trim(),
+      claimGrantToken: verifiedBenefit?.claimGrantToken ?? '',
+      benefitEmail: verifiedBenefit?.verifiedEmail.trim() ?? '',
       loginEmail: data.email.trim(),
       hasExistingAccount: false,
     });
   };
 
+  const onExistingAccountSubmitCallback = useCallback(async () => {
+    const normalizedBenefitEmail = verifiedBenefit?.verifiedEmail.trim() ?? '';
+    const loginEmail =
+      existingAccountUser?.email?.trim() ?? currentUser?.email?.trim();
+    if (
+      normalizedBenefitEmail === '' ||
+      loginEmail == null ||
+      loginEmail === ''
+    ) {
+      toast.error('We could not load your account. Please try again.');
+      return;
+    }
+
+    await submitBenefitClaim(undefined, {
+      claimGrantToken: verifiedBenefit?.claimGrantToken ?? '',
+      benefitEmail: normalizedBenefitEmail,
+      loginEmail,
+      hasExistingAccount: true,
+    });
+  }, [
+    currentUser?.email,
+    existingAccountUser?.email,
+    submitBenefitClaim,
+    verifiedBenefit?.claimGrantToken,
+    verifiedBenefit?.verifiedEmail,
+  ]);
+
   useEffect(() => {
-    if (!organizationId) {
+    if (organizationId === '') {
       toast.error('Invalid benefit link. Please contact your organization.');
       void navigate({ to: '/register' });
       return;
     }
 
-    if (!isBenefitsLoading && (isBenefitsError || !benefits)) {
+    if (!isBenefitsLoading && (isBenefitsError || benefits == null)) {
       toast.error('Unable to load benefits. Please contact your organization.');
       void navigate({ to: '/register' });
     }
   }, [organizationId, navigate, isBenefitsLoading, isBenefitsError, benefits]);
+
+  const showExistingAccountDetails =
+    step === 'existing-account-details' && existingAccountUser != null;
 
   return (
     <>
@@ -228,43 +288,56 @@ export const ClaimBenefitForm = () => {
         open={accountChoiceDialogState !== null}
         currentUserEmail={currentUser?.email}
         onOpenChange={(open) => {
-          if (!open) {
-            setAccountChoiceDialogState(null);
+          if (open) {
+            return;
           }
+          setAccountChoiceDialogState(null);
         }}
         onCreateNewAccount={handleCreateNewAccount}
         onUseCurrentAccount={handleUseCurrentAccount}
       />
 
-      <Form {...form}>
-        <div className="relative space-y-1">
-          {processing ? (
-            <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-2 bg-black/50 p-6 backdrop-blur-sm sm:flex-row">
-              <Spinner variant="light" size="sm" />
-              <Body1 className="text-center text-white">
-                Processing your benefit claim. Do not refresh this tab.
-              </Body1>
-            </div>
-          ) : null}
-          {step === 1 ? (
-            <AuthLayout title="Email" progress={{ current: step, total: 2 }}>
-              <VerifyEligibilityStep
-                organizationId={organizationId}
-                onContinueToNewAccountSignup={handleContinueToNewAccountSignup}
-                onContinueWithCurrentAccount={handleContinueWithCurrentAccount}
-                onChooseBetweenCurrentOrNewAccount={
-                  handleChooseBetweenCurrentOrNewAccount
-                }
+      {showExistingAccountDetails ? (
+        <ExistingMemberDetails
+          currentUser={existingAccountUser}
+          onPrev={onPrevCallback}
+          onSubmit={onExistingAccountSubmitCallback}
+        />
+      ) : (
+        <Form {...form}>
+          <div className="relative space-y-1">
+            {processing ? (
+              <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-2 bg-black/50 p-6 backdrop-blur-sm sm:flex-row">
+                <Spinner variant="light" size="sm" />
+                <Body1 className="text-center text-white">
+                  Processing your benefit claim. Do not refresh this tab.
+                </Body1>
+              </div>
+            ) : null}
+            {step === 'verify' ? (
+              <AuthLayout title="Email" progress={{ current: 1, total: 2 }}>
+                <VerifyEligibilityStep
+                  organizationId={organizationId}
+                  onContinueToNewAccountSignup={
+                    handleContinueToNewAccountSignup
+                  }
+                  onContinueWithCurrentAccount={
+                    handleContinueWithCurrentAccount
+                  }
+                  onChooseBetweenCurrentOrNewAccount={
+                    handleChooseBetweenCurrentOrNewAccount
+                  }
+                />
+              </AuthLayout>
+            ) : (
+              <MemberDetails
+                onPrev={onPrevCallback}
+                onSubmit={onSubmitCallback}
               />
-            </AuthLayout>
-          ) : (
-            <MemberDetails
-              onPrev={onPrevCallback}
-              onSubmit={onSubmitCallback}
-            />
-          )}
-        </div>
-      </Form>
+            )}
+          </div>
+        </Form>
+      )}
     </>
   );
 };
@@ -357,6 +430,7 @@ type VerifyEligibilityStepProps = {
   onContinueWithCurrentAccount: (
     verifiedEmail: string,
     claimGrantToken: string,
+    authenticatedUser?: User,
   ) => void | Promise<void>;
   onChooseBetweenCurrentOrNewAccount: (
     verifiedEmail: string,
@@ -382,7 +456,7 @@ const VerifyEligibilityStep = ({
   const lastSubmittedCodeRef = useRef<string | null>(null);
   const otpInputRef = useRef<HTMLInputElement>(null);
 
-  const userQuery = useUser();
+  const { data: loggedInUser, refetch: refetchUser } = useUser();
   const sendOtp = useSendB2bEligibilityOtp();
   const verifyOtp = useVerifyB2bEligibilityOtp();
   const form = useFormContext<RegisterInput>();
@@ -404,7 +478,7 @@ const VerifyEligibilityStep = ({
   }, [phase]);
 
   const finishVerification = useCallback(
-    (
+    async (
       verifiedEmail: string,
       grantToken: string | undefined | null,
       authStatus: 'logged_in' | 'no_existing_account',
@@ -418,11 +492,13 @@ const VerifyEligibilityStep = ({
       }
 
       const normalizedVerified = verifiedEmail.trim().toLowerCase();
-      const loggedIn = userQuery.data;
-
-      if (loggedIn) {
-        if (loggedIn.email.trim().toLowerCase() === normalizedVerified) {
-          void onContinueWithCurrentAccount(verifiedEmail, parsed);
+      if (loggedInUser != null) {
+        if (loggedInUser.email.trim().toLowerCase() === normalizedVerified) {
+          await onContinueWithCurrentAccount(
+            verifiedEmail,
+            parsed,
+            loggedInUser,
+          );
           return;
         }
         onChooseBetweenCurrentOrNewAccount(verifiedEmail, parsed);
@@ -430,7 +506,14 @@ const VerifyEligibilityStep = ({
       }
 
       if (authStatus === 'logged_in') {
-        void onContinueWithCurrentAccount(verifiedEmail, parsed);
+        const result = await refetchUser();
+        if (result.data == null) {
+          toast.error('We could not load your account. Please try again.');
+          lastSubmittedCodeRef.current = null;
+          return;
+        }
+
+        await onContinueWithCurrentAccount(verifiedEmail, parsed, result.data);
         return;
       }
 
@@ -440,13 +523,14 @@ const VerifyEligibilityStep = ({
       onChooseBetweenCurrentOrNewAccount,
       onContinueToNewAccountSignup,
       onContinueWithCurrentAccount,
-      userQuery.data,
+      loggedInUser,
+      refetchUser,
     ],
   );
 
   const handleSendCode = useCallback(async () => {
     const isStepValid = await form.trigger('email');
-    if (!isStepValid || organizationId.length === 0) return;
+    if (isStepValid === false || organizationId.length === 0) return;
 
     const email = form.getValues('email');
     try {
@@ -465,8 +549,12 @@ const VerifyEligibilityStep = ({
     void handleSendCode();
   }, [cooldownSeconds, handleSendCode]);
 
+  const normalizedOtpCode = otpCode.replace(/\D/g, '').slice(0, 6);
+  const resendDisabled =
+    cooldownSeconds > 0 || sendOtp.isPending || verifyOtp.isPending;
+
   const submitOtpCode = useCallback(() => {
-    const cleanValue = otpCode.replace(/\D/g, '').slice(0, 6);
+    const cleanValue = normalizedOtpCode;
     if (
       cleanValue.length !== 6 ||
       cleanValue === lastSubmittedCodeRef.current ||
@@ -481,18 +569,23 @@ const VerifyEligibilityStep = ({
     verifyOtp.mutate(
       { organizationId, email, code: cleanValue },
       {
-        onSuccess: (result: VerifyB2bEligibilityOtpResult) =>
-          finishVerification(email, result.claimGrantToken, result.authStatus),
+        onSuccess: (result) => {
+          void finishVerification(
+            email,
+            result.claimGrantToken,
+            result.authStatus,
+          );
+        },
         onError: () => {
           lastSubmittedCodeRef.current = null;
           startTransition(() => {
             setOtpCode('');
-            setTimeout(() => otpInputRef.current?.focus(), 0);
+            window.setTimeout(() => otpInputRef.current?.focus(), 0);
           });
         },
       },
     );
-  }, [finishVerification, form, organizationId, otpCode, verifyOtp]);
+  }, [finishVerification, form, normalizedOtpCode, organizationId, verifyOtp]);
 
   const handleOtpInputChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -579,9 +672,7 @@ const VerifyEligibilityStep = ({
               type="button"
               onClick={submitOtpCode}
               className="w-full"
-              disabled={
-                otpCode.replace(/\D/g, '').length !== 6 || verifyOtp.isPending
-              }
+              disabled={normalizedOtpCode.length !== 6 || verifyOtp.isPending}
             >
               {verifyOtp.isPending ? (
                 <span className="inline-flex items-center justify-center gap-2">
@@ -607,11 +698,7 @@ const VerifyEligibilityStep = ({
               <button
                 type="button"
                 onClick={handleResend}
-                disabled={
-                  cooldownSeconds > 0 ||
-                  sendOtp.isPending ||
-                  verifyOtp.isPending
-                }
+                disabled={resendDisabled}
                 className="text-center disabled:opacity-50"
               >
                 <Body2 className="text-zinc-500">

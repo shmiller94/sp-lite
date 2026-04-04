@@ -1,9 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { zodValidator } from '@tanstack/zod-adapter';
+import { APIProvider } from '@vis.gl/react-google-maps';
 import { Suspense, useEffect } from 'react';
 import * as z from 'zod';
 
 import { SuperpowerLoadingLogo } from '@/components/icons/superpower-logo';
+import { env } from '@/config/env';
 import { ClaimBenefitForm } from '@/features/auth/components/b2b-benefits/claim-benefit-form';
 import { LazyStripeProvider } from '@/lib/lazy-stripe-provider';
 
@@ -40,7 +42,9 @@ function ClaimBenefitComponent() {
       }
     >
       <LazyStripeProvider>
-        <ClaimBenefitForm />
+        <APIProvider apiKey={env.GOOGLE_API_KEY} libraries={['places']}>
+          <ClaimBenefitForm />
+        </APIProvider>
       </LazyStripeProvider>
     </Suspense>
   );
