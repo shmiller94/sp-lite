@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/components/ui/sonner';
+import { Spinner } from '@/components/ui/spinner/spinner';
 import { Body1, Body2, H2, H3 } from '@/components/ui/typography';
 import {
   ADVANCED_BLOOD_PANEL,
@@ -127,7 +128,17 @@ const TestCard = ({
   onToggle: () => void;
   disabled?: boolean;
 }) => (
-  <div className="flex items-start gap-4 py-4">
+  <button
+    type="button"
+    onClick={onToggle}
+    disabled={disabled}
+    aria-pressed={isSelected}
+    aria-label={isSelected ? 'Remove from cart' : 'Add to cart'}
+    className={cn(
+      'flex w-full cursor-pointer items-start gap-4 py-4 text-left',
+      disabled && 'cursor-not-allowed opacity-50',
+    )}
+  >
     <div className="flex-1 space-y-1">
       <Body1 className="font-medium text-zinc-900">{service.name}</Body1>
       <Body2 className="text-zinc-500">{service.description}</Body2>
@@ -139,27 +150,22 @@ const TestCard = ({
         alt={service.name}
         className="size-20 rounded-lg object-contain"
       />
-      <button
-        type="button"
-        onClick={onToggle}
-        disabled={disabled}
+      <div
         className={cn(
           'absolute -bottom-1 right-0 flex size-8 items-center justify-center rounded-full border shadow-md transition-colors',
           isSelected
             ? 'border-zinc-800 bg-zinc-950 text-white'
             : 'border-white bg-white text-zinc-900 hover:bg-zinc-50',
-          disabled && 'cursor-not-allowed opacity-50',
         )}
-        aria-label={isSelected ? 'Remove from cart' : 'Add to cart'}
       >
         {isSelected ? (
           <span className="text-sm font-medium">✓</span>
         ) : (
           <Plus className="size-5" />
         )}
-      </button>
+      </div>
     </div>
-  </div>
+  </button>
 );
 
 const TestCardSkeleton = () => (
@@ -209,8 +215,8 @@ export const AddOnPanelsStep = () => {
 
     const orderedServices = filteredServices.sort((a, b) => {
       const rank = (group?: string) => {
-        if (group === 'test-kit') return 0;
-        if (group === 'phlebotomy') return 1;
+        if (group === 'phlebotomy') return 0;
+        if (group === 'test-kit') return 1;
         return 2;
       };
 
@@ -249,6 +255,26 @@ export const AddOnPanelsStep = () => {
 
     return result;
   }, [services, searchQuery, activeFilter]);
+
+  const visibleSelectedServices = useMemo(() => {
+    const nextSelectedServices: HealthcareService[] = [];
+    for (const service of filteredServices) {
+      if (selectedPanelIds.has(service.id)) {
+        nextSelectedServices.push(service);
+      }
+    }
+    return nextSelectedServices;
+  }, [filteredServices, selectedPanelIds]);
+
+  const visibleUnselectedServices = useMemo(() => {
+    const nextUnselectedServices: HealthcareService[] = [];
+    for (const service of filteredServices) {
+      if (!selectedPanelIds.has(service.id)) {
+        nextUnselectedServices.push(service);
+      }
+    }
+    return nextUnselectedServices;
+  }, [filteredServices, selectedPanelIds]);
 
   const selectedServices = useMemo(() => {
     const nextSelectedServices: HealthcareService[] = [];
@@ -370,7 +396,7 @@ export const AddOnPanelsStep = () => {
             <div className="mx-auto max-w-lg py-6">
               <div className="sticky top-0 z-10 -mx-4 bg-white px-4 pb-4">
                 <div className="space-y-6 pt-0.5">
-                  <H2>Explore tests</H2>
+                  <H2>Finalize your testing plan</H2>
 
                   <ExploreTestsSearch
                     value={searchQuery}
@@ -385,28 +411,53 @@ export const AddOnPanelsStep = () => {
               </div>
 
               <div className="pt-2">
-                <H3 className="mb-2 text-lg text-zinc-400">Most recommended</H3>
-
                 <div className="divide-y divide-zinc-100 overflow-x-visible">
                   {isLoading &&
                     Array.from({ length: 5 }).map((_, i) => (
                       <TestCardSkeleton key={i} />
                     ))}
 
-                  {!isLoading && filteredServices.length === 0 && (
-                    <div className="py-8 text-center">
-                      <Body1 className="text-zinc-500">
-                        No tests found matching your search.
-                      </Body1>
+                  {!isLoading &&
+                    visibleSelectedServices.length === 0 &&
+                    visibleUnselectedServices.length === 0 && (
+                      <div className="py-8 text-center">
+                        <Body1 className="text-zinc-500">
+                          No tests found matching your search.
+                        </Body1>
+                      </div>
+                    )}
+
+                  {!isLoading && visibleSelectedServices.length > 0 && (
+                    <div className="pb-2 pt-1">
+                      <H3 className="text-lg text-zinc-400">Selected tests</H3>
                     </div>
                   )}
 
                   {!isLoading &&
-                    filteredServices.map((service) => (
+                    visibleSelectedServices.map((service) => (
                       <TestCard
                         key={service.id}
                         service={service}
-                        isSelected={selectedPanelIds.has(service.id)}
+                        isSelected
+                        onToggle={() => handleToggle(service)}
+                        disabled={isPending}
+                      />
+                    ))}
+
+                  {!isLoading && visibleUnselectedServices.length > 0 && (
+                    <div className="pb-2 pt-4">
+                      <H3 className="text-lg text-zinc-400">
+                        Explore other tests
+                      </H3>
+                    </div>
+                  )}
+
+                  {!isLoading &&
+                    visibleUnselectedServices.map((service) => (
+                      <TestCard
+                        key={service.id}
+                        service={service}
+                        isSelected={false}
                         onToggle={() => handleToggle(service)}
                         disabled={isPending}
                       />
@@ -420,7 +471,7 @@ export const AddOnPanelsStep = () => {
             <div className="mx-auto max-w-lg space-y-3">
               {hasSelectedServices && <CurrentPaymentMethodCard />}
               <Button
-                onClick={handleContinue}
+                onClick={hasSelectedServices ? handleContinue : handleSkip}
                 disabled={
                   isPending ||
                   isSelectingPaymentMethod ||
@@ -429,23 +480,23 @@ export const AddOnPanelsStep = () => {
                 }
                 className="w-full"
               >
-                {hasSelectedServices
-                  ? `Purchase selected tests${isFlexSelected ? ' with HSA/FSA' : ''}`
-                  : 'Continue'}
-                {hasSelectedServices && (
-                  <span className="ml-2 opacity-80">
-                    {formatMoney(totalPrice)}
+                {isPending && hasSelectedServices ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <Spinner size="sm" variant="light" />
+                    <span>Processing purchase</span>
                   </span>
+                ) : (
+                  <>
+                    {hasSelectedServices
+                      ? `Purchase selected tests${isFlexSelected ? ' with HSA/FSA' : ''}`
+                      : 'Skip additional testing'}
+                    {hasSelectedServices && (
+                      <span className="ml-2 opacity-80">
+                        {formatMoney(totalPrice)}
+                      </span>
+                    )}
+                  </>
                 )}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleSkip}
-                disabled={isPending}
-                className="w-full"
-              >
-                Skip additional testing
               </Button>
             </div>
           </div>

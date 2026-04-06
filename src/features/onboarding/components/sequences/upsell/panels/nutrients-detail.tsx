@@ -94,16 +94,14 @@ export const NutrientsDetail = () => {
         <Detail.Subheader
           label="Suggested based on your goals"
           pretext="One-time upgrade"
+          supportingText="Are you getting the nutrients you need? Even with a healthy diet, hidden deficiencies can quietly affect energy, mood, and long-term health."
           className="px-4 md:px-0"
         >
           Nutrients Panel
         </Detail.Subheader>
 
-        <div className="hidden space-y-1 px-0 md:block">
+        <div className="hidden px-0 md:block">
           <Detail.Pricing {...pricing} />
-          <p className="text-sm text-zinc-500">
-            See what&apos;s missing from feeling your best
-          </p>
         </div>
 
         <div className="hidden space-y-8 py-6 md:block">

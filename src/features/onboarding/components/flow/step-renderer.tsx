@@ -2,12 +2,10 @@ import { AnimatePresence } from 'framer-motion';
 import React from 'react';
 
 import {
-  CommitmentSequence,
   DigitalTwinSequence,
   FinishTwinSequence,
   HeardAboutUsSequence,
   IntroductionSequence,
-  OrganAgeSequence,
   UpsellSequence,
 } from '@/features/onboarding/components/sequences';
 import * as QuestionnaireSequence from '@/features/onboarding/components/sequences/questionnaire';
@@ -31,12 +29,6 @@ export const StepRenderer = () => {
       break;
     case STEP_IDS.DIGITAL_TWIN:
       content = <DigitalTwinSequence />;
-      break;
-    case STEP_IDS.BUNDLED_DISCOUNT:
-      content = <Steps.BundledDiscountStep />;
-      break;
-    case STEP_IDS.ORGAN_AGE:
-      content = <OrganAgeSequence />;
       break;
     case STEP_IDS.ADVANCED_UPGRADE:
       content = <Steps.AdvancedPanelUpgradeStep />;
@@ -87,9 +79,6 @@ export const StepRenderer = () => {
       break;
     case STEP_IDS.PHLEBOTOMY_BOOKING:
       content = <Steps.PhlebotomyBookingStep />;
-      break;
-    case STEP_IDS.COMMITMENT:
-      content = <CommitmentSequence />;
       break;
     default:
       throw new Error(`Unknown onboarding step: ${currentStep}`);

@@ -113,16 +113,14 @@ export const FertilityDetail = () => {
         <Detail.Subheader
           label="Suggested based on your goals"
           pretext="One-time upgrade"
+          supportingText="Never ask whether you are running out of time again. Testing gives you a clearer sense of your fertility timeline, options, and time horizon for kids."
           className="px-4 md:px-0"
         >
           Fertility Panel
         </Detail.Subheader>
 
-        <div className="hidden space-y-1 px-0 md:block">
+        <div className="hidden px-0 md:block">
           <Detail.Pricing {...pricing} />
-          <p className="text-sm text-zinc-500">
-            Know your timeline for pregnancy.
-          </p>
         </div>
 
         <div className="hidden space-y-8 py-6 md:block">

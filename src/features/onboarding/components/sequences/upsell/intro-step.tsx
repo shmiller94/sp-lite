@@ -37,16 +37,15 @@ export const IntroStep = () => {
       </div>
 
       <Sequence.StepContent className="space-y-1 text-center md:mx-auto md:w-full md:max-w-md md:space-y-[17px] md:px-0 md:pt-6">
-        <H2 className="text-balance">Go beyond your baseline</H2>
+        <H2 className="text-balance">Build your testing plan</H2>
         <Body1 className="text-zinc-500">
-          Explore additional tests that go deeper into the areas that matter
-          most.
+          We put together a testing plan based on your health history and goals.
         </Body1>
       </Sequence.StepContent>
 
       <Sequence.StepFooter className="md:mx-auto md:mt-4 md:w-full md:max-w-md md:px-0">
         <Button onClick={next} className="w-full">
-          Build your testing plan
+          Review recommendations
         </Button>
       </Sequence.StepFooter>
     </Sequence.StepLayout>

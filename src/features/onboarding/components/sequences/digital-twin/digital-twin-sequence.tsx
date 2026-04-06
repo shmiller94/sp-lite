@@ -11,7 +11,6 @@ import { Sequence } from '../../sequence';
 
 import { BiologyUniqueStep } from './biology-unique-step';
 import { CarePersonalizedStep } from './care-personalized-step';
-import { DigitalTwinExplainerStep } from './digital-twin-explainer-step';
 import { UnderstandingStep } from './understanding-step';
 
 const FADE_TRANSITION = { duration: 0.2 };
@@ -20,7 +19,6 @@ const STEPS = [
   BiologyUniqueStep,
   CarePersonalizedStep,
   UnderstandingStep,
-  DigitalTwinExplainerStep,
 ] as const;
 
 export const DigitalTwinSequence = () => {

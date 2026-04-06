@@ -10,11 +10,10 @@ import {
 import { Sequence } from '../../sequence';
 
 import { ChecklistStep } from './checklist-step';
-import { IntroStep } from './intro-step';
 
 const FADE_TRANSITION = { duration: 0.2 };
 
-const STEPS = [IntroStep, ChecklistStep] as const;
+const STEPS = [ChecklistStep] as const;
 
 export const FinishTwinSequence = () => {
   const { next: exitSequence, prev: exitBack } = useOnboardingNavigation();
@@ -29,7 +28,6 @@ export const FinishTwinSequence = () => {
     <SequenceProvider value={sequenceValue}>
       <Head title="Complete Your Digital Twin" />
       <Sequence.Layout>
-        <Sequence.ProgressHeader />
         <AnimatePresence mode="wait">
           <m.div
             key={screenIndex}

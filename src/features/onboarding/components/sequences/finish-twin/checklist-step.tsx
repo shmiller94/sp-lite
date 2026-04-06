@@ -23,12 +23,12 @@ const SETUP_ITEMS: SetupItemData[] = [
   },
   {
     id: 'additional-tests',
-    title: 'Explore additional tests',
+    title: 'Build your testing plan',
     image: '/onboarding/finish-twin/additional-tests.webp',
   },
   {
     id: 'schedule-tests',
-    title: 'Schedule your tests',
+    title: 'Schedule your appointment',
     image: '/onboarding/finish-twin/schedule-tests.webp',
   },
   {
@@ -229,7 +229,7 @@ const InactiveIndicator = () => (
     viewBox="0 0 44 44"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    className="shrink-0"
+    className="shrink-0 opacity-75"
   >
     <g filter="url(#filter0_dd_inactive)">
       <rect
@@ -238,7 +238,7 @@ const InactiveIndicator = () => (
         width="28"
         height="28"
         rx="14"
-        fill="white"
+        fill="#FAFAFA"
         shapeRendering="crispEdges"
       />
       <rect
@@ -273,7 +273,7 @@ const InactiveIndicator = () => (
         <feComposite in2="hardAlpha" operator="out" />
         <feColorMatrix
           type="matrix"
-          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0"
+          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.035 0"
         />
         <feBlend
           mode="normal"
@@ -291,7 +291,7 @@ const InactiveIndicator = () => (
         <feComposite in2="hardAlpha" operator="out" />
         <feColorMatrix
           type="matrix"
-          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.025 0"
+          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.02 0"
         />
         <feBlend
           mode="normal"
@@ -356,19 +356,33 @@ const SetupItem = ({
       </div>
       <div
         className={cn(
-          'mb-3 flex flex-1 items-center gap-4 rounded-2xl border bg-white p-4',
+          'mb-3 flex flex-1 items-center gap-4 rounded-2xl border p-4 transition-colors',
           isActive
-            ? 'border-vermillion-900 outline outline-2 outline-vermillion-900/20'
-            : 'border-zinc-200 shadow-sm',
+            ? 'border-vermillion-900 bg-white outline outline-2 outline-vermillion-900/20'
+            : 'border-zinc-200 bg-white',
         )}
       >
         <div className="flex-1">
-          <div className="text-lg font-medium text-zinc-900">{item.title}</div>
+          <div
+            className={cn(
+              'text-lg font-medium',
+              isActive ? 'text-zinc-900' : 'text-zinc-800',
+            )}
+          >
+            {item.title}
+          </div>
           {item.description && (
             <div className="text-sm text-zinc-500">{item.description}</div>
           )}
         </div>
-        <img src={item.image} alt="" className="h-14 w-auto object-contain" />
+        <img
+          src={item.image}
+          alt=""
+          className={cn(
+            'h-14 w-auto object-contain transition-opacity',
+            isActive ? 'opacity-100' : 'opacity-60',
+          )}
+        />
       </div>
     </m.div>
   );
@@ -386,7 +400,9 @@ export const ChecklistStep = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: 'easeOut' }}
           >
-            <H2 className="text-zinc-900">Let&apos;s complete your twin</H2>
+            <H2 className="text-zinc-900">
+              Let&apos;s build your health profile
+            </H2>
             <Body1 className="mt-2 text-zinc-500">
               The more information you share the better your insights and
               recommendations will be.
@@ -399,9 +415,6 @@ export const ChecklistStep = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
           >
-            <div className="mb-4 text-lg font-medium text-zinc-900">
-              Set up your twin
-            </div>
             <div>
               {SETUP_ITEMS.map((item, index) => (
                 <SetupItem

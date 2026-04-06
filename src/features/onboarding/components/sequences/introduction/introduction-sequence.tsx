@@ -10,10 +10,8 @@ import {
 import { Sequence } from '../../sequence';
 
 import { ActionStep } from './action-step';
-import { AutopilotStep } from './autopilot-step';
 import { BaselineStep } from './baseline-step';
 import { IntroStep } from './intro-step';
-import { MembershipSummaryStep } from './membership-summary-step';
 import { OutroStep } from './outro-step';
 import { VisualizeDataStep } from './visualize-data-step';
 
@@ -24,8 +22,6 @@ const STEPS = [
   BaselineStep,
   VisualizeDataStep,
   ActionStep,
-  AutopilotStep,
-  MembershipSummaryStep,
   OutroStep,
 ] as const;
 

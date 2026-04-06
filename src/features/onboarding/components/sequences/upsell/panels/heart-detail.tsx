@@ -78,16 +78,14 @@ export const HeartDetail = () => {
         <Detail.Subheader
           label="Suggested based on your goals"
           pretext="One-time upgrade"
+          supportingText='Heart disease is a silent killer. Most doctors do not test the markers that reveal risk, and many heart attacks happen with "normal" cholesterol.'
           className="px-4 md:px-0"
         >
           Cardiovascular Panel
         </Detail.Subheader>
 
-        <div className="hidden space-y-1 px-0 md:block">
+        <div className="hidden px-0 md:block">
           <Detail.Pricing {...pricing} />
-          <p className="text-sm text-zinc-500">
-            Know your genetic risk of heart disease.
-          </p>
         </div>
 
         <div className="hidden space-y-8 py-6 md:block">

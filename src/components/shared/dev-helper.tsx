@@ -47,7 +47,6 @@ const SEQUENCE_STEPS: Array<{ id: StepId; label: string }> = [
   { id: STEP_IDS.FEMALE_HEALTH, label: 'Female Health Questionnaire' },
   { id: STEP_IDS.LIFESTYLE, label: 'Lifestyle Questionnaire' },
   { id: STEP_IDS.UPSELL_PANELS, label: 'Upsell Sequence' },
-  { id: STEP_IDS.COMMITMENT, label: 'Commitment Sequence' },
 ];
 
 export function DevHelper() {

@@ -20,10 +20,10 @@ export const BaselineStep = () => {
         </TransitionWrapper>
       </Sequence.StepMedia>
       <Sequence.StepContent className="mx-auto max-w-md text-center">
-        <H2>Test your baseline</H2>
+        <H2>You're testing 100+ biomarkers</H2>
         <Body1 className="text-zinc-500">
-          Superpower starts with a test beyond a basic check-up with more
-          insights than ever before.
+          That's 10x more than a typical checkup, so we can find signals and see
+          trends normally missed.
         </Body1>
       </Sequence.StepContent>
       <Sequence.StepFooter>

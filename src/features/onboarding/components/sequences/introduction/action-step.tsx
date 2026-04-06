@@ -20,10 +20,10 @@ export const ActionStep = () => {
         </TransitionWrapper>
       </Sequence.StepMedia>
       <Sequence.StepContent className="mx-auto max-w-md text-center">
-        <H2>Action on your insights</H2>
+        <H2>Get actionable insights</H2>
         <Body1 className="text-zinc-500">
-          Your action plan tells you what matters and exactly what to do next,
-          tailored to your biology and goals.
+          Your action plan tells you what matters and what to do next, tailored
+          to your biology and goals.
         </Body1>
       </Sequence.StepContent>
       <Sequence.StepFooter>

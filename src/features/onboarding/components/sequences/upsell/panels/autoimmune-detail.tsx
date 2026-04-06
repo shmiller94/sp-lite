@@ -92,16 +92,14 @@ export const AutoimmuneDetail = () => {
         <Detail.Subheader
           label="Suggested based on your goals"
           pretext="One-time upgrade"
+          supportingText="Your immune system could be working against you. Autoimmune conditions can develop silently for years, and early detection can help you act sooner."
           className="px-4 md:px-0"
         >
           Autoimmune Panel
         </Detail.Subheader>
 
-        <div className="hidden space-y-1 px-0 md:block">
+        <div className="hidden px-0 md:block">
           <Detail.Pricing {...pricing} />
-          <p className="text-sm text-zinc-500">
-            Know whether your immune system is misfiring.
-          </p>
         </div>
 
         <div className="hidden space-y-8 py-6 md:block">

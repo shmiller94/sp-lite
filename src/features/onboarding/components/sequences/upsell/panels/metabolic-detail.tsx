@@ -83,16 +83,14 @@ export const MetabolicDetail = () => {
         <Detail.Subheader
           label="Suggested based on your goals"
           pretext="One-time upgrade"
+          supportingText="Your metabolism holds the key to energy. Fatigue, weight gain, and brain fog often trace back to metabolic dysfunction."
           className="px-4 md:px-0"
         >
           Metabolic Panel
         </Detail.Subheader>
 
-        <div className="hidden space-y-1 px-0 md:block">
+        <div className="hidden px-0 md:block">
           <Detail.Pricing {...pricing} />
-          <p className="text-sm text-zinc-500">
-            Understand how your metabolism is functioning.
-          </p>
         </div>
 
         <div className="hidden space-y-8 py-6 md:block">

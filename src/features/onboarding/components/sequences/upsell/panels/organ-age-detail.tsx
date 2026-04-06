@@ -63,8 +63,12 @@ export const OrganAgeDetail = () => {
           </>
         }
       >
-        <Detail.Subheader pretext="One-time upgrade" className="px-4 md:px-0">
-          Calculate your OrganAge
+        <Detail.Subheader
+          pretext="One-time upgrade"
+          supportingText="How old are you really? Your baseline includes biological age, and this upgrade zooms into how specific organ systems are aging."
+          className="px-4 md:px-0"
+        >
+          OrganAge Panel
         </Detail.Subheader>
 
         <div className="hidden space-y-2 px-0 md:block">

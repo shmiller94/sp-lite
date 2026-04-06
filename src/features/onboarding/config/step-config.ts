@@ -6,8 +6,6 @@ export const STEP_IDS = {
   INTRODUCTION: 'introduction',
   DIGITAL_TWIN: 'digital-twin',
   ADVANCED_UPGRADE: 'advanced-upgrade',
-  BUNDLED_DISCOUNT: 'bundled-discount',
-  ORGAN_AGE: 'organ-age',
   HEARD_ABOUT_US: 'heard-about-us',
   INTAKE: 'intake',
   PRIMER_INTRO: 'primer-intro',
@@ -23,7 +21,6 @@ export const STEP_IDS = {
   ADD_ON_PANELS: 'add-on-panels',
   UPSELL_PANELS: 'upsell-panels',
   PHLEBOTOMY_BOOKING: 'phlebotomy-booking',
-  COMMITMENT: 'commitment',
   // Intake flow only (legacy members)
   INTAKE_SPLASH: 'intake-splash',
   INTAKE_COMPLETION: 'intake-completion',
@@ -79,20 +76,12 @@ interface StepConfig {
 // Order matters - this is the default step order
 const STEP_CONFIGS: StepConfig[] = [
   {
-    id: STEP_IDS.HEARD_ABOUT_US,
-    shouldShow: (ctx) => !ctx.userInfoCompleted && !ctx.hasClaimedBenefits,
-  },
-  {
     id: STEP_IDS.UPDATE_INFO,
     shouldShow: (ctx) => !ctx.userInfoCompleted,
   },
   {
-    id: STEP_IDS.INTRODUCTION,
-    shouldShow: (ctx) => !ctx.hasStartedIntake,
-  },
-  {
-    id: STEP_IDS.DIGITAL_TWIN,
-    shouldShow: (ctx) => !ctx.hasStartedIntake,
+    id: STEP_IDS.HEARD_ABOUT_US,
+    shouldShow: (ctx) => !ctx.hasClaimedBenefits,
   },
   {
     id: STEP_IDS.ADVANCED_UPGRADE,
@@ -103,19 +92,12 @@ const STEP_CONFIGS: StepConfig[] = [
       !ctx.hasClaimedBenefits,
   },
   {
-    id: STEP_IDS.BUNDLED_DISCOUNT,
-    shouldShow: (ctx) =>
-      !ctx.hasClaimedBenefits &&
-      !ctx.hasStartedIntake &&
-      ctx.rxQuestionnaireContext.status !== 'required' &&
-      ctx.baselineCreditsCount <= 1,
+    id: STEP_IDS.INTRODUCTION,
+    shouldShow: (ctx) => !ctx.hasStartedIntake,
   },
   {
-    id: STEP_IDS.ORGAN_AGE,
-    shouldShow: (ctx) =>
-      !ctx.userHasOrganAge &&
-      !ctx.hasClaimedBenefits &&
-      ctx.rxQuestionnaireContext.status !== 'required',
+    id: STEP_IDS.DIGITAL_TWIN,
+    shouldShow: (ctx) => !ctx.hasStartedIntake,
   },
   {
     id: STEP_IDS.FINISH_TWIN,
@@ -170,10 +152,6 @@ const STEP_CONFIGS: StepConfig[] = [
   {
     id: STEP_IDS.PHLEBOTOMY_BOOKING,
     shouldShow: () => true, // Always shown when other conditions pass
-  },
-  {
-    id: STEP_IDS.COMMITMENT,
-    shouldShow: () => true,
   },
 ];
 

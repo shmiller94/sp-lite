@@ -1,7 +1,6 @@
 import { IconEyeOpen } from '@central-icons-react/round-filled-radius-2-stroke-1.5/IconEyeOpen';
 import { IconHeartBeat } from '@central-icons-react/round-filled-radius-2-stroke-1.5/IconHeartBeat';
 import { IconPersona } from '@central-icons-react/round-filled-radius-2-stroke-1.5/IconPersona';
-import { ChevronLeft } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 import { Head } from '@/components/seo';
@@ -191,7 +190,6 @@ const OrderButtons = ({ price }: { price: number }) => {
 export const AdvancedPanelUpgradeStep = () => {
   const { data: user } = useUser();
   const { gender } = useGender();
-  const { prev } = useOnboardingNavigation();
   const priceInCents = getUpgradePrice(user);
   const copy =
     gender === 'female' ? ADVANCED_PANEL_COPY.female : ADVANCED_PANEL_COPY.male;
@@ -216,14 +214,7 @@ export const AdvancedPanelUpgradeStep = () => {
       <Head title="Advanced Panel Upgrade" />
       <Sequence.StepLayout className="bg-zinc-50 md:bg-white">
         <Sequence.StepHeader className="flex items-center justify-between md:hidden">
-          <button
-            type="button"
-            onClick={prev}
-            className="flex size-9 items-center justify-center text-zinc-500"
-            aria-label="Go back"
-          >
-            <ChevronLeft className="size-6" />
-          </button>
+          <div className="size-9" />
           <span className="text-sm font-medium text-zinc-900">
             Recommended for you
           </span>
@@ -231,15 +222,7 @@ export const AdvancedPanelUpgradeStep = () => {
         </Sequence.StepHeader>
 
         <div className="flex flex-1 flex-col md:mx-auto md:w-full md:max-w-screen-2xl">
-          <button
-            type="button"
-            onClick={prev}
-            className="hidden items-center gap-1 p-8 pb-0 text-zinc-500 md:flex"
-            aria-label="Go back"
-          >
-            <ChevronLeft className="size-5" />
-            <span className="text-sm">Back</span>
-          </button>
+          <div className="hidden p-8 pb-0 md:block" aria-hidden="true" />
 
           <div className="flex flex-1 flex-col md:flex-row">
             <div className="hidden md:block md:w-1/2 md:p-8">
@@ -263,10 +246,10 @@ export const AdvancedPanelUpgradeStep = () => {
               <div className="hidden space-y-1 px-0 md:block">
                 <Detail.Pricing {...pricing} />
                 <p className="text-sm text-zinc-500">
-                  Everything in the baseline panel, plus 30+ additional blood
-                  biomarkers and a complete urinalysis. Go deeper and broader
-                  across cardiovascular risk, hormones, metabolic health,
-                  inflammation, and kidney function.
+                  Add 30+ advanced biomarkers and complete urinalysis on top of
+                  your Baseline panel. Go deeper and broader across
+                  cardiovascular risk, hormones, metabolic health, inflammation,
+                  and kidney function.
                 </p>
               </div>
 

@@ -272,7 +272,7 @@ describe('useOnboardingFlowStore', () => {
 
       // Try to go to a step not in validSteps
       act(() => {
-        result.current.goTo(STEP_IDS.COMMITMENT);
+        result.current.goTo(STEP_IDS.DIGITAL_TWIN);
       });
 
       // Should stay on current step

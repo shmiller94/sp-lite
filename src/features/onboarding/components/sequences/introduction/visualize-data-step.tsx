@@ -20,10 +20,10 @@ export const VisualizeDataStep = () => {
         </TransitionWrapper>
       </Sequence.StepMedia>
       <Sequence.StepContent className="mx-auto max-w-md text-center">
-        <H2>Visualize your data</H2>
+        <H2>Visualize your health</H2>
         <Body1 className="text-zinc-500">
-          For the first time ever see your whole body&apos;s health and detect
-          issues before they arrive.
+          Your data and ranges are plotted against people like you, not the
+          general population.
         </Body1>
       </Sequence.StepContent>
       <Sequence.StepFooter>

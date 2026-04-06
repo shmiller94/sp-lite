@@ -73,15 +73,16 @@ export const GutMicrobiomeDetail = () => {
           </>
         }
       >
-        <Detail.Subheader pretext="One-time add-on" className="px-4 md:px-0">
-          Understand your microbiome to improve whole-body health
+        <Detail.Subheader
+          pretext="One-time add-on"
+          supportingText="Your gut shapes how you feel, function, and look. Measure the bacteria influencing digestion, immunity, mood, and more."
+          className="px-4 md:px-0"
+        >
+          Gut Microbiome Panel
         </Detail.Subheader>
 
-        <div className="hidden space-y-1 px-0 md:block">
+        <div className="hidden px-0 md:block">
           <Detail.Pricing {...pricing} />
-          <p className="text-sm text-zinc-500">
-            Get the full picture of health.
-          </p>
         </div>
 
         <div className="hidden space-y-8 py-6 md:block">

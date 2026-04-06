@@ -77,6 +77,17 @@ describe('getValidSteps', () => {
       expect(steps).toContain(STEP_IDS.ADVANCED_UPGRADE);
     });
 
+    it('comes right after heard-about-us when profile gates are already complete', () => {
+      const ctx = {
+        ...baseContext,
+        userInfoCompleted: true,
+        hasStartedIntake: false,
+      };
+      const steps = getValidSteps(ctx);
+      expect(steps[0]).toBe(STEP_IDS.HEARD_ABOUT_US);
+      expect(steps[1]).toBe(STEP_IDS.ADVANCED_UPGRADE);
+    });
+
     it('excludes advanced-upgrade when intake is started', () => {
       const ctx = { ...baseContext, hasStartedIntake: true };
       const steps = getValidSteps(ctx);
@@ -108,82 +119,6 @@ describe('getValidSteps', () => {
     });
   });
 
-  describe('bundled-discount step', () => {
-    it('includes bundled-discount for fresh user with 1 baseline credit', () => {
-      const ctx = {
-        ...baseContext,
-        hasStartedIntake: false,
-        hasClaimedBenefits: false,
-        baselineCreditsCount: 1,
-      };
-      const steps = getValidSteps(ctx);
-      expect(steps).toContain(STEP_IDS.BUNDLED_DISCOUNT);
-    });
-
-    it('excludes bundled-discount when user has started intake', () => {
-      const ctx = { ...baseContext, hasStartedIntake: true };
-      const steps = getValidSteps(ctx);
-      expect(steps).not.toContain(STEP_IDS.BUNDLED_DISCOUNT);
-    });
-
-    it('excludes bundled-discount when user has more than 1 baseline credit', () => {
-      const ctx = { ...baseContext, baselineCreditsCount: 2 };
-      const steps = getValidSteps(ctx);
-      expect(steps).not.toContain(STEP_IDS.BUNDLED_DISCOUNT);
-    });
-
-    it('excludes bundled-discount for B2B users', () => {
-      const ctx = { ...baseContext, hasClaimedBenefits: true };
-      const steps = getValidSteps(ctx);
-      expect(steps).not.toContain(STEP_IDS.BUNDLED_DISCOUNT);
-    });
-
-    it('includes bundled-discount when baselineCreditsCount is 0', () => {
-      const ctx = {
-        ...baseContext,
-        hasStartedIntake: false,
-        hasClaimedBenefits: false,
-        baselineCreditsCount: 0,
-      };
-      const steps = getValidSteps(ctx);
-      expect(steps).toContain(STEP_IDS.BUNDLED_DISCOUNT);
-    });
-  });
-
-  describe('organ-age step', () => {
-    it('includes organ-age when user does not have OrganAge', () => {
-      const ctx = {
-        ...baseContext,
-        userHasOrganAge: false,
-        hasClaimedBenefits: false,
-      };
-      const steps = getValidSteps(ctx);
-      expect(steps).toContain(STEP_IDS.ORGAN_AGE);
-    });
-
-    it('excludes organ-age when user already has OrganAge', () => {
-      const ctx = { ...baseContext, userHasOrganAge: true };
-      const steps = getValidSteps(ctx);
-      expect(steps).not.toContain(STEP_IDS.ORGAN_AGE);
-    });
-
-    it('excludes organ-age for B2B users', () => {
-      const ctx = { ...baseContext, hasClaimedBenefits: true };
-      const steps = getValidSteps(ctx);
-      expect(steps).not.toContain(STEP_IDS.ORGAN_AGE);
-    });
-
-    it('excludes organ-age for B2B users even without OrganAge', () => {
-      const ctx = {
-        ...baseContext,
-        userHasOrganAge: false,
-        hasClaimedBenefits: true,
-      };
-      const steps = getValidSteps(ctx);
-      expect(steps).not.toContain(STEP_IDS.ORGAN_AGE);
-    });
-  });
-
   describe('rx-assessment step', () => {
     it('includes rx-assessment when a required RX questionnaire response exists', () => {
       const ctx = {
@@ -208,14 +143,12 @@ describe('getValidSteps', () => {
       };
       const steps = getValidSteps(ctx);
 
-      expect(steps[0]).toBe(STEP_IDS.HEARD_ABOUT_US);
-      expect(steps).toContain(STEP_IDS.UPDATE_INFO);
+      expect(steps[0]).toBe(STEP_IDS.UPDATE_INFO);
+      expect(steps[1]).toBe(STEP_IDS.HEARD_ABOUT_US);
       expect(steps).toContain(STEP_IDS.INTRODUCTION);
       expect(steps).toContain(STEP_IDS.DIGITAL_TWIN);
 
       expect(steps).not.toContain(STEP_IDS.ADVANCED_UPGRADE);
-      expect(steps).not.toContain(STEP_IDS.BUNDLED_DISCOUNT);
-      expect(steps).not.toContain(STEP_IDS.ORGAN_AGE);
 
       const finishTwinIdx = steps.indexOf(STEP_IDS.FINISH_TWIN);
       const rxAssessmentIdx = steps.indexOf(STEP_IDS.RX_ASSESSMENT);
@@ -265,19 +198,21 @@ describe('getValidSteps', () => {
       expect(steps).toContain(STEP_IDS.HEARD_ABOUT_US);
     });
 
-    it('places heard-about-us at the beginning when included', () => {
+    it('places heard-about-us between update-info and advanced-upgrade when included', () => {
       const ctx = {
         ...baseContext,
         userInfoCompleted: false,
       };
       const steps = getValidSteps(ctx);
-      expect(steps[0]).toBe(STEP_IDS.HEARD_ABOUT_US);
+      expect(steps[0]).toBe(STEP_IDS.UPDATE_INFO);
+      expect(steps[1]).toBe(STEP_IDS.HEARD_ABOUT_US);
+      expect(steps[2]).toBe(STEP_IDS.ADVANCED_UPGRADE);
     });
 
-    it('excludes heard-about-us when user info is completed', () => {
+    it('keeps heard-about-us when user info is completed', () => {
       const ctx = { ...baseContext, userInfoCompleted: true };
       const steps = getValidSteps(ctx);
-      expect(steps).not.toContain(STEP_IDS.HEARD_ABOUT_US);
+      expect(steps).toContain(STEP_IDS.HEARD_ABOUT_US);
     });
 
     it('excludes heard-about-us for B2B users who have claimed benefits', () => {
@@ -449,23 +384,16 @@ describe('getValidSteps', () => {
       const steps = getValidSteps(ctx);
       expect(steps).toContain(STEP_IDS.PHLEBOTOMY_BOOKING);
     });
-  });
 
-  describe('commitment step', () => {
-    it('always includes commitment', () => {
+    it('is the last top-level step in the default flow', () => {
       const steps = getValidSteps(baseContext);
-      expect(steps).toContain(STEP_IDS.COMMITMENT);
+      expect(steps[steps.length - 1]).toBe(STEP_IDS.PHLEBOTOMY_BOOKING);
     });
 
-    it('commitment is last step', () => {
-      const steps = getValidSteps(baseContext);
-      expect(steps[steps.length - 1]).toBe(STEP_IDS.COMMITMENT);
-    });
-
-    it('commitment is last step for B2B users', () => {
+    it('is the last top-level step for B2B users when sole remaining step', () => {
       const ctx = { ...baseContext, hasClaimedBenefits: true };
       const steps = getValidSteps(ctx);
-      expect(steps[steps.length - 1]).toBe(STEP_IDS.COMMITMENT);
+      expect(steps[steps.length - 1]).toBe(STEP_IDS.PHLEBOTOMY_BOOKING);
     });
   });
 
@@ -480,8 +408,6 @@ describe('getValidSteps', () => {
       const introductionIdx = steps.indexOf(STEP_IDS.INTRODUCTION);
       const digitalTwinIdx = steps.indexOf(STEP_IDS.DIGITAL_TWIN);
       const advancedIdx = steps.indexOf(STEP_IDS.ADVANCED_UPGRADE);
-      const bundledIdx = steps.indexOf(STEP_IDS.BUNDLED_DISCOUNT);
-      const organAgeIdx = steps.indexOf(STEP_IDS.ORGAN_AGE);
       const heardAboutIdx = steps.indexOf(STEP_IDS.HEARD_ABOUT_US);
       const finishTwinIdx = steps.indexOf(STEP_IDS.FINISH_TWIN);
       const primerIntroIdx = steps.indexOf(STEP_IDS.PRIMER_INTRO);
@@ -495,16 +421,13 @@ describe('getValidSteps', () => {
       const upsellIdx = steps.indexOf(STEP_IDS.UPSELL_PANELS);
       const addOnIdx = steps.indexOf(STEP_IDS.ADD_ON_PANELS);
       const phlebIdx = steps.indexOf(STEP_IDS.PHLEBOTOMY_BOOKING);
-      const commitmentIdx = steps.indexOf(STEP_IDS.COMMITMENT);
 
-      expect(heardAboutIdx).toBeLessThan(updateInfoIdx);
-      expect(updateInfoIdx).toBeLessThan(introductionIdx);
+      expect(updateInfoIdx).toBeLessThan(heardAboutIdx);
+      expect(heardAboutIdx).toBeLessThan(advancedIdx);
+      expect(advancedIdx).toBeLessThan(introductionIdx);
       expect(introductionIdx).toBeLessThan(digitalTwinIdx);
-      expect(digitalTwinIdx).toBeLessThan(advancedIdx);
-      expect(advancedIdx).toBeLessThan(bundledIdx);
-      expect(bundledIdx).toBeLessThan(organAgeIdx);
-      expect(organAgeIdx).toBeLessThan(finishTwinIdx);
-      expect(heardAboutIdx).toBeLessThan(finishTwinIdx);
+      expect(digitalTwinIdx).toBeLessThan(finishTwinIdx);
+      expect(advancedIdx).toBeLessThan(finishTwinIdx);
       expect(finishTwinIdx).toBeLessThan(primerIntroIdx);
       expect(primerIntroIdx).toBeLessThan(primerIdx);
       expect(primerIdx).toBeLessThan(medicalIntroIdx);
@@ -516,7 +439,7 @@ describe('getValidSteps', () => {
       expect(lifestyleIdx).toBeLessThan(upsellIdx);
       expect(upsellIdx).toBeLessThan(addOnIdx);
       expect(addOnIdx).toBeLessThan(phlebIdx);
-      expect(phlebIdx).toBeLessThan(commitmentIdx);
+      expect(phlebIdx).toBe(steps.length - 1);
     });
 
     it('returns only always-shown steps when most are excluded', () => {
@@ -540,7 +463,7 @@ describe('getValidSteps', () => {
       };
       const steps = getValidSteps(ctx);
 
-      expect(steps).toEqual([STEP_IDS.PHLEBOTOMY_BOOKING, STEP_IDS.COMMITMENT]);
+      expect(steps).toEqual([STEP_IDS.PHLEBOTOMY_BOOKING]);
     });
   });
 

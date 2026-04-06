@@ -83,16 +83,14 @@ export const HeavyMetalDetail = () => {
         <Detail.Subheader
           label="Suggested based on your goals"
           pretext="One-time upgrade"
+          supportingText="Heavy metals stay in the body longer than you think. Low-level exposure can build up quietly over time and interfere with nerves, kidneys, and energy."
           className="px-4 md:px-0"
         >
           Heavy Metals Test
         </Detail.Subheader>
 
-        <div className="hidden space-y-1 px-0 md:block">
+        <div className="hidden px-0 md:block">
           <Detail.Pricing {...pricing} />
-          <p className="text-sm text-zinc-500">
-            See if heavy metals are accumulating in your body.
-          </p>
         </div>
 
         <div className="hidden space-y-8 py-6 md:block">

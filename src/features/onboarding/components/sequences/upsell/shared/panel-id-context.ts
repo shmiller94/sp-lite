@@ -7,6 +7,7 @@ export type PanelId =
   | 'nutrients'
   | 'autoimmune'
   | 'methylation'
+  | 'organ-age'
   | 'gut-microbiome';
 
 const PanelIdContext = createContext<PanelId | null>(null);

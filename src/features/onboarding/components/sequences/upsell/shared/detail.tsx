@@ -53,6 +53,7 @@ type SubheaderProps = PropsWithChildren<{
   label?: string;
   labelClassName?: string;
   pretext?: string;
+  supportingText?: string;
   className?: string;
 }>;
 
@@ -60,6 +61,7 @@ const Subheader = ({
   label,
   labelClassName,
   pretext,
+  supportingText,
   children,
   className,
 }: SubheaderProps) => (
@@ -75,9 +77,12 @@ const Subheader = ({
         <span className="text-sm text-vermillion-900">{label}</span>
       </div>
     )}
-    <div className="space-y-2">
+    <div className="space-y-2 pb-4">
       {pretext && <p className="text-base text-zinc-500">{pretext}</p>}
       <H2>{children}</H2>
+      {supportingText && (
+        <p className="text-base text-zinc-500">{supportingText}</p>
+      )}
     </div>
   </div>
 );
@@ -89,7 +94,7 @@ const Content = ({
   children,
   className,
 }: PropsWithChildren<{ className?: string }>) => (
-  <div className={cn('mt-6 flex-1 overflow-y-auto px-6 py-4', className)}>
+  <div className={cn('mt-6 flex-1 overflow-y-auto px-6 pb-8 pt-4', className)}>
     {children}
   </div>
 );

@@ -20,15 +20,14 @@ export const OnboardingPrimerIntroStep = () => {
           />
         </Sequence.StepMedia>
         <Sequence.StepContent className="mx-auto max-w-md text-center">
-          <H2>Tell us about yourself</H2>
+          <H2>Let's start with your goals</H2>
           <Body1 className="text-zinc-500">
-            Your responses will inform your experience. Set aside 10 min for the
-            best result.
+            Your goals help us prioritize what's most important to you.
           </Body1>
         </Sequence.StepContent>
         <Sequence.StepFooter className="mx-auto w-full max-w-md">
           <Button onClick={next} className="w-full">
-            Set up your twin
+            Get started
           </Button>
         </Sequence.StepFooter>
       </Sequence.StepLayout>
