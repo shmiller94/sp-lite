@@ -6,6 +6,7 @@ import {
   Briefcase,
   HeartPulse,
   Mail,
+  Tv,
 } from 'lucide-react';
 
 import {
@@ -22,6 +23,7 @@ import {
   YouTubeIcon,
 } from '@/components/icons/marketing';
 import { SuperpowerIcon } from '@/components/icons/superpower-logo';
+import { XIcon } from '@/components/icons/x-icon';
 
 export type IconComponent =
   | LucideIcon
@@ -52,6 +54,8 @@ export const HEARD_ABOUT_US_CATEGORIES: HeardAboutUsCategory[] = [
       { value: 'youtube', label: 'YouTube', icon: YouTubeIcon },
       { value: 'reddit', label: 'Reddit', icon: RedditIcon },
       { value: 'linkedin', label: 'LinkedIn', icon: LinkedInIcon },
+      { value: 'x', label: 'X', icon: XIcon },
+      { value: 'tv', label: 'TV', icon: Tv },
       { value: 'other', label: 'Other', icon: MoreHorizontal },
     ],
   },
