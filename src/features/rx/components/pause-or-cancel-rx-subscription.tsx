@@ -23,21 +23,25 @@ export const PauseOrCancelRxSubscriptionDialog = ({
   subscription: RxSubscription;
 }) => {
   const { width } = useWindowDimensions();
-  const [mode, setMode] = useState(flow);
   const [open, setOpen] = useState(false);
+  const [mode, setMode] = useState(flow);
+
+  const closeModal = () => {
+    setOpen(false);
+    setMode(flow);
+  };
 
   const content =
     mode === 'pause' ? (
       <PauseSubscriptionDialogContent
         subscription={subscription}
-        setMode={() => setMode('cancel')}
-        closeModal={() => setOpen(false)}
+        closeModal={closeModal}
       />
     ) : (
       <CancelSubscriptionDialogContent
         subscription={subscription}
-        setMode={() => setMode('pause')}
-        closeModal={() => setOpen(false)}
+        onPauseInstead={() => setMode('pause')}
+        closeModal={closeModal}
       />
     );
 
@@ -46,8 +50,8 @@ export const PauseOrCancelRxSubscriptionDialog = ({
       <Sheet
         open={open}
         onOpenChange={(next) => {
-          setOpen(next);
-          setMode(flow);
+          if (next) setOpen(true);
+          else closeModal();
         }}
       >
         <SheetTrigger asChild>{children}</SheetTrigger>
@@ -63,7 +67,7 @@ export const PauseOrCancelRxSubscriptionDialog = ({
       open={open}
       onOpenChange={(next) => {
         setOpen(next);
-        setMode(flow);
+        if (!next) setMode(flow);
       }}
     >
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -80,11 +84,9 @@ export const PauseOrCancelRxSubscriptionDialog = ({
 };
 
 const PauseSubscriptionDialogContent = ({
-  setMode,
   closeModal,
   subscription,
 }: {
-  setMode: () => void;
   closeModal: () => void;
   subscription: RxSubscription;
 }) => {
@@ -96,15 +98,12 @@ const PauseSubscriptionDialogContent = ({
     },
   });
 
-  const isCancellable =
-    subscription.contract.billingCycleStatus !== 'cancelled';
-
   return (
     <div className="space-y-6">
       <div className="space-y-2">
         <H2>Pause subscription</H2>
         <Body1 className="text-secondary">
-          Temporarily pause your subscription. You won’t be charged while paused
+          Temporarily pause your subscription. You won't be charged while paused
           & can resume anytime.
         </Body1>
       </div>
@@ -112,7 +111,7 @@ const PauseSubscriptionDialogContent = ({
         <div className="flex items-center gap-2">
           <Info className="size-4 text-vermillion-900" />
           <Body2 className="text-vermillion-900">
-            What happen’s once you pause?
+            What happens once you pause?
           </Body2>
         </div>
         <ul className="space-y-1">
@@ -141,16 +140,6 @@ const PauseSubscriptionDialogContent = ({
         </ul>
       </div>
       <div className="flex flex-col items-center justify-end gap-2.5 md:flex-row">
-        {isCancellable ? (
-          <Button
-            variant="outline"
-            className="w-full md:w-auto"
-            onClick={setMode}
-            disabled={pauseSubscriptionMutation.isPending}
-          >
-            Cancel Subscription
-          </Button>
-        ) : null}
         <Button
           className="w-full md:w-auto"
           onClick={() =>
@@ -165,12 +154,12 @@ const PauseSubscriptionDialogContent = ({
 };
 
 const CancelSubscriptionDialogContent = ({
-  setMode,
   closeModal,
+  onPauseInstead,
   subscription,
 }: {
-  setMode: () => void;
   closeModal: () => void;
+  onPauseInstead: () => void;
   subscription: RxSubscription;
 }) => {
   const cancelSubscriptionMutation = useCancelSubscription({
@@ -190,7 +179,7 @@ const CancelSubscriptionDialogContent = ({
       <div className="space-y-2">
         <H2>Cancel subscription</H2>
         <Body1 className="text-secondary">
-          We’re sorry to see you go. Please help us understand why you are
+          We're sorry to see you go. Please help us understand why you are
           cancelling.
         </Body1>
       </div>
@@ -209,7 +198,7 @@ const CancelSubscriptionDialogContent = ({
           <li className="flex items-center gap-2">
             <span className="size-1.5 shrink-0 rounded-full bg-zinc-300" />
             <Body2 className="text-secondary">
-              You’ll lose access to your treatment plan
+              You'll lose access to your treatment plan
             </Body2>
           </li>
         </ul>
@@ -219,7 +208,7 @@ const CancelSubscriptionDialogContent = ({
           <Button
             variant="outline"
             className="w-full md:w-auto"
-            onClick={setMode}
+            onClick={onPauseInstead}
             disabled={cancelSubscriptionMutation.isPending}
           >
             Pause instead

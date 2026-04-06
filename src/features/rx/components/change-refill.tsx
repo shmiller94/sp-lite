@@ -71,22 +71,22 @@ const ChangeRefillDialogContent = ({
     return <ChangeRefillConfirmation subscription={subscription} />;
   }
 
+  const anchorDate = new Date(subscription.contract.anchorDate);
+
   return (
     <div className="space-y-6">
       <div className="space-y-2">
         <H2>Change refill date</H2>
         <Body1 className="text-secondary">
-          Want to adjust your refill date? Delay your refill date for up to two
-          weeks, once per refill period. An earlier refill requires manual
+          Want to adjust your refill date? Delay your refill date for up to 30
+          days, once per refill period. An earlier refill requires manual
           approval.
         </Body1>
       </div>
       <div className="flex items-center gap-2">
         <div className="w-full space-y-1.5 rounded-xl border px-3 py-2">
           <Body2 className="text-secondary">Current refill date</Body2>
-          <Body1>
-            {format(new Date(subscription.contract.anchorDate), 'MMM d, yyyy')}
-          </Body1>
+          <Body1>{format(anchorDate, 'MMM d, yyyy')}</Body1>
         </div>
         <div className="w-full space-y-1.5 rounded-xl border px-3 py-2">
           <Body2 className="text-secondary">Updated refill date</Body2>
@@ -97,6 +97,16 @@ const ChangeRefillDialogContent = ({
           )}
         </div>
       </div>
+      {date ? (
+        <div className="rounded-xl bg-zinc-100 px-3 py-2">
+          <Body2 className="text-secondary">
+            Next charge date:{' '}
+            <span className="font-medium text-zinc-900">
+              {format(date, 'MMM d, yyyy')}
+            </span>
+          </Body2>
+        </div>
+      ) : null}
       <Calendar
         mode="single"
         selected={date}
@@ -114,10 +124,11 @@ const ChangeRefillDialogContent = ({
           day_button:
             'h-9 w-full p-0 font-normal aria-selected:opacity-100 hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-center rounded-md text-sm font-medium',
         }}
-        disabled={{
-          before: addDays(startOfDay(subscription.contract.anchorDate), 2),
-        }}
-        defaultMonth={new Date(subscription.contract.anchorDate)}
+        disabled={[
+          { before: addDays(startOfDay(anchorDate), 2) },
+          { after: addDays(startOfDay(anchorDate), 30) },
+        ]}
+        defaultMonth={anchorDate}
       />
       <div className="flex flex-col items-center justify-end gap-2.5 md:flex-row">
         <Button
