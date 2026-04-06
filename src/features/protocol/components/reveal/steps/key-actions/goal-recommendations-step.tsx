@@ -14,6 +14,7 @@ import { useRevealBuilderStore } from '@/features/protocol/stores/reveal-builder
 
 import { ProtocolStepLayout } from '../../../layouts/protocol-step-layout';
 import { ProtocolMarkdown } from '../../../protocol-markdown';
+import { RxClinicianCallCta } from '../../../rx-clinician-call-cta';
 
 interface GoalRecommendationsStepProps {
   goalIndex: number;
@@ -105,6 +106,12 @@ export const GoalRecommendationsStep = ({
                 className="mb-4 text-sm text-secondary [&>div]:mb-0"
               />
 
+              {action.content.type === 'prescription' && (
+                <div className="mb-4">
+                  <RxClinicianCallCta source="reveal_recommendations" />
+                </div>
+              )}
+
               <div className="flex items-center justify-between">
                 <AdditionalContentDialog
                   actionTitle={action.title}
@@ -114,6 +121,7 @@ export const GoalRecommendationsStep = ({
                   additionalContent={action.additionalContent}
                   supplementProduct={supplementProduct}
                   citations={actionCitations}
+                  isPrescription={action.content.type === 'prescription'}
                 >
                   <button
                     type="button"

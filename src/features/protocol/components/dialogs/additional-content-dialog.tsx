@@ -18,6 +18,7 @@ import type { Product } from '@/types/api';
 import type { ProtocolCitation } from '../../api';
 import { ACTION_TYPE_FALLBACK_IMAGE } from '../../const/protocol-constants';
 import { ProtocolMarkdown } from '../protocol-markdown';
+import { RxClinicianCallCta } from '../rx-clinician-call-cta';
 import { SupplementPreview } from '../supplement-preview';
 
 import { CitationCard } from './citations-dialog';
@@ -31,6 +32,7 @@ type AdditionalContentDialogProps = {
   additionalContent?: string | null;
   supplementProduct?: Product | null;
   citations?: ProtocolCitation[];
+  isPrescription?: boolean;
 };
 
 export function AdditionalContentDialog({
@@ -42,6 +44,7 @@ export function AdditionalContentDialog({
   additionalContent,
   supplementProduct,
   citations,
+  isPrescription,
 }: AdditionalContentDialogProps) {
   const [open, setOpen] = useState(false);
   const { track } = useAnalytics();
@@ -135,6 +138,11 @@ export function AdditionalContentDialog({
           <H4 className="text-base">Recommended product</H4>
           <SupplementPreview product={supplementProduct} />
         </div>
+      )}
+
+      {/* RX Clinician Call CTA */}
+      {isPrescription && (
+        <RxClinicianCallCta source="additional_content_dialog" />
       )}
 
       {/* Citations */}

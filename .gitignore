@@ -22,6 +22,9 @@ storybook-static
 # production
 /dist
 
+# superpowers specs
+docs/superpowers/specs/
+
 # misc
 .DS_Store
 .env

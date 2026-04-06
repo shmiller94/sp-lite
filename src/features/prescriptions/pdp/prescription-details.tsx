@@ -1,4 +1,5 @@
 import { PrescriptionsCategory } from '@/features/prescriptions/components/prescriptions-category';
+import { RxClinicianCallCta } from '@/features/protocol/components/rx-clinician-call-cta';
 import type { Rx } from '@/types/api';
 
 import { Faq } from './prescriptions-faq';
@@ -23,6 +24,9 @@ export const PrescriptionDetails = ({
       <Science prescription={prescription} />
       <HowTo prescription={prescription} />
       <Faq prescription={prescription} />
+      <div className="mx-auto max-w-md md:hidden">
+        <RxClinicianCallCta source="rx_pdp" />
+      </div>
       {otherPopularPrescriptions.length > 0 && (
         <PrescriptionsCategory
           title="Other popular products"

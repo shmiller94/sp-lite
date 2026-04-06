@@ -411,6 +411,7 @@ const ActionsTab = ({
           additionalContent={primaryAction.additionalContent}
           supplementProduct={primaryActionProduct}
           citations={primaryActionCitations}
+          isPrescription={primaryAction.content.type === 'prescription'}
         >
           <m.div
             initial={{ opacity: 0, y: 20 }}
@@ -478,6 +479,7 @@ const ActionsTab = ({
                   additionalContent={action.additionalContent}
                   supplementProduct={actionProduct}
                   citations={actionCitations}
+                  isPrescription={action.content.type === 'prescription'}
                 >
                   <m.div
                     initial={{ opacity: 0, y: 20 }}

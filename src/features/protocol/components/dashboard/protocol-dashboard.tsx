@@ -37,7 +37,8 @@ function getTodaysActions(goals: ProtocolGoal[]): ProtocolAction[] {
     if (action.accepted !== true) return false;
     if (
       action.content.type === 'supplement' ||
-      action.content.type === 'lifestyle'
+      action.content.type === 'lifestyle' ||
+      action.content.type === 'prescription'
     )
       return true;
 

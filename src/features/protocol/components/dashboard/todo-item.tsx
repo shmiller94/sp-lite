@@ -27,6 +27,7 @@ import { cn } from '@/lib/utils';
 import type { Product } from '@/types/api';
 
 import type { ProtocolAction } from '../../api';
+import { RxClinicianCallCta } from '../rx-clinician-call-cta';
 import { SupplementPreview } from '../supplement-preview';
 
 interface TodoItemProps {
@@ -100,6 +101,7 @@ const DetailContent = ({
   description,
   additionalContent,
   supplementProduct,
+  isPrescription,
 }: {
   title: string;
   typeLabel: string;
@@ -107,6 +109,7 @@ const DetailContent = ({
   description?: string | null;
   additionalContent?: string | null;
   supplementProduct?: Product | null;
+  isPrescription?: boolean;
 }) => (
   <div className="space-y-5 p-5">
     {/* Header with image + title */}
@@ -154,6 +157,8 @@ const DetailContent = ({
         showAskOwn
       />
     </div>
+
+    {isPrescription && <RxClinicianCallCta source="todo_dialog" />}
   </div>
 );
 
@@ -312,6 +317,7 @@ export const TodoItem = ({
               description={action.description}
               additionalContent={action.additionalContent}
               supplementProduct={supplementProduct}
+              isPrescription={action.content.type === 'prescription'}
             />
           </SheetContent>
         </Sheet>
@@ -335,6 +341,7 @@ export const TodoItem = ({
               description={action.description}
               additionalContent={action.additionalContent}
               supplementProduct={supplementProduct}
+              isPrescription={action.content.type === 'prescription'}
             />
           </DialogContent>
         </Dialog>

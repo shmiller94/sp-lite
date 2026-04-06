@@ -18,6 +18,7 @@ import { useSupplementProductLookup } from '@/features/protocol/hooks/use-supple
 import { useRevealBuilderStore } from '@/features/protocol/stores/reveal-builder-store';
 
 import { ProtocolStepLayout } from '../../../layouts/protocol-step-layout';
+import { RxClinicianCallCta } from '../../../rx-clinician-call-cta';
 
 interface GoalFixStepProps {
   goalIndex: number;
@@ -107,6 +108,12 @@ export const GoalFixStep = ({ goalIndex }: GoalFixStepProps) => {
             className="text-sm text-secondary [&>div]:mb-0"
           />
 
+          {primaryAction.content.type === 'prescription' && (
+            <div className="mt-4">
+              <RxClinicianCallCta source="reveal_fix" />
+            </div>
+          )}
+
           <div className="mt-4 flex items-center justify-between">
             <AdditionalContentDialog
               actionTitle={primaryAction.title}
@@ -116,6 +123,7 @@ export const GoalFixStep = ({ goalIndex }: GoalFixStepProps) => {
               additionalContent={primaryAction.additionalContent}
               supplementProduct={supplementProduct}
               citations={citations}
+              isPrescription={primaryAction.content.type === 'prescription'}
             >
               <button
                 type="button"
