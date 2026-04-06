@@ -6,8 +6,8 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useState,
   useRef,
+  useState,
   type Dispatch,
   type SetStateAction,
 } from 'react';
@@ -48,18 +48,6 @@ const publicErrors = [
 
 const conciergeLoadErrorMessage =
   'Currently chat is under heavy load. Please try again later.';
-
-function hasAssistantContent(message: UIMessage | undefined): boolean {
-  if (!message || message.role !== 'assistant') return false;
-
-  for (const part of message.parts ?? []) {
-    if (part.type !== 'text') continue;
-    if (part.text.length === 0) continue;
-    return true;
-  }
-
-  return false;
-}
 
 const isObjectRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
@@ -158,49 +146,13 @@ function hasUserMessages(messages: UIMessage[]): boolean {
   return false;
 }
 
-function hasInProgressParts(message: UIMessage): boolean {
-  for (const part of message.parts ?? []) {
-    if (!isObjectRecord(part) || !('state' in part)) continue;
-    const state = (part as { state?: unknown }).state;
-    if (typeof state === 'string' && state.includes('streaming')) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-function getLastFinishStepReason(message: UIMessage): string | null {
-  const meta = message.metadata as Record<string, unknown> | undefined;
-  const events = meta?.events;
-  if (!events || typeof events !== 'object' || Array.isArray(events)) {
-    return null;
-  }
-
-  let maxSeq = -1;
-  let reason: string | null = null;
-
-  for (const [key, value] of Object.entries(events)) {
-    const seq = Number(key);
-    if (!Number.isFinite(seq)) continue;
-    if (!value || typeof value !== 'object' || Array.isArray(value)) continue;
-
-    const ev = value as Record<string, unknown>;
-    if (ev.type !== 'finish-step') continue;
-    if (typeof ev.finishReason !== 'string') continue;
-
-    if (seq > maxSeq) {
-      maxSeq = seq;
-      reason = ev.finishReason;
-    }
-  }
-
-  return reason;
-}
-
 function isNetworkError(err: unknown): boolean {
   const message = getErrorMessage(err).toLowerCase();
-  return message.includes('fetch') || message.includes('network');
+  return (
+    message.includes('fetch') ||
+    message.includes('network') ||
+    message.includes('the operation was aborted.')
+  );
 }
 
 export function Chat({
@@ -220,8 +172,8 @@ export function Chat({
       status={controller.status}
       showLoadErrorBanner={controller.showLoadErrorBanner}
       showReconnectBanner={controller.showReconnectBanner}
+      onReconnect={controller.handleReconnect}
       assistantBusyMessage={controller.assistantBusyMessage}
-      onReconnect={controller.onReconnect}
       input={controller.input}
       setInput={controller.setInput}
       attachments={controller.attachments}
@@ -273,6 +225,8 @@ function useConciergeChatController({
   const clearErrorAfterFinishRef = useRef(false);
   const pendingSendSnapshotRef = useRef<UIMessage[] | null>(null);
   const pendingSendInputRef = useRef<string | null>(null);
+  const hasResumedRef = useRef(false);
+  const [resumeKey, setResumeKey] = useState(0);
 
   const [input, setInput] = useState(defaultMessage ?? '');
   const [attachments, setAttachments] = useState<Array<FileUIPart>>(() =>
@@ -314,10 +268,9 @@ function useConciergeChatController({
     messages,
     setMessages,
     sendMessage,
-    resumeStream,
-    stop,
     status,
     clearError,
+    resumeStream,
   } = useChat({
     id,
     transport,
@@ -445,60 +398,6 @@ function useConciergeChatController({
     },
   });
 
-  const recoverFromServer = useCallback(async () => {
-    try {
-      const latestDesc = await getMessages({
-        chatId: id,
-        sort: 'desc',
-        limit: DEFAULT_MESSAGES_PAGE_SIZE,
-      });
-      const latestAsc = latestDesc.slice().reverse();
-
-      if (latestAsc.length === 0) {
-        return { recovered: false, shouldReconnect: false } as const;
-      }
-
-      const lastServerMessage = latestAsc[latestAsc.length - 1];
-      if (
-        !hasAssistantContent(lastServerMessage) ||
-        (lastServerMessage && hasInProgressParts(lastServerMessage))
-      ) {
-        return { recovered: false, shouldReconnect: false } as const;
-      }
-
-      setMessages((prev) => {
-        const latestIds = new Set<string>();
-        for (const message of latestAsc) {
-          latestIds.add(message.id);
-        }
-
-        const merged: UIMessage[] = [];
-        for (const message of prev) {
-          if (latestIds.has(message.id)) continue;
-          merged.push(message);
-        }
-        for (const message of latestAsc) {
-          merged.push(message);
-        }
-        return merged;
-      });
-      queryClient.setQueryData(getMessagesQueryOptions(id).queryKey, latestAsc);
-
-      setAssistantBusyMessage(null);
-      setShowLoadErrorBanner(false);
-      setShowReconnectBanner(false);
-      clearError();
-
-      return { recovered: true, shouldReconnect: false } as const;
-    } catch (err) {
-      console.warn('Failed to recover chat from server', err);
-      return {
-        recovered: false,
-        shouldReconnect: isNetworkError(err),
-      } as const;
-    }
-  }, [clearError, id, queryClient, setMessages]);
-
   const navigateToPersistedChat = useCallback(() => {
     return navigate({
       to: '/concierge/$id',
@@ -551,112 +450,31 @@ function useConciergeChatController({
     oldestMessageRef.current = messages[0];
   }, [messages]);
 
-  const resumeInFlightRef = useRef(false);
-  const resumeStartedRef = useRef(false);
-  const statusRef = useRef(status);
-
-  useEffect(() => {
-    statusRef.current = status;
-
-    if (!resumeInFlightRef.current) return;
-    if (status === 'submitted' || status === 'streaming') {
-      resumeStartedRef.current = true;
-    }
-  }, [status]);
-
-  const attemptResumeStream = useCallback(
-    async (options?: { force?: boolean }) => {
-      if (resumeInFlightRef.current) return;
-      const currentStatus = statusRef.current;
-      if (currentStatus === 'submitted' || currentStatus === 'streaming')
-        return;
-
-      const current = messagesRef.current;
-      const hasUser = hasUserMessages(current);
-      const last = current[current.length - 1];
-
-      const shouldResume =
-        options?.force === true
-          ? true
-          : hasUser &&
-            (last?.role === 'user' ||
-              (last?.role === 'assistant' &&
-                (hasInProgressParts(last) ||
-                  getLastFinishStepReason(last) === 'tool-calls')));
-
-      if (!shouldResume) return;
-
-      const shouldPruneAssistant = last?.role === 'assistant';
-
-      const snapshot = current;
-
-      resumeInFlightRef.current = true;
-      resumeStartedRef.current = false;
-
-      setShowLoadErrorBanner(false);
-      setShowReconnectBanner(false);
-      clearError();
-
-      if (shouldPruneAssistant) {
-        setMessages((prev) => {
-          const l = prev[prev.length - 1];
-          return l?.role === 'assistant' ? prev.slice(0, -1) : prev;
-        });
-      }
-
-      try {
-        await resumeStream();
-      } catch (err) {
-        console.debug('resumeStream failed', err);
-      }
-      const started = resumeStartedRef.current;
-      resumeInFlightRef.current = false;
-
-      if (started) return;
-
-      const recovery = await recoverFromServer();
-      if (recovery.recovered) return;
-
-      if (shouldPruneAssistant) {
-        setMessages(snapshot);
-      }
-
-      if (recovery.shouldReconnect) {
-        setShowLoadErrorBanner(false);
-        setShowReconnectBanner(true);
-        return;
-      }
-
-      setShowLoadErrorBanner(true);
-      setShowReconnectBanner(false);
-      reportChatError(
-        'Recovery failed: assistant response was not available on the server.',
-      );
-    },
-    [clearError, recoverFromServer, reportChatError, resumeStream, setMessages],
-  );
-
-  useEffect(() => {
-    const timeoutId = window.setTimeout(() => {
-      void attemptResumeStream();
-    }, 0);
-
-    return () => {
-      window.clearTimeout(timeoutId);
-    };
-  }, [attemptResumeStream]);
-
-  useEffect(() => {
-    return () => {
-      void stop().catch((err) => {
-        console.debug('chat stop failed', err);
-      });
-    };
-  }, [stop]);
-
   const handleReconnect = useCallback(() => {
-    void attemptResumeStream({ force: true });
-  }, [attemptResumeStream]);
+    setShowReconnectBanner(false);
+    setShowLoadErrorBanner(false);
+    hasResumedRef.current = false;
+    setResumeKey((k) => k + 1);
+  }, []);
+
+  useEffect(() => {
+    if (hasResumedRef.current) return;
+    if (status === 'streaming' || status === 'submitted') return;
+    if (resumeKey === 0) {
+      if (messages.length === 0) return;
+      if (messages.at(-1)?.role !== 'user') return;
+    }
+    hasResumedRef.current = true;
+    if (resumeKey > 0) {
+      setMessages((prev) => {
+        if (prev.length > 0 && prev.at(-1)?.role === 'assistant') {
+          return prev.slice(0, -1);
+        }
+        return prev;
+      });
+    }
+    void resumeStream();
+  }, [messages, status, resumeStream, resumeKey, setMessages]);
 
   useEffect(() => {
     if (hasIdParam) return;
@@ -927,8 +745,8 @@ function useConciergeChatController({
     status,
     showLoadErrorBanner,
     showReconnectBanner,
+    handleReconnect,
     assistantBusyMessage,
-    onReconnect: handleReconnect,
     input,
     setInput,
     attachments,
@@ -951,8 +769,8 @@ interface ChatViewProps {
   status: UseChatHelpers<UIMessage>['status'];
   showLoadErrorBanner: boolean;
   showReconnectBanner: boolean;
-  assistantBusyMessage: string | null;
   onReconnect: () => void;
+  assistantBusyMessage: string | null;
   input: string;
   setInput: Dispatch<SetStateAction<string>>;
   attachments: Array<FileUIPart>;
@@ -1085,7 +903,6 @@ function ChatView({
             </Alert>
           </div>
         )}
-
         {showErrorUi && showLoadErrorBanner && (
           <div className="mx-auto mb-3 w-full max-w-3xl px-1">
             <Alert variant="destructive">

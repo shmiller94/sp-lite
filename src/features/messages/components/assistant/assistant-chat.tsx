@@ -50,50 +50,28 @@ export function AssistantChat({
 
   const transport = useMemo(() => createChatV2Transport<UIMessage>(), []);
 
-  const { messages, setMessages, sendMessage, resumeStream, stop, status } =
-    useChat({
-      id,
-      transport,
-      messages: [],
-      generateId: () => crypto.randomUUID(),
-      onFinish: ({ message, isAbort, isDisconnect, isError }) => {
-        if (isAbort) return;
+  const { messages, setMessages, sendMessage, status } = useChat({
+    id,
+    transport,
+    resume: true,
+    messages: [],
+    generateId: () => crypto.randomUUID(),
+    onFinish: ({ message, isAbort, isDisconnect, isError }) => {
+      if (isAbort) return;
 
-        void queryClient.invalidateQueries({
-          queryKey: getHistoryQueryOptions().queryKey,
-        });
-
-        if (isDisconnect || isError) return;
-        if (message.role !== 'assistant') return;
-
-        const timing = extractTiming(message, false);
-        track('received_message_ai', {
-          response_time: timing.totalMs,
-        });
-      },
-    });
-
-  useEffect(() => {
-    if (!isActive) return;
-
-    const timeoutId = window.setTimeout(() => {
-      void resumeStream().catch((err) => {
-        console.debug('resumeStream failed', err);
+      void queryClient.invalidateQueries({
+        queryKey: getHistoryQueryOptions().queryKey,
       });
-    }, 0);
 
-    return () => {
-      window.clearTimeout(timeoutId);
-    };
-  }, [isActive, resumeStream]);
+      if (isDisconnect || isError) return;
+      if (message.role !== 'assistant') return;
 
-  useEffect(() => {
-    return () => {
-      void stop().catch((err) => {
-        console.debug('chat stop failed', err);
+      const timing = extractTiming(message, false);
+      track('received_message_ai', {
+        response_time: timing.totalMs,
       });
-    };
-  }, [stop]);
+    },
+  });
 
   // Set initial messages when they're available and haven't been set yet
   useEffect(() => {
