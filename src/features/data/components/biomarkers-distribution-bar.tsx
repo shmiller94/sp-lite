@@ -113,10 +113,11 @@ export const BiomarkersDistributionBar = ({
   const numTotalBiomarkers = numInRange + numNormal + numOutOfRange;
 
   const optimalPercent =
-    Math.round((numInRange / numTotalBiomarkers) * 100) || 0;
-  const normalPercent = Math.round((numNormal / numTotalBiomarkers) * 100) || 0;
+    numTotalBiomarkers > 0 ? (numInRange / numTotalBiomarkers) * 100 : 0;
+  const normalPercent =
+    numTotalBiomarkers > 0 ? (numNormal / numTotalBiomarkers) * 100 : 0;
   const outOfRangePercent =
-    Math.round((numOutOfRange / numTotalBiomarkers) * 100) || 0;
+    numTotalBiomarkers > 0 ? (numOutOfRange / numTotalBiomarkers) * 100 : 0;
 
   const handleToggle = (target: FilterTarget) => {
     if (enableToggle !== true) return;
@@ -198,14 +199,14 @@ export const BiomarkersDistributionBar = ({
             transition={{ duration: 1.5, ease: EASE }}
           />
         )}
-        <m.div
-          className="h-full rounded-full bg-zinc-200"
-          initial={{ width: 0 }}
-          animate={{
-            width: `${100 - optimalPercent - normalPercent - outOfRangePercent}%`,
-          }}
-          transition={{ duration: 1.5, ease: EASE }}
-        />
+        {numTotalBiomarkers === 0 && (
+          <m.div
+            className="h-full rounded-full bg-zinc-200"
+            initial={{ width: 0 }}
+            animate={{ width: '100%' }}
+            transition={{ duration: 1.5, ease: EASE }}
+          />
+        )}
       </div>
     </div>
   );
