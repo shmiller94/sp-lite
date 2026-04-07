@@ -71,7 +71,7 @@ export const ProtocolDashboard = ({
     error: protocolError,
   } = useProtocol(protocolId);
 
-  const { data: allProtocols } = useProtocols();
+  const { data: allProtocols } = useProtocols('active');
   const { data: allLegacyProtocols } = useLegacyProtocols();
 
   // Unwrap the protocol from the response
