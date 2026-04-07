@@ -2,8 +2,9 @@ import { type UseChatHelpers, useChat } from '@ai-sdk/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useLocation } from '@tanstack/react-router';
 import { type ChatRequestOptions, type UIMessage, FileUIPart } from 'ai';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { toast } from '@/components/ui/sonner';
 import { useCreateFollowups } from '@/features/messages/api/create-followups';
 import { getHistoryQueryOptions } from '@/features/messages/api/get-history';
 import { MultimodalInput } from '@/features/messages/components/ai/multimodal-input';
@@ -49,8 +50,9 @@ export function AssistantChat({
   const [attachments, setAttachments] = useState<Array<FileUIPart>>([]);
 
   const transport = useMemo(() => createChatV2Transport<UIMessage>(), []);
+  const hasResumedRef = useRef(false);
 
-  const { messages, setMessages, sendMessage, status } = useChat({
+  const { messages, setMessages, sendMessage, status, resumeStream } = useChat({
     id,
     transport,
     resume: true,
@@ -71,7 +73,32 @@ export function AssistantChat({
         response_time: timing.totalMs,
       });
     },
+    onError: (err) => {
+      console.warn('assistant chat error', err);
+
+      const message = err instanceof Error ? err.message : String(err);
+
+      const publicErrors = [
+        'Too many requests, please try again later.',
+        'This chat has ended. Please start a new chat.',
+      ];
+
+      if (publicErrors.includes(message)) {
+        toast(message);
+      }
+    },
   });
+
+  // Resume an interrupted stream (e.g. after disconnect/reconnect)
+  useEffect(() => {
+    if (hasResumedRef.current) return;
+    if (status === 'streaming' || status === 'submitted') return;
+    if (messages.length === 0) return;
+    if (messages.at(-1)?.role !== 'user') return;
+
+    hasResumedRef.current = true;
+    void resumeStream();
+  }, [messages, status, resumeStream]);
 
   // Set initial messages when they're available and haven't been set yet
   useEffect(() => {
