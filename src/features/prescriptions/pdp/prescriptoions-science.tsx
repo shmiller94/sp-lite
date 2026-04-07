@@ -15,11 +15,13 @@ import { getPrescriptionInfo } from '@/utils/prescription';
 type PrescriptoionsScienceProps = {
   prescription: Rx;
   className?: string;
+  getStartedUrl?: string;
 };
 
 export const Science = ({
   prescription,
   className,
+  getStartedUrl,
 }: PrescriptoionsScienceProps) => {
   const info = getPrescriptionInfo(prescription.name);
   const science = info?.science;
@@ -82,9 +84,9 @@ export const Science = ({
           ))}
         </Accordion>
 
-        {prescription.url ? (
+        {getStartedUrl ? (
           <Button asChild size="medium" className="w-fit">
-            <Link to={prescription.url}>Get started</Link>
+            <Link to={getStartedUrl}>Get started</Link>
           </Button>
         ) : (
           <Button type="button" size="medium" className="w-fit" disabled>

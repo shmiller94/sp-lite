@@ -1,6 +1,5 @@
 import { Link } from '@tanstack/react-router';
 import { Check } from 'lucide-react';
-import { useState } from 'react';
 
 import { HomeTreatment } from '@/components/icons/marketplace/prescriptions/home-treatment';
 import { Lab } from '@/components/icons/marketplace/prescriptions/lab-tested';
@@ -62,9 +61,18 @@ const treatmentHighlights = [
 type HeaderProps = {
   className?: string;
   prescription: Rx;
+  selectedBillingCode: string;
+  onBillingCodeChange: (code: string) => void;
+  getStartedUrl?: string;
 };
 
-export const Header = ({ className, prescription }: HeaderProps) => {
+export const Header = ({
+  className,
+  prescription,
+  selectedBillingCode,
+  onBillingCodeChange,
+  getStartedUrl,
+}: HeaderProps) => {
   const info = getPrescriptionInfo(prescription.name);
 
   if (!info) {
@@ -153,6 +161,9 @@ export const Header = ({ className, prescription }: HeaderProps) => {
           <BillingTierSelector
             prescription={prescription}
             includes={includes}
+            selectedCode={selectedBillingCode}
+            onSelectedCodeChange={onBillingCodeChange}
+            getStartedUrl={getStartedUrl}
           />
 
           <div className="mt-5 hidden flex-col lg:flex">
@@ -224,6 +235,9 @@ type BillingTierIncludes = {
 type BillingTierSelectorProps = {
   prescription: Rx;
   includes: string[] | BillingTierIncludes;
+  selectedCode: string;
+  onSelectedCodeChange: (code: string) => void;
+  getStartedUrl?: string;
 };
 
 const getIncludesForTier = (
@@ -240,21 +254,17 @@ const getIncludesForTier = (
 const BillingTierSelector = ({
   prescription,
   includes,
+  selectedCode,
+  onSelectedCodeChange,
+  getStartedUrl,
 }: BillingTierSelectorProps) => {
   const prices = [...(prescription.prices ?? [])].sort(
     (a, b) => a.interval_count - b.interval_count,
   );
   const monthlyPrice = prices.find((p) => p.interval_count <= 30);
-  const [selectedCode, setSelectedCode] = useState<string>(
-    monthlyPrice?.billing_code ?? prices[0]?.billing_code ?? '',
-  );
   const basePerMonth = monthlyPrice
     ? getPerMonthPrice(monthlyPrice.amount, monthlyPrice.interval_count)
     : 0;
-
-  const getStartedUrl = prescription.url
-    ? `${prescription.url}${prescription.url.includes('?') ? '&' : '?'}billingCode=${encodeURIComponent(selectedCode)}`
-    : undefined;
 
   if (prices.length === 0) {
     return (
@@ -277,9 +287,9 @@ const BillingTierSelector = ({
             </ul>
           </div>
         </div>
-        {prescription.url ? (
+        {getStartedUrl ? (
           <Button asChild className="w-full">
-            <Link to={prescription.url}>Get started</Link>
+            <Link to={getStartedUrl}>Get started</Link>
           </Button>
         ) : (
           <Button className="w-full" disabled>
@@ -311,7 +321,7 @@ const BillingTierSelector = ({
               type="button"
               role="radio"
               aria-checked={isSelected}
-              onClick={() => setSelectedCode(price.billing_code)}
+              onClick={() => onSelectedCodeChange(price.billing_code)}
               className="flex items-start gap-3 border border-zinc-200 px-4 py-3 text-left transition-colors first:rounded-t-2xl last:rounded-b-2xl [&:not(:last-child)]:border-b-0"
             >
               <span
