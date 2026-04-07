@@ -14,6 +14,10 @@ export const sanitizeSchema = {
       'chat',
       'marketplace',
       'copy',
+      'kb',
+      'wearables',
+      'message',
+      'file',
     ],
   },
 };

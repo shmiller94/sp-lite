@@ -59,8 +59,8 @@ function MarkdownLink({ children, href, citationContext }: MarkdownLinkProps) {
     return <sup className="text-blue-500">{text}</sup>;
   }
 
-  // No href - render nothing
-  if (!href) return null;
+  // No href (e.g. stripped by sanitizer) - render as plain text
+  if (!href) return <>{children}</>;
 
   // External protocols (http, https, mailto, tel, sms) - use native <a>
   if (EXTERNAL_PROTOCOL.test(href)) {

@@ -38,6 +38,18 @@ const INLINE_ONLY_CITATION_RULES: Array<{
       !s.match(/^fhir:\/?\/?Observation/),
     tooltip: () => 'Based on your health records',
   },
+  {
+    predicate: (s) => s.startsWith('kb://'),
+    tooltip: () => 'Based on Superpower knowledge base',
+  },
+  {
+    predicate: (s) => s.startsWith('message://'),
+    tooltip: () => 'Based on a previous message',
+  },
+  {
+    predicate: (s) => s.startsWith('file://'),
+    tooltip: () => 'Based on an uploaded file',
+  },
 ];
 
 /**

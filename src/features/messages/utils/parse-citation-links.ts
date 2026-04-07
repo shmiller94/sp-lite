@@ -16,6 +16,9 @@ const CITATION_SCHEMES = [
   'chat://',
   'marketplace://',
   'wearables://',
+  'kb://',
+  'message://',
+  'file://',
 ];
 
 /**
