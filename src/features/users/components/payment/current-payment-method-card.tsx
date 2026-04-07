@@ -10,9 +10,11 @@ import { capitalize } from '@/utils/format';
 export const CurrentPaymentMethodCard = ({
   error,
   className,
+  disableFlexOptions,
 }: {
   error?: string;
   className?: string;
+  disableFlexOptions?: boolean;
 }) => {
   const {
     activePaymentMethod,
@@ -22,20 +24,28 @@ export const CurrentPaymentMethodCard = ({
   } = usePaymentMethodSelection();
 
   if (isSelectingPaymentMethod) {
-    return <PaymentMethodsSelect />;
+    return <PaymentMethodsSelect disableFlexOptions={disableFlexOptions} />;
   }
+
+  const showFlexError = disableFlexOptions && isFlexSelected;
 
   return (
     <div className="space-y-2">
       <div
         className={cn(
           'w-full space-y-3 rounded-2xl border bg-white px-8 py-6',
-          error ? 'border-pink-700 bg-pink-50' : 'border-zinc-200',
+          error || showFlexError
+            ? 'border-pink-700 bg-pink-50'
+            : 'border-zinc-200',
           className,
         )}
       >
         <div className="flex items-center justify-between">
-          <Body2 className={cn(error ? 'text-pink-700' : 'text-zinc-500')}>
+          <Body2
+            className={cn(
+              error || showFlexError ? 'text-pink-700' : 'text-zinc-500',
+            )}
+          >
             Payment method
           </Body2>
 
@@ -90,7 +100,14 @@ export const CurrentPaymentMethodCard = ({
         </div>
       </div>
 
-      {error ? <Body2 className="text-pink-700">{error}</Body2> : null}
+      {showFlexError ? (
+        <Body2 className="text-pink-700">
+          Sorry, HSA/FSA cards are currently not supported for this purchase.
+          Please select a different payment method.
+        </Body2>
+      ) : error ? (
+        <Body2 className="text-pink-700">{error}</Body2>
+      ) : null}
     </div>
   );
 };

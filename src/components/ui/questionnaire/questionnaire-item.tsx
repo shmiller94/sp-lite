@@ -701,12 +701,13 @@ function ConsentPaymentConfirmButton({
   onChangeAnswer: (answer: QuestionnaireResponseItemAnswer) => void;
   onAutoSubmit?: () => void;
 }) {
-  const { activePaymentMethod, isSelectingPaymentMethod } =
+  const { activePaymentMethod, isSelectingPaymentMethod, isFlexSelected } =
     usePaymentMethodSelection();
 
   const disabled =
     isSelectingPaymentMethod ||
-    activePaymentMethod?.externalPaymentMethodId == null;
+    activePaymentMethod?.externalPaymentMethodId == null ||
+    isFlexSelected;
 
   return (
     <QuestionnaireErrorWrapper isError={isErrored}>

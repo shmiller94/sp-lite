@@ -22,7 +22,7 @@ export const setDefaultPaymentMethod = ({
   data: SetDefaultPaymentMethodInput;
   paymentMethodId: string;
 }): Promise<Subscription> => {
-  return api.post(`billing/methods/${paymentMethodId}`, data);
+  return api.post(`billing/methods/${paymentMethodId}/default`, data);
 };
 
 type UseSetDefaultPaymentMethodOptions = {

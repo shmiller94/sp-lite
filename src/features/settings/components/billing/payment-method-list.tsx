@@ -128,7 +128,7 @@ export function PaymentMethodCard({
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-[160px]">
                 <SetDefaultPaymentMethodMenuItem
-                  paymentMethodId={paymentMethod.stripePaymentMethodId}
+                  paymentMethodId={paymentMethod.externalPaymentMethodId}
                   setDefault={!defaultMethod}
                 />
                 {paymentMethodsCount > 1 && (

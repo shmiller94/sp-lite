@@ -85,7 +85,7 @@ export const ConsentPaymentSummary = () => {
           />
         )}
       </div>
-      <CurrentPaymentMethodCard />
+      <CurrentPaymentMethodCard disableFlexOptions />
       <div className="flex flex-col gap-3">
         <div className="flex flex-col gap-4">
           <div className="flex items-start justify-between">

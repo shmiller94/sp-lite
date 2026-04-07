@@ -18,7 +18,11 @@ import { usePaymentMethodSelection } from '@/features/settings/hooks';
 import { cn } from '@/lib/utils';
 import { capitalize } from '@/utils/format';
 
-export const PaymentMethodsSelect = () => {
+export const PaymentMethodsSelect = ({
+  disableFlexOptions,
+}: {
+  disableFlexOptions?: boolean;
+}) => {
   const {
     activePaymentMethodId,
     setActivePaymentMethod,
@@ -45,25 +49,31 @@ export const PaymentMethodsSelect = () => {
             {paymentMethods.map((paymentMethod) => {
               const isFlexCard =
                 paymentMethod.paymentProvider.toLowerCase() === 'flex';
+              const isDisabled = disableFlexOptions && isFlexCard;
               const isSelected =
                 activePaymentMethodId === paymentMethod.externalPaymentMethodId;
               return (
                 <div
                   role="button"
-                  tabIndex={0}
+                  tabIndex={isDisabled ? -1 : 0}
+                  aria-disabled={isDisabled}
                   className={cn(
                     'flex w-full items-center justify-between rounded-[8px] p-4 text-left',
-                    isSelected
-                      ? 'bg-zinc-100 hover:bg-zinc-100'
-                      : 'hover:bg-zinc-100',
+                    isDisabled
+                      ? 'cursor-not-allowed opacity-50'
+                      : isSelected
+                        ? 'bg-zinc-100 hover:bg-zinc-100'
+                        : 'hover:bg-zinc-100',
                   )}
                   key={paymentMethod.externalPaymentMethodId}
-                  onClick={() =>
+                  onClick={() => {
+                    if (isDisabled) return;
                     setActivePaymentMethod(
                       paymentMethod.externalPaymentMethodId,
-                    )
-                  }
+                    );
+                  }}
                   onKeyDown={(e) => {
+                    if (isDisabled) return;
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault();
                       setActivePaymentMethod(
@@ -128,6 +138,12 @@ export const PaymentMethodsSelect = () => {
                         {paymentMethod.card.exp_year}
                       </Body3>
                     )}
+                    {isDisabled && (
+                      <Body3 className="text-pink-600">
+                        Sorry, HSA/FSA cards are currently not supported for
+                        this purchase. Please select a different payment method.
+                      </Body3>
+                    )}
                   </div>
                   {!isFlexCard && !paymentMethod.default && (
                     <DropdownMenu>
@@ -142,9 +158,14 @@ export const PaymentMethodsSelect = () => {
                           <MoreVertical className="size-4 cursor-pointer text-zinc-400" />
                         </button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent className="rounded-2xl p-2">
+                      <DropdownMenuContent
+                        className="rounded-2xl p-2"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <SetDefaultPaymentMethodMenuItem
-                          paymentMethodId={paymentMethod.stripePaymentMethodId}
+                          paymentMethodId={
+                            paymentMethod.externalPaymentMethodId
+                          }
                           setDefault={!paymentMethod.default}
                         />
                         {paymentMethods.length > 1 && (
