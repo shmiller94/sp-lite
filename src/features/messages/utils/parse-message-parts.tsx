@@ -1,5 +1,6 @@
 import { getToolName, isToolUIPart, type UIMessage } from 'ai';
 
+import { CompactionBlock } from '../components/ai/blocks/compaction-block';
 import { FileIngestionBlock } from '../components/ai/blocks/file-ingestion-block';
 import { MetadataBlock } from '../components/ai/blocks/metadata-block';
 import { ReasoningBlock } from '../components/ai/blocks/reasoning-block';
@@ -9,7 +10,7 @@ import type {
   ParsedMessageResult,
 } from '../types/message-parts';
 
-import { isFileIngestionDataPart } from './data-parts';
+import { isCompactionDataPart, isFileIngestionDataPart } from './data-parts';
 import { extractTiming, getCombinedTimingMs } from './extract-timing';
 import { safeJsonStringify } from './json';
 import {
@@ -146,6 +147,7 @@ export function parseMessageParts(
       : undefined;
   let reasoningBlockAdded = false;
   let fileIngestionBlockAdded = false;
+  let compactionBlockAdded = false;
 
   const pushParagraph = (
     paragraphText: string,
@@ -351,6 +353,17 @@ export function parseMessageParts(
             kind: 'node',
             key: `${message.id}:file-ingestion`,
             node: <FileIngestionBlock parts={allIngestionParts} />,
+          });
+        }
+      } else if (isCompactionDataPart(part)) {
+        // Collect all compaction parts and render a single aggregated block
+        if (!compactionBlockAdded) {
+          compactionBlockAdded = true;
+          const allCompactionParts = message.parts.filter(isCompactionDataPart);
+          blocks.push({
+            kind: 'node',
+            key: `${message.id}:compaction`,
+            node: <CompactionBlock parts={allCompactionParts} />,
           });
         }
       } else {

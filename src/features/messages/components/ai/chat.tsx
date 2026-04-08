@@ -15,6 +15,7 @@ import {
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/sonner';
+import { env } from '@/config/env';
 import { getHistoryQueryOptions } from '@/features/messages/api/get-history';
 import {
   DEFAULT_MESSAGES_PAGE_SIZE,
@@ -738,6 +739,92 @@ function useConciergeChatController({
     if (sessionStartTime != null) return;
     setSessionStartTime(Date.now());
   }, [sessionStartTime, setSessionStartTime]);
+
+  // DEV: Simulate data-compaction by injecting fake parts into the last assistant message
+  useEffect(() => {
+    if (!env.DEV_TOOLS_ENABLED) return;
+
+    const handler = () => {
+      setMessages((prev) => {
+        // Find the last assistant message
+        let lastAssistantIdx = -1;
+        for (let i = prev.length - 1; i >= 0; i--) {
+          if (prev[i].role === 'assistant') {
+            lastAssistantIdx = i;
+            break;
+          }
+        }
+        if (lastAssistantIdx === -1) {
+          toast.error('No assistant message to inject compaction into');
+          return prev;
+        }
+
+        const msg = prev[lastAssistantIdx];
+        const now = new Date().toISOString();
+
+        // First inject in-progress, then schedule complete after 3s
+        const inProgressPart = {
+          type: 'data-compaction' as const,
+          data: {
+            state: 'in-progress' as const,
+            reason: 'threshold' as const,
+            startedAt: now,
+            tokensBefore: 185_000,
+          },
+        };
+
+        const updated = [...prev];
+        updated[lastAssistantIdx] = {
+          ...msg,
+          parts: [...msg.parts, inProgressPart],
+        };
+
+        // After 3s, replace with complete state
+        setTimeout(() => {
+          setMessages((current) => {
+            const idx = current.findIndex((m) => m.id === msg.id);
+            if (idx === -1) return current;
+
+            const completePart = {
+              type: 'data-compaction' as const,
+              data: {
+                state: 'complete' as const,
+                reason: 'threshold' as const,
+                startedAt: now,
+                completedAt: new Date().toISOString(),
+                chatSummaryId: crypto.randomUUID(),
+                summary: 'Simulated compaction summary for dev testing.',
+                tokensBefore: 185_000,
+                tokensAfter: 42_000,
+              },
+            };
+
+            const next = [...current];
+            const currentMsg = current[idx];
+            // Replace in-progress part with complete part
+            const partsWithoutInProgress = currentMsg.parts.filter(
+              (p) =>
+                !(
+                  (p as { type?: string }).type === 'data-compaction' &&
+                  (p as { data?: { state?: string } }).data?.state ===
+                    'in-progress'
+                ),
+            );
+            next[idx] = {
+              ...currentMsg,
+              parts: [...partsWithoutInProgress, completePart],
+            };
+            return next;
+          });
+        }, 3000);
+
+        return updated;
+      });
+    };
+
+    window.addEventListener('dev:simulate-compaction', handler);
+    return () => window.removeEventListener('dev:simulate-compaction', handler);
+  }, [setMessages]);
 
   return {
     messages,

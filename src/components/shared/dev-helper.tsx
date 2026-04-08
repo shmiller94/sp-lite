@@ -109,6 +109,7 @@ function DevHelperMenuContent({
 }: DevHelperMenuContentProps) {
   const matchRoute = useMatchRoute();
   const isOnboarding = matchRoute({ to: '/onboarding' }) !== false;
+  const isConcierge = matchRoute({ to: '/concierge', fuzzy: true }) !== false;
 
   const goToStep = useOnboardingFlowStore((state) => state.goTo);
   const updateQuestionnaireResponseMutation = useUpdateQuestionnaireResponse();
@@ -404,6 +405,19 @@ function DevHelperMenuContent({
           <span>Trigger wearable success modal</span>
         </CommandItem>
       </CommandGroup>
+
+      {isConcierge ? (
+        <CommandGroup heading="Chat Actions">
+          <CommandItem
+            onSelect={() => {
+              window.dispatchEvent(new Event('dev:simulate-compaction'));
+              closeMenu();
+            }}
+          >
+            <span>Simulate Compaction</span>
+          </CommandItem>
+        </CommandGroup>
+      ) : null}
 
       {isOnboarding ? (
         <CommandGroup heading="Jump to Sequences">{sequenceItems}</CommandGroup>

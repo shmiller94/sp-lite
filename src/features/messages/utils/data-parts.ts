@@ -46,3 +46,40 @@ export function isFileIngestionDataPart(
   const p = part as { type?: string; data?: { fileId?: unknown } };
   return p.type === 'data-file-ingestion' && typeof p.data?.fileId === 'string';
 }
+
+export interface CompactionDataInProgress {
+  state: 'in-progress';
+  reason: 'threshold' | 'overflow';
+  startedAt: string;
+  tokensBefore: number;
+}
+
+export interface CompactionDataComplete {
+  state: 'complete';
+  reason: 'threshold' | 'overflow';
+  startedAt: string;
+  completedAt: string;
+  chatSummaryId: string;
+  summary: string;
+  tokensBefore: number;
+  tokensAfter: number;
+}
+
+export type CompactionData = CompactionDataInProgress | CompactionDataComplete;
+
+export type CompactionDataPart = DataUIPart<Record<string, unknown>> & {
+  type: 'data-compaction';
+  data: CompactionData;
+};
+
+export function isCompactionDataPart(
+  part: unknown,
+): part is CompactionDataPart {
+  if (typeof part !== 'object' || part === null) return false;
+  const p = part as { type?: string; data?: { state?: unknown } };
+  return (
+    p.type === 'data-compaction' &&
+    typeof p.data?.state === 'string' &&
+    (p.data.state === 'in-progress' || p.data.state === 'complete')
+  );
+}
