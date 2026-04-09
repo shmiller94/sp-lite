@@ -150,17 +150,19 @@ const sharedComponents = {
     className,
     children,
     ...props
-  }: MarkdownComponentProps & { inline?: boolean; className?: string }) =>
-    CodeBlock({
-      inline: inline || false,
-      className: className || '',
-      children,
-      ...props,
-    }),
+  }: MarkdownComponentProps & { inline?: boolean; className?: string }) => {
+    if (inline) {
+      return CodeBlock({
+        inline: true,
+        className: className || '',
+        children,
+        ...props,
+      });
+    }
+    return null;
+  },
 
-  pre: ({ children }: Pick<MarkdownComponentProps, 'children'>) => (
-    <>{children}</>
-  ),
+  pre: () => null,
 
   ol: ({ children, ...props }: MarkdownComponentProps) => (
     <ol className="ml-4 list-outside list-decimal" {...props}>
