@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Lock } from 'lucide-react';
+import { Suspense } from 'react';
 
 import { ContentLayout } from '@/components/layouts';
 import { Badge } from '@/components/ui/badge';
@@ -89,7 +90,9 @@ function DataComponent() {
           {isWearables ? (
             <WearablesDataView />
           ) : shouldShowCategoryView ? (
-            <CategoryView />
+            <Suspense fallback={null}>
+              <CategoryView />
+            </Suspense>
           ) : (
             <Overview />
           )}

@@ -87,23 +87,21 @@ export const DataFilter = ({ isLoading }: { isLoading: boolean }) => {
                 <BiomarkersDistributionBar enableToggle />
               )}
             </div>
-            {!isLoading && (
-              <div className="flex h-28 flex-col justify-between border-t border-t-zinc-100 py-2 md:h-auto md:flex-row md:items-center md:gap-4 md:px-3">
-                <DataSearch
-                  value={localQuery}
-                  onChange={(e) => {
-                    const q = e.target.value;
-                    setLocalQuery(q);
-                    debouncedUpdate(q);
-                  }}
-                />
-                <div className="flex items-center gap-1.5 px-2.5 md:px-0">
-                  <RangesFilter />
-                  <CategoryFilter />
-                  <DateFilter />
-                </div>
+            <div className="flex h-28 flex-col justify-between border-t border-t-zinc-100 py-2 md:h-auto md:flex-row md:items-center md:gap-4 md:px-3">
+              <DataSearch
+                value={localQuery}
+                onChange={(e) => {
+                  const q = e.target.value;
+                  setLocalQuery(q);
+                  debouncedUpdate(q);
+                }}
+              />
+              <div className="flex items-center gap-1.5 px-2.5 md:px-0">
+                <RangesFilter />
+                <CategoryFilter />
+                <DateFilter />
               </div>
-            )}
+            </div>
           </div>
         </div>
       </div>

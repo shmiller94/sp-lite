@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Suspense, type ReactNode } from 'react';
 
+import { ErrorBoundary } from '@/components/errors/error-boundary';
 import { ContentLayout } from '@/components/layouts';
 import { CardSkeleton } from '@/features/homepage/components/card-skeleton';
 import { DigitalTwinCard } from '@/features/homepage/components/digital-twin-card';
@@ -11,15 +12,23 @@ export const Route = createFileRoute('/_app/')({
   component: HomepageComponent,
 });
 
+const HomepageCardsSkeleton = () => (
+  <div className="space-y-6 lg:px-2">
+    <CardSkeleton />
+    <CardSkeleton />
+    <CardSkeleton />
+  </div>
+);
+
 function HomepageComponent() {
-  const { visibleCards, isLoading } = useHomepageState();
+  const { visibleCards } = useHomepageState();
 
   const visibleCardContent: ReactNode[] = [];
   for (const { id, component: Component } of visibleCards) {
     visibleCardContent.push(
-      <Suspense key={id} fallback={<CardSkeleton />}>
+      <ErrorBoundary key={id} fallback={<></>}>
         <Component />
-      </Suspense>,
+      </ErrorBoundary>,
     );
   }
 
@@ -37,19 +46,9 @@ function HomepageComponent() {
         <DigitalTwinCard />
 
         <div className="flex flex-col pb-20 lg:col-span-2 lg:pb-60 xl:col-span-1">
-          {isLoading ? (
-            <div className="space-y-6">
-              <CardSkeleton />
-              <CardSkeleton />
-              <CardSkeleton />
-            </div>
-          ) : visibleCards.length === 0 ? (
-            <div className="text-center text-zinc-500">
-              <p>No cards to display at this time.</p>
-            </div>
-          ) : (
+          <Suspense fallback={<HomepageCardsSkeleton />}>
             <div className="space-y-6 lg:px-2">{visibleCardContent}</div>
-          )}
+          </Suspense>
         </div>
       </div>
     </ContentLayout>

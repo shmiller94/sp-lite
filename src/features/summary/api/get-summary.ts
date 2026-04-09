@@ -1,4 +1,8 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
+import {
+  queryOptions,
+  useQuery,
+  useSuspenseQuery,
+} from '@tanstack/react-query';
 
 import { api } from '@/lib/api-client';
 import { QueryConfig } from '@/lib/react-query';
@@ -43,4 +47,8 @@ export const useSummary = ({ queryConfig }: UseSummaryOptions = {}) => {
   }
 
   return query;
+};
+
+export const useSummarySuspense = () => {
+  return useSuspenseQuery(getSummaryQueryOptions());
 };

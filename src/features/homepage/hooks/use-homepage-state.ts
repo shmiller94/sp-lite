@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useOrders } from '@/features/orders/api';
 import { useCredits } from '@/features/orders/api/credits';
 import { useWearables } from '@/features/settings/api/get-wearables';
-import { useSummary } from '@/features/summary/api/get-summary';
+import { useSummarySuspense } from '@/features/summary/api/get-summary';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { OrderStatus } from '@/types/api';
 
@@ -17,21 +17,18 @@ import { HomepageState, VisibleCard } from '../types';
 export const useHomepageState = (): {
   state: HomepageState;
   visibleCards: VisibleCard[];
-  isLoading: boolean;
 } => {
   const getVisibleCards = useHomepageStore((store) => store.getVisibleCards);
 
   const isMobile = useIsMobile();
 
-  const { data: summaryData, isLoading: isSummaryDataLoading } = useSummary();
+  const { data: summaryData } = useSummarySuspense();
 
   // NOTE(Nikita): these should be coming from the summary endpoint most likely as well
   // NOTE: but credits and orders are highly dynamic...
-  const { data: creditsData, isLoading: isCreditsLoading } = useCredits();
-  const { data: ordersData, isLoading: isOrdersLoading } = useOrders();
+  const { data: creditsData } = useCredits();
+  const { data: ordersData } = useOrders();
   const { data: wearablesData } = useWearables();
-
-  const isLoading = isSummaryDataLoading || isCreditsLoading || isOrdersLoading;
 
   const state = useMemo<HomepageState>(() => {
     const summary = summaryData;
@@ -56,19 +53,16 @@ export const useHomepageState = (): {
       isMobile,
       hasActiveLabOrders,
       hasActionableOrders: credits.length > 0,
-      hasCompletedActionPlan: summary ? summary.hasCompletedCarePlan : false,
-      hasMultipleActionPlans: summary ? summary.completedCarePlans > 1 : false,
+      hasCompletedActionPlan: summary.hasCompletedCarePlan,
+      hasMultipleActionPlans: summary.completedCarePlans > 1,
       hasActiveNonLabOrders,
       hasNoWearables: connectedWearables.length === 0,
     };
   }, [summaryData, creditsData, ordersData, wearablesData, isMobile]);
 
   const visibleCards = useMemo(() => {
-    if (isLoading) {
-      return [];
-    }
     return getVisibleCards(state);
-  }, [isLoading, getVisibleCards, state]);
+  }, [getVisibleCards, state]);
 
-  return { state, visibleCards, isLoading };
+  return { state, visibleCards };
 };

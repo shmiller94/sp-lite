@@ -20,7 +20,6 @@ import { mostRecent } from '../utils/most-recent-biomarker';
 import { BiologicalAgeDialog } from './dialogs/biological-age-dialog';
 import { SuperpowerScoreDialog } from './dialogs/superpower-score-dialog';
 import { DataFilter } from './filter/data-filter';
-import { BiomarkerSkeletonRow } from './table/biomarker-skeleton-row';
 import { BiomarkersDataTable } from './table/biomarkers-data-table';
 import { WaitingScreen } from './waiting-screen';
 
@@ -239,18 +238,11 @@ export function Overview() {
         </div>
       </div>
       <DataFilter isLoading={isLoading} />
-      <div>
-        {isLoading ? (
-          <div className="mx-auto mt-8 space-y-2">
-            {Array.from({ length: 10 }).map((_, index) => (
-              <BiomarkerSkeletonRow key={index} />
-            ))}
-          </div>
-        ) : (
-          <div className="mx-auto min-h-screen">
-            <BiomarkersDataTable biomarkers={filteredBiomarkers} />
-          </div>
-        )}
+      <div className="mx-auto min-h-screen">
+        <BiomarkersDataTable
+          biomarkers={filteredBiomarkers}
+          isLoading={isLoading}
+        />
       </div>
     </div>
   );

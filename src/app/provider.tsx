@@ -1,8 +1,8 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import { lazy, Suspense } from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
 import { HelmetProvider } from 'react-helmet-async';
 
+import { ErrorBoundary } from '@/components/errors/error-boundary';
 import { MainErrorFallback } from '@/components/errors/main';
 import { Toaster } from '@/components/ui/sonner';
 import { PHProvider } from '@/lib/posthog';
@@ -52,7 +52,7 @@ const LazyDevtools =
 
 export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   return (
-    <ErrorBoundary FallbackComponent={MainErrorFallback}>
+    <ErrorBoundary fallback={<MainErrorFallback />}>
       <HelmetProvider>
         <QueryClientProvider client={queryClient}>
           <PHProvider>

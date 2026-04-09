@@ -1,9 +1,7 @@
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { useCredits } from '@/features/orders/api/credits';
-import { useRedraws } from '@/features/redraw/api/get-redraws';
 
 import { ActionableOrdersCard } from '../actionable-orders-card';
 
@@ -20,52 +18,64 @@ vi.mock('@tanstack/react-router', async () => {
   };
 });
 
+vi.mock('@tanstack/react-query', async () => {
+  const actual = await vi.importActual<typeof import('@tanstack/react-query')>(
+    '@tanstack/react-query',
+  );
+  return { ...actual, useSuspenseQuery: vi.fn() };
+});
+
 vi.mock('@/features/orders/api/credits', () => ({
-  useCredits: vi.fn(),
+  getCreditsQueryOptions: vi.fn(() => ({ queryKey: ['credits', 'default'] })),
 }));
 
 vi.mock('@/features/redraw/api/get-redraws', () => ({
-  useRedraws: vi.fn(),
+  getRedrawsQueryOptions: vi.fn(() => ({ queryKey: ['redraws'] })),
 }));
 
-const useCreditsMock = vi.mocked(useCredits, { partial: true });
-const useRedrawsMock = vi.mocked(useRedraws, { partial: true });
+const useSuspenseQueryMock = vi.mocked(useSuspenseQuery);
 
 describe('ActionableOrdersCard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     navigateMock.mockReset();
 
-    useCreditsMock.mockReturnValue({
-      data: {
-        credits: [],
+    useSuspenseQueryMock.mockImplementation(
+      ({ queryKey }: { queryKey: readonly unknown[] }) => {
+        if (queryKey[0] === 'credits')
+          return { data: { credits: [] } } as ReturnType<
+            typeof useSuspenseQuery
+          >;
+        return { data: { redraws: [] } } as ReturnType<typeof useSuspenseQuery>;
       },
-    });
-
-    useRedrawsMock.mockReturnValue({
-      data: {
-        redraws: [],
-      },
-    });
+    );
   });
 
   it('renders a recollection task when an available redraw exists', async () => {
-    useRedrawsMock.mockReturnValue({
-      data: {
-        redraws: [
-          {
-            serviceRequestId: 'sr-redraw-1',
-            serviceRequestIds: ['sr-redraw-1'],
-            redrawStatus: 'requisition_created',
-            serviceNames: ['Superpower Blood Panel'],
-            missingBiomarkers: ['Apolipoprotein B'],
-            canSchedule: true,
-            canSkip: true,
-            canCancel: false,
+    useSuspenseQueryMock.mockImplementation(
+      ({ queryKey }: { queryKey: readonly unknown[] }) => {
+        if (queryKey[0] === 'credits')
+          return { data: { credits: [] } } as ReturnType<
+            typeof useSuspenseQuery
+          >;
+        return {
+          data: {
+            redraws: [
+              {
+                serviceRequestId: 'sr-redraw-1',
+                serviceRequestIds: ['sr-redraw-1'],
+                redrawStatus: 'requisition_created',
+                serviceNames: ['Superpower Blood Panel'],
+                missingBiomarkers: ['Apolipoprotein B'],
+                canSchedule: true,
+                canSkip: true,
+                canCancel: false,
+              },
+            ],
           },
-        ],
+        } as ReturnType<typeof useSuspenseQuery>;
       },
-    });
+    );
 
     render(<ActionableOrdersCard />);
 

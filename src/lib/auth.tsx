@@ -3,21 +3,12 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
-import { Navigate, useRouter, useRouterState } from '@tanstack/react-router';
-import * as React from 'react';
+import { useRouter } from '@tanstack/react-router';
 import { configureAuth } from 'react-query-auth';
 
-import { SuperpowerLoadingLogo } from '@/components/icons/superpower-logo';
 import { toast } from '@/components/ui/sonner';
 import { env } from '@/config/env';
-import {
-  buildQuestionnaireStatusMap,
-  getQuestionnaireStatus,
-} from '@/features/onboarding/utils/get-questionnaire-status';
-import { useQuestionnaireResponseList } from '@/features/questionnaires/api/questionnaire-response';
-import { useTask } from '@/features/tasks/api/get-task';
 import { useAnalytics } from '@/hooks/use-analytics';
-import { isIntakeDismissed } from '@/lib/intake-dismiss';
 import { MutationConfig } from '@/lib/react-query';
 import { clearActiveLogin, setActiveLogin } from '@/lib/utils';
 import {
@@ -37,14 +28,6 @@ import type {
   ResetPasswordInput,
   SetPasswordInput,
 } from './auth-schemas';
-
-function ExternalRedirect({ href }: { href: string }) {
-  React.useEffect(() => {
-    window.location.href = href;
-  }, [href]);
-
-  return null;
-}
 
 export type {
   BaseLoginInput,
@@ -263,134 +246,6 @@ export const useStopImpersonating = () => {
       void router.invalidate();
     },
   });
-};
-
-export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const userQuery = useUser();
-  const taskQuery = useTask({
-    taskName: 'onboarding',
-    queryConfig: {
-      enabled: userQuery.isSuccess,
-      retry: 3,
-      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 5000), // 1s, 2s, 4s, max 5s
-    },
-  });
-
-  const onboardingDone = taskQuery.data?.task.status === 'completed';
-  const { data: intakeResponses, isLoading: intakeLoading } =
-    useQuestionnaireResponseList(
-      {
-        questionnaireName:
-          'onboarding-primer,onboarding-medical-history,onboarding-female-health,onboarding-lifestyle',
-        status: 'completed',
-      },
-      { enabled: userQuery.isSuccess && onboardingDone },
-    );
-
-  if (!userQuery.isFetched) {
-    return (
-      <div className="flex h-screen w-screen items-center justify-center">
-        <SuperpowerLoadingLogo />
-        <span className="sr-only">Loading</span>
-      </div>
-    );
-  }
-
-  if (taskQuery.isLoading) {
-    return (
-      <div className="flex h-screen w-screen items-center justify-center">
-        <SuperpowerLoadingLogo />
-        <span className="sr-only">Loading</span>
-      </div>
-    );
-  }
-
-  if (!userQuery.data) {
-    return (
-      <Navigate
-        to="/signin"
-        search={{
-          redirectTo: pathname,
-        }}
-        replace
-      />
-    );
-  }
-
-  // note: we should probably never get to this state anyways
-  if (taskQuery.isError) {
-    return (
-      <div className="p-4">
-        <p className="text-red-600">Ooops...Error loading onboarding status.</p>
-        <button onClick={() => taskQuery.refetch()}>Retry</button>
-      </div>
-    );
-  }
-
-  const onOnboarding = pathname.includes('/onboarding');
-
-  if (taskQuery.data) {
-    const { task } = taskQuery.data;
-    const isTaskIncomplete = task.status !== 'completed';
-    const isSubscribed = !!userQuery.data?.subscribed;
-    const isDev = import.meta.env.DEV;
-
-    let target: string | null = null;
-
-    if (isTaskIncomplete) {
-      // If a user isn't subscribed, send them to checkout
-      if (!isSubscribed) {
-        return <ExternalRedirect href={`${env.MARKETING_SITE_URL}/checkout`} />;
-      }
-      // otherwise, send to onboarding (but not if already there)
-      else if (!onOnboarding) {
-        target = '/onboarding';
-      }
-    }
-
-    if (target && target !== pathname) {
-      console.warn(`Redirecting to ${target}, current location: ${pathname}`);
-      return <Navigate to={target} replace />;
-    }
-
-    // Redirect legacy members (account > 6 months old) with incomplete intakes
-    if (
-      onboardingDone &&
-      !isDev &&
-      !intakeLoading &&
-      !userQuery.data?.adminActor
-    ) {
-      const sixMonthsAgo = new Date();
-      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-      // Clamp to last day of target month if day-of-month overflowed
-      const now = new Date();
-      if (sixMonthsAgo.getDate() !== now.getDate()) {
-        sixMonthsAgo.setDate(0);
-      }
-
-      const isLegacy =
-        userQuery.data?.createdAt &&
-        new Date(userQuery.data.createdAt) < sixMonthsAgo;
-
-      const statusMap = buildQuestionnaireStatusMap(intakeResponses);
-      const done = (name: string) =>
-        getQuestionnaireStatus(statusMap, name) === 'completed';
-
-      const isFemale = userQuery.data?.gender?.toLowerCase() === 'female';
-      const hasAllIntakes =
-        done('onboarding-primer') &&
-        done('onboarding-medical-history') &&
-        (!isFemale || done('onboarding-female-health')) &&
-        done('onboarding-lifestyle');
-
-      if (isLegacy && !hasAllIntakes && !isIntakeDismissed()) {
-        return <Navigate to="/intake" replace />;
-      }
-    }
-  }
-
-  return children;
 };
 
 /**

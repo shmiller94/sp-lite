@@ -36,7 +36,6 @@ export const useQuestionnaireResponseController = ({
     queryConfig: { enabled: !!questionnaireName },
   });
 
-  const responseSettled = !responseQuery.isLoading;
   const response = responseQuery.data?.questionnaireResponse ?? undefined;
 
   const questionnaireIdentifierRef = useRef<string | null>(null);
@@ -45,7 +44,7 @@ export const useQuestionnaireResponseController = ({
     prevNameRef.current = questionnaireName;
     questionnaireIdentifierRef.current = null;
   }
-  if (questionnaireIdentifierRef.current === null && responseSettled) {
+  if (questionnaireIdentifierRef.current === null && !responseQuery.isPending) {
     questionnaireIdentifierRef.current =
       response?.questionnaire ?? questionnaireName;
   }
@@ -54,7 +53,6 @@ export const useQuestionnaireResponseController = ({
     identifier: questionnaireIdentifierRef.current ?? questionnaireName,
     queryConfig: {
       placeholderData: keepPreviousData,
-      enabled: responseSettled,
     },
   });
 

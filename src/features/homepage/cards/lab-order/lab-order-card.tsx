@@ -4,7 +4,6 @@ import { useCallback } from 'react';
 
 import { AddToCalendar } from '@/components/shared/add-to-calendar-button';
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Body1, Body2, H3 } from '@/components/ui/typography';
 import { useCurrentLabOrder } from '@/features/orders/hooks';
 import { useNowMs } from '@/hooks/use-now-ms';
@@ -46,7 +45,7 @@ const isValidAddress = (address?: Address): boolean => {
 };
 
 export const LabOrderCard = () => {
-  const { activeLabOrder, isLoading } = useCurrentLabOrder();
+  const { activeLabOrder } = useCurrentLabOrder();
   const nowMs = useNowMs();
 
   /**
@@ -70,16 +69,6 @@ export const LabOrderCard = () => {
     const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
     window.open(url, '_blank');
   }, []);
-
-  if (isLoading) {
-    return (
-      <section className="rounded-3xl bg-white p-6 shadow-sm">
-        <Skeleton className="mb-2 h-7 w-48" />
-        <Skeleton className="mb-6 h-6 w-64" />
-        <Skeleton className="mx-auto h-64 w-48" />
-      </section>
-    );
-  }
 
   if (!activeLabOrder) {
     return null;

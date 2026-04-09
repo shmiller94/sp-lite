@@ -1,3 +1,4 @@
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { type ReactElement } from 'react';
 
@@ -5,7 +6,7 @@ import {
   ActionableAccordion,
   ActionableAccordionItem,
 } from '@/components/shared/actionable-accordion';
-import { useWearables } from '@/features/settings/api/get-wearables';
+import { getWearablesQueryOptions } from '@/features/settings/api/get-wearables';
 import { useUser } from '@/lib/auth';
 import { shouldShowImportMemory } from '@/utils/show-action-conditions';
 
@@ -19,7 +20,7 @@ interface ActionItem {
 
 export const ActionItemsCard = () => {
   const navigate = useNavigate();
-  const { data: wearablesData } = useWearables();
+  const { data: wearablesData } = useSuspenseQuery(getWearablesQueryOptions());
   const hasNoWearables =
     (wearablesData?.wearables?.filter((w) => w.status === 'connected') ?? [])
       .length === 0;

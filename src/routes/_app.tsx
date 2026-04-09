@@ -7,6 +7,7 @@ import {
 } from '@tanstack/react-router';
 import { type ReactNode } from 'react';
 
+import { SuperpowerLoadingLogo } from '@/components/icons/superpower-logo';
 import { AppLayout } from '@/components/layouts/app-layout';
 import { env } from '@/config/env';
 import {
@@ -74,7 +75,17 @@ async function getRevealData(queryClient: QueryClient) {
   }
 }
 
+function AppPendingComponent() {
+  return (
+    <div className="flex h-screen w-screen items-center justify-center">
+      <SuperpowerLoadingLogo />
+      <span className="sr-only">Loading</span>
+    </div>
+  );
+}
+
 export const Route = createFileRoute('/_app')({
+  pendingComponent: AppPendingComponent,
   beforeLoad: async ({ context, location }) => {
     const { queryClient } = context;
     const redirectTo = location.href;
@@ -96,13 +107,13 @@ export const Route = createFileRoute('/_app')({
       });
     }
 
-    if (onboarding?.task.status !== 'completed') {
-      if (user.subscribed !== true) {
-        throw redirect({
-          href: `${env.MARKETING_SITE_URL}/checkout`,
-        });
-      }
+    if (user.subscribed !== true) {
+      throw redirect({
+        href: `${env.MARKETING_SITE_URL}/checkout`,
+      });
+    }
 
+    if (onboarding?.task.status !== 'completed') {
       if (!location.pathname.startsWith('/onboarding')) {
         throw redirect({
           to: '/onboarding',

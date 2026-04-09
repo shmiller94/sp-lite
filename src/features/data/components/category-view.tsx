@@ -1,10 +1,10 @@
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useSearch } from '@tanstack/react-router';
 import { ArrowUpRight } from 'lucide-react';
 import { useRef } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { ScoreChart } from '@/components/ui/charts/score-chart/score-chart';
-import { Skeleton } from '@/components/ui/skeleton';
 import { H4 } from '@/components/ui/typography';
 import { AnimatedIcon } from '@/features/messages/components/ai/animated-icon';
 import { useAssistantStore } from '@/features/messages/stores/assistant-store';
@@ -12,11 +12,10 @@ import { useUser } from '@/lib/auth';
 
 import { useBiomarkers } from '../api';
 import { useBiomarkerSummary } from '../api/get-biomarker-summary';
-import { useCategories } from '../api/get-categories';
+import { getCategoriesQueryOptions } from '../api/get-categories';
 import { encodeCategory } from '../utils/category/encode-category';
 
 import { PersonalizedExplanation } from './personalized-explanation';
-import { BiomarkerSkeletonRow } from './table/biomarker-skeleton-row';
 import { CategoryDataTable } from './table/category-data-table';
 
 export const CategoryView = () => {
@@ -32,20 +31,18 @@ export const CategoryView = () => {
     category: activeCategory ?? '',
   });
 
-  const { data: categoriesData, isLoading: isCategoriesLoading } =
-    useCategories();
+  const { data: categoriesData } = useSuspenseQuery(
+    getCategoriesQueryOptions(),
+  );
   const activeCategoryData = categoriesData?.categories.find(
     (category) =>
       encodeCategory(category.category) ===
       encodeCategory(activeCategory ?? ''),
   );
 
-  const { data: biomarkersData, isLoading: isBiomarkersLoading } =
-    useBiomarkers({
-      category: activeCategoryData?.category,
-    });
-
-  const isLoading = isCategoriesLoading || isBiomarkersLoading;
+  const { data: biomarkersData } = useBiomarkers({
+    category: activeCategoryData?.category,
+  });
 
   if (!activeCategoryData) {
     return null;
@@ -67,16 +64,10 @@ export const CategoryView = () => {
       <div className="relative mx-auto w-full flex-1 overflow-visible rounded-[24px] border-none bg-white p-6 pb-4 shadow-sm hover:bg-white/80">
         <H4>{activeCategoryData.category}</H4>
         <div className="mb-8 flex w-full items-center justify-center py-2">
-          {isLoading ? (
-            <div className="flex size-full items-center justify-center gap-4">
-              <Skeleton className="size-28 rounded-full" />
-            </div>
-          ) : (
-            <ScoreChart
-              biomarkers={categoryBiomarkers ?? []}
-              value={activeCategoryData.value}
-            />
-          )}
+          <ScoreChart
+            biomarkers={categoryBiomarkers ?? []}
+            value={activeCategoryData.value}
+          />
         </div>
         <div className="space-y-4">
           <div ref={contentRef} className="space-y-4">
@@ -109,17 +100,9 @@ export const CategoryView = () => {
           </div>
         </div>
       </div>
-      {isLoading ? (
-        <div className="mt-8 w-full space-y-2">
-          {Array.from({ length: 10 }).map((_, index) => (
-            <BiomarkerSkeletonRow key={index} />
-          ))}
-        </div>
-      ) : (
-        <div className="w-full space-y-3">
-          <CategoryDataTable category={activeCategoryData} />
-        </div>
-      )}
+      <div className="w-full space-y-3">
+        <CategoryDataTable category={activeCategoryData} />
+      </div>
     </div>
   );
 };

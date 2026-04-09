@@ -6,7 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useOrders } from '@/features/orders/api';
 import { useCredits } from '@/features/orders/api/credits';
 import { useWearables } from '@/features/settings/api/get-wearables';
-import { useSummary } from '@/features/summary/api/get-summary';
+import { useSummarySuspense } from '@/features/summary/api/get-summary';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 import { useHomepageState } from '../use-homepage-state';
@@ -20,7 +20,7 @@ vi.mock('@/features/orders/api/credits', () => ({
 }));
 
 vi.mock('@/features/summary/api/get-summary', () => ({
-  useSummary: vi.fn(),
+  useSummarySuspense: vi.fn(),
 }));
 
 vi.mock('@/features/settings/api/get-wearables', () => ({
@@ -31,9 +31,9 @@ vi.mock('@/hooks/use-mobile', () => ({
   useIsMobile: vi.fn(),
 }));
 
+const useSummarySuspenseMock = vi.mocked(useSummarySuspense, { partial: true });
 const useOrdersMock = vi.mocked(useOrders, { partial: true });
 const useCreditsMock = vi.mocked(useCredits, { partial: true });
-const useSummaryMock = vi.mocked(useSummary, { partial: true });
 const useWearablesMock = vi.mocked(useWearables, { partial: true });
 const useIsMobileMock = vi.mocked(useIsMobile, { partial: true });
 
@@ -41,29 +41,27 @@ describe('useHomepageState', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    useOrdersMock.mockReturnValue({
+    useSummarySuspenseMock.mockReturnValue({
       data: {
-        requestGroups: [],
+        hasCompletedCarePlan: false,
+        completedCarePlans: 0,
+        hasPartialResults: false,
+        partialDiagnosticReports: 0,
       },
+    });
+
+    useOrdersMock.mockReturnValue({
+      data: { requestGroups: [] },
       isLoading: false,
     });
 
     useCreditsMock.mockReturnValue({
-      data: {
-        credits: [],
-      },
-      isLoading: false,
-    });
-
-    useSummaryMock.mockReturnValue({
-      data: undefined,
+      data: { credits: [] },
       isLoading: false,
     });
 
     useWearablesMock.mockReturnValue({
-      data: {
-        wearables: [],
-      },
+      data: { wearables: [] },
       isLoading: false,
     });
 
@@ -92,19 +90,6 @@ describe('useHomepageState', () => {
     expect(
       result.current.visibleCards.some((card) => card.id === 'actionableCards'),
     ).toBe(true);
-  });
-
-  it('waits for orders, credits, or summary before finishing homepage loading', () => {
-    useCreditsMock.mockReturnValue({
-      data: undefined,
-      isLoading: true,
-    });
-
-    const { result } = renderHook(() => useHomepageState(), {
-      wrapper: createWrapper(),
-    });
-
-    expect(result.current.isLoading).toBe(true);
   });
 
   it('keeps the actionable task card registered even when there are no current tasks', () => {
