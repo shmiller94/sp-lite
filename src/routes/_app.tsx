@@ -87,6 +87,11 @@ function AppPendingComponent() {
 export const Route = createFileRoute('/_app')({
   pendingComponent: AppPendingComponent,
   beforeLoad: async ({ context, location }) => {
+    // DEMO MODE: Skip all auth checks when API is a placeholder
+    if (env.API_URL === 'https://placeholder.invalid') {
+      return;
+    }
+
     const { queryClient } = context;
     const redirectTo = location.href;
 
