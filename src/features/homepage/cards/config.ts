@@ -9,7 +9,7 @@ import { ActionItemsCard } from './action-items-card';
 import { ActionableOrdersCard } from './actionable-orders-card';
 import { AiapSummaryCardWeb } from './aiap-summary-card-web';
 import { KeyInsightsCard } from './key-insights-card';
-import { LabOrderCard } from './lab-order/lab-order-card';
+import { BloodDrawHubCard } from './blood-draw-hub/blood-draw-hub-card';
 import { NavigationCard } from './navigation-card';
 import { ReferralCard } from './referral-card';
 
@@ -26,10 +26,10 @@ const aiapSummaryCardWebConfig: CardConfig = {
 /**
  * Card configuration for Phlebotomy Appointment card
  */
-const labOrderCardConfig: CardConfig = {
+const bloodDrawHubCardConfig: CardConfig = {
   id: 'appointmentCard',
-  component: LabOrderCard,
-  shouldShow: (state: HomepageState) => state.hasActiveLabOrders,
+  component: BloodDrawHubCard,
+  shouldShow: () => true,
   getPriority: () => 10,
 };
 
@@ -120,7 +120,7 @@ cardRegistry.register(actionableOrdersCardConfig);
 cardRegistry.register(actionItemsCardConfig);
 cardRegistry.register(switchRxCardConfig);
 cardRegistry.register(navigationCardConfig);
-cardRegistry.register(labOrderCardConfig);
+cardRegistry.register(bloodDrawHubCardConfig);
 cardRegistry.register(keyInsightsCardConfig);
 cardRegistry.register(referralCardConfig);
 cardRegistry.register(familyInsightsBannerConfig);
