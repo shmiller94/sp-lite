@@ -15,6 +15,7 @@ import { Route as SetpasswordRouteImport } from './routes/setpassword'
 import { Route as ResetpasswordRouteImport } from './routes/resetpassword'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as LogoutRouteImport } from './routes/logout'
+import { Route as DemoRouteImport } from './routes/demo'
 import { Route as ClaimBenefitRouteImport } from './routes/claim-benefit'
 import { Route as CheckEmailRouteImport } from './routes/check-email'
 import { Route as AppRouteImport } from './routes/_app'
@@ -91,6 +92,11 @@ const RegisterRoute = RegisterRouteImport.update({
 const LogoutRoute = LogoutRouteImport.update({
   id: '/logout',
   path: '/logout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoRoute = DemoRouteImport.update({
+  id: '/demo',
+  path: '/demo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ClaimBenefitRoute = ClaimBenefitRouteImport.update({
@@ -335,6 +341,7 @@ export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/check-email': typeof CheckEmailRoute
   '/claim-benefit': typeof ClaimBenefitRoute
+  '/demo': typeof DemoRoute
   '/logout': typeof LogoutRoute
   '/register': typeof RegisterRoute
   '/resetpassword': typeof ResetpasswordRoute
@@ -387,6 +394,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/check-email': typeof CheckEmailRoute
   '/claim-benefit': typeof ClaimBenefitRoute
+  '/demo': typeof DemoRoute
   '/logout': typeof LogoutRoute
   '/register': typeof RegisterRoute
   '/resetpassword': typeof ResetpasswordRoute
@@ -435,6 +443,7 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/check-email': typeof CheckEmailRoute
   '/claim-benefit': typeof ClaimBenefitRoute
+  '/demo': typeof DemoRoute
   '/logout': typeof LogoutRoute
   '/register': typeof RegisterRoute
   '/resetpassword': typeof ResetpasswordRoute
@@ -492,6 +501,7 @@ export interface FileRouteTypes {
     | '/'
     | '/check-email'
     | '/claim-benefit'
+    | '/demo'
     | '/logout'
     | '/register'
     | '/resetpassword'
@@ -544,6 +554,7 @@ export interface FileRouteTypes {
   to:
     | '/check-email'
     | '/claim-benefit'
+    | '/demo'
     | '/logout'
     | '/register'
     | '/resetpassword'
@@ -591,6 +602,7 @@ export interface FileRouteTypes {
     | '/_app'
     | '/check-email'
     | '/claim-benefit'
+    | '/demo'
     | '/logout'
     | '/register'
     | '/resetpassword'
@@ -647,6 +659,7 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   CheckEmailRoute: typeof CheckEmailRoute
   ClaimBenefitRoute: typeof ClaimBenefitRoute
+  DemoRoute: typeof DemoRoute
   LogoutRoute: typeof LogoutRoute
   RegisterRoute: typeof RegisterRoute
   ResetpasswordRoute: typeof ResetpasswordRoute
@@ -697,6 +710,13 @@ declare module '@tanstack/react-router' {
       path: '/logout'
       fullPath: '/logout'
       preLoaderRoute: typeof LogoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo': {
+      id: '/demo'
+      path: '/demo'
+      fullPath: '/demo'
+      preLoaderRoute: typeof DemoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/claim-benefit': {
@@ -1238,6 +1258,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   CheckEmailRoute: CheckEmailRoute,
   ClaimBenefitRoute: ClaimBenefitRoute,
+  DemoRoute: DemoRoute,
   LogoutRoute: LogoutRoute,
   RegisterRoute: RegisterRoute,
   ResetpasswordRoute: ResetpasswordRoute,
